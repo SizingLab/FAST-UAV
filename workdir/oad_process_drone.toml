@@ -1,0 +1,126 @@
+title = "Sample OAD Process"
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders = ["D:/THESE/Tools/FAST_OAD_Drone/components"]
+
+# Input and output files
+input_file = "./problem_inputs.xml"
+output_file = "./problem_outputs.xml"
+
+# Definition of problem driver assuming the OpenMDAO convention "import openmdao.api as om"
+driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
+
+# Definition of OpenMDAO model
+[model]
+    # Solvers are defined assuming the OpenMDAO convention "import openmdao.api as om"
+    nonlinear_solver = "om.NonlinearBlockGS(maxiter=200)"
+    linear_solver = "om.DirectSolver()"
+
+    # Although "model" is a mandatory name for the top level of the model, its
+    # sub-components can be freely named by user
+    [model.missions]
+        id = "missions.multirotor"
+    [model.propeller]
+        id = "propeller.multirotor"
+    [model.motor]
+        id = "motor.multirotor"
+    [model.energy_source]
+        id = "battery"
+    [model.esc]
+        id = "esc"
+    [model.structure]
+        id = "structure.multirotor"
+    [model.objective]
+        id = "objective"
+
+[optimization]  # This section is needed only if optimization process is run
+[[optimization.design_var]]
+        name = "settings:mission:k_M" # over sizing coefficient on the load mass 
+        lower = 1.0
+        upper = 400.0
+
+[[optimization.design_var]]
+        name = "settings:battery:k_Mb" # over sizing coefficient on the battery load mass 
+        upper = 60.0  
+        lower = 0.01
+
+[[optimization.design_var]]
+        name = "settings:structure:arms:D_ratio" # aspect ratio e/c (thickness/side) for the beam of the frame
+        lower = 0.05
+        upper = 0.9      
+
+[[optimization.design_var]]
+        name = "data:propeller:geometry:beta" # pitch/diameter ratio of the propeller
+        lower = 0.3
+        upper = 0.6
+
+[[optimization.design_var]]
+        name = "data:propeller:geometry:advance_ratio" # advance ratio 
+        upper = 0.5
+        lower = 0.01
+
+[[optimization.design_var]]
+        name = "settings:motor:k_mot" # over sizing coefficient on the motor torque
+        lower = 1.0
+        upper = 20.0
+
+[[optimization.design_var]]
+        name = "settings:motor:k_speed_mot" # over sizing coefficient on the motor speed
+        lower = 1.0
+        upper = 10.0
+
+[[optimization.design_var]]
+        name = "settings:battery:k_VB" # over sizing coefficient for the battery voltage
+        lower = 1.0
+        upper = 5.0
+
+[[optimization.design_var]]
+        name = "settings:propeller:k_ND" # slow down propeller coef : ND = kNDmax / k_ND
+        upper = 1.0
+        lower = 0.01
+
+[[optimization.design_var]]
+        name = "settings:ESC:k_ESC" # over sizing coefficient on the ESC power
+        lower = 1.0
+        upper = 15.0
+
+[[optimization.constraint]]
+        name = "constraints:ESC:cons_climb_power"
+
+[[optimization.constraint]]
+        name = "constraints:battery:cons_ESC_voltage"
+
+[[optimization.constraint]]
+        name = "constraints:battery:cons_climb_power"
+
+[[optimization.constraint]]
+        name = "constraints:battery:cons_climb_voltage"
+
+[[optimization.constraint]]
+        name = "constraints:battery:cons_takeoff_power"
+
+[[optimization.constraint]]
+        name = "constraints:battery:cons_takeoff_voltage"
+
+[[optimization.constraint]]
+        name = "constraints:motor:cons_climb_torque"
+
+[[optimization.constraint]]
+        name = "constraints:motor:cons_takeoff_torque"
+
+[[optimization.constraint]]
+        name = "constraints:propeller:cons_climb_speed"
+        upper = 0.05
+
+[[optimization.constraint]]
+        name = "constraints:propeller:cons_max_speed"
+
+[[optimization.constraint]]
+        name = "constraints:mass_objective:cons_flight_autonomy"
+
+[[optimization.constraint]]
+        name = "constraints:mass_objective:cons_mass_convergence"
+
+[[optimization.objective]]
+        name = "objectives:mass_total"
+

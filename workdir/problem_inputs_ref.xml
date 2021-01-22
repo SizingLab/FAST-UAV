@@ -1,0 +1,103 @@
+<FASTOAD_model>
+  <data>
+    <mission>
+      <climb_speed units="m/s" is_input="True">6.0</climb_speed>
+      <hover_time_goal units="min" is_input="True">18.0</hover_time_goal>
+      <rho_air units="kg/m**3" is_input="True">1.18</rho_air>
+      <load>
+        <mass units="kg" is_input="True">4.0</mass>
+      </load>
+    </mission>
+    <propeller>
+      <prop_number is_input="True">4.0</prop_number>
+      <geometry>
+        <advance_ratio is_input="True">0.5</advance_ratio>
+        <beta is_input="True">0.5</beta>
+      </geometry>
+      <reference>
+        <diameter_ref units="m" is_input="True">0.2794</diameter_ref>
+        <mass_ref units="kg" is_input="True">0.014999</mass_ref>
+        <nD_max units="m/s" is_input="True">44.45</nD_max>
+      </reference>
+    </propeller>
+    <ESC>
+      <performances>
+        <efficiency is_input="True">0.95</efficiency>
+      </performances>
+      <reference>
+        <mass_ref units="kg" is_input="True">0.115</mass_ref>
+        <power_ref units="W" is_input="True">3108.0</power_ref>
+        <voltage_ref units="V" is_input="True">44.4</voltage_ref>
+      </reference>
+    </ESC>
+    <battery>
+      <reference>
+        <capacity_ref units="A*s" is_input="True">12240.0</capacity_ref>
+        <mass_ref units="kg" is_input="True">0.329</mass_ref>
+        <max_current_ref units="A" is_input="True">170.0</max_current_ref>
+        <voltage_ref units="V" is_input="True">14.8</voltage_ref>
+      </reference>
+    </battery>
+    <motor>
+      <reference>
+        <mass_ref units="kg" is_input="True">0.575</mass_ref>
+        <resistance_ref units="V/A" is_input="True">0.03</resistance_ref>
+        <torque_coefficient_ref units="N*m/A" is_input="True">0.03</torque_coefficient_ref>
+        <torque_friction_ref units="N*m" is_input="True">0.03</torque_friction_ref>
+        <torque_max_ref units="N*m" is_input="True">2.81714285714</torque_max_ref>
+        <torque_nominal_ref units="N*m" is_input="True">2.32</torque_nominal_ref>
+      </reference>
+    </motor>
+    <structure>
+      <aerodynamics>
+        <C_D is_input="True">1.3</C_D>
+      </aerodynamics>
+      <geometry>
+        <top_surface units="m**2" is_input="True">0.09</top_surface>
+        <arms>
+          <arm_number is_input="True">4.0</arm_number>
+        </arms>
+      </geometry>
+      <reference>
+        <mass_arms_ref units="kg" is_input="True">0.14</mass_arms_ref>
+        <mass_frame_ref units="kg" is_input="True">0.347</mass_frame_ref>
+      </reference>
+      <arms>
+        <material>
+          <sigma_max units="Pa" is_input="True">70000000.0</sigma_max>
+        </material>
+      </arms>
+    </structure>
+  </data>
+  <settings>
+    <ESC>
+      <k_ESC is_input="True">10.0</k_ESC>
+    </ESC>
+    <battery>
+      <k_Mb is_input="True">30.0</k_Mb>
+      <k_VB is_input="True">3.0</k_VB>
+    </battery>
+    <mission>
+      <k_M is_input="True">10.0</k_M>
+      <k_maxthrust is_input="True">3.0</k_maxthrust>
+    </mission>
+    <motor>
+      <k_mot is_input="True">10.0</k_mot>
+      <k_speed_mot is_input="True">5.0</k_speed_mot>
+    </motor>
+    <propeller>
+      <k_ND is_input="True">0.5</k_ND>
+    </propeller>
+    <options>
+      <gearbox>
+        <mode is_input="True">0.0</mode>
+        <reduction_ratio is_input="True">1.0</reduction_ratio>
+      </gearbox>
+    </options>
+    <structure>
+      <arms>
+        <D_ratio is_input="True">0.5</D_ratio>
+      </arms>
+    </structure>
+  </settings>
+</FASTOAD_model>
