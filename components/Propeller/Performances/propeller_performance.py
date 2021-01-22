@@ -18,7 +18,7 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CT_dynamic', val=np.nan)
         self.add_input('data:propeller:aerodynamics:CP_dynamic', val=np.nan)
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
-        self.add_input('settings:propeller:k_ND', val=np.nan)
+        self.add_input('optimization:propeller:k_ND', val=np.nan)
         self.add_input('data:propeller:geometry:diameter', units='m')
         self.add_output('data:propeller:performances:rot_speed_takeoff', units='rad/s')
         self.add_output('data:propeller:performances:rot_speed_hover', units='rad/s')
@@ -39,7 +39,7 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
         F_pro_hov = inputs['data:mission:thrust:hover_thrust_prop']
         rho_air = inputs['data:mission:rho_air']
         NDmax = inputs['data:propeller:reference:nD_max']
-        k_ND = inputs['settings:propeller:k_ND']
+        k_ND = inputs['optimization:propeller:k_ND']
         Dpro = inputs['data:propeller:geometry:diameter']
         C_t_sta = inputs['data:propeller:aerodynamics:CT_static']
         C_t_dyn = inputs['data:propeller:aerodynamics:CT_dynamic']

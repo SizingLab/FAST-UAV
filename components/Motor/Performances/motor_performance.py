@@ -17,11 +17,11 @@ class ComputeMotorPerfoMR(om.ExplicitComponent):
         self.add_input('data:propeller:performances:torque_hover', val=np.nan, units='N*m')
         self.add_input('data:propeller:performances:torque_climb', val=np.nan, units='N*m')
         self.add_input('data:propeller:performances:power_takeoff', units='W')
-        self.add_input('settings:motor:k_mot', val=np.nan)
-        self.add_input('settings:motor:k_speed_mot', val=np.nan)
-        self.add_input('settings:battery:k_VB', val=np.nan)
-        self.add_input('settings:options:gearbox:mode', val=np.nan)
-        self.add_input('settings:options:gearbox:reduction_ratio', val=np.nan)
+        self.add_input('optimization:motor:k_mot', val=np.nan)
+        self.add_input('optimization:motor:k_speed_mot', val=np.nan)
+        self.add_input('optimization:battery:k_VB', val=np.nan)
+        self.add_input('optimization:options:gearbox:mode', val=np.nan)
+        self.add_input('optimization:options:gearbox:reduction_ratio', val=np.nan)
         self.add_input('data:motor:reference:torque_nominal_ref', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:torque_max_ref', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:torque_friction_ref', val=np.nan, units='N*m')
@@ -58,11 +58,11 @@ class ComputeMotorPerfoMR(om.ExplicitComponent):
         Qpro_hover = inputs['data:propeller:performances:torque_hover']
         Qpro_cl = inputs['data:propeller:performances:torque_climb']
         Ppro_to = inputs['data:propeller:performances:power_takeoff']
-        k_mot = inputs['settings:motor:k_mot']
-        k_speed_mot = inputs['settings:motor:k_speed_mot']
-        k_vb = inputs['settings:battery:k_VB']
-        Mod = inputs['settings:options:gearbox:mode']
-        Nred = inputs['settings:options:gearbox:reduction_ratio']
+        k_mot = inputs['optimization:motor:k_mot']
+        k_speed_mot = inputs['optimization:motor:k_speed_mot']
+        k_vb = inputs['optimization:battery:k_VB']
+        Mod = inputs['optimization:options:gearbox:mode']
+        Nred = inputs['optimization:options:gearbox:reduction_ratio']
         Tmot_ref = inputs['data:motor:reference:torque_nominal_ref']
         Tmot_max_ref = inputs['data:motor:reference:torque_max_ref']
         Tfmot_ref = inputs['data:motor:reference:torque_friction_ref']

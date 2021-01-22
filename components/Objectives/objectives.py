@@ -26,14 +26,14 @@ class WeightObjective(om.ExplicitComponent):
         self.add_input('data:battery:mass', val=np.nan, units='kg')
         self.add_input('data:structure:mass:frame', val=np.nan, units='kg')
         self.add_input('data:structure:mass:arms', val=np.nan, units='kg')
-        self.add_input('data:mission:load:mass', val=np.nan, units='kg')
+        self.add_input('specifications:load:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan)
         self.add_input('data:mission:mass_total_estimated', val=np.nan, units='kg')
-        self.add_input('data:mission:hover_time', val=np.nan, units='min')
-        self.add_input('data:mission:hover_time_goal', val=np.nan, units='min')
-        self.add_output('objectives:mass_total', units='kg')
-        self.add_output('constraints:mass_objective:cons_mass_convergence')
-        self.add_output('constraints:mass_objective:cons_flight_autonomy')
+        self.add_input('optimization:objectives:hover_time', val=np.nan, units='min')
+        self.add_input('specifications:hover_time', val=np.nan, units='min')
+        self.add_output('optimization:objectives:mass_total', units='kg')
+        self.add_output('optimization:constraints:mass_objective:cons_mass_convergence')
+        self.add_output('optimization:constraints:mass_objective:cons_flight_autonomy')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -44,13 +44,13 @@ class WeightObjective(om.ExplicitComponent):
         Mpro = inputs['data:propeller:mass']
         Mmot = inputs['data:motor:mass']
         Npro = inputs['data:propeller:prop_number']
-        M_load = inputs['data:mission:load:mass']
+        M_load = inputs['specifications:load:mass']
         Mbat = inputs['data:battery:mass']
         Mfra = inputs['data:structure:mass:frame']
         Marm = inputs['data:structure:mass:arms']
         Mtotal_estimated = inputs['data:mission:mass_total_estimated']
-        t_hf = inputs['data:mission:hover_time']
-        t_h = inputs['data:mission:hover_time_goal']
+        t_hf = inputs['optimization:objectives:hover_time']
+        t_h = inputs['specifications:hover_time']
 
         # Objective : mass minimization
         Mtotal = (Mesc + Mpro + Mmot) * Npro + M_load + Mbat + Mfra + Marm  # total mass without reducer
@@ -59,7 +59,7 @@ class WeightObjective(om.ExplicitComponent):
         mass_con1 = (Mtotal_estimated - Mtotal) / Mtotal_estimated  # mass convergence
         mass_con2 = (t_hf - t_h) / t_hf  # hover flight autonomy
 
-        outputs['objectives:mass_total'] = Mtotal
-        outputs['constraints:mass_objective:cons_mass_convergence'] = mass_con1
-        outputs['constraints:mass_objective:cons_flight_autonomy'] = mass_con2
+        outputs['optimization:objectives:mass_total'] = Mtotal
+        outputs['optimization:constraints:mass_objective:cons_mass_convergence'] = mass_con1
+        outputs['optimization:constraints:mass_objective:cons_flight_autonomy'] = mass_con2
 

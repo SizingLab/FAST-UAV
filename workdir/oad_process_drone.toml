@@ -35,17 +35,17 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
 
 [optimization]  # This section is needed only if optimization process is run
 [[optimization.design_var]]
-        name = "settings:mission:k_M" # over sizing coefficient on the load mass 
+        name = "optimization:mission:k_M" # over sizing coefficient on the load mass 
         lower = 1.0
         upper = 400.0
 
 [[optimization.design_var]]
-        name = "settings:battery:k_Mb" # over sizing coefficient on the battery load mass 
+        name = "optimization:battery:k_Mb" # over sizing coefficient on the battery load mass 
         upper = 60.0  
         lower = 0.01
 
 [[optimization.design_var]]
-        name = "settings:structure:arms:D_ratio" # aspect ratio e/c (thickness/side) for the beam of the frame
+        name = "optimization:structure:arms:D_ratio" # aspect ratio e/c (thickness/side) for the beam of the frame
         lower = 0.05
         upper = 0.9      
 
@@ -60,67 +60,79 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
         lower = 0.01
 
 [[optimization.design_var]]
-        name = "settings:motor:k_mot" # over sizing coefficient on the motor torque
+        name = "optimization:motor:k_mot" # over sizing coefficient on the motor torque
         lower = 1.0
         upper = 20.0
 
 [[optimization.design_var]]
-        name = "settings:motor:k_speed_mot" # over sizing coefficient on the motor speed
+        name = "optimization:motor:k_speed_mot" # over sizing coefficient on the motor speed
         lower = 1.0
         upper = 10.0
 
 [[optimization.design_var]]
-        name = "settings:battery:k_VB" # over sizing coefficient for the battery voltage
+        name = "optimization:battery:k_VB" # over sizing coefficient for the battery voltage
         lower = 1.0
         upper = 5.0
 
 [[optimization.design_var]]
-        name = "settings:propeller:k_ND" # slow down propeller coef : ND = kNDmax / k_ND
+        name = "optimization:propeller:k_ND" # slow down propeller coef : ND = kNDmax / k_ND
         upper = 1.0
         lower = 0.01
 
 [[optimization.design_var]]
-        name = "settings:ESC:k_ESC" # over sizing coefficient on the ESC power
+        name = "optimization:ESC:k_ESC" # over sizing coefficient on the ESC power
         lower = 1.0
         upper = 15.0
 
 [[optimization.constraint]]
-        name = "constraints:ESC:cons_climb_power"
+        name = "optimization:constraints:ESC:cons_climb_power"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:cons_ESC_voltage"
+        name = "optimization:constraints:battery:cons_ESC_voltage"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:cons_climb_power"
+        name = "optimization:constraints:battery:cons_climb_power"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:cons_climb_voltage"
+        name = "optimization:constraints:battery:cons_climb_voltage"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:cons_takeoff_power"
+        name = "optimization:constraints:battery:cons_takeoff_power"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:cons_takeoff_voltage"
+        name = "optimization:constraints:battery:cons_takeoff_voltage"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:motor:cons_climb_torque"
+        name = "optimization:constraints:motor:cons_climb_torque"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:motor:cons_takeoff_torque"
+        name = "optimization:constraints:motor:cons_takeoff_torque"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:propeller:cons_climb_speed"
+        name = "optimization:constraints:propeller:cons_climb_speed"
+        lower=0.0
         upper = 0.05
 
 [[optimization.constraint]]
-        name = "constraints:propeller:cons_max_speed"
+        name = "optimization:constraints:propeller:cons_max_speed"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:mass_objective:cons_flight_autonomy"
+        name = "optimization:constraints:mass_objective:cons_flight_autonomy"
+        lower=0.0
 
 [[optimization.constraint]]
-        name = "constraints:mass_objective:cons_mass_convergence"
+        name = "optimization:constraints:mass_objective:cons_mass_convergence"
+        lower=0.0
 
 [[optimization.objective]]
-        name = "objectives:mass_total"
+        name = "optimization:objectives:mass_total"
 

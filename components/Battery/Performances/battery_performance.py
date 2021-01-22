@@ -24,7 +24,7 @@ class ComputeBatteryPerfo(om.ExplicitComponent):
         self.add_output('data:battery:performances:capacity', units='A*s')
         self.add_output('data:battery:performances:current', units='A')
         self.add_output('data:battery:performances:max_current', units='A')
-        self.add_output('data:mission:hover_time', units='min')
+        self.add_output('optimization:objectives:hover_time', units='min')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -56,4 +56,4 @@ class ComputeBatteryPerfo(om.ExplicitComponent):
         outputs['data:battery:performances:capacity'] = C_bat
         outputs['data:battery:performances:current'] = I_bat
         outputs['data:battery:performances:max_current'] = Imax
-        outputs['data:mission:hover_time'] = t_hf
+        outputs['optimization:objectives:hover_time'] = t_hf

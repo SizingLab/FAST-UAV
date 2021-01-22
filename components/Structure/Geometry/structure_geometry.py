@@ -14,7 +14,7 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:structure:arms:material:sigma_max', val=np.nan, units='Pa')
-        self.add_input('settings:structure:arms:D_ratio', val=np.nan)
+        self.add_input('optimization:structure:arms:D_ratio', val=np.nan)
         self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
         self.add_input('data:structure:geometry:arms:arm_number', val=np.nan)
         self.add_input('data:mission:thrust:max_thrust_prop', val=np.nan, units='N')
@@ -30,7 +30,7 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         # Frame sized from max thrust
         Sigma_max = inputs['data:structure:arms:material:sigma_max']
-        D_ratio = inputs['settings:structure:arms:D_ratio']
+        D_ratio = inputs['optimization:structure:arms:D_ratio']
         Dpro = inputs['data:propeller:geometry:diameter']
         Narm = inputs['data:structure:geometry:arms:arm_number']
         F_pro_to = inputs['data:mission:thrust:max_thrust_prop']

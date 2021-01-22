@@ -11,7 +11,7 @@ class ComputeStructureWeightMR(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('settings:structure:arms:D_ratio', val=np.nan)
+        self.add_input('optimization:structure:arms:D_ratio', val=np.nan)
         self.add_input('data:structure:geometry:arms:arm_number', val=np.nan)
         self.add_input('data:structure:geometry:arms:arm_length', val=np.nan, units='m')
         self.add_input('data:structure:geometry:arms:outer_diameter', val=np.nan, units='m')
@@ -26,7 +26,7 @@ class ComputeStructureWeightMR(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         # Mass
-        D_ratio = inputs['settings:structure:arms:D_ratio']
+        D_ratio = inputs['optimization:structure:arms:D_ratio']
         Narm = inputs['data:structure:geometry:arms:arm_number']
         Lbra = inputs['data:structure:geometry:arms:arm_length']
         Dout = inputs['data:structure:geometry:arms:outer_diameter']

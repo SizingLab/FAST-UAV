@@ -13,8 +13,8 @@ class MotorConstraints(om.ExplicitComponent):
         self.add_input('data:motor:performances:torque_max', val=np.nan, units='N*m')
         self.add_input('data:motor:performances:torque_takeoff', val=np.nan, units='N*m')
         self.add_input('data:motor:performances:torque_climb', val=np.nan, units='N*m')
-        self.add_output('constraints:motor:cons_takeoff_torque')
-        self.add_output('constraints:motor:cons_climb_torque')
+        self.add_output('optimization:constraints:motor:cons_takeoff_torque')
+        self.add_output('optimization:constraints:motor:cons_climb_torque')
 
 
     def setup_partials(self):
@@ -29,5 +29,5 @@ class MotorConstraints(om.ExplicitComponent):
         motor_con1 = (Tmot_max - Tmot_to) / Tmot_max
         motor_con2 = (Tmot_max - Tmot_cl) / Tmot_max
 
-        outputs['constraints:motor:cons_takeoff_torque'] = motor_con1
-        outputs['constraints:motor:cons_climb_torque'] = motor_con2
+        outputs['optimization:constraints:motor:cons_takeoff_torque'] = motor_con1
+        outputs['optimization:constraints:motor:cons_climb_torque'] = motor_con2

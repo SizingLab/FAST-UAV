@@ -15,7 +15,7 @@ class ComputePropellerGeometryMR(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CT_static', val=np.nan)
         #self.add_input('data:propeller:aerodynamics:CT_dynamic', val=np.nan)
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
-        self.add_input('settings:propeller:k_ND', val=np.nan)
+        self.add_input('optimization:propeller:k_ND', val=np.nan)
         self.add_output('data:propeller:geometry:diameter', units='m')
 
     def setup_partials(self):
@@ -28,7 +28,7 @@ class ComputePropellerGeometryMR(om.ExplicitComponent):
         #C_t_dyn = inputs['data:propeller:aerodynamics:CT_dynamic']
         rho_air = inputs['data:mission:rho_air']
         NDmax = inputs['data:propeller:reference:nD_max']
-        k_ND = inputs['settings:propeller:k_ND']
+        k_ND = inputs['optimization:propeller:k_ND']
 
         Dpro = (F_pro_to / (C_t_sta * rho_air * (NDmax * k_ND) ** 2)) ** 0.5  # [m] Propeller diameter
 

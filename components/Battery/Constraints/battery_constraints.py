@@ -19,11 +19,11 @@ class BatteryConstraints(om.ExplicitComponent):
         self.add_input('data:motor:performances:current_climb', val=np.nan, units='A')
         self.add_input('data:propeller:prop_number', val=np.nan)
         self.add_input('data:ESC:performances:efficiency', val=np.nan)
-        self.add_output('constraints:battery:cons_takeoff_voltage')
-        self.add_output('constraints:battery:cons_climb_voltage')
-        self.add_output('constraints:battery:cons_ESC_voltage')
-        self.add_output('constraints:battery:cons_takeoff_power')
-        self.add_output('constraints:battery:cons_climb_power')
+        self.add_output('optimization:constraints:battery:cons_takeoff_voltage')
+        self.add_output('optimization:constraints:battery:cons_climb_voltage')
+        self.add_output('optimization:constraints:battery:cons_ESC_voltage')
+        self.add_output('optimization:constraints:battery:cons_takeoff_power')
+        self.add_output('optimization:constraints:battery:cons_climb_power')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -46,8 +46,8 @@ class BatteryConstraints(om.ExplicitComponent):
         battery_con4 = (V_bat * Imax - Umot_to * Imot_to * Npro / eta_ESC) / (V_bat * Imax)
         battery_con5 = (V_bat * Imax - Umot_cl * Imot_cl * Npro / eta_ESC) / (V_bat * Imax)
 
-        outputs['constraints:battery:cons_takeoff_voltage'] = battery_con1
-        outputs['constraints:battery:cons_climb_voltage'] = battery_con2
-        outputs['constraints:battery:cons_ESC_voltage'] = battery_con3
-        outputs['constraints:battery:cons_takeoff_power'] = battery_con4
-        outputs['constraints:battery:cons_climb_power'] = battery_con5
+        outputs['optimization:constraints:battery:cons_takeoff_voltage'] = battery_con1
+        outputs['optimization:constraints:battery:cons_climb_voltage'] = battery_con2
+        outputs['optimization:constraints:battery:cons_ESC_voltage'] = battery_con3
+        outputs['optimization:constraints:battery:cons_takeoff_power'] = battery_con4
+        outputs['optimization:constraints:battery:cons_climb_power'] = battery_con5
