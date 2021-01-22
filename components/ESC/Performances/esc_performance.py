@@ -12,7 +12,7 @@ class ComputeESCPerfo(om.ExplicitComponent):
     def setup(self):
         self.add_input('data:ESC:reference:power_ref', val=np.nan, units='W')
         self.add_input('data:ESC:reference:voltage_ref', val=np.nan, units='V')
-        self.add_input('optimization:ESC:k_ESC', val=np.nan)
+        self.add_input('optimization:settings:k_ESC', val=np.nan)
         self.add_input('data:motor:performances:elec_power_takeoff', val=np.nan, units='W')
         self.add_input('data:motor:performances:elec_power_climb', val=np.nan, units='W')
         self.add_input('data:motor:performances:voltage_takeoff', val=np.nan, units='V')
@@ -30,7 +30,7 @@ class ComputeESCPerfo(om.ExplicitComponent):
         # ESC sized from max speed
         Pesc_ref = inputs['data:ESC:reference:power_ref']
         Vesc_ref = inputs['data:ESC:reference:voltage_ref']
-        k_ESC = inputs['optimization:ESC:k_ESC']
+        k_ESC = inputs['optimization:settings:k_ESC']
         P_el_to = inputs['data:motor:performances:elec_power_takeoff']
         P_el_cl = inputs['data:motor:performances:elec_power_climb']
         V_bat = inputs['data:battery:performances:voltage']

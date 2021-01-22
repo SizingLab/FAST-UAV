@@ -14,10 +14,10 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:structure:arms:material:sigma_max', val=np.nan, units='Pa')
-        self.add_input('optimization:structure:arms:D_ratio', val=np.nan)
+        self.add_input('optimization:settings:D_ratio_arms', val=np.nan)
         self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
         self.add_input('data:structure:geometry:arms:arm_number', val=np.nan)
-        self.add_input('data:mission:thrust:max_thrust_prop', val=np.nan, units='N')
+        self.add_input('data:propeller:performances:max_thrust_prop', val=np.nan, units='N')
         self.add_output('data:structure:geometry:arms:arm_length', units='m')
         self.add_output('data:structure:geometry:arms:outer_diameter', units='m')
         self.add_output('data:structure:geometry:arms:inner_diameter', units='m')
@@ -30,10 +30,10 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         # Frame sized from max thrust
         Sigma_max = inputs['data:structure:arms:material:sigma_max']
-        D_ratio = inputs['optimization:structure:arms:D_ratio']
+        D_ratio = inputs['optimization:settings:D_ratio_arms']
         Dpro = inputs['data:propeller:geometry:diameter']
         Narm = inputs['data:structure:geometry:arms:arm_number']
-        F_pro_to = inputs['data:mission:thrust:max_thrust_prop']
+        F_pro_to = inputs['data:propeller:performances:max_thrust_prop']
 
         # Length calculation
         #    sep= 2*pi/Narm #[rad] interior angle separation between propellers

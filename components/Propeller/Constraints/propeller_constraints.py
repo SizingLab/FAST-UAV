@@ -11,7 +11,7 @@ class PropellerConstraintsMR(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
-        self.add_input('data:propeller:geometry:advance_ratio', val=np.nan)
+        self.add_input('optimization:settings:advance_ratio', val=np.nan)
         self.add_input('data:propeller:performances:rot_speed_climb', val=np.nan, units='rad/s')
         self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
         self.add_input('specifications:climb_speed', val=np.nan, units='m/s')
@@ -25,7 +25,7 @@ class PropellerConstraintsMR(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         NDmax = inputs['data:propeller:reference:nD_max']
-        J = inputs['data:propeller:geometry:advance_ratio']
+        J = inputs['optimization:settings:advance_ratio']
         n_pro_cl = inputs['data:propeller:performances:rot_speed_climb'] / 2 / 3.14
         Dpro = inputs['data:propeller:geometry:diameter']
         V_cl = inputs['specifications:climb_speed']

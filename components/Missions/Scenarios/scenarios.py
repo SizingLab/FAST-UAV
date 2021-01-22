@@ -11,19 +11,19 @@ class SizingScenarios(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('optimization:mission:k_M', val=np.nan)
+        self.add_input('optimization:settings:k_M', val=np.nan)
         self.add_input('specifications:load:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number_per_arm', val=np.nan)
         self.add_input('data:structure:geometry:arms:arm_number', val=np.nan)
-        self.add_input('data:mission:rho_air', val=np.nan, units='kg/m**3')
+        self.add_input('specifications:rho_air', val=np.nan, units='kg/m**3')
         self.add_input('data:structure:aerodynamics:C_D', val=np.nan)
         self.add_input('data:structure:geometry:top_surface', val=np.nan, units='m**2')
         self.add_input('specifications:climb_speed', val=np.nan, units='m/s')
         self.add_input('specifications:k_maxthrust', val=np.nan)
-        self.add_output('data:mission:thrust:hover_thrust_prop', units='N')
-        self.add_output('data:mission:thrust:climb_thrust_prop', units='N')
-        self.add_output('data:mission:thrust:max_thrust_prop', units='N')
-        self.add_output('data:mission:mass_total_estimated', units='kg')
+        self.add_output('data:propeller:performances:hover_thrust_prop', units='N')
+        self.add_output('data:propeller:performances:climb_thrust_prop', units='N')
+        self.add_output('data:propeller:performances:max_thrust_prop', units='N')
+        self.add_output('optimization:objectives:mass_total_estimated', units='kg')
         self.add_output('data:propeller:prop_number')
 
     def setup_partials(self):
@@ -31,11 +31,11 @@ class SizingScenarios(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        k_M = inputs['optimization:mission:k_M']
+        k_M = inputs['optimization:settings:k_M']
         M_load = inputs['specifications:load:mass']
         Npro_arm = inputs['data:propeller:prop_number_per_arm']
         Narm = inputs['data:structure:geometry:arms:arm_number']
-        rho_air = inputs['data:mission:rho_air']
+        rho_air = inputs['specifications:rho_air']
         C_D = inputs['data:structure:aerodynamics:C_D']
         A_top = inputs['data:structure:geometry:top_surface']
         V_cl = inputs['specifications:climb_speed']
@@ -48,7 +48,7 @@ class SizingScenarios(om.ExplicitComponent):
         F_pro_to = F_pro_hov * k_maxthrust  # [N] max propeller thrust
 
         outputs['data:propeller:prop_number'] = Npro
-        outputs['data:mission:mass_total_estimated'] = Mtotal_estimated
-        outputs['data:mission:thrust:hover_thrust_prop'] = F_pro_hov
-        outputs['data:mission:thrust:climb_thrust_prop'] = F_pro_cl
-        outputs['data:mission:thrust:max_thrust_prop'] = F_pro_to
+        outputs['optimization:objectives:mass_total_estimated'] = Mtotal_estimated
+        outputs['data:propeller:performances:hover_thrust_prop'] = F_pro_hov
+        outputs['data:propeller:performances:climb_thrust_prop'] = F_pro_cl
+        outputs['data:propeller:performances:max_thrust_prop'] = F_pro_to

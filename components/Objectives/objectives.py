@@ -28,7 +28,7 @@ class WeightObjective(om.ExplicitComponent):
         self.add_input('data:structure:mass:arms', val=np.nan, units='kg')
         self.add_input('specifications:load:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan)
-        self.add_input('data:mission:mass_total_estimated', val=np.nan, units='kg')
+        self.add_input('optimization:objectives:mass_total_estimated', val=np.nan, units='kg')
         self.add_input('optimization:objectives:hover_time', val=np.nan, units='min')
         self.add_input('specifications:hover_time', val=np.nan, units='min')
         self.add_output('optimization:objectives:mass_total', units='kg')
@@ -48,7 +48,7 @@ class WeightObjective(om.ExplicitComponent):
         Mbat = inputs['data:battery:mass']
         Mfra = inputs['data:structure:mass:frame']
         Marm = inputs['data:structure:mass:arms']
-        Mtotal_estimated = inputs['data:mission:mass_total_estimated']
+        Mtotal_estimated = inputs['optimization:objectives:mass_total_estimated']
         t_hf = inputs['optimization:objectives:hover_time']
         t_h = inputs['specifications:hover_time']
 

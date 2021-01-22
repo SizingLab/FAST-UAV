@@ -35,52 +35,52 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
 
 [optimization]  # This section is needed only if optimization process is run
 [[optimization.design_var]]
-        name = "optimization:mission:k_M" # over sizing coefficient on the load mass 
+        name = "optimization:settings:k_M" # over sizing coefficient on the load mass 
         lower = 1.0
         upper = 400.0
 
 [[optimization.design_var]]
-        name = "optimization:battery:k_Mb" # over sizing coefficient on the battery load mass 
+        name = "optimization:settings:k_Mb" # over sizing coefficient on the battery load mass 
         upper = 60.0  
         lower = 0.01
 
 [[optimization.design_var]]
-        name = "optimization:structure:arms:D_ratio" # aspect ratio e/c (thickness/side) for the beam of the frame
+        name = "optimization:settings:D_ratio_arms" # aspect ratio e/c (thickness/side) for the beam of the frame
         lower = 0.05
         upper = 0.9      
 
 [[optimization.design_var]]
-        name = "data:propeller:geometry:beta" # pitch/diameter ratio of the propeller
+        name = "optimization:settings:beta_pro" # pitch/diameter ratio of the propeller
         lower = 0.3
         upper = 0.6
 
 [[optimization.design_var]]
-        name = "data:propeller:geometry:advance_ratio" # advance ratio 
+        name = "optimization:settings:advance_ratio" # advance ratio 
         upper = 0.5
         lower = 0.01
 
 [[optimization.design_var]]
-        name = "optimization:motor:k_mot" # over sizing coefficient on the motor torque
+        name = "optimization:settings:k_mot" # over sizing coefficient on the motor torque
         lower = 1.0
         upper = 20.0
 
 [[optimization.design_var]]
-        name = "optimization:motor:k_speed_mot" # over sizing coefficient on the motor speed
+        name = "optimization:settings:k_speed_mot" # over sizing coefficient on the motor speed
         lower = 1.0
         upper = 10.0
 
 [[optimization.design_var]]
-        name = "optimization:battery:k_VB" # over sizing coefficient for the battery voltage
+        name = "optimization:settings:k_VB" # over sizing coefficient for the battery voltage
         lower = 1.0
         upper = 5.0
 
 [[optimization.design_var]]
-        name = "optimization:propeller:k_ND" # slow down propeller coef : ND = kNDmax / k_ND
+        name = "optimization:settings:k_ND" # slow down propeller coef : ND = kNDmax / k_ND
         upper = 1.0
         lower = 0.01
 
 [[optimization.design_var]]
-        name = "optimization:ESC:k_ESC" # over sizing coefficient on the ESC power
+        name = "optimization:settings:k_ESC" # over sizing coefficient on the ESC power
         lower = 1.0
         upper = 15.0
 

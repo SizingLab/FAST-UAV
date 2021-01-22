@@ -1,22 +1,19 @@
 <FASTOAD_model>
   <specifications>
-    <climb_speed units="m/s" is_input="True">6</climb_speed>
-    <hover_time units="min" is_input="True">18</hover_time>
-    <k_maxthrust is_input="True">3</k_maxthrust>
+    <climb_speed units="m/s" is_input="True">6.0</climb_speed>
+    <hover_time units="min" is_input="True">18.0</hover_time>
+    <k_maxthrust is_input="True">3.0</k_maxthrust>
+    <rho_air units="kg/m**3" is_input="True">1.18</rho_air>
     <load>
-      <mass units="kg" is_input="True">4</mass>
+      <mass units="kg" is_input="True">4.0</mass>
     </load>
+    <options>
+      <gearbox_mode is_input="True">0.0</gearbox_mode>
+    </options>
   </specifications>
   <data>
-    <mission>
-      <rho_air units="kg/m**3" is_input="True">1.18</rho_air>
-    </mission>
     <propeller>
       <prop_number_per_arm is_input="True">1.0</prop_number_per_arm>
-      <geometry>
-        <advance_ratio is_input="True">0.5</advance_ratio>
-        <beta is_input="True">0.5</beta>
-      </geometry>
       <reference>
         <diameter_ref units="m" is_input="True">0.2794</diameter_ref>
         <mass_ref units="kg" is_input="True">0.014999</mass_ref>
@@ -58,7 +55,7 @@
       <geometry>
         <top_surface units="m**2" is_input="True">0.09</top_surface>
         <arms>
-          <arm_number is_input="True">4.0</arm_number>
+          <arm_number is_input="True">8.0</arm_number>
         </arms>
       </geometry>
       <reference>
@@ -73,33 +70,18 @@
     </structure>
   </data>
   <optimization>
-    <ESC>
-      <k_ESC is_input="True">10.0</k_ESC>
-    </ESC>
-    <battery>
-      <k_Mb is_input="True">10.0</k_Mb>
-      <k_VB is_input="True">3.0</k_VB>
-    </battery>
-    <mission>
-      <k_M is_input="True">10.0</k_M>
-    </mission>
-    <motor>
-      <k_mot is_input="True">10.0</k_mot>
-      <k_speed_mot is_input="True">5.0</k_speed_mot>
-    </motor>
-    <propeller>
+    <settings>
+      <D_ratio_arms is_input="True">0.5</D_ratio_arms>
+      <advance_ratio is_input="True">0.2</advance_ratio>
+      <beta_pro is_input="True">0.3</beta_pro>
+      <gearbox_reduction_ratio is_input="True">2.0</gearbox_reduction_ratio>
+      <k_ESC is_input="True">1.0</k_ESC>
+      <k_M is_input="True">2.0</k_M>
+      <k_Mb is_input="True">1.0</k_Mb>
       <k_ND is_input="True">1.0</k_ND>
-    </propeller>
-    <options>
-      <gearbox>
-        <mode is_input="True">0.0</mode>
-        <reduction_ratio is_input="True">1.0</reduction_ratio>
-      </gearbox>
-    </options>
-    <structure>
-      <arms>
-        <D_ratio is_input="True">0.5</D_ratio>
-      </arms>
-    </structure>
+      <k_VB is_input="True">4.0</k_VB>
+      <k_mot is_input="True">2.5</k_mot>
+      <k_speed_mot is_input="True">1.2</k_speed_mot>
+    </settings>
   </optimization>
 </FASTOAD_model>
