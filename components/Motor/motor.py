@@ -17,5 +17,8 @@ class MotorMR(om.Group):
         self.add_subsystem("compute_perfo", ComputeMotorPerfoMR(), promotes=["*"])
         self.add_subsystem("compute_weight", ComputeMotorWeightMR(), promotes=["*"])
 
+        # TO BE ADDED : GEARBOX MODEL with condition (if gearbox_mode == true)
+        # self.add_subsystem("gearbox_model", ComputeGearboxParameters(), promotes=["*"])
+
         # Constraints
         self.add_subsystem("constraints", MotorConstraints(), promotes=["*"])
