@@ -1,5 +1,6 @@
 <FASTOAD_model>
   <specifications>
+    <MTOW units="kg" is_input="True">100.0</MTOW>
     <climb_speed units="m/s" is_input="True">6.0</climb_speed>
     <hover_time units="min" is_input="True">18.0</hover_time>
     <k_maxthrust is_input="True">3.0</k_maxthrust>
@@ -135,10 +136,32 @@
     </structure>
   </data>
   <optimization>
+    <constraints>
+      <cons_MTOW is_input="False">7.273836235292166</cons_MTOW>
+      <cons_flight_autonomy is_input="False">0.49893483478122835</cons_flight_autonomy>
+      <cons_mass_convergence is_input="False">-0.33809310117662666</cons_mass_convergence>
+      <ESC>
+        <cons_climb_power is_input="False">0.5414469927538349</cons_climb_power>
+      </ESC>
+      <battery>
+        <cons_ESC_voltage is_input="False">0.6310974100454206</cons_ESC_voltage>
+        <cons_climb_power is_input="False">0.9559741726521277</cons_climb_power>
+        <cons_climb_voltage is_input="False">0.3377279474946332</cons_climb_voltage>
+        <cons_takeoff_power is_input="False">0.8526126851759044</cons_takeoff_power>
+        <cons_takeoff_voltage is_input="False">-0.016666597351695008</cons_takeoff_voltage>
+      </battery>
+      <motor>
+        <cons_climb_torque is_input="False">0.5540579299596031</cons_climb_torque>
+        <cons_takeoff_torque is_input="False">0.011764705881350587</cons_takeoff_torque>
+      </motor>
+      <propeller>
+        <cons_climb_speed is_input="False">-0.22518013948344784</cons_climb_speed>
+        <cons_max_speed is_input="False">0.2997547649624919</cons_max_speed>
+      </propeller>
+    </constraints>
     <objectives>
       <hover_time units="min" is_input="False">35.92347113601674</hover_time>
       <mass_total units="kg" is_input="False">12.086291915405404</mass_total>
-      <mass_total_estimated units="kg" is_input="False">8.0</mass_total_estimated>
     </objectives>
     <settings>
       <D_ratio_arms is_input="True">0.5</D_ratio_arms>
@@ -153,29 +176,5 @@
       <k_mot is_input="True">2.5</k_mot>
       <k_speed_mot is_input="True">1.2</k_speed_mot>
     </settings>
-    <constraints>
-      <ESC>
-        <cons_climb_power is_input="False">0.5414469927538349</cons_climb_power>
-      </ESC>
-      <battery>
-        <cons_ESC_voltage is_input="False">0.6310974100454206</cons_ESC_voltage>
-        <cons_climb_power is_input="False">0.9559741726521277</cons_climb_power>
-        <cons_climb_voltage is_input="False">0.3377279474946332</cons_climb_voltage>
-        <cons_takeoff_power is_input="False">0.8526126851759044</cons_takeoff_power>
-        <cons_takeoff_voltage is_input="False">-0.016666597351695008</cons_takeoff_voltage>
-      </battery>
-      <mass_objective>
-        <cons_flight_autonomy is_input="False">0.49893483478122835</cons_flight_autonomy>
-        <cons_mass_convergence is_input="False">-0.5107864894256755</cons_mass_convergence>
-      </mass_objective>
-      <motor>
-        <cons_climb_torque is_input="False">0.5540579299596031</cons_climb_torque>
-        <cons_takeoff_torque is_input="False">0.011764705881350587</cons_takeoff_torque>
-      </motor>
-      <propeller>
-        <cons_climb_speed is_input="False">-0.22518013948344784</cons_climb_speed>
-        <cons_max_speed is_input="False">0.2997547649624919</cons_max_speed>
-      </propeller>
-    </constraints>
   </optimization>
 </FASTOAD_model>

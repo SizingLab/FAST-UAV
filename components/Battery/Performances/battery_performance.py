@@ -24,7 +24,7 @@ class ComputeBatteryPerfo(om.ExplicitComponent):
         self.add_output('data:battery:performances:capacity', units='A*s')
         self.add_output('data:battery:performances:current', units='A')
         self.add_output('data:battery:performances:max_current', units='A')
-        self.add_output('optimization:objectives:hover_time', units='min')
+        #self.add_output('optimization:objectives:hover_time', units='min')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -48,7 +48,7 @@ class ComputeBatteryPerfo(om.ExplicitComponent):
         # Hover --> autonomy
         C_bat = Mbat / Mbat_ref * Cbat_ref / V_bat * Vbat_ref  # [A.s] Capacity  of the battery
         I_bat = (P_el_hover * Npro) / eta_ESC / V_bat  # [I] Current of the battery
-        t_hf = .8 * C_bat / I_bat / 60  # [min] Hover time
+        #t_hf = .8 * C_bat / I_bat / 60  # [min] Hover time
         Imax = Imax_ref * C_bat / Cbat_ref  # [A] max current battery
 
         outputs['data:battery:cell_number'] = Ncel
@@ -56,4 +56,4 @@ class ComputeBatteryPerfo(om.ExplicitComponent):
         outputs['data:battery:performances:capacity'] = C_bat
         outputs['data:battery:performances:current'] = I_bat
         outputs['data:battery:performances:max_current'] = Imax
-        outputs['optimization:objectives:hover_time'] = t_hf
+        #outputs['optimization:objectives:hover_time'] = t_hf

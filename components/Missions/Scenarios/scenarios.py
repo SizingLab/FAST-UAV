@@ -23,7 +23,7 @@ class SizingScenarios(om.ExplicitComponent):
         self.add_output('data:propeller:performances:hover_thrust_prop', units='N')
         self.add_output('data:propeller:performances:climb_thrust_prop', units='N')
         self.add_output('data:propeller:performances:max_thrust_prop', units='N')
-        self.add_output('optimization:objectives:mass_total_estimated', units='kg')
+        #self.add_output('optimization:objectives:mass_total_estimated', units='kg')
         self.add_output('data:propeller:prop_number')
 
     def setup_partials(self):
@@ -48,7 +48,7 @@ class SizingScenarios(om.ExplicitComponent):
         F_pro_to = F_pro_hov * k_maxthrust  # [N] max propeller thrust
 
         outputs['data:propeller:prop_number'] = Npro
-        outputs['optimization:objectives:mass_total_estimated'] = Mtotal_estimated
+        #outputs['optimization:objectives:mass_total_estimated'] = Mtotal_estimated
         outputs['data:propeller:performances:hover_thrust_prop'] = F_pro_hov
         outputs['data:propeller:performances:climb_thrust_prop'] = F_pro_cl
         outputs['data:propeller:performances:max_thrust_prop'] = F_pro_to

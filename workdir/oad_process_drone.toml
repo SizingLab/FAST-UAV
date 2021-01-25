@@ -126,13 +126,21 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
         lower=0.0
 
 [[optimization.constraint]]
-        name = "optimization:constraints:mass_objective:cons_flight_autonomy"
+        name = "optimization:constraints:cons_mass_convergence"
+        lower=0.0
+        
+#[[optimization.constraint]]  # Min. flight autonomy for drone mass objective
+#        name = "optimization:constraints:cons_flight_autonomy"
+#        lower=0.0
+        
+[[optimization.constraint]]  # Max. takeoff weight for flight autonomy objective
+        name = "optimization:constraints:cons_MTOW"
         lower=0.0
 
-[[optimization.constraint]]
-        name = "optimization:constraints:mass_objective:cons_mass_convergence"
-        lower=0.0
-
-[[optimization.objective]]
-        name = "optimization:objectives:mass_total"
+#[[optimization.objective]] # Mass minimization
+#        name = "optimization:objectives:mass_total"
+        
+[[optimization.objective]] # Flight autonomy maximization
+        name = "optimization:objectives:hover_time"
+        scaler = -1
 

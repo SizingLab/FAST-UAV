@@ -1,5 +1,6 @@
 <FASTOAD_model>
   <specifications>
+    <MTOW units="kg" is_input="True">100.0</MTOW>
     <climb_speed units="m/s" is_input="True">6.0</climb_speed>
     <hover_time units="min" is_input="True">18.0</hover_time>
     <k_maxthrust is_input="True">3.0</k_maxthrust>
