@@ -3,12 +3,16 @@ Objectives definition
 """
 import openmdao.api as om
 import numpy as np
+from fastoad.models.options import OpenMdaoOptionDispatcherGroup
 
 
-class Objective(om.Group):
+class Objective(OpenMdaoOptionDispatcherGroup):
     """
     Group containing the objective functions
     """
+
+    def initialize(self):
+        self.options.declare("use_gearbox", default=True, types=bool)
 
     def setup(self):
         self.add_subsystem("define_objective", DefineObjectives(), promotes=["*"])
@@ -19,6 +23,9 @@ class DefineObjectives(om.ExplicitComponent):
     Weight objective and flight autonomy objective definitions, with associated constraints
     """
 
+    def initialize(self):
+        self.options.declare("use_gearbox", default=True, types=bool)
+
     def setup(self):
         self.add_input('data:ESC:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:mass', val=np.nan, units='kg')
@@ -27,6 +34,7 @@ class DefineObjectives(om.ExplicitComponent):
         self.add_input('data:structure:mass:frame', val=np.nan, units='kg')
         self.add_input('data:structure:mass:arms', val=np.nan, units='kg')
         self.add_input('specifications:load:mass', val=np.nan, units='kg')
+        self.add_input('data:gearbox:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan)
         self.add_input('data:battery:performances:current', val=np.nan, units='A')
         self.add_input('data:battery:performances:capacity', val=np.nan, units='A*s')
@@ -53,6 +61,7 @@ class DefineObjectives(om.ExplicitComponent):
         Mbat = inputs['data:battery:mass']
         Mfra = inputs['data:structure:mass:frame']
         Marm = inputs['data:structure:mass:arms']
+        Mgear = inputs['data:gearbox:mass']
         k_M = inputs['optimization:settings:k_M']
         C_bat = inputs['data:battery:performances:capacity']
         I_bat = inputs['data:battery:performances:current']
@@ -60,7 +69,11 @@ class DefineObjectives(om.ExplicitComponent):
         MTOW = inputs['specifications:MTOW']
 
         # Objectives
-        Mtotal = (Mesc + Mpro + Mmot) * Npro + M_load + Mbat + Mfra + Marm  # total mass without reducer
+        if self.options["use_gearbox"]:
+            Mtotal = (Mesc + Mpro + Mmot + Mgear) * Npro + M_load + Mbat + Mfra + Marm  # total mass with reducer
+        else:
+            Mtotal = (Mesc + Mpro + Mmot) * Npro + M_load + Mbat + Mfra + Marm  # total mass without reducer
+
         t_hf = .8 * C_bat / I_bat / 60  # [min] Hover time
 
         # Constraints

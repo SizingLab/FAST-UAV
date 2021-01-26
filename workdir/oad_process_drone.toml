@@ -24,6 +24,7 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
         id = "propeller.multirotor"
     [model.motor]
         id = "motor.multirotor"
+        use_gearbox = true
     [model.energy_source]
         id = "battery"
     [model.esc]
@@ -83,6 +84,11 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
         name = "optimization:settings:k_ESC" # over sizing coefficient on the ESC power
         lower = 1.0
         upper = 15.0
+        
+[[optimization.design_var]]
+        name = "optimization:settings:gearbox_reduction_ratio" # gearbox reduction ratio (if 'use_gearbox' is true)
+        lower = 1.0
+        upper = 20.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:ESC:cons_climb_power"

@@ -8,9 +8,6 @@
     <load>
       <mass units="kg" is_input="True">4.0</mass>
     </load>
-    <options>
-      <gearbox_mode is_input="True">0.0</gearbox_mode>
-    </options>
   </specifications>
   <data>
     <propeller>

@@ -9,6 +9,9 @@ class ComputeMotorPerfoMR(om.ExplicitComponent):
     Performances calculation of a Multi-Rotor Motor
     """
 
+    def initialize(self):
+        self.options.declare("use_gearbox", default=True, types=bool)
+
     def setup(self):
         self.add_input('data:propeller:performances:rot_speed_takeoff', val=np.nan, units='rad/s')
         self.add_input('data:propeller:performances:rot_speed_hover', val=np.nan, units='rad/s')
@@ -20,7 +23,7 @@ class ComputeMotorPerfoMR(om.ExplicitComponent):
         self.add_input('optimization:settings:k_mot', val=np.nan)
         self.add_input('optimization:settings:k_speed_mot', val=np.nan)
         self.add_input('optimization:settings:k_VB', val=np.nan)
-        self.add_input('specifications:options:gearbox_mode', val=np.nan)
+        #self.add_input('specifications:options:gearbox_mode', val=np.nan)
         self.add_input('optimization:settings:gearbox_reduction_ratio', val=np.nan)
         self.add_input('data:motor:reference:torque_nominal_ref', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:torque_max_ref', val=np.nan, units='N*m')
@@ -61,7 +64,7 @@ class ComputeMotorPerfoMR(om.ExplicitComponent):
         k_mot = inputs['optimization:settings:k_mot']
         k_speed_mot = inputs['optimization:settings:k_speed_mot']
         k_vb = inputs['optimization:settings:k_VB']
-        Mod = inputs['specifications:options:gearbox_mode']
+        #Mod = inputs['specifications:options:gearbox_mode']
         Nred = inputs['optimization:settings:gearbox_reduction_ratio']
         Tmot_ref = inputs['data:motor:reference:torque_nominal_ref']
         Tmot_max_ref = inputs['data:motor:reference:torque_max_ref']
@@ -71,7 +74,7 @@ class ComputeMotorPerfoMR(om.ExplicitComponent):
         
         
         # Motor speeds:
-        if Mod == 1:
+        if self.options["use_gearbox"]:
             W_hover_motor = Wpro_hover * Nred  # [rad/s] Nominal motor speed with reduction
             W_cl_motor = Wpro_cl * Nred  # [rad/s] Motor Climb speed with reduction
             W_to_motor = Wpro_to * Nred  # [rad/s] Motor take-off speed with reduction
@@ -81,13 +84,10 @@ class ComputeMotorPerfoMR(om.ExplicitComponent):
             W_to_motor = Wpro_to  # [rad/s] Motor take-off speed
 
         # Motor torque:
-
-        if Mod == 1:
+        if self.options["use_gearbox"]:
             Tmot_hover = Qpro_hover / Nred  # [N.m] motor nominal torque with reduction
             Tmot_to = Qpro_to / Nred  # [N.m] motor take-off torque with reduction
             Tmot_cl = Qpro_cl / Nred  # [N.m] motor climbing torque with reduction
-
-
         else:
             Tmot_hover = Qpro_hover  # [N.m] motor take-off torque
             Tmot_to = Qpro_to  # [N.m] motor take-off torque
@@ -103,7 +103,6 @@ class ComputeMotorPerfoMR(om.ExplicitComponent):
         Tfmot = Tfmot_ref * (Tmot / Tmot_ref) ** (3 / 3.5)  # [N.m] Friction torque
 
         # Hover current and voltage
-
         Imot_hover = (Tmot_hover + Tfmot) / Ktmot  # [I] Current of the motor per propeller
         Umot_hover = Rmot * Imot_hover + W_hover_motor * Ktmot  # [V] Voltage of the motor per propeller
         P_el_hover = Umot_hover * Imot_hover  # [W] Hover : output electrical power
