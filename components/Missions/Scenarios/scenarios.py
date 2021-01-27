@@ -11,20 +11,20 @@ class SizingScenarios(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('optimization:settings:k_M', val=np.nan)
+        self.add_input('optimization:settings:k_M', val=np.nan, units=None)
         self.add_input('specifications:load:mass', val=np.nan, units='kg')
-        self.add_input('data:propeller:prop_number_per_arm', val=np.nan)
-        self.add_input('data:structure:geometry:arms:arm_number', val=np.nan)
+        self.add_input('data:propeller:prop_number_per_arm', val=np.nan, units=None)
+        self.add_input('data:structure:geometry:arms:arm_number', val=np.nan, units=None)
         self.add_input('specifications:rho_air', val=np.nan, units='kg/m**3')
-        self.add_input('data:structure:aerodynamics:C_D', val=np.nan)
+        self.add_input('data:structure:aerodynamics:C_D', val=np.nan, units=None)
         self.add_input('data:structure:geometry:top_surface', val=np.nan, units='m**2')
         self.add_input('specifications:climb_speed', val=np.nan, units='m/s')
-        self.add_input('specifications:k_maxthrust', val=np.nan)
+        self.add_input('specifications:k_maxthrust', val=np.nan, units=None)
         self.add_output('data:propeller:performances:hover_thrust_prop', units='N')
         self.add_output('data:propeller:performances:climb_thrust_prop', units='N')
         self.add_output('data:propeller:performances:max_thrust_prop', units='N')
         #self.add_output('optimization:objectives:mass_total_estimated', units='kg')
-        self.add_output('data:propeller:prop_number')
+        self.add_output('data:propeller:prop_number', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.

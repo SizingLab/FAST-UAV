@@ -12,10 +12,10 @@ class ComputePropellerGeometryMR(om.ExplicitComponent):
     def setup(self):
         self.add_input('data:propeller:performances:max_thrust_prop', val=np.nan, units='N')
         self.add_input('specifications:rho_air', val=np.nan, units='kg/m**3')
-        self.add_input('data:propeller:aerodynamics:CT_static', val=np.nan)
+        self.add_input('data:propeller:aerodynamics:CT_static', val=np.nan, units=None)
         #self.add_input('data:propeller:aerodynamics:CT_dynamic', val=np.nan)
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
-        self.add_input('optimization:settings:k_ND', val=np.nan)
+        self.add_input('optimization:settings:k_ND', val=np.nan, units=None)
         self.add_output('data:propeller:geometry:diameter', units='m')
 
     def setup_partials(self):

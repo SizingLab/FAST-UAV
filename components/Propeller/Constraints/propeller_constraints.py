@@ -11,12 +11,12 @@ class PropellerConstraintsMR(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
-        self.add_input('optimization:settings:advance_ratio', val=np.nan)
+        self.add_input('optimization:settings:advance_ratio', val=np.nan, units=None)
         self.add_input('data:propeller:performances:rot_speed_climb', val=np.nan, units='rad/s')
         self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
         self.add_input('specifications:climb_speed', val=np.nan, units='m/s')
-        self.add_output('optimization:constraints:propeller:cons_max_speed')
-        self.add_output('optimization:constraints:propeller:cons_climb_speed')
+        self.add_output('optimization:constraints:propeller:cons_max_speed', units=None)
+        self.add_output('optimization:constraints:propeller:cons_climb_speed', units=None)
 
 
     def setup_partials(self):

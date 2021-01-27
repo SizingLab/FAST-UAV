@@ -14,9 +14,9 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:structure:arms:material:sigma_max', val=np.nan, units='N/m**2')
-        self.add_input('optimization:settings:D_ratio_arms', val=np.nan)
+        self.add_input('optimization:settings:D_ratio_arms', val=np.nan, units=None)
         self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
-        self.add_input('data:structure:geometry:arms:arm_number', val=np.nan)
+        self.add_input('data:structure:geometry:arms:arm_number', val=np.nan, units=None)
         self.add_input('data:propeller:performances:max_thrust_prop', val=np.nan, units='N')
         self.add_output('data:structure:geometry:arms:arm_length', units='m')
         self.add_output('data:structure:geometry:arms:outer_diameter', units='m')

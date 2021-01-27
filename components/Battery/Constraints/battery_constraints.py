@@ -17,13 +17,13 @@ class BatteryConstraints(om.ExplicitComponent):
         self.add_input('data:battery:performances:max_current', val=np.nan, units='A')
         self.add_input('data:motor:performances:current_takeoff', val=np.nan, units='A')
         self.add_input('data:motor:performances:current_climb', val=np.nan, units='A')
-        self.add_input('data:propeller:prop_number', val=np.nan)
-        self.add_input('data:ESC:performances:efficiency', val=np.nan)
-        self.add_output('optimization:constraints:battery:cons_takeoff_voltage')
-        self.add_output('optimization:constraints:battery:cons_climb_voltage')
-        self.add_output('optimization:constraints:battery:cons_ESC_voltage')
-        self.add_output('optimization:constraints:battery:cons_takeoff_power')
-        self.add_output('optimization:constraints:battery:cons_climb_power')
+        self.add_input('data:propeller:prop_number', val=np.nan, units=None)
+        self.add_input('data:ESC:performances:efficiency', val=np.nan, units=None)
+        self.add_output('optimization:constraints:battery:cons_takeoff_voltage', units=None)
+        self.add_output('optimization:constraints:battery:cons_climb_voltage', units=None)
+        self.add_output('optimization:constraints:battery:cons_ESC_voltage', units=None)
+        self.add_output('optimization:constraints:battery:cons_takeoff_power', units=None)
+        self.add_output('optimization:constraints:battery:cons_climb_power', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.

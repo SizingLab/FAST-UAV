@@ -13,8 +13,8 @@ class MotorConstraints(om.ExplicitComponent):
         self.add_input('data:motor:performances:torque_max', val=np.nan, units='N*m')
         self.add_input('data:motor:performances:torque_takeoff', val=np.nan, units='N*m')
         self.add_input('data:motor:performances:torque_climb', val=np.nan, units='N*m')
-        self.add_output('optimization:constraints:motor:cons_takeoff_torque')
-        self.add_output('optimization:constraints:motor:cons_climb_torque')
+        self.add_output('optimization:constraints:motor:cons_takeoff_torque', units=None)
+        self.add_output('optimization:constraints:motor:cons_climb_torque', units=None)
 
 
     def setup_partials(self):

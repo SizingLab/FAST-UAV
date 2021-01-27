@@ -10,12 +10,12 @@ class ComputePropellerAeroMR(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('optimization:settings:beta_pro', val=np.nan)
-        self.add_input('optimization:settings:advance_ratio', val=np.nan)
-        self.add_output('data:propeller:aerodynamics:CT_static')
-        self.add_output('data:propeller:aerodynamics:CP_static')
-        self.add_output('data:propeller:aerodynamics:CT_dynamic')
-        self.add_output('data:propeller:aerodynamics:CP_dynamic')
+        self.add_input('optimization:settings:beta_pro', val=np.nan, units=None)
+        self.add_input('optimization:settings:advance_ratio', val=np.nan, units=None)
+        self.add_output('data:propeller:aerodynamics:CT_static', units=None)
+        self.add_output('data:propeller:aerodynamics:CP_static', units=None)
+        self.add_output('data:propeller:aerodynamics:CT_dynamic', units=None)
+        self.add_output('data:propeller:aerodynamics:CP_dynamic', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.

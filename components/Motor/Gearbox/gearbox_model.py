@@ -11,7 +11,7 @@ class ComputeGearboxParameters(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('optimization:settings:gearbox_reduction_ratio', val=np.nan)
+        self.add_input('optimization:settings:gearbox_reduction_ratio', val=np.nan, units=None)
         self.add_input('data:motor:performances:torque_hover', val=np.nan, units='N*m')
         self.add_output('data:gearbox:mass', units='kg')
         self.add_output('data:gearbox:gear_diameter', units='m')
