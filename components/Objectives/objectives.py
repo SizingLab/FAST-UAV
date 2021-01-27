@@ -12,7 +12,7 @@ class Objective(OpenMdaoOptionDispatcherGroup):
     """
 
     def initialize(self):
-        self.options.declare("use_gearbox", default=True, types=bool)
+        self.options.declare("use_gearbox", default=False, types=bool)
 
     def setup(self):
         self.add_subsystem("define_objective", DefineObjectives(), promotes=["*"])
@@ -24,7 +24,7 @@ class DefineObjectives(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("use_gearbox", default=True, types=bool)
+        self.options.declare("use_gearbox", default=False, types=bool)
 
     def setup(self):
         self.add_input('data:ESC:mass', val=np.nan, units='kg')
@@ -34,7 +34,6 @@ class DefineObjectives(om.ExplicitComponent):
         self.add_input('data:structure:mass:frame', val=np.nan, units='kg')
         self.add_input('data:structure:mass:arms', val=np.nan, units='kg')
         self.add_input('specifications:load:mass', val=np.nan, units='kg')
-        self.add_input('data:gearbox:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan)
         self.add_input('data:battery:performances:current', val=np.nan, units='A')
         self.add_input('data:battery:performances:capacity', val=np.nan, units='A*s')
@@ -47,6 +46,9 @@ class DefineObjectives(om.ExplicitComponent):
         self.add_output('optimization:constraints:cons_mass_convergence')
         self.add_output('optimization:constraints:cons_flight_autonomy')
         self.add_output('optimization:constraints:cons_MTOW')
+
+        if self.options["use_gearbox"]:
+            self.add_input('data:gearbox:mass', val=np.nan, units='kg')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -61,7 +63,6 @@ class DefineObjectives(om.ExplicitComponent):
         Mbat = inputs['data:battery:mass']
         Mfra = inputs['data:structure:mass:frame']
         Marm = inputs['data:structure:mass:arms']
-        Mgear = inputs['data:gearbox:mass']
         k_M = inputs['optimization:settings:k_M']
         C_bat = inputs['data:battery:performances:capacity']
         I_bat = inputs['data:battery:performances:current']
@@ -70,6 +71,7 @@ class DefineObjectives(om.ExplicitComponent):
 
         # Objectives
         if self.options["use_gearbox"]:
+            Mgear = inputs['data:gearbox:mass']
             Mtotal = (Mesc + Mpro + Mmot + Mgear) * Npro + M_load + Mbat + Mfra + Marm  # total mass with reducer
         else:
             Mtotal = (Mesc + Mpro + Mmot) * Npro + M_load + Mbat + Mfra + Marm  # total mass without reducer

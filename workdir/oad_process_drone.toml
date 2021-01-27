@@ -24,7 +24,7 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
         id = "propeller.multirotor"
     [model.motor]
         id = "motor.multirotor"
-        use_gearbox = true
+        use_gearbox = false
     [model.energy_source]
         id = "battery"
     [model.esc]
@@ -48,7 +48,7 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
 [[optimization.design_var]]
         name = "optimization:settings:D_ratio_arms" # aspect ratio e/c (thickness/side) for the beam of the frame
         lower = 0.05
-        upper = 0.9      
+        upper = 0.99      
 
 [[optimization.design_var]]
         name = "optimization:settings:beta_pro" # pitch/diameter ratio of the propeller
@@ -84,7 +84,7 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
         name = "optimization:settings:k_ESC" # over sizing coefficient on the ESC power
         lower = 1.0
         upper = 15.0
-        
+
 [[optimization.design_var]]
         name = "optimization:settings:gearbox_reduction_ratio" # gearbox reduction ratio (if 'use_gearbox' is true)
         lower = 1.0
@@ -92,61 +92,62 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
 
 [[optimization.constraint]]
         name = "optimization:constraints:ESC:cons_climb_power"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:battery:cons_ESC_voltage"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:battery:cons_climb_power"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:battery:cons_climb_voltage"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:battery:cons_takeoff_power"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:battery:cons_takeoff_voltage"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:motor:cons_climb_torque"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:motor:cons_takeoff_torque"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:propeller:cons_climb_speed"
-        lower=0.0
-        upper = 0.05
+        lower = 0.0
+        upper = 0.01
 
 [[optimization.constraint]]
         name = "optimization:constraints:propeller:cons_max_speed"
-        lower=0.0
+        lower = 0.0
 
 [[optimization.constraint]]
         name = "optimization:constraints:cons_mass_convergence"
-        lower=0.0
-        
-#[[optimization.constraint]]  # Min. flight autonomy for drone mass objective
-#        name = "optimization:constraints:cons_flight_autonomy"
-#        lower=0.0
-        
-[[optimization.constraint]]  # Max. takeoff weight for flight autonomy objective
-        name = "optimization:constraints:cons_MTOW"
-        lower=0.0
+        lower = 0.0
 
-#[[optimization.objective]] # Mass minimization
-#        name = "optimization:objectives:mass_total"
-        
-[[optimization.objective]] # Flight autonomy maximization
-        name = "optimization:objectives:hover_time"
-        scaler = -1
+# MASS MINIMIZATION
+[[optimization.constraint]]
+        name = "optimization:constraints:cons_flight_autonomy"
+        lower = 0.0
 
+[[optimization.objective]]
+        name = "optimization:objectives:mass_total"
+        
+# TIME MAXIMIZATION
+#[[optimization.constraint]]
+#        name = "optimization:constraints:cons_MTOW"
+#        lower = 0.0
+
+#[[optimization.objective]]
+#        name = "optimization:objectives:hover_time"
+ 

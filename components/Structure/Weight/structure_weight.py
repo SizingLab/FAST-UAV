@@ -17,6 +17,7 @@ class ComputeStructureWeightMR(om.ExplicitComponent):
         self.add_input('data:structure:geometry:arms:outer_diameter', val=np.nan, units='m')
         self.add_input('data:structure:reference:mass_arms_ref', val=np.nan, units='kg')
         self.add_input('data:structure:reference:mass_frame_ref', val=np.nan, units='kg')
+        self.add_input('data:structure:arms:material:density', val=1700, units='kg/m**3')
         self.add_output('data:structure:mass:arms', units='kg')
         self.add_output('data:structure:mass:frame', units='kg')
 
@@ -32,8 +33,9 @@ class ComputeStructureWeightMR(om.ExplicitComponent):
         Dout = inputs['data:structure:geometry:arms:outer_diameter']
         Marm_ref = inputs['data:structure:reference:mass_arms_ref']
         Mfra_ref = inputs['data:structure:reference:mass_frame_ref']
+        rho = inputs['data:structure:arms:material:density']
 
-        Marm = pi / 4 * (Dout ** 2 - (D_ratio * Dout) ** 2) * Lbra * 1700 * Narm  # [kg] mass of the arms
+        Marm = pi / 4 * (Dout ** 2 - (D_ratio * Dout) ** 2) * Lbra * rho * Narm  # [kg] mass of the arms
         Mfra = Mfra_ref * (Marm / Marm_ref)  # [kg] mass of the frame
 
         outputs['data:structure:mass:arms'] = Marm

@@ -62,7 +62,8 @@
       </reference>
       <arms>
         <material>
-          <sigma_max units="Pa" is_input="True">70000000.0</sigma_max>
+          <density units="kg/m**3" is_input="True">1700.0</density>
+          <sigma_max units="N/m**2" is_input="True">70000000.0</sigma_max>
         </material>
       </arms>
     </structure>
