@@ -2,11 +2,11 @@
 Propeller component
 """
 import openmdao.api as om
-from Propeller.Aerodynamics.propeller_aero import ComputePropellerAeroMR
-from Propeller.Geometry.propeller_geometry import ComputePropellerGeometryMR
-from Propeller.Performances.propeller_performance import ComputePropellerPerfoMR
-from Propeller.Weight.propeller_weight import ComputePropellerWeightMR
-from Propeller.Constraints.propeller_constraints import PropellerConstraintsMR
+from components.Propeller.Aerodynamics.propeller_aero import ComputePropellerAeroMR
+from components.Propeller.Geometry.propeller_geometry import ComputePropellerGeometryMR
+from components.Propeller.Performances.propeller_performance import ComputePropellerPerfoMR
+from components.Propeller.Weight.propeller_weight import ComputePropellerWeightMR
+from components.Propeller.Constraints.propeller_constraints import PropellerConstraintsMR
 
 class PropellerMR(om.Group):
     """

@@ -2,9 +2,9 @@
 ESC component
 """
 import openmdao.api as om
-from ESC.Performances.esc_performance import ComputeESCPerfo
-from ESC.Weight.esc_weight import ComputeESCWeight
-from ESC.Constraints.esc_constraints import ESCConstraints
+from components.ESC.Performances.esc_performance import ComputeESCPerfo
+from components.ESC.Weight.esc_weight import ComputeESCWeight
+from components.ESC.Constraints.esc_constraints import ESCConstraints
 
 class ESC(om.Group):
     """

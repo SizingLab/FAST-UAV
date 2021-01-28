@@ -3,10 +3,10 @@ Motor component
 """
 import openmdao.api as om
 from fastoad.models.options import OpenMdaoOptionDispatcherGroup
-from Motor.Performances.motor_performance import ComputeMotorPerfoMR
-from Motor.Weight.motor_weight import ComputeMotorWeightMR
-from Motor.Constraints.motor_constraints import MotorConstraints
-from Motor.Gearbox.gearbox_model import ComputeGearboxParameters
+from components.Motor.Performances.motor_performance import ComputeMotorPerfoMR
+from components.Motor.Weight.motor_weight import ComputeMotorWeightMR
+from components.Motor.Constraints.motor_constraints import MotorConstraints
+from components.Motor.Gearbox.gearbox_model import ComputeGearboxParameters
 
 class MotorMR(OpenMdaoOptionDispatcherGroup):
     """

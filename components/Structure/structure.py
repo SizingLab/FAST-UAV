@@ -2,8 +2,8 @@
 Structure component
 """
 import openmdao.api as om
-from Structure.Geometry.structure_geometry import ComputeStructureGeometryMR
-from Structure.Weight.structure_weight import ComputeStructureWeightMR
+from components.Structure.Geometry.structure_geometry import ComputeStructureGeometryMR
+from components.Structure.Weight.structure_weight import ComputeStructureWeightMR
 
 
 class StructureMR(om.Group):

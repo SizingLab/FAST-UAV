@@ -2,7 +2,7 @@
 Missions definition : sizing scenarios
 """
 import openmdao.api as om
-from Missions.Scenarios.scenarios import SizingScenarios
+from components.Missions.Scenarios.scenarios import SizingScenarios
 
 
 
