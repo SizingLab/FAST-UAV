@@ -4,7 +4,7 @@ MR Drone problem
 import openmdao.api as om
 from Propeller.propeller import PropellerMR
 from Motor.motor import MotorMR
-from Battery.battery import Battery
+from Energy_source.energy_source import Battery
 from ESC.esc import ESC
 from Structure.structure import StructureMR
 

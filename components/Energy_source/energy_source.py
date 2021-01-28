@@ -2,9 +2,10 @@
 Battery component
 """
 import openmdao.api as om
-from Battery.Performances.battery_performance import ComputeBatteryPerfo
-from Battery.Weight.battery_weight import ComputeBatteryWeight
-from Battery.Constraints.battery_constraints import BatteryConstraints
+from Energy_source.Battery.Performances.battery_performance import ComputeBatteryPerfo
+from Energy_source.Battery.Weight.battery_weight import ComputeBatteryWeight
+from Energy_source.Battery.Constraints.battery_constraints import BatteryConstraints
+
 
 class Battery(om.Group):
     """
@@ -17,3 +18,4 @@ class Battery(om.Group):
 
         # Constraints
         self.add_subsystem("constraints", BatteryConstraints(), promotes=["*"])
+

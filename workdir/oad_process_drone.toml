@@ -24,9 +24,9 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
         id = "propeller.multirotor"
     [model.motor]
         id = "motor.multirotor"
-        use_gearbox = false
-    [model.energy_source]
-        id = "battery"
+        use_gearbox = true
+    [model.battery]
+        id = "energy.battery"
     [model.esc]
         id = "esc"
     [model.structure]
