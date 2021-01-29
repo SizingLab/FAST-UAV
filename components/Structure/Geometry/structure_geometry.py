@@ -17,6 +17,7 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
         self.add_input('optimization:settings:D_ratio_arms', val=np.nan, units=None)
         self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
         self.add_input('data:structure:geometry:arms:arm_number', val=np.nan, units=None)
+        self.add_input('data:propeller:prop_number_per_arm', val=np.nan, units=None)
         self.add_input('data:propeller:performances:max_thrust_prop', val=np.nan, units='N')
         self.add_output('data:structure:geometry:arms:arm_length', units='m')
         self.add_output('data:structure:geometry:arms:outer_diameter', units='m')
@@ -34,12 +35,13 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
         Dpro = inputs['data:propeller:geometry:diameter']
         Narm = inputs['data:structure:geometry:arms:arm_number']
         F_pro_to = inputs['data:propeller:performances:max_thrust_prop']
+        Npro_arm = inputs['data:propeller:prop_number_per_arm']
 
         # Length calculation
         #    sep= 2*pi/Narm #[rad] interior angle separation between propellers
         Lbra = Dpro / 2 / (math.sin(pi / Narm))  # [m] length of the arm
         # Tube diameter & thickness
-        Dout = (F_pro_to * Lbra * 32 / (pi * Sigma_max * (1 - D_ratio ** 4))) ** (1 / 3)  # [m] outer diameter of the beam
+        Dout = (F_pro_to * Npro_arm * Lbra * 32 / (pi * Sigma_max * (1 - D_ratio ** 4))) ** (1 / 3)  # [m] outer diameter of the beam
         Din = D_ratio * Dout # [m] inner diameter of the beam
 
         outputs['data:structure:geometry:arms:arm_length'] = Lbra
