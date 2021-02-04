@@ -95,7 +95,7 @@ driver = "om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "optimization:constraints:battery:cons_ESC_voltage"
+        name = "optimization:constraints:ESC:cons_bat_voltage"
         lower = 0.0
 
 [[optimization.constraint]]

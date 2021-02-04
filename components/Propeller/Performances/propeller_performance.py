@@ -12,7 +12,7 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
     def setup(self):
         self.add_input('data:propeller:performances:climb_thrust_prop', val=np.nan, units='N')
         self.add_input('data:propeller:performances:hover_thrust_prop', val=np.nan, units='N')
-        self.add_input('specifications:rho_air', val=np.nan, units='kg/m**3')
+        self.add_input('data:air_density', val=np.nan, units='kg/m**3')
         self.add_input('data:propeller:aerodynamics:CT_static', val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CP_static', val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CT_dynamic', val=np.nan, units=None)
@@ -37,7 +37,7 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         F_pro_cl = inputs['data:propeller:performances:climb_thrust_prop']
         F_pro_hov = inputs['data:propeller:performances:hover_thrust_prop']
-        rho_air = inputs['specifications:rho_air']
+        rho_air = inputs['data:air_density']
         NDmax = inputs['data:propeller:reference:nD_max']
         k_ND = inputs['optimization:settings:k_ND']
         Dpro = inputs['data:propeller:geometry:diameter']
