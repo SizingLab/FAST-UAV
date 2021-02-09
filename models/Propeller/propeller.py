@@ -34,4 +34,3 @@ class PropellerMR(om.Group):
         # Constraints
         self.add_subsystem("define_constraints", PropellerConstraintsMR(use_catalogues=self.options['use_catalogues']),
                            promotes=["*"])
-
