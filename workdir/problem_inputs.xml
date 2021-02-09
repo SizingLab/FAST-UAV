@@ -19,15 +19,8 @@
         <voltage units="V" is_input="True">44.4</voltage>
       </reference>
     </ESC>
-    <propeller>
-      <prop_number_per_arm is_input="True">1.0</prop_number_per_arm>
-      <reference>
-        <diameter units="m" is_input="True">0.2794</diameter>
-        <mass units="kg" is_input="True">0.014999</mass>
-        <nD_max units="m/s" is_input="True">44.45</nD_max>
-      </reference>
-    </propeller>
     <battery>
+      <discharge_limit is_input="True">0.8</discharge_limit>
       <reference>
         <capacity units="A*s" is_input="True">12240.0</capacity>
         <mass units="kg" is_input="True">0.329</mass>
@@ -37,6 +30,14 @@
         </current>
       </reference>
     </battery>
+    <propeller>
+      <prop_number_per_arm is_input="True">1.0</prop_number_per_arm>
+      <reference>
+        <diameter units="m" is_input="True">0.2794</diameter>
+        <mass units="kg" is_input="True">0.014999</mass>
+        <nD_max units="m/s" is_input="True">44.45</nD_max>
+      </reference>
+    </propeller>
     <motor>
       <reference>
         <mass units="kg" is_input="True">0.575</mass>

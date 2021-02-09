@@ -9,6 +9,7 @@ import numpy as np
 
 path = './data/DecisionTrees/Batteries/'
 df = pd.read_csv(path + 'Non-Dominated-Batteries.csv', sep=';')
+df = df[df['TYPE'] != 'KOKAM']
 
 
 @ValidityDomainChecker(

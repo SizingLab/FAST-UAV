@@ -70,7 +70,7 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         # Selection with take-off speed
         V_bat_est = k_vb * 1.84 * (Ppro_to) ** (0.36)  # [V] battery voltage estimation
         Ktmot = V_bat_est / (k_speed_mot * W_to_motor)  # [N.m/A] or [V/(rad/s)] Kt motor (RI term is missing)
-        Rmot = Rmot_ref * (Tmot / Tmot_ref) ** (-5 / 3.5) * (Ktmot / Ktmot_ref) ** (2)  # [Ohm] motor resistance
+        Rmot = Rmot_ref * (Tmot / Tmot_ref) ** (-5 / 3.5) * (Ktmot / Ktmot_ref) ** 2  # [Ohm] motor resistance
         Tfmot = Tfmot_ref * (Tmot / Tmot_ref) ** (3 / 3.5)  # [N.m] Friction torque
 
         outputs['data:motor:torque:nominal'] = Tmot

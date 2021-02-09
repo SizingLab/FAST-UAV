@@ -4,7 +4,6 @@ Objectives definition
 import openmdao.api as om
 import numpy as np
 
-from models.Propeller.propeller import PropellerMR
 
 class Objective(om.Group):
     """
@@ -54,6 +53,7 @@ class DefineObjectives(om.ExplicitComponent):
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
         self.add_input('specifications:hover_time', val=np.nan, units='min')
         self.add_input('specifications:MTOW', val=np.nan, units='kg')
+        self.add_input('data:battery:discharge_limit', val=0.8, units=None)
         self.add_output('optimization:objectives:mass_total', units='kg')
         self.add_output('optimization:objectives:hover_time', units='min')
         self.add_output('optimization:constraints:mass_convergence', units=None)
@@ -96,12 +96,13 @@ class DefineObjectives(om.ExplicitComponent):
         MTOW = inputs['specifications:MTOW']
         P_el_hover = inputs['data:motor:power:hover']
         eta_ESC = inputs['data:ESC:efficiency']
+        C_ratio = inputs['data:battery:discharge_limit']
 
         # Objectives
         Mtotal = (Mesc + Mpro + Mmot + Mgear) * Npro + M_load + Mbat + Mfra + Marm  # total mass
 
         I_bat = (P_el_hover * Npro) / eta_ESC / V_bat  # [I] Current of the battery
-        t_hf = .8 * C_bat / I_bat / 60  # [min] Hover time
+        t_hf = C_ratio * C_bat / I_bat / 60  # [min] Hover time
 
         # Constraints
         mass_con = (t_hf - t_h) / t_hf  # Min. hover flight autonomy, for weight minimization

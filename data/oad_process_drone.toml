@@ -19,24 +19,24 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
     # Although "model" is a mandatory name for the top level of the model, its
     # sub-components can be freely named by user
     [model.missions]
-        id = "missions.multirotor"
+        id = "multirotor.missions"
     [model.propeller]
-        id = "propeller.multirotor"
+        id = "multirotor.propeller"
         use_catalogues = true
     [model.motor]
-        id = "motor"
+        id = "multirotor.motor"
         use_catalogues = true
         use_gearbox = false
     [model.battery]
         id = "energy.battery"
         use_catalogues = true
     [model.esc]
-        id = "esc"
+        id = "multirotor.esc"
         use_catalogues = true
     [model.structure]
-        id = "structure.multirotor"
+        id = "multirotor.structure"
     [model.objective]
-        id = "objective"
+        id = "multirotor.objective"
         use_catalogues = true
         use_gearbox = false
 
