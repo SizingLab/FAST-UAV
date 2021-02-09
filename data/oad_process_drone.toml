@@ -4,8 +4,8 @@ title = "Sample OAD Process"
 module_folders = ["D:/THESE/Tools/FAST_OAD_Drone/models"]
 
 # Input and output files
-input_file = "./problem_inputs.xml"
-output_file = "./problem_outputs.xml"
+input_file = "./workdir/problem_inputs.xml"
+output_file = "./workdir/problem_outputs.xml"
 
 # Definition of problem driver assuming the OpenMDAO convention "import openmdao.api as om"
 driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
