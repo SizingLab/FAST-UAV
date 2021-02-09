@@ -4,6 +4,7 @@ Objectives definition
 import openmdao.api as om
 import numpy as np
 
+from models.Propeller.propeller import PropellerMR
 
 class Objective(om.Group):
     """
