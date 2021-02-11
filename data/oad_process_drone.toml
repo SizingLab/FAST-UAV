@@ -9,6 +9,7 @@ output_file = "../workdir/problem_outputs.xml"
 
 # Definition of problem driver assuming the OpenMDAO convention "import openmdao.api as om"
 driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
+#driver = "om.SimpleGADriver()"
 
 # Definition of OpenMDAO model
 [model]

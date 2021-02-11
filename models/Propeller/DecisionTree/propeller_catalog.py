@@ -4,6 +4,7 @@ Propeller Decision Tree based on provided catalogue
 import openmdao.api as om
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
 from utils.DecisionTrees.predicted_values_DT import DecisionTrees
+from models.Propeller.Aerodynamics.propeller_aero import ComputePropellerAeroMR
 import pandas as pd
 import numpy as np
 
@@ -59,12 +60,13 @@ class PropellerDecisionTree(om.ExplicitComponent):
         Dpro = y_pred[0][1] * 0.0254  # [m] diameter expressed in meters
 
         # Update Ct and Cp with new parameters
-        C_t_sta = 4.27e-02 + 1.44e-01 * beta  # Thrust coef with T=C_T.rho.n^2.D^4
-        C_p_sta = -1.48e-03 + 9.72e-02 * beta  # Power coef with P=C_p.rho.n^3.D^5
-        C_t_dyn = 0.02791 - 0.06543 * J + 0.11867 * beta + 0.27334 * beta ** 2 - 0.28852 * beta ** 3 + 0.02104 * J ** 3 \
-                  - 0.23504 * J ** 2 + 0.18677 * beta * J ** 2  # thrust coef for APC props in dynamics
-        C_p_dyn = 0.01813 - 0.06218 * beta + 0.00343 * J + 0.35712 * beta ** 2 - 0.23774 * beta ** 3 + 0.07549 * beta \
-                  * J - 0.1235 * J ** 2  # power coef for APC props in dynamics
+        C_t_sta, C_p_sta, C_t_dyn, C_p_dyn = ComputePropellerAeroMR.aero_coefficients(beta, J)
+        #C_t_sta = 4.27e-02 + 1.44e-01 * beta  # Thrust coef with T=C_T.rho.n^2.D^4
+        #C_p_sta = -1.48e-03 + 9.72e-02 * beta  # Power coef with P=C_p.rho.n^3.D^5
+        #C_t_dyn = 0.02791 - 0.06543 * J + 0.11867 * beta + 0.27334 * beta ** 2 - 0.28852 * beta ** 3 + 0.02104 * J ** 3 \
+        #          - 0.23504 * J ** 2 + 0.18677 * beta * J ** 2  # thrust coef for APC props in dynamics
+        #C_p_dyn = 0.01813 - 0.06218 * beta + 0.00343 * J + 0.35712 * beta ** 2 - 0.23774 * beta ** 3 + 0.07549 * beta \
+        #          * J - 0.1235 * J ** 2  # power coef for APC props in dynamics
 
 
         # Outputs
