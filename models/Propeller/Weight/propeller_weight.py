@@ -14,9 +14,9 @@ class ComputePropellerWeightMR(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_catalogues"]:
-            self.add_input('data:propeller:catalogue:diameter', val=np.nan, units='m')
+            self.add_input('data:propeller:geometry:diameter:catalogue', val=np.nan, units='m')
         else:
-            self.add_input('data:propeller:diameter', val=np.nan, units='m')
+            self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
         self.add_input('data:propeller:reference:diameter', val=np.nan, units='m')
         self.add_input('data:propeller:reference:mass', val=np.nan, units='kg')
         self.add_output('data:propeller:mass', units='kg')
@@ -27,9 +27,9 @@ class ComputePropellerWeightMR(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_catalogues"]:
-            Dpro = inputs['data:propeller:catalogue:diameter']
+            Dpro = inputs['data:propeller:geometry:diameter:catalogue']
         else:
-            Dpro = inputs['data:propeller:diameter']
+            Dpro = inputs['data:propeller:geometry:diameter']
         Dpro_ref = inputs['data:propeller:reference:diameter']
         Mpro_ref = inputs['data:propeller:reference:mass']
 

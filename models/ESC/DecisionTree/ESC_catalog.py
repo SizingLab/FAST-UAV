@@ -30,9 +30,9 @@ class ESCDecisionTree(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:ESC:voltage', val=np.nan, units='V')
-        self.add_output('data:ESC:catalogue:voltage', units='V')
-        self.add_output('data:ESC:catalogue:power:max', units='W')
-        self.add_output('data:ESC:catalogue:mass', units='kg')
+        self.add_output('data:ESC:voltage:catalogue', units='V')
+        self.add_output('data:ESC:power:max:catalogue', units='W')
+        self.add_output('data:ESC:mass:catalogue', units='kg')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -52,6 +52,6 @@ class ESCDecisionTree(om.ExplicitComponent):
         M_esc = y_pred[0][2] / 1000  # [kg] ESC mass
 
         # Outputs
-        outputs['data:ESC:catalogue:power:max'] = P_esc
-        outputs['data:ESC:catalogue:voltage'] = V_esc
-        outputs['data:ESC:catalogue:mass'] = M_esc
+        outputs['data:ESC:power:max:catalogue'] = P_esc
+        outputs['data:ESC:voltage:catalogue'] = V_esc
+        outputs['data:ESC:mass:catalogue'] = M_esc

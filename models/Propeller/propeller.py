@@ -10,6 +10,7 @@ from models.Propeller.Weight.propeller_weight import ComputePropellerWeightMR
 from models.Propeller.Constraints.propeller_constraints import PropellerConstraintsMR
 from models.Propeller.DecisionTree.propeller_catalog import PropellerDecisionTree
 
+
 class PropellerMR(om.Group):
     """
     Group containing the Propeller MDA.

@@ -13,7 +13,7 @@ class MotorConstraints(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_catalogues"]:
-            self.add_input('data:motor:catalogue:torque:max', val=np.nan, units='N*m')
+            self.add_input('data:motor:torque:max:catalogue', val=np.nan, units='N*m')
         else:
             self.add_input('data:motor:torque:max', val=np.nan, units='N*m')
 
@@ -29,7 +29,7 @@ class MotorConstraints(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_catalogues"]:
-            Tmot_max = inputs['data:motor:catalogue:torque:max']
+            Tmot_max = inputs['data:motor:torque:max:catalogue']
         else:
             Tmot_max = inputs['data:motor:torque:max']
         Tmot_to = inputs['data:motor:torque:takeoff']

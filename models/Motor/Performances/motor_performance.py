@@ -18,9 +18,9 @@ class ComputeMotorPerfo(om.ExplicitComponent):
             self.add_input('optimization:settings:gearbox_reduction_ratio', val=np.nan, units=None)
 
         if self.options["use_catalogues"]:
-            self.add_input('data:motor:catalogue:torque:friction', val=np.nan, units='N*m')
-            self.add_input('data:motor:catalogue:resistance', val=np.nan, units='V/A')
-            self.add_input('data:motor:catalogue:torque_coefficient', val=np.nan, units='N*m/A')
+            self.add_input('data:motor:torque:friction:catalogue', val=np.nan, units='N*m')
+            self.add_input('data:motor:resistance:catalogue', val=np.nan, units='V/A')
+            self.add_input('data:motor:torque_coefficient:catalogue', val=np.nan, units='N*m/A')
         else:
             self.add_input('data:motor:torque:friction', units='N*m')
             self.add_input('data:motor:resistance', units='V/A')
@@ -56,9 +56,9 @@ class ComputeMotorPerfo(om.ExplicitComponent):
             Nred = 1
 
         if self.options["use_catalogues"]:
-            Tfmot = inputs['data:motor:catalogue:torque:friction']
-            Rmot = inputs['data:motor:catalogue:resistance']
-            Ktmot = inputs['data:motor:catalogue:torque_coefficient']
+            Tfmot = inputs['data:motor:torque:friction:catalogue']
+            Rmot = inputs['data:motor:resistance:catalogue']
+            Ktmot = inputs['data:motor:torque_coefficient:catalogue']
         else:
             Tfmot = inputs['data:motor:torque:friction']
             Rmot = inputs['data:motor:resistance']

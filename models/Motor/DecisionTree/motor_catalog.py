@@ -33,12 +33,12 @@ class MotorDecisionTree(om.ExplicitComponent):
     def setup(self):
         self.add_input('data:motor:torque:max', val=np.nan, units='N*m')
         self.add_input('data:motor:torque_coefficient', val=np.nan, units='N*m/A')
-        self.add_output('data:motor:catalogue:torque:max', units='N*m')
-        self.add_output('data:motor:catalogue:torque_coefficient', units='N*m/A')
-        self.add_output('data:motor:catalogue:torque:nominal', units='N*m')
-        self.add_output('data:motor:catalogue:torque:friction', units='N*m')
-        self.add_output('data:motor:catalogue:resistance', units='V/A')
-        self.add_output('data:motor:catalogue:mass', units='kg')
+        self.add_output('data:motor:torque:max:catalogue', units='N*m')
+        self.add_output('data:motor:torque_coefficient:catalogue', units='N*m/A')
+        self.add_output('data:motor:torque:nominal:catalogue', units='N*m')
+        self.add_output('data:motor:torque:friction:catalogue', units='N*m')
+        self.add_output('data:motor:resistance:catalogue', units='V/A')
+        self.add_output('data:motor:mass:catalogue', units='kg')
 
 
     def setup_partials(self):
@@ -63,9 +63,9 @@ class MotorDecisionTree(om.ExplicitComponent):
         Tfmot = y_pred[0][5]  # friction torque [Nm]
 
         # Outputs
-        outputs['data:motor:catalogue:torque:max'] = Tmot_max
-        outputs['data:motor:catalogue:torque_coefficient'] = Ktmot
-        outputs['data:motor:catalogue:torque:nominal'] = Tmot
-        outputs['data:motor:catalogue:torque:friction'] = Tfmot
-        outputs['data:motor:catalogue:resistance'] = Rmot
-        outputs['data:motor:catalogue:mass'] = Mmot
+        outputs['data:motor:torque:max:catalogue'] = Tmot_max
+        outputs['data:motor:torque_coefficient:catalogue'] = Ktmot
+        outputs['data:motor:torque:nominal:catalogue'] = Tmot
+        outputs['data:motor:torque:friction:catalogue'] = Tfmot
+        outputs['data:motor:resistance:catalogue'] = Rmot
+        outputs['data:motor:mass:catalogue'] = Mmot

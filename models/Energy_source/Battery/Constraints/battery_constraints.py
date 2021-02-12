@@ -13,8 +13,8 @@ class BatteryConstraints(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_catalogues"]:
-            self.add_input('data:battery:catalogue:voltage', val=np.nan, units='V')
-            self.add_input('data:battery:catalogue:current:max', val=np.nan, units='A')
+            self.add_input('data:battery:voltage:catalogue', val=np.nan, units='V')
+            self.add_input('data:battery:current:max:catalogue', val=np.nan, units='A')
         else:
             self.add_input('data:battery:voltage', val=np.nan, units='V')
             self.add_input('data:battery:current:max', val=np.nan, units='A')
@@ -36,8 +36,8 @@ class BatteryConstraints(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_catalogues"]:
-            V_bat = inputs['data:battery:catalogue:voltage']
-            Imax = inputs['data:battery:catalogue:current:max']
+            V_bat = inputs['data:battery:voltage:catalogue']
+            Imax = inputs['data:battery:current:max:catalogue']
         else:
             V_bat = inputs['data:battery:voltage']
             Imax = inputs['data:battery:current:max']

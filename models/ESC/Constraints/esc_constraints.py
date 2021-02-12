@@ -13,9 +13,9 @@ class ESCConstraints(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_catalogues"]:
-            self.add_input('data:ESC:catalogue:voltage', val=np.nan, units='V')
-            self.add_input('data:battery:catalogue:voltage', val=np.nan, units='V')
-            self.add_input('data:ESC:catalogue:power:max', val=np.nan, units='W')
+            self.add_input('data:ESC:voltage:catalogue', val=np.nan, units='V')
+            self.add_input('data:battery:voltage:catalogue', val=np.nan, units='V')
+            self.add_input('data:ESC:power:max:catalogue', val=np.nan, units='W')
         else:
             self.add_input('data:ESC:voltage', val=np.nan, units='V')
             self.add_input('data:battery:voltage', val=np.nan, units='V')
@@ -31,9 +31,9 @@ class ESCConstraints(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_catalogues"]:
-            P_esc = inputs['data:ESC:catalogue:power:max']
-            Vesc = inputs['data:ESC:catalogue:voltage']
-            V_bat = inputs['data:battery:catalogue:voltage']
+            P_esc = inputs['data:ESC:power:max:catalogue']
+            Vesc = inputs['data:ESC:voltage:catalogue']
+            V_bat = inputs['data:battery:voltage:catalogue']
         else:
             P_esc = inputs['data:ESC:power:max']
             Vesc = inputs['data:ESC:voltage']

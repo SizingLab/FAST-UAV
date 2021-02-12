@@ -31,11 +31,11 @@ class DefineObjectives(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_catalogues"]:
-            self.add_input('data:ESC:catalogue:mass', val=np.nan, units='kg')
-            self.add_input('data:motor:catalogue:mass', val=np.nan, units='kg')
-            self.add_input('data:battery:catalogue:mass', val=np.nan, units='kg')
-            self.add_input('data:battery:catalogue:capacity', val=np.nan, units='A*s')
-            self.add_input('data:battery:catalogue:voltage', val=np.nan, units='V')
+            self.add_input('data:ESC:mass:catalogue', val=np.nan, units='kg')
+            self.add_input('data:motor:mass:catalogue', val=np.nan, units='kg')
+            self.add_input('data:battery:mass:catalogue', val=np.nan, units='kg')
+            self.add_input('data:battery:capacity:catalogue', val=np.nan, units='A*s')
+            self.add_input('data:battery:voltage:catalogue', val=np.nan, units='V')
         else:
             self.add_input('data:ESC:mass', val=np.nan, units='kg')
             self.add_input('data:motor:mass', val=np.nan, units='kg')
@@ -46,13 +46,13 @@ class DefineObjectives(om.ExplicitComponent):
         self.add_input('data:propeller:mass', val=np.nan, units='kg')
         self.add_input('data:structure:frame:mass', val=np.nan, units='kg')
         self.add_input('data:structure:arms:mass', val=np.nan, units='kg')
-        self.add_input('specifications:load:mass', val=np.nan, units='kg')
+        self.add_input('data:payload:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
-        self.add_input('optimization:settings:k_M', val=np.nan, units=None)
+        self.add_input('data:payload:settings:k_M', val=np.nan, units=None)
         self.add_input('data:motor:power:hover', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('specifications:hover_time', val=np.nan, units='min')
-        self.add_input('specifications:MTOW', val=np.nan, units='kg')
+        self.add_input('mission:hover_time', val=np.nan, units='min')
+        self.add_input('mission:MTOW', val=np.nan, units='kg')
         self.add_input('data:battery:discharge_limit', val=0.8, units=None)
         self.add_output('optimization:objectives:mass_total', units='kg')
         self.add_output('optimization:objectives:hover_time', units='min')
@@ -69,11 +69,11 @@ class DefineObjectives(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_catalogues"]:
-            Mmot = inputs['data:motor:catalogue:mass']
-            Mesc = inputs['data:ESC:catalogue:mass']
-            Mbat = inputs['data:battery:catalogue:mass']
-            C_bat = inputs['data:battery:catalogue:capacity']
-            V_bat = inputs['data:battery:catalogue:voltage']
+            Mmot = inputs['data:motor:mass:catalogue']
+            Mesc = inputs['data:ESC:mass:catalogue']
+            Mbat = inputs['data:battery:mass:catalogue']
+            C_bat = inputs['data:battery:capacity:catalogue']
+            V_bat = inputs['data:battery:voltage:catalogue']
         else:
             Mmot = inputs['data:motor:mass']
             Mesc = inputs['data:ESC:mass']
@@ -88,12 +88,12 @@ class DefineObjectives(om.ExplicitComponent):
 
         Mpro = inputs['data:propeller:mass']
         Npro = inputs['data:propeller:prop_number']
-        M_load = inputs['specifications:load:mass']
+        M_load = inputs['data:payload:mass']
         Mfra = inputs['data:structure:frame:mass']
         Marm = inputs['data:structure:arms:mass']
-        k_M = inputs['optimization:settings:k_M']
-        t_h = inputs['specifications:hover_time']
-        MTOW = inputs['specifications:MTOW']
+        k_M = inputs['data:payload:settings:k_M']
+        t_h = inputs['mission:hover_time']
+        MTOW = inputs['mission:MTOW']
         P_el_hover = inputs['data:motor:power:hover']
         eta_ESC = inputs['data:ESC:efficiency']
         C_ratio = inputs['data:battery:discharge_limit']

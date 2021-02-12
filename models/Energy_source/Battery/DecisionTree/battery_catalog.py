@@ -31,11 +31,11 @@ class BatteryDecisionTree(om.ExplicitComponent):
     def setup(self):
         self.add_input('data:battery:voltage', val=np.nan, units='V')
         self.add_input('data:battery:capacity', val=np.nan, units='A*s')
-        self.add_output('data:battery:catalogue:cell_number', units=None)
-        self.add_output('data:battery:catalogue:voltage', units='V')
-        self.add_output('data:battery:catalogue:capacity', units='A*s')
-        self.add_output('data:battery:catalogue:current:max', units='A')
-        self.add_output('data:battery:catalogue:mass', units='kg')
+        self.add_output('data:battery:cell_number:catalogue', units=None)
+        self.add_output('data:battery:voltage:catalogue', units='V')
+        self.add_output('data:battery:capacity:catalogue', units='A*s')
+        self.add_output('data:battery:current:max:catalogue', units='A')
+        self.add_output('data:battery:mass:catalogue', units='kg')
 
 
     def setup_partials(self):
@@ -60,8 +60,8 @@ class BatteryDecisionTree(om.ExplicitComponent):
 
 
         # Outputs
-        outputs['data:battery:catalogue:cell_number'] = Ncel
-        outputs['data:battery:catalogue:voltage'] = V_bat_data * Ncel
-        outputs['data:battery:catalogue:capacity'] = C_bat
-        outputs['data:battery:catalogue:current:max'] = Imax
-        outputs['data:battery:catalogue:mass'] = Mbat
+        outputs['data:battery:cell_number:catalogue'] = Ncel
+        outputs['data:battery:voltage:catalogue'] = V_bat_data * Ncel
+        outputs['data:battery:capacity:catalogue'] = C_bat
+        outputs['data:battery:current:max:catalogue'] = Imax
+        outputs['data:battery:mass:catalogue'] = Mbat

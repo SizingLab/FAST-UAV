@@ -1,15 +1,12 @@
 <FASTOAD_model>
-  <specifications>
+  <mission>
     <MTOW units="kg" is_input="True">100.0</MTOW>
     <altitude units="m" is_input="True">0.0</altitude>
     <climb_speed units="m/s" is_input="True">6.0</climb_speed>
     <dISA units="K" is_input="True">0.0</dISA>
     <hover_time units="min" is_input="True">18.0</hover_time>
     <k_maxthrust is_input="True">3.0</k_maxthrust>
-    <load>
-      <mass units="kg" is_input="True">4.0</mass>
-    </load>
-  </specifications>
+  </mission>
   <data>
     <ESC>
       <efficiency is_input="True">0.95</efficiency>
@@ -18,6 +15,9 @@
         <power units="W" is_input="True">3108.0</power>
         <voltage units="V" is_input="True">44.4</voltage>
       </reference>
+      <settings>
+        <k_ESC is_input="True">1.0</k_ESC>
+      </settings>
     </ESC>
     <battery>
       <discharge_limit is_input="True">0.8</discharge_limit>
@@ -29,14 +29,31 @@
           <max units="A" is_input="True">170.0</max>
         </current>
       </reference>
+      <settings>
+        <k_Mb is_input="True">1.0</k_Mb>
+        <k_VB is_input="True">4.0</k_VB>
+      </settings>
     </battery>
+    <payload>
+      <mass units="kg" is_input="True">4.0</mass>
+      <settings>
+        <k_M is_input="True">2.0</k_M>
+      </settings>
+    </payload>
     <propeller>
       <prop_number_per_arm is_input="True">1.0</prop_number_per_arm>
+      <geometry>
+        <beta is_input="True">0.3</beta>
+      </geometry>
       <reference>
         <diameter units="m" is_input="True">0.2794</diameter>
         <mass units="kg" is_input="True">0.014999</mass>
         <nD_max units="m/s" is_input="True">44.45</nD_max>
       </reference>
+      <settings>
+        <advance_ratio is_input="True">0.2</advance_ratio>
+        <k_ND is_input="True">1.0</k_ND>
+      </settings>
     </propeller>
     <motor>
       <reference>
@@ -49,6 +66,10 @@
           <nominal units="N*m" is_input="True">2.32</nominal>
         </torque>
       </reference>
+      <settings>
+        <k_mot is_input="True">2.5</k_mot>
+        <k_speed_mot is_input="True">1.2</k_speed_mot>
+      </settings>
     </motor>
     <structure>
       <aerodynamics>
@@ -64,6 +85,9 @@
       <geometry>
         <top_surface units="m**2" is_input="True">0.09</top_surface>
       </geometry>
+      <settings>
+        <D_ratio_arms is_input="True">0.5</D_ratio_arms>
+      </settings>
       <reference>
         <arms>
           <mass units="kg" is_input="True">0.14</mass>
@@ -74,18 +98,4 @@
       </reference>
     </structure>
   </data>
-  <optimization>
-    <settings>
-      <D_ratio_arms is_input="True">0.5</D_ratio_arms>
-      <advance_ratio is_input="True">0.2</advance_ratio>
-      <beta_pro is_input="True">0.3</beta_pro>
-      <k_ESC is_input="True">1.0</k_ESC>
-      <k_M is_input="True">2.0</k_M>
-      <k_Mb is_input="True">1.0</k_Mb>
-      <k_ND is_input="True">1.0</k_ND>
-      <k_VB is_input="True">4.0</k_VB>
-      <k_mot is_input="True">2.5</k_mot>
-      <k_speed_mot is_input="True">1.2</k_speed_mot>
-    </settings>
-  </optimization>
 </FASTOAD_model>

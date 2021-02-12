@@ -4,6 +4,7 @@ Battery Characteristics
 import openmdao.api as om
 import numpy as np
 
+
 class ComputeBatteryCharacteristics(om.ExplicitComponent):
     """
     Characteristics calculation of Battery (sized from hover)
@@ -14,7 +15,7 @@ class ComputeBatteryCharacteristics(om.ExplicitComponent):
         self.add_input('data:battery:reference:capacity', val=np.nan, units='A*s')
         self.add_input('data:battery:reference:voltage', val=np.nan, units='V')
         self.add_input('data:battery:reference:current:max', val=np.nan, units='A')
-        self.add_input('data:battery:voltage:estimation', val=np.nan, units='V')
+        self.add_input('data:battery:voltage:guess', val=np.nan, units='V')
         self.add_input('data:battery:mass', val=np.nan, units='kg')
         self.add_output('data:battery:cell_number', units=None)
         self.add_output('data:battery:voltage', units='V')
@@ -31,10 +32,10 @@ class ComputeBatteryCharacteristics(om.ExplicitComponent):
         Cbat_ref = inputs['data:battery:reference:capacity']
         Vbat_ref = inputs['data:battery:reference:voltage']
         Imax_ref = inputs['data:battery:reference:current:max']
-        V_bat_est = inputs['data:battery:voltage:estimation']
+        V_bat_guess = inputs['data:battery:voltage:guess']
         Mbat = inputs['data:battery:mass']
 
-        Ncel = np.ceil(V_bat_est / 3.7)  # [-] Cell number, round (up value)
+        Ncel = np.ceil(V_bat_guess / 3.7)  # [-] Cell number, round (up value)
         V_bat = 3.7 * Ncel  # [V] Battery voltage
 
         # Hover --> autonomy

@@ -10,8 +10,8 @@ class ComputePropellerAeroMR(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('optimization:settings:beta_pro', val=np.nan, units=None)
-        self.add_input('optimization:settings:advance_ratio', val=np.nan, units=None)
+        self.add_input('data:propeller:geometry:beta', val=np.nan, units=None)
+        self.add_input('data:propeller:settings:advance_ratio', val=np.nan, units=None)
         self.add_output('data:propeller:aerodynamics:CT:static', units=None)
         self.add_output('data:propeller:aerodynamics:CP:static', units=None)
         self.add_output('data:propeller:aerodynamics:CT:dynamic', units=None)
@@ -22,8 +22,8 @@ class ComputePropellerAeroMR(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        beta = inputs['optimization:settings:beta_pro']
-        J = inputs['optimization:settings:advance_ratio']
+        beta = inputs['data:propeller:geometry:beta']
+        J = inputs['data:propeller:settings:advance_ratio']
 
         C_t_sta, C_p_sta, C_t_dyn, C_p_dyn = self.aero_coefficients(beta, J)
         #C_t_sta = 4.27e-02 + 1.44e-01 * beta  # Thrust coef with T=C_T.rho.n^2.D^4

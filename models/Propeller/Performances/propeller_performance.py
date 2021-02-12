@@ -14,13 +14,13 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_catalogues"]:
-            self.add_input('data:propeller:catalogue:diameter', val=np.nan, units='m')
-            self.add_input('data:propeller:catalogue:aerodynamics:CT:static', val=np.nan, units=None)
-            self.add_input('data:propeller:catalogue:aerodynamics:CP:static', val=np.nan, units=None)
-            self.add_input('data:propeller:catalogue:aerodynamics:CT:dynamic', val=np.nan, units=None)
-            self.add_input('data:propeller:catalogue:aerodynamics:CP:dynamic', val=np.nan, units=None)
+            self.add_input('data:propeller:geometry:diameter:catalogue', val=np.nan, units='m')
+            self.add_input('data:propeller:aerodynamics:CT:static:catalogue', val=np.nan, units=None)
+            self.add_input('data:propeller:aerodynamics:CP:static:catalogue', val=np.nan, units=None)
+            self.add_input('data:propeller:aerodynamics:CT:dynamic:catalogue', val=np.nan, units=None)
+            self.add_input('data:propeller:aerodynamics:CP:dynamic:catalogue', val=np.nan, units=None)
         else:
-            self.add_input('data:propeller:diameter', val=np.nan, units='m')
+            self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
             self.add_input('data:propeller:aerodynamics:CT:static', val=np.nan, units=None)
             self.add_input('data:propeller:aerodynamics:CP:static', val=np.nan, units=None)
             self.add_input('data:propeller:aerodynamics:CT:dynamic', val=np.nan, units=None)
@@ -28,9 +28,9 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
 
         self.add_input('data:propeller:thrust:climb', val=np.nan, units='N')
         self.add_input('data:propeller:thrust:hover', val=np.nan, units='N')
-        self.add_input('data:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('mission:rho_air', val=np.nan, units='kg/m**3')
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
-        self.add_input('optimization:settings:k_ND', val=np.nan, units=None)
+        self.add_input('data:propeller:settings:k_ND', val=np.nan, units=None)
         self.add_output('data:propeller:speed:takeoff', units='rad/s')
         self.add_output('data:propeller:speed:hover', units='rad/s')
         self.add_output('data:propeller:speed:climb', units='rad/s')
@@ -47,13 +47,13 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_catalogues"]:
-            Dpro = inputs['data:propeller:catalogue:diameter']
-            C_t_sta = inputs['data:propeller:catalogue:aerodynamics:CT:static']
-            C_t_dyn = inputs['data:propeller:catalogue:aerodynamics:CT:dynamic']
-            C_p_sta = inputs['data:propeller:catalogue:aerodynamics:CP:static']
-            C_p_dyn = inputs['data:propeller:catalogue:aerodynamics:CP:dynamic']
+            Dpro = inputs['data:propeller:geometry:diameter:catalogue']
+            C_t_sta = inputs['data:propeller:aerodynamics:CT:static:catalogue']
+            C_t_dyn = inputs['data:propeller:aerodynamics:CT:dynamic:catalogue']
+            C_p_sta = inputs['data:propeller:aerodynamics:CP:static:catalogue']
+            C_p_dyn = inputs['data:propeller:aerodynamics:CP:dynamic:catalogue']
         else:
-            Dpro = inputs['data:propeller:diameter']
+            Dpro = inputs['data:propeller:geometry:diameter']
             C_t_sta = inputs['data:propeller:aerodynamics:CT:static']
             C_t_dyn = inputs['data:propeller:aerodynamics:CT:dynamic']
             C_p_sta = inputs['data:propeller:aerodynamics:CP:static']
@@ -61,9 +61,9 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
 
         F_pro_cl = inputs['data:propeller:thrust:climb']
         F_pro_hov = inputs['data:propeller:thrust:hover']
-        rho_air = inputs['data:air_density']
+        rho_air = inputs['mission:rho_air']
         NDmax = inputs['data:propeller:reference:nD_max']
-        k_ND = inputs['optimization:settings:k_ND']
+        k_ND = inputs['data:propeller:settings:k_ND']
 
         # Propeller torque& speed for take-off
         n_pro_to = NDmax * k_ND / Dpro  # [Hz] Propeller speed

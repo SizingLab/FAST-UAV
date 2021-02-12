@@ -14,14 +14,14 @@ class PropellerConstraintsMR(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_catalogues"]:
-            self.add_input('data:propeller:catalogue:diameter', val=np.nan, units='m')
+            self.add_input('data:propeller:geometry:diameter:catalogue', val=np.nan, units='m')
         else:
-            self.add_input('data:propeller:diameter', val=np.nan, units='m')
+            self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
 
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
-        self.add_input('optimization:settings:advance_ratio', val=np.nan, units=None)
+        self.add_input('data:propeller:settings:advance_ratio', val=np.nan, units=None)
         self.add_input('data:propeller:speed:climb', val=np.nan, units='rad/s')
-        self.add_input('specifications:climb_speed', val=np.nan, units='m/s')
+        self.add_input('mission:climb_speed', val=np.nan, units='m/s')
         self.add_output('optimization:constraints:propeller:speed:max', units=None)
         self.add_output('optimization:constraints:propeller:speed:climb', units=None)
 
@@ -32,14 +32,14 @@ class PropellerConstraintsMR(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_catalogues"]:
-            Dpro = inputs['data:propeller:catalogue:diameter']
+            Dpro = inputs['data:propeller:geometry:diameter:catalogue']
         else:
-            Dpro = inputs['data:propeller:diameter']
+            Dpro = inputs['data:propeller:geometry:diameter']
 
         NDmax = inputs['data:propeller:reference:nD_max']
-        J = inputs['optimization:settings:advance_ratio']
+        J = inputs['data:propeller:settings:advance_ratio']
         n_pro_cl = inputs['data:propeller:speed:climb'] / 2 / 3.14
-        V_cl = inputs['specifications:climb_speed']
+        V_cl = inputs['mission:climb_speed']
 
         prop_con1 = (NDmax - n_pro_cl * Dpro) / NDmax
         prop_con2 = (-J * n_pro_cl * Dpro + V_cl)
