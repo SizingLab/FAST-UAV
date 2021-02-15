@@ -39,6 +39,9 @@
         </voltage>
       </cell>
     </battery>
+    <gearbox>
+      <mass units="kg" is_input="True">0.0</mass>
+    </gearbox>
     <payload>
       <mass units="kg" is_input="True">4.0</mass>
       <settings>

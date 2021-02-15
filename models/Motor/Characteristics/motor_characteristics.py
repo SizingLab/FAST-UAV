@@ -16,7 +16,7 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_gearbox"]:
-            self.add_input('data:gearbox:N_red', val=np.nan, units=None)
+            self.add_input('data:gearbox:N_red', val=1.0, units=None)
 
         self.add_input('data:propeller:speed:takeoff', val=np.nan, units='rad/s')
         self.add_input('data:propeller:torque:hover', val=np.nan, units='N*m')
@@ -43,6 +43,8 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         if self.options["use_gearbox"]:
             Nred = inputs['data:gearbox:N_red']
+        else:
+            Nred = 1.0
 
         Wpro_to = inputs['data:propeller:speed:takeoff']
         Qpro_hover = inputs['data:propeller:torque:hover']
@@ -57,12 +59,8 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         Ktmot_ref = inputs['data:motor:reference:torque_coefficient']
 
         # Motor speed and torque for sizing
-        if self.options["use_gearbox"]:
-            W_to_motor = Wpro_to * Nred  # [rad/s] Motor take-off speed with reduction
-            Tmot_hover = Qpro_hover / Nred  # [N.m] motor nominal torque with reduction
-        else:
-            W_to_motor = Wpro_to  # [rad/s] Motor take-off speed
-            Tmot_hover = Qpro_hover  # [N.m] motor take-off torque
+        W_to_motor = Wpro_to * Nred  # [rad/s] Motor take-off speed with reduction
+        Tmot_hover = Qpro_hover / Nred  # [N.m] motor nominal torque with reduction
 
         Tmot = k_mot * Tmot_hover  # [N.m] required motor nominal torque for reductor
         Tmot_max = Tmot_max_ref * (Tmot / Tmot_ref) ** (1)  # [N.m] max torque

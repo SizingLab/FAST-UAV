@@ -11,7 +11,7 @@ class ComputeGearboxCharacteristics(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:gearbox:N_red', val=np.nan, units=None)
+        self.add_input('data:gearbox:N_red', val=1.0, units=None)
         self.add_input('data:motor:torque:hover', val=np.nan, units='N*m')
         self.add_output('data:gearbox:mass', units='kg')
         self.add_output('data:gearbox:gear_diameter', units='m')

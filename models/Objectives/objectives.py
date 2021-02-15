@@ -9,7 +9,6 @@ class Objective(om.Group):
     """
     Group containing the objective functions
     """
-
     def setup(self):
         self.add_subsystem("define_objective", DefineObjectives(), promotes=["*"])
 
@@ -19,10 +18,8 @@ class DefineObjectives(om.ExplicitComponent):
     Weight objective and flight autonomy objective definitions, with associated constraints
     """
 
-    def initialize(self):
-        self.options.declare("use_gearbox", default=False, types=bool)
-
     def setup(self):
+        self.add_input('data:gearbox:mass', val=0.0, units='kg')
         self.add_input('data:ESC:mass', val=np.nan, units='kg')
         self.add_input('data:motor:mass', val=np.nan, units='kg')
         self.add_input('data:battery:mass', val=np.nan, units='kg')
@@ -45,19 +42,12 @@ class DefineObjectives(om.ExplicitComponent):
         self.add_output('optimization:constraints:flight_autonomy', units=None)
         self.add_output('optimization:constraints:MTOW', units=None)
 
-        if self.options["use_gearbox"]:
-            self.add_input('data:gearbox:mass', val=np.nan, units='kg')
-
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        if self.options["use_gearbox"]:
-            Mgear = inputs['data:gearbox:mass']
-        else:
-            Mgear = 0
-
+        Mgear = inputs['data:gearbox:mass']  # default value = .0 if use_gearbox = false
         Mmot = inputs['data:motor:mass']
         Mesc = inputs['data:ESC:mass']
         Mbat = inputs['data:battery:mass']

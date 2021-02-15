@@ -46,7 +46,7 @@ class ComputeMotorPerfo(om.ExplicitComponent):
         if self.options["use_gearbox"]:
             Nred = inputs['data:gearbox:N_red']
         else:
-            Nred = 1
+            Nred = 1.0
 
         Tfmot = inputs['data:motor:torque:friction']
         Rmot = inputs['data:motor:resistance']
