@@ -93,23 +93,20 @@ class MotorDecisionTree(om.ExplicitComponent):
 class ValueSetter(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)
+        self._str = ''
 
     def setup(self):
         if self.options["use_catalogue"]:  # discrete values from catalogues
-            self.add_input('data:motor:torque:max:catalogue', val=np.nan, units='N*m')
-            self.add_input('data:motor:torque_coefficient:catalogue', val=np.nan, units='N*m/A')
-            self.add_input('data:motor:torque:nominal:catalogue', val=np.nan, units='N*m')
-            self.add_input('data:motor:torque:friction:catalogue', val=np.nan, units='N*m')
-            self.add_input('data:motor:resistance:catalogue', val=np.nan, units='V/A')
-            self.add_input('data:motor:mass:catalogue', val=np.nan, units='kg')
+            self._str = ':catalogue'
         else:  # estimated values
-            self.add_input('data:motor:torque:max:estimated', val=np.nan, units='N*m')
-            self.add_input('data:motor:torque_coefficient:estimated', val=np.nan, units='N*m/A')
-            self.add_input('data:motor:torque:nominal:estimated', val=np.nan, units='N*m')
-            self.add_input('data:motor:torque:friction:estimated', val=np.nan, units='N*m')
-            self.add_input('data:motor:resistance:estimated', val=np.nan, units='V/A')
-            self.add_input('data:motor:mass:estimated', val=np.nan, units='kg')
-        # real values
+            self._str = ':estimated'
+        self.add_input('data:motor:torque:max'+self._str, val=np.nan, units='N*m')
+        self.add_input('data:motor:torque_coefficient'+self._str, val=np.nan, units='N*m/A')
+        self.add_input('data:motor:torque:nominal'+self._str, val=np.nan, units='N*m')
+        self.add_input('data:motor:torque:friction'+self._str, val=np.nan, units='N*m')
+        self.add_input('data:motor:resistance'+self._str, val=np.nan, units='V/A')
+        self.add_input('data:motor:mass'+self._str, val=np.nan, units='kg')
+        # 'real' values
         self.add_output('data:motor:torque:max', units='N*m')
         self.add_output('data:motor:torque_coefficient', units='N*m/A')
         self.add_output('data:motor:torque:nominal', units='N*m')
@@ -118,33 +115,17 @@ class ValueSetter(om.ExplicitComponent):
         self.add_output('data:motor:mass', units='kg')
 
     def setup_partials(self):
-        if self.options["use_catalogue"]:
-            self.declare_partials('data:motor:torque:max', 'data:motor:torque:max:catalogue', val=1.)
-            self.declare_partials('data:motor:torque_coefficient', 'data:motor:torque_coefficient:catalogue', val=1.)
-            self.declare_partials('data:motor:torque:nominal', 'data:motor:torque:nominal:catalogue', val=1.)
-            self.declare_partials('data:motor:torque:friction', 'data:motor:torque:friction:catalogue', val=1.)
-            self.declare_partials('data:motor:resistance', 'data:motor:resistance:catalogue', val=1.)
-            self.declare_partials('data:motor:mass', 'data:motor:mass:catalogue', val=1.)
-        else:
-            self.declare_partials('data:motor:torque:max', 'data:motor:torque:max:estimated', val=1.)
-            self.declare_partials('data:motor:torque_coefficient', 'data:motor:torque_coefficient:estimated', val=1.)
-            self.declare_partials('data:motor:torque:nominal', 'data:motor:torque:nominal:estimated', val=1.)
-            self.declare_partials('data:motor:torque:friction', 'data:motor:torque:friction:estimated', val=1.)
-            self.declare_partials('data:motor:resistance', 'data:motor:resistance:estimated', val=1.)
-            self.declare_partials('data:motor:mass', 'data:motor:mass:estimated', val=1.)
+        self.declare_partials('data:motor:torque:max', 'data:motor:torque:max'+self._str, val=1.)
+        self.declare_partials('data:motor:torque_coefficient', 'data:motor:torque_coefficient'+self._str, val=1.)
+        self.declare_partials('data:motor:torque:nominal', 'data:motor:torque:nominal'+self._str, val=1.)
+        self.declare_partials('data:motor:torque:friction', 'data:motor:torque:friction'+self._str, val=1.)
+        self.declare_partials('data:motor:resistance', 'data:motor:resistance'+self._str, val=1.)
+        self.declare_partials('data:motor:mass', 'data:motor:mass'+self._str, val=1.)
 
     def compute(self, inputs, outputs):
-        if self.options["use_catalogue"]:
-            outputs['data:motor:torque:max'] = inputs['data:motor:torque:max:catalogue']
-            outputs['data:motor:torque_coefficient'] = inputs['data:motor:torque_coefficient:catalogue']
-            outputs['data:motor:torque:nominal'] = inputs['data:motor:torque:nominal:catalogue']
-            outputs['data:motor:torque:friction'] = inputs['data:motor:torque:friction:catalogue']
-            outputs['data:motor:resistance'] = inputs['data:motor:resistance:catalogue']
-            outputs['data:motor:mass'] = inputs['data:motor:mass:catalogue']
-        else:
-            outputs['data:motor:torque:max'] = inputs['data:motor:torque:max:estimated']
-            outputs['data:motor:torque_coefficient'] = inputs['data:motor:torque_coefficient:estimated']
-            outputs['data:motor:torque:nominal'] = inputs['data:motor:torque:nominal:estimated']
-            outputs['data:motor:torque:friction'] = inputs['data:motor:torque:friction:estimated']
-            outputs['data:motor:resistance'] = inputs['data:motor:resistance:estimated']
-            outputs['data:motor:mass'] = inputs['data:motor:mass:estimated']
+        outputs['data:motor:torque:max'] = inputs['data:motor:torque:max'+self._str]
+        outputs['data:motor:torque_coefficient'] = inputs['data:motor:torque_coefficient'+self._str]
+        outputs['data:motor:torque:nominal'] = inputs['data:motor:torque:nominal'+self._str]
+        outputs['data:motor:torque:friction'] = inputs['data:motor:torque:friction'+self._str]
+        outputs['data:motor:resistance'] = inputs['data:motor:resistance'+self._str]
+        outputs['data:motor:mass'] = inputs['data:motor:mass'+self._str]

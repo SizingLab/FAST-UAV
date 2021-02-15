@@ -197,32 +197,3 @@ class ValueSetter(om.ExplicitComponent):
 #             outputs['data:propeller:aerodynamics:CP:dynamic'] = inputs['data:propeller:aerodynamics:CP:dynamic:estimated']
 #             outputs['data:propeller:aerodynamics:CT:dynamic'] = inputs['data:propeller:aerodynamics:CT:dynamic:estimated']
 
-
-
-# class PropellerCatalogue(om.Group):
-#
-#     def setup(self):
-#         self.add_subsystem("decision_tree", PropellerDecisionTree(), promotes=["*"])
-#         self.add_subsystem("override_var", PropellerVariablesOverride(), promotes=["*"])
-#
-
-# class PropellerVariablesOverride(om.ExplicitComponent):
-#
-#     def setup(self):
-#         self.add_input('catalogue:propeller:beta', units=None)
-#         self.add_input('catalogue:propeller:diameter', units='m')
-#         self.add_output('data:propeller:geometry:beta', val=np.nan, units=None)
-#         self.add_output('data:propeller:geometry:diameter', val=np.nan, units='m')
-#
-#     def setup_partials(self):
-#         # Finite difference all partials.
-#         self.declare_partials('*', '*', method='fd')
-#
-#     def compute(self, inputs, outputs):
-#         # Inputs
-#         beta = inputs['catalogue:propeller:beta']
-#         Dpro = inputs['catalogue:propeller:diameter']
-#
-#         # Outputs
-#         outputs['data:propeller:geometry:beta'] = beta
-#         outputs['data:propeller:geometry:diameter'] = Dpro

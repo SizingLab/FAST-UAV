@@ -9,7 +9,6 @@ import numpy as np
 
 path = './data/DecisionTrees/Batteries/'
 DF = pd.read_csv(path + 'Non-Dominated-Batteries.csv', sep=';')
-DF = DF[DF['TYPE'] != 'KOKAM']  # remove KOKAM batteries (not the same techno)
 
 
 class BatteryCatalogueSelection(om.Group):
@@ -91,23 +90,20 @@ class BatteryDecisionTree(om.ExplicitComponent):
 class ValueSetter(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)
+        self._str = ''
 
     def setup(self):
         if self.options["use_catalogue"]:  # discrete values from catalogues
-            self.add_input('data:battery:cell:number:catalogue', val=np.nan, units=None)
-            self.add_input('data:battery:voltage:catalogue', val=np.nan, units='V')
-            self.add_input('data:battery:capacity:catalogue', val=np.nan, units='A*s')
-            self.add_input('data:battery:current:max:catalogue', val=np.nan, units='A')
-            self.add_input('data:battery:mass:catalogue', val=np.nan, units='kg')
-            self.add_input('data:battery:cell:voltage:catalogue', val=np.nan, units='V')
+            self._str = ':catalogue'
         else:  # estimated values
-            self.add_input('data:battery:cell:number:estimated', val=np.nan, units=None)
-            self.add_input('data:battery:voltage:estimated', val=np.nan, units='V')
-            self.add_input('data:battery:capacity:estimated', val=np.nan, units='A*s')
-            self.add_input('data:battery:current:max:estimated', val=np.nan, units='A')
-            self.add_input('data:battery:mass:estimated', val=np.nan, units='kg')
-            self.add_input('data:battery:cell:voltage:estimated', val=np.nan, units='V')
-        # real values
+            self._str = ':estimated'
+        self.add_input('data:battery:cell:number'+self._str, val=np.nan, units=None)
+        self.add_input('data:battery:voltage'+self._str, val=np.nan, units='V')
+        self.add_input('data:battery:capacity'+self._str, val=np.nan, units='A*s')
+        self.add_input('data:battery:current:max'+self._str, val=np.nan, units='A')
+        self.add_input('data:battery:mass'+self._str, val=np.nan, units='kg')
+        self.add_input('data:battery:cell:voltage'+self._str, val=np.nan, units='V')
+        # 'real' values
         self.add_output('data:battery:cell:number', units=None)
         self.add_output('data:battery:voltage', units='V')
         self.add_output('data:battery:capacity', units='A*s')
@@ -116,33 +112,17 @@ class ValueSetter(om.ExplicitComponent):
         self.add_output('data:battery:cell:voltage', units='V')
 
     def setup_partials(self):
-        if self.options["use_catalogue"]:
-            self.declare_partials('data:battery:cell:number', 'data:battery:cell:number:catalogue', val=1.)
-            self.declare_partials('data:battery:voltage', 'data:battery:voltage:catalogue', val=1.)
-            self.declare_partials('data:battery:capacity', 'data:battery:capacity:catalogue', val=1.)
-            self.declare_partials('data:battery:current:max', 'data:battery:current:max:catalogue', val=1.)
-            self.declare_partials('data:battery:mass', 'data:battery:mass:catalogue', val=1.)
-            self.declare_partials('data:battery:cell:voltage', 'data:battery:cell:voltage:catalogue', val=1.)
-        else:
-            self.declare_partials('data:battery:cell:number', 'data:battery:cell:number:estimated', val=1.)
-            self.declare_partials('data:battery:voltage', 'data:battery:voltage:estimated', val=1.)
-            self.declare_partials('data:battery:capacity', 'data:battery:capacity:estimated', val=1.)
-            self.declare_partials('data:battery:current:max', 'data:battery:current:max:estimated', val=1.)
-            self.declare_partials('data:battery:mass', 'data:battery:mass:estimated', val=1.)
-            self.declare_partials('data:battery:cell:voltage', 'data:battery:cell:voltage:estimated', val=1.)
+        self.declare_partials('data:battery:cell:number', 'data:battery:cell:number'+self._str, val=1.)
+        self.declare_partials('data:battery:voltage', 'data:battery:voltage'+self._str, val=1.)
+        self.declare_partials('data:battery:capacity', 'data:battery:capacity'+self._str, val=1.)
+        self.declare_partials('data:battery:current:max', 'data:battery:current:max'+self._str, val=1.)
+        self.declare_partials('data:battery:mass', 'data:battery:mass'+self._str, val=1.)
+        self.declare_partials('data:battery:cell:voltage', 'data:battery:cell:voltage'+self._str, val=1.)
 
     def compute(self, inputs, outputs):
-        if self.options["use_catalogue"]:
-            outputs['data:battery:cell:number'] = inputs['data:battery:cell:number:catalogue']
-            outputs['data:battery:voltage'] = inputs['data:battery:voltage:catalogue']
-            outputs['data:battery:capacity'] = inputs['data:battery:capacity:catalogue']
-            outputs['data:battery:current:max'] = inputs['data:battery:current:max:catalogue']
-            outputs['data:battery:mass'] = inputs['data:battery:mass:catalogue']
-            outputs['data:battery:cell:voltage'] = inputs['data:battery:cell:voltage:catalogue']
-        else:
-            outputs['data:battery:cell:number'] = inputs['data:battery:cell:number:estimated']
-            outputs['data:battery:voltage'] = inputs['data:battery:voltage:estimated']
-            outputs['data:battery:capacity'] = inputs['data:battery:capacity:estimated']
-            outputs['data:battery:current:max'] = inputs['data:battery:current:max:estimated']
-            outputs['data:battery:mass'] = inputs['data:battery:mass:estimated']
-            outputs['data:battery:cell:voltage'] = inputs['data:battery:cell:voltage:estimated']
+        outputs['data:battery:cell:number'] = inputs['data:battery:cell:number'+self._str]
+        outputs['data:battery:voltage'] = inputs['data:battery:voltage'+self._str]
+        outputs['data:battery:capacity'] = inputs['data:battery:capacity'+self._str]
+        outputs['data:battery:current:max'] = inputs['data:battery:current:max'+self._str]
+        outputs['data:battery:mass'] = inputs['data:battery:mass'+self._str]
+        outputs['data:battery:cell:voltage'] = inputs['data:battery:cell:voltage'+self._str]

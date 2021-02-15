@@ -80,37 +80,27 @@ class ESCDecisionTree(om.ExplicitComponent):
 class ValueSetter(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)
+        self._str = ''
 
     def setup(self):
         if self.options["use_catalogue"]:  # discrete values from catalogues
-            self.add_input('data:ESC:voltage:catalogue', val=np.nan, units='V')
-            self.add_input('data:ESC:power:max:catalogue', val=np.nan, units='W')
-            self.add_input('data:ESC:mass:catalogue', val=np.nan, units='kg')
+            self._str = ':catalogue'
         else:  # estimated values
-            self.add_input('data:ESC:voltage:estimated', val=np.nan, units='V')
-            self.add_input('data:ESC:power:max:estimated', val=np.nan, units='W')
-            self.add_input('data:ESC:mass:estimated', val=np.nan, units='kg')
-        # real values
+            self._str = ':estimated'
+        self.add_input('data:ESC:voltage'+self._str, val=np.nan, units='V')
+        self.add_input('data:ESC:power:max'+self._str, val=np.nan, units='W')
+        self.add_input('data:ESC:mass'+self._str, val=np.nan, units='kg')
+        # 'real' values
         self.add_output('data:ESC:voltage', units='V')
         self.add_output('data:ESC:power:max', units='W')
         self.add_output('data:ESC:mass', units='kg')
 
     def setup_partials(self):
-        if self.options["use_catalogue"]:
-            self.declare_partials('data:ESC:power:max', 'data:ESC:power:max:catalogue', val=1.)
-            self.declare_partials('data:ESC:voltage', 'data:ESC:voltage:catalogue', val=1.)
-            self.declare_partials('data:ESC:mass', 'data:ESC:mass:catalogue', val=1.)
-        else:
-            self.declare_partials('data:ESC:power:max', 'data:ESC:power:max:estimated', val=1.)
-            self.declare_partials('data:ESC:voltage', 'data:ESC:voltage:estimated', val=1.)
-            self.declare_partials('data:ESC:mass', 'data:ESC:mass:estimated', val=1.)
+        self.declare_partials('data:ESC:power:max', 'data:ESC:power:max'+self._str, val=1.)
+        self.declare_partials('data:ESC:voltage', 'data:ESC:voltage'+self._str, val=1.)
+        self.declare_partials('data:ESC:mass', 'data:ESC:mass'+self._str, val=1.)
 
     def compute(self, inputs, outputs):
-        if self.options["use_catalogue"]:
-            outputs['data:ESC:power:max'] = inputs['data:ESC:power:max:catalogue']
-            outputs['data:ESC:voltage'] = inputs['data:ESC:voltage:catalogue']
-            outputs['data:ESC:mass'] = inputs['data:ESC:mass:catalogue']
-        else:
-            outputs['data:ESC:power:max'] = inputs['data:ESC:power:max:estimated']
-            outputs['data:ESC:voltage'] = inputs['data:ESC:voltage:estimated']
-            outputs['data:ESC:mass'] = inputs['data:ESC:mass:estimated']
+        outputs['data:ESC:power:max'] = inputs['data:ESC:power:max'+self._str]
+        outputs['data:ESC:voltage'] = inputs['data:ESC:voltage'+self._str]
+        outputs['data:ESC:mass'] = inputs['data:ESC:mass'+self._str]

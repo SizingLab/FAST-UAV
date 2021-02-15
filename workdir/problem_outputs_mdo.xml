@@ -81,7 +81,7 @@
       </settings>
       <torque>
         <climb units="N*m" is_input="False">0.416640415305931</climb>
-        <friction units="N*m" is_input="False">0.01061033<catalogue units="N*m" is_input="False">0.01061033</catalogue><estimated units="N*m" is_input="False">0.011731019438257256</estimated></friction>
+        <friction units="N*m" is_input="False">0.010610330000000001<catalogue units="N*m" is_input="False">0.010610330000000001</catalogue><estimated units="N*m" is_input="False">0.011731019438257256</estimated></friction>
         <hover units="N*m" is_input="False">0.31031175381802</hover>
         <max units="N*m" is_input="False">1.007981306<catalogue units="N*m" is_input="False">1.007981306</catalogue><estimated units="N*m" is_input="False">0.9420178240894626</estimated></max>
         <nominal units="N*m" is_input="False">1.007981306<catalogue units="N*m" is_input="False">1.007981306</catalogue><estimated units="N*m" is_input="False">0.77577938454505</estimated></nominal>
