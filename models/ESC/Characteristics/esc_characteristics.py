@@ -16,8 +16,8 @@ class ComputeESCCharacteristics(om.ExplicitComponent):
         self.add_input('data:motor:power:takeoff', val=np.nan, units='W')
         self.add_input('data:motor:voltage:takeoff', val=np.nan, units='V')
         self.add_input('data:battery:voltage', val=np.nan, units='V')
-        self.add_output('data:ESC:power:max', units='W')
-        self.add_output('data:ESC:voltage', units='V')
+        self.add_output('data:ESC:power:max:estimated', units='W')
+        self.add_output('data:ESC:voltage:estimated', units='V')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -36,5 +36,5 @@ class ComputeESCCharacteristics(om.ExplicitComponent):
         P_esc = k_ESC * (P_el_to * V_bat / Umot_to)  # [W] power electronic power max thrust
         V_esc = Vesc_ref * (P_esc / Pesc_ref) ** (1 / 3)  # [V] ESC voltage
 
-        outputs['data:ESC:power:max'] = P_esc
-        outputs['data:ESC:voltage'] = V_esc
+        outputs['data:ESC:power:max:estimated'] = P_esc
+        outputs['data:ESC:voltage:estimated'] = V_esc

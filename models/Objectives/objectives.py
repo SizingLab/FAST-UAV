@@ -10,14 +10,8 @@ class Objective(om.Group):
     Group containing the objective functions
     """
 
-    def initialize(self):
-        self.options.declare("use_gearbox", default=True, types=bool)
-        self.options.declare("use_catalogues", default=True, types=bool)
-
     def setup(self):
-        self.add_subsystem("define_objective", DefineObjectives(use_catalogues=self.options['use_catalogues'],
-                                                                use_gearbox=self.options['use_gearbox']),
-                           promotes=["*"])
+        self.add_subsystem("define_objective", DefineObjectives(), promotes=["*"])
 
 
 class DefineObjectives(om.ExplicitComponent):
@@ -26,23 +20,14 @@ class DefineObjectives(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("use_gearbox", default=True, types=bool)
-        self.options.declare("use_catalogues", default=True, types=bool)
+        self.options.declare("use_gearbox", default=False, types=bool)
 
     def setup(self):
-        if self.options["use_catalogues"]:
-            self.add_input('data:ESC:mass:catalogue', val=np.nan, units='kg')
-            self.add_input('data:motor:mass:catalogue', val=np.nan, units='kg')
-            self.add_input('data:battery:mass:catalogue', val=np.nan, units='kg')
-            self.add_input('data:battery:capacity:catalogue', val=np.nan, units='A*s')
-            self.add_input('data:battery:voltage:catalogue', val=np.nan, units='V')
-        else:
-            self.add_input('data:ESC:mass', val=np.nan, units='kg')
-            self.add_input('data:motor:mass', val=np.nan, units='kg')
-            self.add_input('data:battery:mass', val=np.nan, units='kg')
-            self.add_input('data:battery:capacity', val=np.nan, units='A*s')
-            self.add_input('data:battery:voltage', val=np.nan, units='V')
-
+        self.add_input('data:ESC:mass', val=np.nan, units='kg')
+        self.add_input('data:motor:mass', val=np.nan, units='kg')
+        self.add_input('data:battery:mass', val=np.nan, units='kg')
+        self.add_input('data:battery:capacity', val=np.nan, units='A*s')
+        self.add_input('data:battery:voltage', val=np.nan, units='V')
         self.add_input('data:propeller:mass', val=np.nan, units='kg')
         self.add_input('data:structure:frame:mass', val=np.nan, units='kg')
         self.add_input('data:structure:arms:mass', val=np.nan, units='kg')
@@ -68,24 +53,16 @@ class DefineObjectives(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        if self.options["use_catalogues"]:
-            Mmot = inputs['data:motor:mass:catalogue']
-            Mesc = inputs['data:ESC:mass:catalogue']
-            Mbat = inputs['data:battery:mass:catalogue']
-            C_bat = inputs['data:battery:capacity:catalogue']
-            V_bat = inputs['data:battery:voltage:catalogue']
-        else:
-            Mmot = inputs['data:motor:mass']
-            Mesc = inputs['data:ESC:mass']
-            Mbat = inputs['data:battery:mass']
-            C_bat = inputs['data:battery:capacity']
-            V_bat = inputs['data:battery:voltage']
-
         if self.options["use_gearbox"]:
             Mgear = inputs['data:gearbox:mass']
         else:
             Mgear = 0
 
+        Mmot = inputs['data:motor:mass']
+        Mesc = inputs['data:ESC:mass']
+        Mbat = inputs['data:battery:mass']
+        C_bat = inputs['data:battery:capacity']
+        V_bat = inputs['data:battery:voltage']
         Mpro = inputs['data:propeller:mass']
         Npro = inputs['data:propeller:prop_number']
         M_load = inputs['data:payload:mass']

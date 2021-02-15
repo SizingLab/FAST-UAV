@@ -13,5 +13,3 @@ class MissionsMR(om.Group):
 
     def setup(self):
         self.add_subsystem("sizing_scenarios", SizingScenarios(), promotes=["*"])
-        #self.add_subsystem("objective", WeightObjective(), promotes=["*"])
-        #self.add_subsystem("constraints", Constraints(), promotes=["*"])

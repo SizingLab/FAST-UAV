@@ -33,6 +33,11 @@
         <k_Mb is_input="True">1.0</k_Mb>
         <k_VB is_input="True">4.0</k_VB>
       </settings>
+      <cell>
+        <voltage>
+          <estimated units="V" is_input="True">3.7</estimated>
+        </voltage>
+      </cell>
     </battery>
     <payload>
       <mass units="kg" is_input="True">4.0</mass>
@@ -41,19 +46,21 @@
       </settings>
     </payload>
     <propeller>
+      <advance_ratio is_input="True">0.2</advance_ratio>
       <prop_number_per_arm is_input="True">1.0</prop_number_per_arm>
-      <geometry>
-        <beta is_input="True">0.3</beta>
-      </geometry>
       <reference>
         <diameter units="m" is_input="True">0.2794</diameter>
         <mass units="kg" is_input="True">0.014999</mass>
         <nD_max units="m/s" is_input="True">44.45</nD_max>
       </reference>
       <settings>
-        <advance_ratio is_input="True">0.2</advance_ratio>
         <k_ND is_input="True">1.0</k_ND>
       </settings>
+      <geometry>
+        <beta>
+          <estimated is_input="True">0.3</estimated>
+        </beta>
+      </geometry>
     </propeller>
     <motor>
       <reference>
@@ -76,6 +83,7 @@
         <C_D is_input="True">1.3</C_D>
       </aerodynamics>
       <arms>
+        <D_ratio_arms is_input="True">0.9</D_ratio_arms>
         <arm_number is_input="True">8.0</arm_number>
         <material>
           <density units="kg/m**3" is_input="True">1700.0</density>
@@ -85,9 +93,6 @@
       <geometry>
         <top_surface units="m**2" is_input="True">0.09</top_surface>
       </geometry>
-      <settings>
-        <D_ratio_arms is_input="True">0.5</D_ratio_arms>
-      </settings>
       <reference>
         <arms>
           <mass units="kg" is_input="True">0.14</mass>

@@ -8,16 +8,10 @@ class BatteryConstraints(om.ExplicitComponent):
     """
     Constraints definition of the Battery component
     """
-    def initialize(self):
-        self.options.declare("use_catalogues", default=True, types=bool)
 
     def setup(self):
-        if self.options["use_catalogues"]:
-            self.add_input('data:battery:voltage:catalogue', val=np.nan, units='V')
-            self.add_input('data:battery:current:max:catalogue', val=np.nan, units='A')
-        else:
-            self.add_input('data:battery:voltage', val=np.nan, units='V')
-            self.add_input('data:battery:current:max', val=np.nan, units='A')
+        self.add_input('data:battery:voltage', val=np.nan, units='V')
+        self.add_input('data:battery:current:max', val=np.nan, units='A')
 
         self.add_input('data:motor:voltage:takeoff', val=np.nan, units='V')
         self.add_input('data:motor:voltage:climb', val=np.nan, units='V')
@@ -35,12 +29,8 @@ class BatteryConstraints(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        if self.options["use_catalogues"]:
-            V_bat = inputs['data:battery:voltage:catalogue']
-            Imax = inputs['data:battery:current:max:catalogue']
-        else:
-            V_bat = inputs['data:battery:voltage']
-            Imax = inputs['data:battery:current:max']
+        V_bat = inputs['data:battery:voltage']
+        Imax = inputs['data:battery:current:max']
 
         Umot_to = inputs['data:motor:voltage:takeoff']
         Umot_cl = inputs['data:motor:voltage:climb']
@@ -58,3 +48,4 @@ class BatteryConstraints(om.ExplicitComponent):
         outputs['optimization:constraints:battery:voltage:climb'] = battery_con2
         outputs['optimization:constraints:battery:power:takeoff'] = battery_con3
         outputs['optimization:constraints:battery:power:climb'] = battery_con4
+

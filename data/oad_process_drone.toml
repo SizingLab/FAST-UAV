@@ -23,23 +23,21 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
         id = "multirotor.missions"
     [model.propeller]
         id = "multirotor.propeller"
-        use_catalogues = true
+        use_catalogue = true
     [model.motor]
         id = "multirotor.motor"
-        use_catalogues = true
+        use_catalogue = true
         use_gearbox = false
     [model.battery]
         id = "energy.battery"
-        use_catalogues = true
+        use_catalogue = true
     [model.esc]
         id = "multirotor.esc"
-        use_catalogues = true
+        use_catalogue = true
     [model.structure]
         id = "multirotor.structure"
     [model.objective]
         id = "multirotor.objective"
-        use_catalogues = true
-        use_gearbox = false
 
 [optimization]  # This section is needed only if optimization process is run
 [[optimization.design_var]]
@@ -50,20 +48,20 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
 [[optimization.design_var]]
         name = "data:battery:settings:k_Mb" # over sizing coefficient on the battery load mass
         upper = 60.0  
-        lower = 0.01
+        lower = 0.01    
 
 [[optimization.design_var]]
-        name = "data:structure:settings:D_ratio_arms" # aspect ratio e/c (thickness/side) for the beam of the frame
+        name = "data:structure:arms:D_ratio_arms" # aspect ratio e/c (thickness/side) for the beam of the frame
         lower = 0.05
-        upper = 0.99      
+        upper = 0.99  
 
 [[optimization.design_var]]
-        name = "data:propeller:geometry:beta" # pitch/diameter ratio of the propeller
+        name = "data:propeller:geometry:beta:estimated" # pitch/diameter ratio of the propeller
         lower = 0.3
         upper = 0.6
 
 [[optimization.design_var]]
-        name = "data:propeller:settings:advance_ratio" # advance ratio
+        name = "data:propeller:advance_ratio" # advance ratio
         upper = 0.5
         lower = 0.01
 

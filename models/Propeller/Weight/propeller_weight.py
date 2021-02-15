@@ -9,14 +9,8 @@ class ComputePropellerWeightMR(om.ExplicitComponent):
     Weight calculation of a Multi-Rotor Propeller
     """
 
-    def initialize(self):
-        self.options.declare("use_catalogues", default=True, types=bool)
-
     def setup(self):
-        if self.options["use_catalogues"]:
-            self.add_input('data:propeller:geometry:diameter:catalogue', val=np.nan, units='m')
-        else:
-            self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
+        self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
         self.add_input('data:propeller:reference:diameter', val=np.nan, units='m')
         self.add_input('data:propeller:reference:mass', val=np.nan, units='kg')
         self.add_output('data:propeller:mass', units='kg')
@@ -26,10 +20,7 @@ class ComputePropellerWeightMR(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        if self.options["use_catalogues"]:
-            Dpro = inputs['data:propeller:geometry:diameter:catalogue']
-        else:
-            Dpro = inputs['data:propeller:geometry:diameter']
+        Dpro = inputs['data:propeller:geometry:diameter']
         Dpro_ref = inputs['data:propeller:reference:diameter']
         Mpro_ref = inputs['data:propeller:reference:mass']
 

@@ -10,22 +10,15 @@ class ComputeMotorPerfo(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("use_catalogues", default=True, types=bool)
         self.options.declare("use_gearbox", default=True, types=bool)
 
     def setup(self):
         if self.options["use_gearbox"]:
-            self.add_input('optimization:settings:gearbox_reduction_ratio', val=np.nan, units=None)
+            self.add_input('data:gearbox:N_red', val=1.0, units=None)
 
-        if self.options["use_catalogues"]:
-            self.add_input('data:motor:torque:friction:catalogue', val=np.nan, units='N*m')
-            self.add_input('data:motor:resistance:catalogue', val=np.nan, units='V/A')
-            self.add_input('data:motor:torque_coefficient:catalogue', val=np.nan, units='N*m/A')
-        else:
-            self.add_input('data:motor:torque:friction', units='N*m')
-            self.add_input('data:motor:resistance', units='V/A')
-            self.add_input('data:motor:torque_coefficient', units='N*m/A')
-
+        self.add_input('data:motor:torque:friction', units='N*m')
+        self.add_input('data:motor:resistance', units='V/A')
+        self.add_input('data:motor:torque_coefficient', units='N*m/A')
         self.add_input('data:propeller:speed:takeoff', val=np.nan, units='rad/s')
         self.add_input('data:propeller:speed:hover', val=np.nan, units='rad/s')
         self.add_input('data:propeller:speed:climb', val=np.nan, units='rad/s')
@@ -51,19 +44,13 @@ class ComputeMotorPerfo(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_gearbox"]:
-            Nred = inputs['optimization:settings:gearbox_reduction_ratio']
+            Nred = inputs['data:gearbox:N_red']
         else:
             Nred = 1
 
-        if self.options["use_catalogues"]:
-            Tfmot = inputs['data:motor:torque:friction:catalogue']
-            Rmot = inputs['data:motor:resistance:catalogue']
-            Ktmot = inputs['data:motor:torque_coefficient:catalogue']
-        else:
-            Tfmot = inputs['data:motor:torque:friction']
-            Rmot = inputs['data:motor:resistance']
-            Ktmot = inputs['data:motor:torque_coefficient']
-
+        Tfmot = inputs['data:motor:torque:friction']
+        Rmot = inputs['data:motor:resistance']
+        Ktmot = inputs['data:motor:torque_coefficient']
         Wpro_to = inputs['data:propeller:speed:takeoff']
         Wpro_hover = inputs['data:propeller:speed:hover']
         Wpro_cl = inputs['data:propeller:speed:climb']
@@ -71,7 +58,6 @@ class ComputeMotorPerfo(om.ExplicitComponent):
         Qpro_hover = inputs['data:propeller:torque:hover']
         Qpro_cl = inputs['data:propeller:torque:climb']
 
-        
         # Motor speeds and torques:
         W_hover_motor = Wpro_hover * Nred  # [rad/s] Nominal motor speed with reduction
         W_cl_motor = Wpro_cl * Nred  # [rad/s] Motor Climb speed with reduction

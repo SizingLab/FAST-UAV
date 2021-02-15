@@ -8,14 +8,34 @@ import pandas as pd
 import numpy as np
 
 
-path = './data/DecisionTrees/Motors/'
-df = pd.read_csv(path + 'Non-Dominated-Motors.csv', sep=';')
+PATH = './data/DecisionTrees/Motors/'
+DF = pd.read_csv(PATH + 'Non-Dominated-Motors.csv', sep=';')
+
+
+class MotorCatalogueSelection(om.Group):
+    """
+    Get motor parameters from catalogue if asked by the user.
+    Otherwise, keep going with estimated parameters.
+    """
+    def initialize(self):
+        self.options.declare("use_catalogue", default=True, types=bool)
+
+    def setup(self):
+        # Add decision tree regressor for catalogue selection if specified by user ('use_catalogue' = true)
+        # And set parameters to 'estimated' or 'catalogue' for future use
+        if self.options["use_catalogue"]:
+            self.add_subsystem("getCatalogueValues", MotorDecisionTree(), promotes=["*"])
+            self.add_subsystem("keepCatalogueValues", ValueSetter(use_catalogue=self.options['use_catalogue']),
+                               promotes=["*"])
+        else:
+            self.add_subsystem("keepEstimatedValues", ValueSetter(use_catalogue=self.options['use_catalogue']),
+                               promotes=["*"])
 
 
 @ValidityDomainChecker(
     {
-        'data:motor:torque:max': (df['Tmax_Nm'].min(), df['Tmax_Nm'].max()),
-        'data:motor:torque_coefficient': (df['Kt_Nm_A'].min(), df['Kt_Nm_A'].max()),
+        'data:motor:torque:max:estimated': (DF['Tmax_Nm'].min(), DF['Tmax_Nm'].max()),
+        'data:motor:torque_coefficient:estimated': (DF['Kt_Nm_A'].min(), DF['Kt_Nm_A'].max()),
     },
 )
 class MotorDecisionTree(om.ExplicitComponent):
@@ -26,20 +46,19 @@ class MotorDecisionTree(om.ExplicitComponent):
         """
         Tmax_selection = 'next'
         Kt_selection = 'average'
-        self._DT = DecisionTrees(df[['Tmax_Nm', 'Kt_Nm_A']].values,
-                                 df[['Tnom_Nm', 'Kt_Nm_A', 'r_omn', 'Tmax_Nm', 'weight_g', 'Cf_Nm']].values,
+        self._DT = DecisionTrees(DF[['Tmax_Nm', 'Kt_Nm_A']].values,
+                                 DF[['Tnom_Nm', 'Kt_Nm_A', 'r_omn', 'Tmax_Nm', 'weight_g', 'Cf_Nm']].values,
                                  [Tmax_selection, Kt_selection]).DT_handling()
 
     def setup(self):
-        self.add_input('data:motor:torque:max', val=np.nan, units='N*m')
-        self.add_input('data:motor:torque_coefficient', val=np.nan, units='N*m/A')
+        self.add_input('data:motor:torque:max:estimated', val=np.nan, units='N*m')
+        self.add_input('data:motor:torque_coefficient:estimated', val=np.nan, units='N*m/A')
         self.add_output('data:motor:torque:max:catalogue', units='N*m')
         self.add_output('data:motor:torque_coefficient:catalogue', units='N*m/A')
         self.add_output('data:motor:torque:nominal:catalogue', units='N*m')
         self.add_output('data:motor:torque:friction:catalogue', units='N*m')
         self.add_output('data:motor:resistance:catalogue', units='V/A')
         self.add_output('data:motor:mass:catalogue', units='kg')
-
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -50,8 +69,8 @@ class MotorDecisionTree(om.ExplicitComponent):
         This method evaluates the decision tree
         """
         # Continuous parameters
-        Tmot_max = inputs['data:motor:torque:max']
-        Ktmot = inputs['data:motor:torque_coefficient']
+        Tmot_max = inputs['data:motor:torque:max:estimated']
+        Ktmot = inputs['data:motor:torque_coefficient:estimated']
 
         # Discrete parameters
         y_pred = self._DT.predict([np.hstack((Tmot_max, Ktmot))])
@@ -69,3 +88,63 @@ class MotorDecisionTree(om.ExplicitComponent):
         outputs['data:motor:torque:friction:catalogue'] = Tfmot
         outputs['data:motor:resistance:catalogue'] = Rmot
         outputs['data:motor:mass:catalogue'] = Mmot
+
+
+class ValueSetter(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare("use_catalogue", default=True, types=bool)
+
+    def setup(self):
+        if self.options["use_catalogue"]:  # discrete values from catalogues
+            self.add_input('data:motor:torque:max:catalogue', val=np.nan, units='N*m')
+            self.add_input('data:motor:torque_coefficient:catalogue', val=np.nan, units='N*m/A')
+            self.add_input('data:motor:torque:nominal:catalogue', val=np.nan, units='N*m')
+            self.add_input('data:motor:torque:friction:catalogue', val=np.nan, units='N*m')
+            self.add_input('data:motor:resistance:catalogue', val=np.nan, units='V/A')
+            self.add_input('data:motor:mass:catalogue', val=np.nan, units='kg')
+        else:  # estimated values
+            self.add_input('data:motor:torque:max:estimated', val=np.nan, units='N*m')
+            self.add_input('data:motor:torque_coefficient:estimated', val=np.nan, units='N*m/A')
+            self.add_input('data:motor:torque:nominal:estimated', val=np.nan, units='N*m')
+            self.add_input('data:motor:torque:friction:estimated', val=np.nan, units='N*m')
+            self.add_input('data:motor:resistance:estimated', val=np.nan, units='V/A')
+            self.add_input('data:motor:mass:estimated', val=np.nan, units='kg')
+        # real values
+        self.add_output('data:motor:torque:max', units='N*m')
+        self.add_output('data:motor:torque_coefficient', units='N*m/A')
+        self.add_output('data:motor:torque:nominal', units='N*m')
+        self.add_output('data:motor:torque:friction', units='N*m')
+        self.add_output('data:motor:resistance', units='V/A')
+        self.add_output('data:motor:mass', units='kg')
+
+    def setup_partials(self):
+        if self.options["use_catalogue"]:
+            self.declare_partials('data:motor:torque:max', 'data:motor:torque:max:catalogue', val=1.)
+            self.declare_partials('data:motor:torque_coefficient', 'data:motor:torque_coefficient:catalogue', val=1.)
+            self.declare_partials('data:motor:torque:nominal', 'data:motor:torque:nominal:catalogue', val=1.)
+            self.declare_partials('data:motor:torque:friction', 'data:motor:torque:friction:catalogue', val=1.)
+            self.declare_partials('data:motor:resistance', 'data:motor:resistance:catalogue', val=1.)
+            self.declare_partials('data:motor:mass', 'data:motor:mass:catalogue', val=1.)
+        else:
+            self.declare_partials('data:motor:torque:max', 'data:motor:torque:max:estimated', val=1.)
+            self.declare_partials('data:motor:torque_coefficient', 'data:motor:torque_coefficient:estimated', val=1.)
+            self.declare_partials('data:motor:torque:nominal', 'data:motor:torque:nominal:estimated', val=1.)
+            self.declare_partials('data:motor:torque:friction', 'data:motor:torque:friction:estimated', val=1.)
+            self.declare_partials('data:motor:resistance', 'data:motor:resistance:estimated', val=1.)
+            self.declare_partials('data:motor:mass', 'data:motor:mass:estimated', val=1.)
+
+    def compute(self, inputs, outputs):
+        if self.options["use_catalogue"]:
+            outputs['data:motor:torque:max'] = inputs['data:motor:torque:max:catalogue']
+            outputs['data:motor:torque_coefficient'] = inputs['data:motor:torque_coefficient:catalogue']
+            outputs['data:motor:torque:nominal'] = inputs['data:motor:torque:nominal:catalogue']
+            outputs['data:motor:torque:friction'] = inputs['data:motor:torque:friction:catalogue']
+            outputs['data:motor:resistance'] = inputs['data:motor:resistance:catalogue']
+            outputs['data:motor:mass'] = inputs['data:motor:mass:catalogue']
+        else:
+            outputs['data:motor:torque:max'] = inputs['data:motor:torque:max:estimated']
+            outputs['data:motor:torque_coefficient'] = inputs['data:motor:torque_coefficient:estimated']
+            outputs['data:motor:torque:nominal'] = inputs['data:motor:torque:nominal:estimated']
+            outputs['data:motor:torque:friction'] = inputs['data:motor:torque:friction:estimated']
+            outputs['data:motor:resistance'] = inputs['data:motor:resistance:estimated']
+            outputs['data:motor:mass'] = inputs['data:motor:mass:estimated']

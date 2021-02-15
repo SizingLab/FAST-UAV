@@ -8,30 +8,20 @@ class MotorConstraints(om.ExplicitComponent):
     """
     Constraints definition of the motor component
     """
-    def initialize(self):
-        self.options.declare("use_catalogues", default=True, types=bool)
 
     def setup(self):
-        if self.options["use_catalogues"]:
-            self.add_input('data:motor:torque:max:catalogue', val=np.nan, units='N*m')
-        else:
-            self.add_input('data:motor:torque:max', val=np.nan, units='N*m')
-
+        self.add_input('data:motor:torque:max', val=np.nan, units='N*m')
         self.add_input('data:motor:torque:takeoff', val=np.nan, units='N*m')
         self.add_input('data:motor:torque:climb', val=np.nan, units='N*m')
         self.add_output('optimization:constraints:motor:torque:takeoff', units=None)
         self.add_output('optimization:constraints:motor:torque:climb', units=None)
-
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        if self.options["use_catalogues"]:
-            Tmot_max = inputs['data:motor:torque:max:catalogue']
-        else:
-            Tmot_max = inputs['data:motor:torque:max']
+        Tmot_max = inputs['data:motor:torque:max']
         Tmot_to = inputs['data:motor:torque:takeoff']
         Tmot_cl = inputs['data:motor:torque:climb']
 

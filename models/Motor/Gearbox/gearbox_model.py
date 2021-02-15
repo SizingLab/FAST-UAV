@@ -11,7 +11,7 @@ class ComputeGearboxCharacteristics(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('optimization:settings:gearbox_reduction_ratio', val=np.nan, units=None)
+        self.add_input('data:gearbox:N_red', val=np.nan, units=None)
         self.add_input('data:motor:torque:hover', val=np.nan, units='N*m')
         self.add_output('data:gearbox:mass', units='kg')
         self.add_output('data:gearbox:gear_diameter', units='m')
@@ -23,7 +23,7 @@ class ComputeGearboxCharacteristics(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        Nred = inputs['optimization:settings:gearbox_reduction_ratio']
+        Nred = inputs['data:gearbox:N_red']
         Tmot_hover = inputs['data:motor:torque:hover']
 
         mg1=0.0309*Nred**2+0.1944*Nred+0.6389       # Ratio input pinion to mating gear

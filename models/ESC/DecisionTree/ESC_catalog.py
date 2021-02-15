@@ -8,13 +8,33 @@ import pandas as pd
 import numpy as np
 
 
-path = './data/DecisionTrees/ESC/'
-df = pd.read_csv(path + 'Non-Dominated-ESC.csv', sep=';')
+PATH = './data/DecisionTrees/ESC/'
+DF = pd.read_csv(PATH + 'Non-Dominated-ESC.csv', sep=';')
+
+
+class ESCCatalogueSelection(om.Group):
+    """
+    Get ESC parameters from catalogue if asked by the user.
+    Otherwise, keep going with estimated parameters.
+    """
+    def initialize(self):
+        self.options.declare("use_catalogue", default=True, types=bool)
+
+    def setup(self):
+        # Add decision tree regressor for catalogue selection if specified by user ('use_catalogue' = true)
+        # And set parameters to 'estimated' or 'catalogue' for future use
+        if self.options["use_catalogue"]:
+            self.add_subsystem("getCatalogueValues", ESCDecisionTree(), promotes=["*"])
+            self.add_subsystem("keepCatalogueValues", ValueSetter(use_catalogue=self.options['use_catalogue']),
+                               promotes=["*"])
+        else:
+            self.add_subsystem("keepEstimatedValues", ValueSetter(use_catalogue=self.options['use_catalogue']),
+                               promotes=["*"])
 
 
 @ValidityDomainChecker(
     {
-        'data:ESC:voltage': (df['Vmax_V'].min(), df['Vmax_V'].max()),
+        'data:ESC:voltage:estimated': (DF['Vmax_V'].min(), DF['Vmax_V'].max()),
     },
 )
 class ESCDecisionTree(om.ExplicitComponent):
@@ -24,12 +44,12 @@ class ESCDecisionTree(om.ExplicitComponent):
         Creates and trains the ESC Decision Tree
         """
         Vmax_selection = 'next'
-        self._DT = DecisionTrees(df[['Vmax_V']],
-                                 df[['Pmax_W', 'Vmax_V', 'Weight_g']], [Vmax_selection])\
+        self._DT = DecisionTrees(DF[['Vmax_V']],
+                                 DF[['Pmax_W', 'Vmax_V', 'Weight_g']], [Vmax_selection])\
             .DT_handling()
 
     def setup(self):
-        self.add_input('data:ESC:voltage', val=np.nan, units='V')
+        self.add_input('data:ESC:voltage:estimated', val=np.nan, units='V')
         self.add_output('data:ESC:voltage:catalogue', units='V')
         self.add_output('data:ESC:power:max:catalogue', units='W')
         self.add_output('data:ESC:mass:catalogue', units='kg')
@@ -43,7 +63,7 @@ class ESCDecisionTree(om.ExplicitComponent):
         This method evaluates the decision tree
         """
         # Continuous parameters
-        V_esc = inputs['data:ESC:voltage']
+        V_esc = inputs['data:ESC:voltage:estimated']
 
         # Discrete parameters
         y_pred = self._DT.predict([np.hstack(V_esc)])
@@ -55,3 +75,42 @@ class ESCDecisionTree(om.ExplicitComponent):
         outputs['data:ESC:power:max:catalogue'] = P_esc
         outputs['data:ESC:voltage:catalogue'] = V_esc
         outputs['data:ESC:mass:catalogue'] = M_esc
+
+
+class ValueSetter(om.ExplicitComponent):
+    def initialize(self):
+        self.options.declare("use_catalogue", default=True, types=bool)
+
+    def setup(self):
+        if self.options["use_catalogue"]:  # discrete values from catalogues
+            self.add_input('data:ESC:voltage:catalogue', val=np.nan, units='V')
+            self.add_input('data:ESC:power:max:catalogue', val=np.nan, units='W')
+            self.add_input('data:ESC:mass:catalogue', val=np.nan, units='kg')
+        else:  # estimated values
+            self.add_input('data:ESC:voltage:estimated', val=np.nan, units='V')
+            self.add_input('data:ESC:power:max:estimated', val=np.nan, units='W')
+            self.add_input('data:ESC:mass:estimated', val=np.nan, units='kg')
+        # real values
+        self.add_output('data:ESC:voltage', units='V')
+        self.add_output('data:ESC:power:max', units='W')
+        self.add_output('data:ESC:mass', units='kg')
+
+    def setup_partials(self):
+        if self.options["use_catalogue"]:
+            self.declare_partials('data:ESC:power:max', 'data:ESC:power:max:catalogue', val=1.)
+            self.declare_partials('data:ESC:voltage', 'data:ESC:voltage:catalogue', val=1.)
+            self.declare_partials('data:ESC:mass', 'data:ESC:mass:catalogue', val=1.)
+        else:
+            self.declare_partials('data:ESC:power:max', 'data:ESC:power:max:estimated', val=1.)
+            self.declare_partials('data:ESC:voltage', 'data:ESC:voltage:estimated', val=1.)
+            self.declare_partials('data:ESC:mass', 'data:ESC:mass:estimated', val=1.)
+
+    def compute(self, inputs, outputs):
+        if self.options["use_catalogue"]:
+            outputs['data:ESC:power:max'] = inputs['data:ESC:power:max:catalogue']
+            outputs['data:ESC:voltage'] = inputs['data:ESC:voltage:catalogue']
+            outputs['data:ESC:mass'] = inputs['data:ESC:mass:catalogue']
+        else:
+            outputs['data:ESC:power:max'] = inputs['data:ESC:power:max:estimated']
+            outputs['data:ESC:voltage'] = inputs['data:ESC:voltage:estimated']
+            outputs['data:ESC:mass'] = inputs['data:ESC:mass:estimated']

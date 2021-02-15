@@ -12,7 +12,7 @@ class ComputeBatteryWeight(om.ExplicitComponent):
     def setup(self):
         self.add_input('data:payload:mass', val=np.nan, units='kg')
         self.add_input('data:battery:settings:k_Mb', val=np.nan)
-        self.add_output('data:battery:mass', units='kg')
+        self.add_output('data:battery:mass:estimated', units='kg')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -24,4 +24,4 @@ class ComputeBatteryWeight(om.ExplicitComponent):
 
         Mbat = k_Mb * M_load  # Battery mass
 
-        outputs['data:battery:mass'] = Mbat
+        outputs['data:battery:mass:estimated'] = Mbat

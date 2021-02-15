@@ -16,7 +16,7 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
 
     def setup(self):
         if self.options["use_gearbox"]:
-            self.add_input('optimization:settings:gearbox_reduction_ratio', val=np.nan, units=None)
+            self.add_input('data:gearbox:N_red', val=np.nan, units=None)
 
         self.add_input('data:propeller:speed:takeoff', val=np.nan, units='rad/s')
         self.add_input('data:propeller:torque:hover', val=np.nan, units='N*m')
@@ -29,11 +29,11 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         self.add_input('data:motor:reference:torque:friction', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:resistance', val=np.nan, units='V/A')
         self.add_input('data:motor:reference:torque_coefficient', val=np.nan, units='N*m/A')
-        self.add_output('data:motor:torque:nominal', units='N*m')
-        self.add_output('data:motor:torque:max', units='N*m')
-        self.add_output('data:motor:torque:friction', units='N*m')
-        self.add_output('data:motor:resistance', units='V/A')
-        self.add_output('data:motor:torque_coefficient', units='N*m/A')
+        self.add_output('data:motor:torque:nominal:estimated', units='N*m')
+        self.add_output('data:motor:torque:max:estimated', units='N*m')
+        self.add_output('data:motor:torque:friction:estimated', units='N*m')
+        self.add_output('data:motor:resistance:estimated', units='V/A')
+        self.add_output('data:motor:torque_coefficient:estimated', units='N*m/A')
         self.add_output('data:battery:voltage:guess', units='V')
 
     def setup_partials(self):
@@ -42,7 +42,7 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         if self.options["use_gearbox"]:
-            Nred = inputs['optimization:settings:gearbox_reduction_ratio']
+            Nred = inputs['data:gearbox:N_red']
 
         Wpro_to = inputs['data:propeller:speed:takeoff']
         Qpro_hover = inputs['data:propeller:torque:hover']
@@ -73,11 +73,11 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         Rmot = Rmot_ref * (Tmot / Tmot_ref) ** (-5 / 3.5) * (Ktmot / Ktmot_ref) ** 2  # [Ohm] motor resistance
         Tfmot = Tfmot_ref * (Tmot / Tmot_ref) ** (3 / 3.5)  # [N.m] Friction torque
 
-        outputs['data:motor:torque:nominal'] = Tmot
-        outputs['data:motor:torque:max'] = Tmot_max
-        outputs['data:motor:torque:friction'] = Tfmot
-        outputs['data:motor:resistance'] = Rmot
-        outputs['data:motor:torque_coefficient'] = Ktmot
+        outputs['data:motor:torque:nominal:estimated'] = Tmot
+        outputs['data:motor:torque:max:estimated'] = Tmot_max
+        outputs['data:motor:torque:friction:estimated'] = Tfmot
+        outputs['data:motor:resistance:estimated'] = Rmot
+        outputs['data:motor:torque_coefficient:estimated'] = Ktmot
         outputs['data:battery:voltage:guess'] = V_bat_guess
 
 

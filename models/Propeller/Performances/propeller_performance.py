@@ -9,23 +9,12 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
     Characteristics calculation of a Multi-Rotor Propeller
     """
 
-    def initialize(self):
-        self.options.declare("use_catalogues", default=True, types=bool)
-
     def setup(self):
-        if self.options["use_catalogues"]:
-            self.add_input('data:propeller:geometry:diameter:catalogue', val=np.nan, units='m')
-            self.add_input('data:propeller:aerodynamics:CT:static:catalogue', val=np.nan, units=None)
-            self.add_input('data:propeller:aerodynamics:CP:static:catalogue', val=np.nan, units=None)
-            self.add_input('data:propeller:aerodynamics:CT:dynamic:catalogue', val=np.nan, units=None)
-            self.add_input('data:propeller:aerodynamics:CP:dynamic:catalogue', val=np.nan, units=None)
-        else:
-            self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
-            self.add_input('data:propeller:aerodynamics:CT:static', val=np.nan, units=None)
-            self.add_input('data:propeller:aerodynamics:CP:static', val=np.nan, units=None)
-            self.add_input('data:propeller:aerodynamics:CT:dynamic', val=np.nan, units=None)
-            self.add_input('data:propeller:aerodynamics:CP:dynamic', val=np.nan, units=None)
-
+        self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
+        self.add_input('data:propeller:aerodynamics:CT:static', val=np.nan, units=None)
+        self.add_input('data:propeller:aerodynamics:CP:static', val=np.nan, units=None)
+        self.add_input('data:propeller:aerodynamics:CT:dynamic', val=np.nan, units=None)
+        self.add_input('data:propeller:aerodynamics:CP:dynamic', val=np.nan, units=None)
         self.add_input('data:propeller:thrust:climb', val=np.nan, units='N')
         self.add_input('data:propeller:thrust:hover', val=np.nan, units='N')
         self.add_input('mission:rho_air', val=np.nan, units='kg/m**3')
@@ -46,19 +35,11 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        if self.options["use_catalogues"]:
-            Dpro = inputs['data:propeller:geometry:diameter:catalogue']
-            C_t_sta = inputs['data:propeller:aerodynamics:CT:static:catalogue']
-            C_t_dyn = inputs['data:propeller:aerodynamics:CT:dynamic:catalogue']
-            C_p_sta = inputs['data:propeller:aerodynamics:CP:static:catalogue']
-            C_p_dyn = inputs['data:propeller:aerodynamics:CP:dynamic:catalogue']
-        else:
-            Dpro = inputs['data:propeller:geometry:diameter']
-            C_t_sta = inputs['data:propeller:aerodynamics:CT:static']
-            C_t_dyn = inputs['data:propeller:aerodynamics:CT:dynamic']
-            C_p_sta = inputs['data:propeller:aerodynamics:CP:static']
-            C_p_dyn = inputs['data:propeller:aerodynamics:CP:dynamic']
-
+        Dpro = inputs['data:propeller:geometry:diameter']
+        C_t_sta = inputs['data:propeller:aerodynamics:CT:static']
+        C_t_dyn = inputs['data:propeller:aerodynamics:CT:dynamic']
+        C_p_sta = inputs['data:propeller:aerodynamics:CP:static']
+        C_p_dyn = inputs['data:propeller:aerodynamics:CP:dynamic']
         F_pro_cl = inputs['data:propeller:thrust:climb']
         F_pro_hov = inputs['data:propeller:thrust:hover']
         rho_air = inputs['mission:rho_air']

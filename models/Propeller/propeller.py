@@ -8,7 +8,7 @@ from models.Propeller.Geometry.propeller_geometry import ComputePropellerGeometr
 from models.Propeller.Performances.propeller_performance import ComputePropellerPerfoMR
 from models.Propeller.Weight.propeller_weight import ComputePropellerWeightMR
 from models.Propeller.Constraints.propeller_constraints import PropellerConstraintsMR
-from models.Propeller.DecisionTree.propeller_catalog import PropellerDecisionTree
+from models.Propeller.DecisionTree.propeller_catalog import PropellerCatalogueSelection
 
 
 class PropellerMR(om.Group):
@@ -17,21 +17,16 @@ class PropellerMR(om.Group):
     """
 
     def initialize(self):
-        self.options.declare("use_catalogues", default=True, types=bool)
+        self.options.declare("use_catalogue", default=True, types=bool)
 
     def setup(self):
         self.add_subsystem("aerodynamics", ComputePropellerAeroMR(), promotes=["*"])
         self.add_subsystem("geometry", ComputePropellerGeometryMR(), promotes=["*"])
-
-        # Add decision tree regressor for catalogue selection if specified by user ('use_catalogues' = true)
-        if self.options["use_catalogues"]:
-            self.add_subsystem("catalogue_selection", PropellerDecisionTree(), promotes=["*"])
-
-        self.add_subsystem("performances", ComputePropellerPerfoMR(use_catalogues=self.options['use_catalogues']),
-                           promotes=["*"])
-        self.add_subsystem("weight", ComputePropellerWeightMR(use_catalogues=self.options['use_catalogues']),
-                           promotes=["*"])
+        self.add_subsystem("catalogue", PropellerCatalogueSelection(use_catalogue=self.options['use_catalogue']),
+                                                                              promotes=["*"])
+        self.add_subsystem("performances", ComputePropellerPerfoMR(), promotes=["*"])
+        self.add_subsystem("weight", ComputePropellerWeightMR(), promotes=["*"])
 
         # Constraints
-        self.add_subsystem("define_constraints", PropellerConstraintsMR(use_catalogues=self.options['use_catalogues']),
-                           promotes=["*"])
+        self.add_subsystem("define_constraints", PropellerConstraintsMR(), promotes=["*"])
+

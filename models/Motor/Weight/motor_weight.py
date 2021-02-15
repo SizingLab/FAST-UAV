@@ -10,20 +10,20 @@ class ComputeMotorWeight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:motor:torque:nominal', val=np.nan, units='N*m')
+        self.add_input('data:motor:torque:nominal:estimated', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:torque:nominal', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:mass', val=np.nan, units='kg')
-        self.add_output('data:motor:mass', units='kg')
+        self.add_output('data:motor:mass:estimated', units='kg')
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        Tmot = inputs['data:motor:torque:nominal']
+        Tmot = inputs['data:motor:torque:nominal:estimated']
         Tmot_ref = inputs['data:motor:reference:torque:nominal']
         Mmot_ref = inputs['data:motor:reference:mass']
 
         Mmot = Mmot_ref * (Tmot / Tmot_ref) ** (3 / 3.5)  # [kg] Motor mass
 
-        outputs['data:motor:mass'] = Mmot
+        outputs['data:motor:mass:estimated'] = Mmot
