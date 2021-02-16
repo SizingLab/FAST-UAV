@@ -4,9 +4,6 @@
     <climb_speed units="m/s" is_input="True">6.0</climb_speed>
     <dISA units="K" is_input="True">0.0</dISA>
     <k_maxthrust is_input="True">3.0</k_maxthrust>
-    <MTOW>
-      <specification units="kg" is_input="True">100.0</specification>
-    </MTOW>
     <hover_time>
       <specification units="min" is_input="True">18.0</specification>
     </hover_time>
@@ -109,5 +106,10 @@
         </frame>
       </reference>
     </structure>
+    <system>
+      <MTOW>
+        <specification units="kg" is_input="True">100.0</specification>
+      </MTOW>
+    </system>
   </data>
 </FASTOAD_model>

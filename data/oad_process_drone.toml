@@ -9,7 +9,7 @@ output_file = "../workdir/problem_outputs.xml"
 
 # Definition of problem driver assuming the OpenMDAO convention "import openmdao.api as om"
 driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
-#driver = "om.SimpleGADriver()"
+#driver = "om.pyOptSparseDriver(optimizer='NSGA2')"
 
 # Definition of OpenMDAO model
 [model]
@@ -146,7 +146,7 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
         lower = 0.0
 
 [[optimization.objective]]
-        name = "mission:MTOW:real"
+        name = "data:system:MTOW"
         scaler=1e-1
         
 # TIME MAXIMIZATION
@@ -155,5 +155,5 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
 #        lower = 0.0
 
 #[[optimization.objective]]
-#        name = "mission:hover_time:real"
+#        name = "mission:hover_time"
  

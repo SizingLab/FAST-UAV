@@ -46,7 +46,7 @@ class MTOWObjective(om.ExplicitComponent):
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
         self.add_input('mission:hover_time:specification', val=np.nan, units='min')
         self.add_input('data:battery:discharge_limit', val=0.8, units=None)
-        self.add_output('mission:MTOW:real', units='kg')
+        self.add_output('data:system:MTOW', units='kg')
         self.add_output('constraints:system:flight_autonomy', units=None)
 
     def setup_partials(self):
@@ -79,7 +79,7 @@ class MTOWObjective(om.ExplicitComponent):
         # Constraints
         autonomy_con = (t_hf - t_h) / t_hf  # Min. hover flight autonomy, for weight minimization
 
-        outputs['mission:MTOW:real'] = Mtotal
+        outputs['data:system:MTOW'] = Mtotal
         outputs['constraints:system:flight_autonomy'] = autonomy_con
 
 
@@ -102,9 +102,9 @@ class HoverAutonomyObjective(om.ExplicitComponent):
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
         self.add_input('data:motor:power:hover', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('mission:MTOW:specification', val=np.nan, units='kg')
+        self.add_input('data:system:MTOW:specification', val=np.nan, units='kg')
         self.add_input('data:battery:discharge_limit', val=0.8, units=None)
-        self.add_output('mission:hover_time:real', units='min')
+        self.add_output('mission:hover_time', units='min')
         self.add_output('constraints:system:MTOW', units=None)
 
     def setup_partials(self):
@@ -123,7 +123,7 @@ class HoverAutonomyObjective(om.ExplicitComponent):
         M_load = inputs['data:payload:mass']
         Mfra = inputs['data:structure:frame:mass']
         Marm = inputs['data:structure:arms:mass']
-        MTOW = inputs['mission:MTOW:specification']
+        MTOW = inputs['data:system:MTOW:specification']
         P_el_hover = inputs['data:motor:power:hover']
         eta_ESC = inputs['data:ESC:efficiency']
         C_ratio = inputs['data:battery:discharge_limit']
@@ -137,7 +137,7 @@ class HoverAutonomyObjective(om.ExplicitComponent):
         # Constraints
         MTOW_con = (MTOW - Mtotal) / Mtotal  # Max. takeoff weight specification, for autonomy maximization
 
-        outputs['mission:hover_time:real'] = t_hf
+        outputs['mission:hover_time'] = t_hf
         outputs['constraints:system:MTOW'] = MTOW_con
 
 
