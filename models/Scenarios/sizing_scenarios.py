@@ -8,7 +8,7 @@ from scipy.constants import g
 
 class SizingScenarios(om.ExplicitComponent):
     """
-    Sizing scenarios definition
+    Sizing scenarios definition: Hover and Take-off
     """
 
     def setup(self):

@@ -15,8 +15,8 @@ class ESCConstraints(om.ExplicitComponent):
         self.add_input('data:ESC:power:max', val=np.nan, units='W')
 
         self.add_input('data:ESC:power:climb', val=np.nan, units='W')
-        self.add_output('optimization:constraints:ESC:power:climb', units=None)
-        self.add_output('optimization:constraints:ESC:voltage', units=None)
+        self.add_output('constraints:ESC:power:climb', units=None)
+        self.add_output('constraints:ESC:voltage', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -31,5 +31,5 @@ class ESCConstraints(om.ExplicitComponent):
         ESC_con1 = (P_esc - P_esc_cl) / P_esc
         ESC_con2 = (V_bat - Vesc) / V_bat
 
-        outputs['optimization:constraints:ESC:power:climb'] = ESC_con1
-        outputs['optimization:constraints:ESC:voltage'] = ESC_con2
+        outputs['constraints:ESC:power:climb'] = ESC_con1
+        outputs['constraints:ESC:voltage'] = ESC_con2

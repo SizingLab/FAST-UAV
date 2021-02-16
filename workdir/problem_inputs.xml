@@ -1,11 +1,15 @@
 <FASTOAD_model>
   <mission>
-    <MTOW units="kg" is_input="True">100.0</MTOW>
     <altitude units="m" is_input="True">0.0</altitude>
     <climb_speed units="m/s" is_input="True">6.0</climb_speed>
     <dISA units="K" is_input="True">0.0</dISA>
-    <hover_time units="min" is_input="True">18.0</hover_time>
     <k_maxthrust is_input="True">3.0</k_maxthrust>
+    <MTOW>
+      <specification units="kg" is_input="True">100.0</specification>
+    </MTOW>
+    <hover_time>
+      <specification units="min" is_input="True">18.0</specification>
+    </hover_time>
   </mission>
   <data>
     <ESC>
@@ -40,7 +44,7 @@
       </cell>
     </battery>
     <gearbox>
-      <mass units="kg" is_input="True">0.0</mass>
+      <N_red is_input="True">1.0</N_red>
     </gearbox>
     <payload>
       <mass units="kg" is_input="True">4.0</mass>
