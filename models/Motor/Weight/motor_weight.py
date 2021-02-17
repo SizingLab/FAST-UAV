@@ -24,6 +24,6 @@ class ComputeMotorWeight(om.ExplicitComponent):
         Tmot_ref = inputs['data:motor:reference:torque:nominal']
         Mmot_ref = inputs['data:motor:reference:mass']
 
-        Mmot = Mmot_ref * (Tmot / Tmot_ref) ** (3 / 3.5)  # [kg] Motor mass
+        Mmot = Mmot_ref * (Tmot / Tmot_ref) ** (3 / 3.5)  # [kg] Motor mass (estimated)
 
         outputs['data:motor:mass:estimated'] = Mmot

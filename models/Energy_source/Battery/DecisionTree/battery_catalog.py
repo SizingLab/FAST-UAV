@@ -14,7 +14,7 @@ DF = pd.read_csv(path + 'Non-Dominated-Batteries.csv', sep=';')
 class BatteryCatalogueSelection(om.Group):
     """
     Get battery parameters from catalogue if asked by the user.
-    Otherwise, keep going with estimated parameters.
+    Then, affect either catalogue values or estimated values to system parameters.
     """
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)
@@ -44,7 +44,7 @@ class BatteryDecisionTree(om.ExplicitComponent):
         """
         Cbat_selection = 'next'
         self._DT = DecisionTrees((DF[['Capacity_mAh']]),
-                                 (DF[['Capacity_mAh', 'Voltage_V', 'Weight_g', 'Imax [A]']]),
+                                 (DF[['Capacity_mAh', 'Voltage_V', 'Weight_g', 'Volume_mm3', 'Imax [A]']]),
                                  [Cbat_selection]).DT_handling(dist=100000)
 
     def setup(self):
@@ -56,7 +56,7 @@ class BatteryDecisionTree(om.ExplicitComponent):
         self.add_output('data:battery:current:max:catalogue', units='A')
         self.add_output('data:battery:mass:catalogue', units='kg')
         self.add_output('data:battery:cell:voltage:catalogue', units='V')
-
+        self.add_output('data:battery:volume:catalogue', units='cm**3')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -74,9 +74,10 @@ class BatteryDecisionTree(om.ExplicitComponent):
         y_pred = self._DT.predict([np.hstack((C_bat * 1000 / 3600))])
         C_bat = y_pred[0][0] / 1000 * 3600  # battery capacity [As]
         V_bat_data = y_pred[0][1]  # battery voltage [V]
-        Ncel = np.ceil(V_bat / V_bat_data)
-        Mbat = Ncel * y_pred[0][2] / 1000
-        Imax = y_pred[0][3]
+        Ncel = np.ceil(V_bat / V_bat_data)  # number of cells
+        Mbat = Ncel * y_pred[0][2] / 1000  # battery weight [kg]
+        Vol_bat = y_pred[0][3] * 0.001 # battery volume [cm3]
+        Imax = y_pred[0][4]
 
         # Outputs
         outputs['data:battery:cell:number:catalogue'] = Ncel
@@ -85,6 +86,7 @@ class BatteryDecisionTree(om.ExplicitComponent):
         outputs['data:battery:current:max:catalogue'] = Imax
         outputs['data:battery:mass:catalogue'] = Mbat
         outputs['data:battery:cell:voltage:catalogue'] = V_bat_data
+        outputs['data:battery:volume:catalogue'] = Vol_bat
 
 
 class ValueSetter(om.ExplicitComponent):
@@ -103,6 +105,7 @@ class ValueSetter(om.ExplicitComponent):
         self.add_input('data:battery:current:max'+self._str, val=np.nan, units='A')
         self.add_input('data:battery:mass'+self._str, val=np.nan, units='kg')
         self.add_input('data:battery:cell:voltage'+self._str, val=np.nan, units='V')
+        self.add_input('data:battery:volume'+self._str, val=np.nan, units='cm**3')
         # 'real' values
         self.add_output('data:battery:cell:number', units=None)
         self.add_output('data:battery:voltage', units='V')
@@ -110,6 +113,7 @@ class ValueSetter(om.ExplicitComponent):
         self.add_output('data:battery:current:max', units='A')
         self.add_output('data:battery:mass', units='kg')
         self.add_output('data:battery:cell:voltage', units='V')
+        self.add_output('data:battery:volume', units='cm**3')
 
     def setup_partials(self):
         self.declare_partials('data:battery:cell:number', 'data:battery:cell:number'+self._str, val=1.)
@@ -118,6 +122,7 @@ class ValueSetter(om.ExplicitComponent):
         self.declare_partials('data:battery:current:max', 'data:battery:current:max'+self._str, val=1.)
         self.declare_partials('data:battery:mass', 'data:battery:mass'+self._str, val=1.)
         self.declare_partials('data:battery:cell:voltage', 'data:battery:cell:voltage'+self._str, val=1.)
+        self.declare_partials('data:battery:volume', 'data:battery:volume' + self._str, val=1.)
 
     def compute(self, inputs, outputs):
         outputs['data:battery:cell:number'] = inputs['data:battery:cell:number'+self._str]
@@ -126,3 +131,4 @@ class ValueSetter(om.ExplicitComponent):
         outputs['data:battery:current:max'] = inputs['data:battery:current:max'+self._str]
         outputs['data:battery:mass'] = inputs['data:battery:mass'+self._str]
         outputs['data:battery:cell:voltage'] = inputs['data:battery:cell:voltage'+self._str]
+        outputs['data:battery:volume'] = inputs['data:battery:volume' + self._str]

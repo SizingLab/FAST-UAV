@@ -26,6 +26,7 @@
         <capacity units="A*s" is_input="True">12240.0</capacity>
         <mass units="kg" is_input="True">0.329</mass>
         <voltage units="V" is_input="True">14.8</voltage>
+        <volume units="cm**3" is_input="True">150.93</volume>
         <current>
           <max units="A" is_input="True">170.0</max>
         </current>
@@ -41,7 +42,7 @@
       </cell>
     </battery>
     <gearbox>
-      <N_red is_input="True">1.0</N_red>
+      <mass units="kg" is_input="True">0.0</mass>
     </gearbox>
     <payload>
       <mass units="kg" is_input="True">4.0</mass>
@@ -68,6 +69,7 @@
     </propeller>
     <motor>
       <reference>
+        <length units="m" is_input="True">0.088</length>
         <mass units="kg" is_input="True">0.575</mass>
         <resistance units="V/A" is_input="True">0.03</resistance>
         <torque_coefficient units="N*m/A" is_input="True">0.03</torque_coefficient>
@@ -101,9 +103,9 @@
         <arms>
           <mass units="kg" is_input="True">0.14</mass>
         </arms>
-        <frame>
+        <body>
           <mass units="kg" is_input="True">0.347</mass>
-        </frame>
+        </body>
       </reference>
     </structure>
     <system>

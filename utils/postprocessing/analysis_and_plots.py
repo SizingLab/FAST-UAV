@@ -16,14 +16,12 @@ Defines the analysis and plotting functions for postprocessing
 import numpy as np
 import plotly
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
 from fastoad.io import VariableIO
 
 COLS = plotly.colors.DEFAULT_PLOTLY_COLORS
 
 
-def mass_breakdown_drone(drone_file_path: str, file_formatter=None):
+def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     """
     Returns a figure sunburst plot of the mass breakdown.
 
@@ -46,9 +44,9 @@ def mass_breakdown_drone(drone_file_path: str, file_formatter=None):
     propulsion = propellers + motors + gearboxes + ESC + battery
 
     # STRUCTURE
-    frame = variables["data:structure:frame:mass"].value[0]
+    body = variables["data:structure:body:mass"].value[0]
     arms = variables["data:structure:arms:mass"].value[0]
-    structure = frame + arms
+    structure = body + arms
 
     # PAYLOAD
     payload = variables["data:payload:mass"].value[0]
@@ -120,12 +118,12 @@ def mass_breakdown_drone(drone_file_path: str, file_formatter=None):
             + str(round(arms / structure * 100, 1))
             + "%)"
     )
-    frame_str = (
-            "Frame"
+    body_str = (
+            "Body"
             + "<br>"
-            + str("{0:.2f}".format(frame))
+            + str("{0:.2f}".format(body))
             + " [kg] ("
-            + str(round(frame / structure * 100, 1))
+            + str(round(body / structure * 100, 1))
             + "%)"
     )
     structure_str = (
@@ -138,7 +136,7 @@ def mass_breakdown_drone(drone_file_path: str, file_formatter=None):
     )
 
     payload_str = (
-            "payload"
+            "Payload"
             + "<br>"
             + str("{0:.2f}".format(payload))
             + " [kg] ("
@@ -147,7 +145,7 @@ def mass_breakdown_drone(drone_file_path: str, file_formatter=None):
     )
 
     fuel_mission_str = (
-            "fuel_mission"
+            "Fuel mission"
             + "<br>"
             + str("{0:.2f}".format(fuel_mission))
             + " [kg] ("
@@ -173,7 +171,7 @@ def mass_breakdown_drone(drone_file_path: str, file_formatter=None):
                 gearboxes_str,
                 ESC_str,
                 battery_str,
-                frame_str,
+                body_str,
                 arms_str,
             ],
             parents=[
@@ -201,7 +199,7 @@ def mass_breakdown_drone(drone_file_path: str, file_formatter=None):
                 gearboxes,
                 ESC,
                 battery,
-                frame,
+                body,
                 arms,
             ],
             branchvalues="total",
@@ -209,6 +207,70 @@ def mass_breakdown_drone(drone_file_path: str, file_formatter=None):
     )
 
     fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
+
+    return fig
+
+
+def mass_breakdown_bar_plot_drone(
+        drone_file_path: str, name=None, fig=None, file_formatter=None
+) -> go.FigureWidget:
+    """
+    Returns a figure plot of the aircraft mass breakdown using bar plots.
+    Different designs can be superposed by providing an existing fig.
+    Each design can be provided a name.
+
+    :param aircraft_file_path: path of data file
+    :param name: name to give to the trace added to the figure
+    :param fig: existing figure to which add the plot
+    :param file_formatter: the formatter that defines the format of data file. If not provided, default format will
+                           be assumed.
+    :return: bar plot figure
+    """
+    variables = VariableIO(drone_file_path, file_formatter).read()
+
+    # PROPULSION
+    propellers = variables["data:propeller:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+    motors = variables["data:motor:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+    if "data:gearbox:mass" in variables.names():
+        gearboxes = variables["data:gearbox:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+    else:
+        gearboxes = 0
+    ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+    battery = variables["data:battery:mass"].value[0]
+    propulsion = propellers + motors + gearboxes + ESC + battery
+
+    # STRUCTURE
+    body = variables["data:structure:body:mass"].value[0]
+    arms = variables["data:structure:arms:mass"].value[0]
+    structure = body + arms
+
+    # PAYLOAD
+    payload = variables["data:payload:mass"].value[0]
+
+    # FUEL MISSION (not used yet. May be useful for hydrogen)
+    fuel_mission = 0
+
+    # MTOW
+    MTOW = variables["data:system:MTOW"].value[0]
+    # TODO: Deal with this in a more generic manner ?
+    if round(MTOW, 6) == round(propulsion + structure + payload + fuel_mission, 6):
+        MTOW = propulsion + structure + payload + fuel_mission
+
+    # DISPLAYED NAMES AND VALUES
+    weight_labels = ["MTOW", "Payload", "Structure", "Propellers", "Motors", "ESC", "Battery", "Gearboxes"]
+    weight_values = [MTOW, payload, structure, propellers, motors, ESC, battery, gearboxes]
+
+    if fig is None:
+        fig = go.Figure()
+
+    # Same color for each drone configuration
+    i = len(fig.data)
+    fig.add_trace(
+        go.Bar(name=name, x=weight_labels, y=weight_values, marker_color=COLS[i]),
+    )
+
+    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
+    fig.update_layout(yaxis_title="[kg]")
 
     return fig
 
@@ -235,18 +297,34 @@ def drone_geometry_plot(
     k = len(fig.data)
 
     N_arms = variables["data:structure:arms:arm_number"].value[0]
+    arm_length = variables["data:structure:arms:length"].value[0]  # [m]
+    arm_diameter = variables["data:structure:arms:diameter:outer"].value[0]  # [m]
     N_pro_arm = variables["data:propeller:prop_number_per_arm"].value[0]
-    arm_length = variables["data:structure:arms:length"].value[0]
-    arm_diameter = variables["data:structure:arms:diameter:outer"].value[0]
-    D_pro = variables["data:propeller:geometry:diameter"].value[0]
+    D_pro = variables["data:propeller:geometry:diameter"].value[0]  # [m]
+    Vol_bat = variables["data:battery:volume"].value[0] * 0.000001  # [m**3]
+    Lmot = variables["data:motor:length:estimated"].value[0]  # [m] TODO: get length from catalogues too
 
-    R = 0.1  # Frame radius #TODO: get frame radius
+    # BATTERY
+    Lbat = 3 * (Vol_bat / 6) ** (1 / 3)  # [m]
+    Wbat = (Vol_bat / 6) ** (1 / 3)  # [m]
+    # Hbat = 2 * (Vol_bat / 6) ** (1 / 3)  # [m]
+    fig.add_shape(
+        dict(type="rect", line=dict(color=COLS[k], width=3), fillcolor=COLS[k],
+             x0= - Lbat / 2,
+             y0= - Wbat / 2,
+             x1= Lbat / 2,
+             y1= Wbat / 2,
+             )
+    )
 
+    # ARMS - PROPELLERS - MOTORS
+    R = 0.0  # body radius #TODO: get body radius
     x_arms = []
     y_arms = []
-
     for i in range(int(N_arms)):
         sep_angle = - i * 2 * np.pi / N_arms
+
+        # Arms
         x_arm = np.array(
             [- arm_diameter / 2 * np.sin(sep_angle),
              - arm_diameter / 2 * np.sin(sep_angle) + arm_length * np.cos(sep_angle),
@@ -259,32 +337,42 @@ def drone_geometry_plot(
              arm_length * np.sin(sep_angle) - arm_diameter / 2 * np.cos(sep_angle),
              - arm_diameter / 2 * np.cos(sep_angle)]
         )
-
-        x_arm = x_arm + R * np.cos(sep_angle)  # frame radius
-        y_arm = y_arm + R * np.sin(sep_angle)  # frame radius
-
+        x_arm = x_arm + R * np.cos(sep_angle)  # body radius
+        y_arm = y_arm + R * np.sin(sep_angle)  # body radius
         x_arms = np.concatenate((x_arms, x_arm))
         y_arms = np.concatenate((y_arms, y_arm))
 
-        # PROPELLERS
+        # Motors
+        # Lhd = 0.25 * Lmot  # [m]
+        # Dhd = 0.25 * 2.54  # [m] this shaft diameter is commonly used along the series of APC MR propellers
+        Dmot = 0.7 * Lmot  # [m] geometric ratio used for AXI 2208, 2212, 2217
+        fig.add_shape(
+            dict(type="circle", line=dict(color=COLS[k], width=3), fillcolor=COLS[k],
+                 x0=arm_length * np.cos(sep_angle) - Dmot / 2 + R * np.cos(sep_angle),
+                 y0=arm_length * np.sin(sep_angle) - Dmot / 2 + R * np.sin(sep_angle),
+                 x1=arm_length * np.cos(sep_angle) + Dmot / 2 + R * np.cos(sep_angle),
+                 y1=arm_length * np.sin(sep_angle) + Dmot / 2 + R * np.sin(sep_angle),
+                 )
+        )
+
+        # Propellers
         for j in range(int(N_pro_arm)):  # TODO: distinguish the two propellers if push/pull configuration
             fig.add_shape(
-                dict(type="circle", line=dict(color=COLS[k],width=0), fillcolor=COLS[k],
+                dict(type="circle", line=dict(color=COLS[k], width=0), fillcolor=COLS[k], opacity=0.25,
                      x0=arm_length * np.cos(sep_angle) - D_pro / 2 + R * np.cos(sep_angle),
                      y0=arm_length * np.sin(sep_angle) - D_pro / 2 + R * np.sin(sep_angle),
                      x1=arm_length * np.cos(sep_angle) + D_pro / 2 + R * np.cos(sep_angle),
                      y1=arm_length * np.sin(sep_angle) + D_pro / 2 + R * np.sin(sep_angle),
                      )
             )
-
-    # ARMS
-    x_arms = np.concatenate((x_arms, [x_arms[0]]))
-    y_arms = np.concatenate((y_arms, [y_arms[0]]))
+    # Arms
+    x_arms = np.concatenate((x_arms, [x_arms[0]]))  # to close the trace
+    y_arms = np.concatenate((y_arms, [y_arms[0]]))  # to close the trace
     scatter = go.Scatter(x=y_arms, y=x_arms, mode="lines", line_color=COLS[k], name=name)
-    fig.add_trace(scatter)
 
+    fig.add_trace(scatter)
     fig = go.FigureWidget(fig)
-    fig.update_shapes(opacity=0.25, xref="x", yref="y")
+    fig.update_shapes(xref="x", yref="y")
     fig.update_layout(
         title_text="Drone Geometry", title_x=0.5, xaxis_title="y", yaxis_title="x",
     )

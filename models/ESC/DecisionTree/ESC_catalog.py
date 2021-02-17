@@ -15,7 +15,7 @@ DF = pd.read_csv(PATH + 'Non-Dominated-ESC.csv', sep=';')
 class ESCCatalogueSelection(om.Group):
     """
     Get ESC parameters from catalogue if asked by the user.
-    Otherwise, keep going with estimated parameters.
+    Then, affect either catalogue values or estimated values to system parameters.
     """
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)

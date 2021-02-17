@@ -15,7 +15,7 @@ DF = pd.read_csv(PATH + 'Non-Dominated-Motors.csv', sep=';')
 class MotorCatalogueSelection(om.Group):
     """
     Get motor parameters from catalogue if asked by the user.
-    Otherwise, keep going with estimated parameters.
+    Then, affect either catalogue values or estimated values to system parameters.
     """
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)

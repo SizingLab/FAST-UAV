@@ -23,17 +23,17 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
         id = "multirotor.sizing_scenarios"
     [model.propeller]
         id = "multirotor.propeller"
-        use_catalogue = true
+        use_catalogue = false
     [model.motor]
         id = "multirotor.motor"
-        use_catalogue = true
-        use_gearbox = true
+        use_catalogue = false
+        use_gearbox = false
     [model.battery]
         id = "energy.battery"
-        use_catalogue = true
+        use_catalogue = false
     [model.esc]
         id = "multirotor.esc"
-        use_catalogue = true
+        use_catalogue = false
     [model.structure]
         id = "multirotor.structure"
     [model.mission]
@@ -90,10 +90,10 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
         lower = 1.0
         upper = 15.0
 
-[[optimization.design_var]]
-        name = "data:gearbox:N_red" # gearbox reduction ratio (if 'use_gearbox' is true)
-        lower = 1.0
-        upper = 20.0
+#[[optimization.design_var]]
+#        name = "data:gearbox:N_red" # gearbox reduction ratio (if 'use_gearbox' is true)
+#        lower = 1.0
+#        upper = 20.0
 
 [[optimization.constraint]]
         name = "constraints:ESC:power:climb"

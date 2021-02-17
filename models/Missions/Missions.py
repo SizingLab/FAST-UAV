@@ -38,7 +38,7 @@ class MTOWObjective(om.ExplicitComponent):
         self.add_input('data:battery:capacity', val=np.nan, units='A*s')
         self.add_input('data:battery:voltage', val=np.nan, units='V')
         self.add_input('data:propeller:mass', val=np.nan, units='kg')
-        self.add_input('data:structure:frame:mass', val=np.nan, units='kg')
+        self.add_input('data:structure:body:mass', val=np.nan, units='kg')
         self.add_input('data:structure:arms:mass', val=np.nan, units='kg')
         self.add_input('data:payload:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
@@ -63,7 +63,7 @@ class MTOWObjective(om.ExplicitComponent):
         Mpro = inputs['data:propeller:mass']
         Npro = inputs['data:propeller:prop_number']
         M_load = inputs['data:payload:mass']
-        Mfra = inputs['data:structure:frame:mass']
+        Mfra = inputs['data:structure:body:mass']
         Marm = inputs['data:structure:arms:mass']
         t_h = inputs['mission:hover_time:specification']
         P_el_hover = inputs['data:motor:power:hover']
@@ -96,7 +96,7 @@ class HoverAutonomyObjective(om.ExplicitComponent):
         self.add_input('data:battery:capacity', val=np.nan, units='A*s')
         self.add_input('data:battery:voltage', val=np.nan, units='V')
         self.add_input('data:propeller:mass', val=np.nan, units='kg')
-        self.add_input('data:structure:frame:mass', val=np.nan, units='kg')
+        self.add_input('data:structure:body:mass', val=np.nan, units='kg')
         self.add_input('data:structure:arms:mass', val=np.nan, units='kg')
         self.add_input('data:payload:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
@@ -121,7 +121,7 @@ class HoverAutonomyObjective(om.ExplicitComponent):
         Mpro = inputs['data:propeller:mass']
         Npro = inputs['data:propeller:prop_number']
         M_load = inputs['data:payload:mass']
-        Mfra = inputs['data:structure:frame:mass']
+        Mfra = inputs['data:structure:body:mass']
         Marm = inputs['data:structure:arms:mass']
         MTOW = inputs['data:system:MTOW:specification']
         P_el_hover = inputs['data:motor:power:hover']
@@ -152,7 +152,7 @@ class MassConvergenceConstraint(om.ExplicitComponent):
         self.add_input('data:motor:mass', val=np.nan, units='kg')
         self.add_input('data:battery:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:mass', val=np.nan, units='kg')
-        self.add_input('data:structure:frame:mass', val=np.nan, units='kg')
+        self.add_input('data:structure:body:mass', val=np.nan, units='kg')
         self.add_input('data:structure:arms:mass', val=np.nan, units='kg')
         self.add_input('data:payload:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
@@ -171,7 +171,7 @@ class MassConvergenceConstraint(om.ExplicitComponent):
         Mpro = inputs['data:propeller:mass']
         Npro = inputs['data:propeller:prop_number']
         M_load = inputs['data:payload:mass']
-        Mfra = inputs['data:structure:frame:mass']
+        Mfra = inputs['data:structure:body:mass']
         Marm = inputs['data:structure:arms:mass']
         k_M = inputs['data:payload:settings:k_M']
 

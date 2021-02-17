@@ -22,6 +22,6 @@ class ComputeBatteryWeight(om.ExplicitComponent):
         M_load = inputs['data:payload:mass']
         k_Mb = inputs['data:battery:settings:k_Mb']
 
-        Mbat = k_Mb * M_load  # Battery mass
+        Mbat = k_Mb * M_load  # Battery mass (estimated)
 
         outputs['data:battery:mass:estimated'] = Mbat

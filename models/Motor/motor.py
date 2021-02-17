@@ -6,6 +6,7 @@ from fastoad.models.options import OpenMdaoOptionDispatcherGroup
 from models.Motor.Characteristics.motor_characteristics import ComputeMotorCharacteristics
 from models.Motor.Performances.motor_performance import ComputeMotorPerfo
 from models.Motor.Weight.motor_weight import ComputeMotorWeight
+from models.Motor.Geometry.motor_geometry import ComputeMotorGeometry
 from models.Motor.Constraints.motor_constraints import MotorConstraints
 from models.Motor.Gearbox.gearbox_model import ComputeGearboxCharacteristics
 from models.Motor.DecisionTree.motor_catalog import MotorCatalogueSelection
@@ -23,6 +24,7 @@ class Motor(om.Group):
         self.add_subsystem("characteristics", ComputeMotorCharacteristics(use_gearbox=self.options["use_gearbox"]),
                            promotes=["*"])
         self.add_subsystem("weight", ComputeMotorWeight(), promotes=["*"])
+        self.add_subsystem("geometry", ComputeMotorGeometry(), promotes=["*"])
 
         # Choose between estimated parameters and catalogue components
         self.add_subsystem("catalogue", MotorCatalogueSelection(use_catalogue=self.options['use_catalogue']), promotes=["*"])

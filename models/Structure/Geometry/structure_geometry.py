@@ -38,11 +38,11 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
 
         # Length calculation
         #    sep= 2*pi/Narm #[rad] interior angle separation between propellers
-        Lbra = Dpro / 2 / (math.sin(pi / Narm))  # [m] length of the arm
+        Larm = Dpro / 2 / (math.sin(pi / Narm))  # [m] length of the arm
         # Tube diameter & thickness
-        Dout = (F_pro_to * Npro_arm * Lbra * 32 / (pi * Sigma_max * (1 - D_ratio ** 4))) ** (1 / 3)  # [m] outer diameter of the beam
+        Dout = (F_pro_to * Npro_arm * Larm * 32 / (pi * Sigma_max * (1 - D_ratio ** 4))) ** (1 / 3)  # [m] outer diameter of the beam
         Din = D_ratio * Dout # [m] inner diameter of the beam
 
-        outputs['data:structure:arms:length'] = Lbra
+        outputs['data:structure:arms:length'] = Larm
         outputs['data:structure:arms:diameter:outer'] = Dout
         outputs['data:structure:arms:diameter:inner'] = Din

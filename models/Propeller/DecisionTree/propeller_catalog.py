@@ -16,7 +16,7 @@ DF = pd.read_csv(PATH + 'Non-Dominated-Propeller.csv', sep=';')
 class PropellerCatalogueSelection(om.Group):
     """
     Get propeller parameters from catalogue if asked by the user.
-    Otherwise, keep going with estimated parameters.
+    Then, affect either catalogue values or estimated values to system parameters.
     """
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)
