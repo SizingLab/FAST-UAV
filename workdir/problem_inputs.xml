@@ -1,13 +1,12 @@
 <FASTOAD_model>
-  <mission>
+  <specifications>
+    <MTOW units="kg" is_input="True">100.0</MTOW>
     <altitude units="m" is_input="True">0.0</altitude>
-    <climb_speed units="m/s" is_input="True">6.0</climb_speed>
+    <climb_speed units="m/s" is_input="True">8.0</climb_speed>
     <dISA units="K" is_input="True">0.0</dISA>
+    <hover_time units="min" is_input="True">18.0</hover_time>
     <k_maxthrust is_input="True">3.0</k_maxthrust>
-    <hover_time>
-      <specification units="min" is_input="True">18.0</specification>
-    </hover_time>
-  </mission>
+  </specifications>
   <data>
     <ESC>
       <efficiency is_input="True">0.95</efficiency>
@@ -96,9 +95,11 @@
           <sigma_max units="N/m**2" is_input="True">70000000.0</sigma_max>
         </material>
       </arms>
-      <geometry>
-        <top_surface units="m**2" is_input="True">0.09</top_surface>
-      </geometry>
+      <body>
+        <surface>
+          <top units="m**2" is_input="True">0.09</top>
+        </surface>
+      </body>
       <reference>
         <arms>
           <mass units="kg" is_input="True">0.14</mass>
@@ -108,10 +109,5 @@
         </body>
       </reference>
     </structure>
-    <system>
-      <MTOW>
-        <specification units="kg" is_input="True">100.0</specification>
-      </MTOW>
-    </system>
   </data>
 </FASTOAD_model>

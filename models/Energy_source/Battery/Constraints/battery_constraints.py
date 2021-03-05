@@ -19,10 +19,10 @@ class BatteryConstraints(om.ExplicitComponent):
         self.add_input('data:motor:current:climb', val=np.nan, units='A')
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_output('constraints:battery:voltage:takeoff', units=None)
-        self.add_output('constraints:battery:voltage:climb', units=None)
-        self.add_output('constraints:battery:power:takeoff', units=None)
-        self.add_output('constraints:battery:power:climb', units=None)
+        self.add_output('data:battery:constraints:voltage:takeoff', units=None)
+        self.add_output('data:battery:constraints:voltage:climb', units=None)
+        self.add_output('data:battery:constraints:power:takeoff', units=None)
+        self.add_output('data:battery:constraints:power:climb', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -44,8 +44,8 @@ class BatteryConstraints(om.ExplicitComponent):
         battery_con3 = (V_bat * Imax - Umot_to * Imot_to * Npro / eta_ESC) / (V_bat * Imax)
         battery_con4 = (V_bat * Imax - Umot_cl * Imot_cl * Npro / eta_ESC) / (V_bat * Imax)
 
-        outputs['constraints:battery:voltage:takeoff'] = battery_con1
-        outputs['constraints:battery:voltage:climb'] = battery_con2
-        outputs['constraints:battery:power:takeoff'] = battery_con3
-        outputs['constraints:battery:power:climb'] = battery_con4
+        outputs['data:battery:constraints:voltage:takeoff'] = battery_con1
+        outputs['data:battery:constraints:voltage:climb'] = battery_con2
+        outputs['data:battery:constraints:power:takeoff'] = battery_con3
+        outputs['data:battery:constraints:power:climb'] = battery_con4
 

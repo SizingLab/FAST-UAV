@@ -44,10 +44,10 @@ class MTOWObjective(om.ExplicitComponent):
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
         self.add_input('data:motor:power:hover', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('mission:hover_time:specification', val=np.nan, units='min')
+        self.add_input('specifications:hover_time', val=np.nan, units='min')
         self.add_input('data:battery:discharge_limit', val=0.8, units=None)
         self.add_output('data:system:MTOW', units='kg')
-        self.add_output('constraints:system:flight_autonomy', units=None)
+        self.add_output('data:system:constraints:flight_autonomy', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -65,7 +65,7 @@ class MTOWObjective(om.ExplicitComponent):
         M_load = inputs['data:payload:mass']
         Mfra = inputs['data:structure:body:mass']
         Marm = inputs['data:structure:arms:mass']
-        t_h = inputs['mission:hover_time:specification']
+        t_h = inputs['specifications:hover_time']
         P_el_hover = inputs['data:motor:power:hover']
         eta_ESC = inputs['data:ESC:efficiency']
         C_ratio = inputs['data:battery:discharge_limit']
@@ -80,7 +80,7 @@ class MTOWObjective(om.ExplicitComponent):
         autonomy_con = (t_hf - t_h) / t_hf  # Min. hover flight autonomy, for weight minimization
 
         outputs['data:system:MTOW'] = Mtotal
-        outputs['constraints:system:flight_autonomy'] = autonomy_con
+        outputs['data:system:constraints:flight_autonomy'] = autonomy_con
 
 
 class HoverAutonomyObjective(om.ExplicitComponent):
@@ -102,10 +102,10 @@ class HoverAutonomyObjective(om.ExplicitComponent):
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
         self.add_input('data:motor:power:hover', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('data:system:MTOW:specification', val=np.nan, units='kg')
+        self.add_input('specifications:MTOW', val=np.nan, units='kg')
         self.add_input('data:battery:discharge_limit', val=0.8, units=None)
-        self.add_output('mission:hover_time', units='min')
-        self.add_output('constraints:system:MTOW', units=None)
+        self.add_output('data:system:hover_time', units='min')
+        self.add_output('data:system:constraints:MTOW', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -123,7 +123,7 @@ class HoverAutonomyObjective(om.ExplicitComponent):
         M_load = inputs['data:payload:mass']
         Mfra = inputs['data:structure:body:mass']
         Marm = inputs['data:structure:arms:mass']
-        MTOW = inputs['data:system:MTOW:specification']
+        MTOW = inputs['specifications:MTOW']
         P_el_hover = inputs['data:motor:power:hover']
         eta_ESC = inputs['data:ESC:efficiency']
         C_ratio = inputs['data:battery:discharge_limit']
@@ -137,8 +137,8 @@ class HoverAutonomyObjective(om.ExplicitComponent):
         # Constraints
         MTOW_con = (MTOW - Mtotal) / Mtotal  # Max. takeoff weight specification, for autonomy maximization
 
-        outputs['mission:hover_time'] = t_hf
-        outputs['constraints:system:MTOW'] = MTOW_con
+        outputs['data:system:hover_time'] = t_hf
+        outputs['data:system:constraints:MTOW'] = MTOW_con
 
 
 class MassConvergenceConstraint(om.ExplicitComponent):
@@ -157,7 +157,7 @@ class MassConvergenceConstraint(om.ExplicitComponent):
         self.add_input('data:payload:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:prop_number', val=np.nan, units=None)
         self.add_input('data:payload:settings:k_M', val=np.nan, units=None)
-        self.add_output('constraints:system:mass_convergence', units=None)
+        self.add_output('data:system:constraints:mass_convergence', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -182,4 +182,4 @@ class MassConvergenceConstraint(om.ExplicitComponent):
         Mtotal_estimated = k_M * M_load  # [kg] Estimation of the total mass (or equivalent weight of dynamic scenario)
         mass_con = (Mtotal_estimated - Mtotal) / Mtotal  # mass convergence
 
-        outputs['constraints:system:mass_convergence'] = mass_con
+        outputs['data:system:constraints:mass_convergence'] = mass_con

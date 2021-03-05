@@ -17,7 +17,7 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CP:dynamic', val=np.nan, units=None)
         self.add_input('data:propeller:thrust:climb', val=np.nan, units='N')
         self.add_input('data:propeller:thrust:hover', val=np.nan, units='N')
-        self.add_input('mission:rho_air', val=np.nan, units='kg/m**3')
+        self.add_input('specifications:rho_air', val=np.nan, units='kg/m**3')
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
         self.add_input('data:propeller:settings:k_ND', val=np.nan, units=None)
         self.add_output('data:propeller:speed:takeoff', units='rad/s')
@@ -42,25 +42,25 @@ class ComputePropellerPerfoMR(om.ExplicitComponent):
         C_p_dyn = inputs['data:propeller:aerodynamics:CP:dynamic']
         F_pro_cl = inputs['data:propeller:thrust:climb']
         F_pro_hov = inputs['data:propeller:thrust:hover']
-        rho_air = inputs['mission:rho_air']
+        rho_air = inputs['specifications:rho_air']
         NDmax = inputs['data:propeller:reference:nD_max']
         k_ND = inputs['data:propeller:settings:k_ND']
 
-        # Propeller torque& speed for take-off
+        # Propeller torque & speed for take-off
         n_pro_to = NDmax * k_ND / Dpro  # [Hz] Propeller speed
-        Wpro_to = n_pro_to * 2 * 3.14  # [rad/s] Propeller speed
+        Wpro_to = n_pro_to * 2 * np.pi  # [rad/s] Propeller speed
         Ppro_to = C_p_sta * rho_air * n_pro_to ** 3 * Dpro ** 5  # [W] Power per propeller
         Qpro_to = Ppro_to / Wpro_to  # [N.m] Propeller torque
 
-        # Propeller torque& speed for hover
+        # Propeller torque & speed for hover
         n_pro_hover = (F_pro_hov / (C_t_sta * rho_air * Dpro ** 4)) ** 0.5  # [Hz] hover speed
-        Wpro_hover = n_pro_hover * 2 * 3.14  # [rad/s] Propeller speed
+        Wpro_hover = n_pro_hover * 2 * np.pi  # [rad/s] Propeller speed
         Ppro_hover = C_p_sta * rho_air * n_pro_hover ** 3 * Dpro ** 5  # [W] Power per propeller
         Qpro_hover = Ppro_hover / Wpro_hover  # [N.m] Propeller torque
 
-        # Propeller torque &speed for climbing
+        # Propeller torque & speed for climbing
         n_pro_cl = (F_pro_cl / (C_t_dyn * rho_air * Dpro ** 4)) ** 0.5  # [Hz] climbing speed
-        Wpro_cl = n_pro_cl * 2 * 3.14  # [rad/s] Propeller speed for climbing
+        Wpro_cl = n_pro_cl * 2 * np.pi  # [rad/s] Propeller speed for climbing
         Ppro_cl = C_p_dyn * rho_air * n_pro_cl ** 3 * Dpro ** 5  # [W] Power per propeller for climbing
         Qpro_cl = Ppro_cl / Wpro_cl  # [N.m] Propeller torque for climbing
 

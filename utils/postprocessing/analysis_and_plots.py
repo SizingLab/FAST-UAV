@@ -23,7 +23,7 @@ COLS = plotly.colors.DEFAULT_PLOTLY_COLORS
 
 def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     """
-    Returns a figure sunburst plot of the mass breakdown.
+    Returns a figure sunburst plot of the drone mass breakdown.
 
     :param drone_file_path: path of data file
     :param file_formatter: the formatter that defines the format of data file. If not provided, default format will
@@ -215,11 +215,11 @@ def mass_breakdown_bar_plot_drone(
         drone_file_path: str, name=None, fig=None, file_formatter=None
 ) -> go.FigureWidget:
     """
-    Returns a figure plot of the aircraft mass breakdown using bar plots.
+    Returns a figure plot of the drone mass breakdown using bar plots.
     Different designs can be superposed by providing an existing fig.
     Each design can be provided a name.
 
-    :param aircraft_file_path: path of data file
+    :param drone_file_path: path of data file
     :param name: name to give to the trace added to the figure
     :param fig: existing figure to which add the plot
     :param file_formatter: the formatter that defines the format of data file. If not provided, default format will
@@ -279,7 +279,7 @@ def drone_geometry_plot(
         drone_file_path: str, name=None, fig=None, file_formatter=None
 ) -> go.FigureWidget:
     """
-    Returns a figure plot of the top view of the wing.
+    Returns a figure plot of the top view of the drone.
     Different designs can be superposed by providing an existing fig.
     Each design can be provided a name.
 
@@ -288,7 +288,7 @@ def drone_geometry_plot(
     :param fig: existing figure to which add the plot
     :param file_formatter: the formatter that defines the format of data file. If not provided, default format will
                            be assumed.
-    :return: wing plot figure
+    :return: drone plot figure
     """
 
     variables = VariableIO(drone_file_path, file_formatter).read()
@@ -296,7 +296,8 @@ def drone_geometry_plot(
         fig = go.Figure()
     k = len(fig.data)
 
-    N_arms = variables["data:structure:arms:arm_number"].value[0]
+    A_body = variables["data:structure:body:surface:top"].value[0]  # [m]
+    N_arms = variables["data:structure:arms:arm_number"].value[0]  # [-]
     arm_length = variables["data:structure:arms:length"].value[0]  # [m]
     arm_diameter = variables["data:structure:arms:diameter:outer"].value[0]  # [m]
     N_pro_arm = variables["data:propeller:prop_number_per_arm"].value[0]
@@ -317,8 +318,8 @@ def drone_geometry_plot(
              )
     )
 
-    # ARMS - PROPELLERS - MOTORS
-    R = 0.0  # body radius #TODO: get body radius
+    # BODY - ARMS - PROPELLERS - MOTORS
+    R_offset = (A_body / (N_arms * np.cos(np.pi / N_arms) * np.sin(np.pi / N_arms))) ** (1/2)  # body radius offset
     x_arms = []
     y_arms = []
     for i in range(int(N_arms)):
@@ -326,19 +327,17 @@ def drone_geometry_plot(
 
         # Arms
         x_arm = np.array(
-            [- arm_diameter / 2 * np.sin(sep_angle),
+            [- arm_diameter / 2 * np.sin(sep_angle) + R_offset * np.cos(sep_angle),
              - arm_diameter / 2 * np.sin(sep_angle) + arm_length * np.cos(sep_angle),
              arm_length * np.cos(sep_angle) + arm_diameter / 2 * np.sin(sep_angle),
-             arm_diameter / 2 * np.sin(sep_angle)]
+             arm_diameter / 2 * np.sin(sep_angle) + R_offset * np.cos(sep_angle)]
         )
         y_arm = np.array(
-            [arm_diameter / 2 * np.cos(sep_angle),
+            [arm_diameter / 2 * np.cos(sep_angle) + R_offset * np.sin(sep_angle),
              arm_diameter / 2 * np.cos(sep_angle) + arm_length * np.sin(sep_angle),
              arm_length * np.sin(sep_angle) - arm_diameter / 2 * np.cos(sep_angle),
-             - arm_diameter / 2 * np.cos(sep_angle)]
+             - arm_diameter / 2 * np.cos(sep_angle) + R_offset * np.sin(sep_angle)]
         )
-        x_arm = x_arm + R * np.cos(sep_angle)  # body radius
-        y_arm = y_arm + R * np.sin(sep_angle)  # body radius
         x_arms = np.concatenate((x_arms, x_arm))
         y_arms = np.concatenate((y_arms, y_arm))
 
@@ -348,29 +347,57 @@ def drone_geometry_plot(
         Dmot = 0.7 * Lmot  # [m] geometric ratio used for AXI 2208, 2212, 2217
         fig.add_shape(
             dict(type="circle", line=dict(color=COLS[k], width=3), fillcolor=COLS[k],
-                 x0=arm_length * np.cos(sep_angle) - Dmot / 2 + R * np.cos(sep_angle),
-                 y0=arm_length * np.sin(sep_angle) - Dmot / 2 + R * np.sin(sep_angle),
-                 x1=arm_length * np.cos(sep_angle) + Dmot / 2 + R * np.cos(sep_angle),
-                 y1=arm_length * np.sin(sep_angle) + Dmot / 2 + R * np.sin(sep_angle),
+                 x0=arm_length * np.cos(sep_angle) - Dmot / 2,
+                 y0=arm_length * np.sin(sep_angle) - Dmot / 2,
+                 x1=arm_length * np.cos(sep_angle) + Dmot / 2,
+                 y1=arm_length * np.sin(sep_angle) + Dmot / 2,
                  )
         )
 
         # Propellers
         for j in range(int(N_pro_arm)):  # TODO: distinguish the two propellers if push/pull configuration
+            prop_offset = j * D_pro / 15  # slightly shift the second propeller to make it visible
             fig.add_shape(
                 dict(type="circle", line=dict(color=COLS[k], width=0), fillcolor=COLS[k], opacity=0.25,
-                     x0=arm_length * np.cos(sep_angle) - D_pro / 2 + R * np.cos(sep_angle),
-                     y0=arm_length * np.sin(sep_angle) - D_pro / 2 + R * np.sin(sep_angle),
-                     x1=arm_length * np.cos(sep_angle) + D_pro / 2 + R * np.cos(sep_angle),
-                     y1=arm_length * np.sin(sep_angle) + D_pro / 2 + R * np.sin(sep_angle),
+                     x0=arm_length * np.cos(sep_angle) - D_pro / 2 + prop_offset,
+                     y0=arm_length * np.sin(sep_angle) - D_pro / 2 + prop_offset,
+                     x1=arm_length * np.cos(sep_angle) + D_pro / 2 + prop_offset,
+                     y1=arm_length * np.sin(sep_angle) + D_pro / 2 + prop_offset,
                      )
             )
     # Arms
     x_arms = np.concatenate((x_arms, [x_arms[0]]))  # to close the trace
     y_arms = np.concatenate((y_arms, [y_arms[0]]))  # to close the trace
     scatter = go.Scatter(x=y_arms, y=x_arms, mode="lines", line_color=COLS[k], name=name)
-
     fig.add_trace(scatter)
+
+    # Push-pull configuration annotation
+    if N_pro_arm == 2:
+        config_text='Coaxial propellers (push-pull)'
+    else:
+        config_text='Single propellers'
+
+    fig.add_annotation(
+        xanchor='right',
+        yanchor='top',
+        x=1, #x_arms[len(x_arms)-3],
+        y=1, #x_arms[len(y_arms)-3],
+        xref="paper",
+        yref="paper",
+        text=config_text,
+        showarrow=False,
+        font=dict(
+            color=COLS[k]
+        ),
+        align="center",
+        xshift=0,
+        yshift=-k*35,
+        bordercolor=COLS[k],
+        borderwidth=2,
+        borderpad=4,
+        bgcolor='white'
+    )
+
     fig = go.FigureWidget(fig)
     fig.update_shapes(xref="x", yref="y")
     fig.update_layout(

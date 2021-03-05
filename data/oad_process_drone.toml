@@ -14,8 +14,8 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
 # Definition of OpenMDAO model
 [model]
     # Solvers are defined assuming the OpenMDAO convention "import openmdao.api as om"
-    nonlinear_solver = "om.NonlinearBlockGS(maxiter=200)"
-    linear_solver = "om.DirectSolver()"
+    #nonlinear_solver = "om.NonlinearBlockGS(maxiter=200)"
+    #linear_solver = "om.DirectSolver()"
 
     # Although "model" is a mandatory name for the top level of the model, its
     # sub-components can be freely named by user
@@ -96,53 +96,53 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
 #        upper = 20.0
 
 [[optimization.constraint]]
-        name = "constraints:ESC:power:climb"
+        name = "data:ESC:constraints:power:climb"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:ESC:voltage"
+        name = "data:ESC:constraints:voltage"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:power:climb"
+        name = "data:battery:constraints:power:climb"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:voltage:climb"
+        name = "data:battery:constraints:voltage:climb"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:power:takeoff"
+        name = "data:battery:constraints:power:takeoff"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:battery:voltage:takeoff"
+        name = "data:battery:constraints:voltage:takeoff"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:motor:torque:climb"
+        name = "data:motor:constraints:torque:climb"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:motor:torque:takeoff"
+        name = "data:motor:constraints:torque:takeoff"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:propeller:speed:climb"
+        name = "data:propeller:constraints:speed:climb"
         lower = 0.0
         upper = 0.01
 
 [[optimization.constraint]]
-        name = "constraints:propeller:speed:max"
+        name = "data:propeller:constraints:speed:max"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "constraints:system:mass_convergence"
+        name = "data:system:constraints:mass_convergence"
         lower = 0.0
 
 # MASS MINIMIZATION
 [[optimization.constraint]]
-        name = "constraints:system:flight_autonomy"
+        name = "data:system:constraints:flight_autonomy"
         lower = 0.0
 
 [[optimization.objective]]
@@ -151,9 +151,9 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
         
 # TIME MAXIMIZATION
 #[[optimization.constraint]]
-#        name = "constraints:system:MTOW"
+#        name = "data:system:constraints:MTOW"
 #        lower = 0.0
 
 #[[optimization.objective]]
-#        name = "mission:hover_time"
+#        name = "data:system:hover_time"
  

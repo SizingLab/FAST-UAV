@@ -14,9 +14,9 @@ class PropellerConstraintsMR(om.ExplicitComponent):
         self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
         self.add_input('data:propeller:advance_ratio', val=np.nan, units=None)
         self.add_input('data:propeller:speed:climb', val=np.nan, units='rad/s')
-        self.add_input('mission:climb_speed', val=np.nan, units='m/s')
-        self.add_output('constraints:propeller:speed:max', units=None)
-        self.add_output('constraints:propeller:speed:climb', units=None)
+        self.add_input('specifications:climb_speed', val=np.nan, units='m/s')
+        self.add_output('data:propeller:constraints:speed:max', units=None)
+        self.add_output('data:propeller:constraints:speed:climb', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -27,11 +27,11 @@ class PropellerConstraintsMR(om.ExplicitComponent):
         NDmax = inputs['data:propeller:reference:nD_max']
         J = inputs['data:propeller:advance_ratio']
         n_pro_cl = inputs['data:propeller:speed:climb'] / 2 / 3.14
-        V_cl = inputs['mission:climb_speed']
+        V_cl = inputs['specifications:climb_speed']
 
         prop_con1 = (NDmax - n_pro_cl * Dpro) / NDmax
         prop_con2 = (-J * n_pro_cl * Dpro + V_cl)
 
-        outputs['constraints:propeller:speed:max'] = prop_con1
-        outputs['constraints:propeller:speed:climb'] = prop_con2
+        outputs['data:propeller:constraints:speed:max'] = prop_con1
+        outputs['data:propeller:constraints:speed:climb'] = prop_con2
 
