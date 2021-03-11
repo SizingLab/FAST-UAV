@@ -21,7 +21,8 @@ from .Energy_source.energy_source import Battery
 from .ESC.esc import ESC
 from .Structure.structure import StructureMR
 from .Scenarios.sizing_scenarios import SizingScenarios
-from .Missions.Missions import Missions
+from .Missions.Mission import Mission
+from .System.System import System
 from fastoad.module_management import OpenMDAOSystemRegistry
 
 
@@ -38,7 +39,8 @@ def register_openmdao_systems():
     OpenMDAOSystemRegistry.register_system(Battery, "energy.battery")
     OpenMDAOSystemRegistry.register_system(ESC, "multirotor.esc")
     OpenMDAOSystemRegistry.register_system(StructureMR, "multirotor.structure")
-    OpenMDAOSystemRegistry.register_system(Missions, "multirotor.missions")
+    OpenMDAOSystemRegistry.register_system(System, "multirotor.system")
+    OpenMDAOSystemRegistry.register_system(Mission, "multirotor.missions")
 
 
 

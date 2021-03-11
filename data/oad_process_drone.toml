@@ -36,6 +36,8 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
         use_catalogue = false
     [model.structure]
         id = "multirotor.structure"
+    [model.system]
+        id = "multirotor.system"
     [model.mission]
         id = "multirotor.missions"
 
@@ -137,12 +139,12 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
         lower = 0.0
 
 [[optimization.constraint]]
-        name = "data:system:constraints:mass_convergence"
+        name = "data:system:constraints:mass:convergence"
         lower = 0.0
 
 # MASS MINIMIZATION
 [[optimization.constraint]]
-        name = "data:system:constraints:flight_autonomy"
+        name = "data:mission:constraints:hover:autonomy"
         lower = 0.0
 
 [[optimization.objective]]
@@ -155,5 +157,5 @@ driver = "om.ScipyOptimizeDriver(tol=1e-12, optimizer='SLSQP')"
 #        lower = 0.0
 
 #[[optimization.objective]]
-#        name = "data:system:hover_time"
+#        name = "data:system:hover:autonomy"
  

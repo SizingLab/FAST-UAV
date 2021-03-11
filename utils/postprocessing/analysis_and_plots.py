@@ -406,3 +406,128 @@ def drone_geometry_plot(
     fig.update_layout(yaxis=dict(scaleanchor="x", scaleratio=1))
 
     return fig
+
+
+
+def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
+    """
+    Returns a figure sunburst plot of the drone energy consumption breakdown.
+
+    :param drone_file_path: path of data file
+    :param file_formatter: the formatter that defines the format of data file. If not provided, default format will
+                           be assumed.
+    :return: sunburst plot figure
+    """
+    variables = VariableIO(drone_file_path, file_formatter).read()
+
+    # PROPULSION
+    propulsion = variables['data:mission:energy:propulsion'].value[0]
+    hover = variables['data:mission:energy:propulsion:hover'].value[0]
+    climb = variables['data:mission:energy:propulsion:climb'].value[0]
+    forward = variables['data:mission:energy:propulsion:forward'].value[0]
+
+    # AVIONICS
+    avionics = variables['data:mission:energy:avionics'].value[0]
+
+    # PAYLOAD
+    payload = variables['data:mission:energy:payload'].value[0]
+
+    # TOTAL MISSION
+    mission = variables['data:mission:energy'].value[0]
+
+    # DISPLAYED NAMES AND VALUES
+    propulsion_str = (
+            "Propulsion"
+            + "<br>"
+            + str("{0:.2f}".format(propulsion))
+            + " [J] ("
+            + str(round(propulsion / mission * 100, 1))
+            + "%)"
+    )
+
+    hover_str = (
+            "Hover"
+            + "<br>"
+            + str("{0:.2f}".format(hover))
+            + " [J] ("
+            + str(round(hover / propulsion * 100, 1))
+            + "%)"
+    )
+
+    climb_str = (
+            "Climb"
+            + "<br>"
+            + str("{0:.2f}".format(climb))
+            + " [J] ("
+            + str(round(climb / propulsion * 100, 1))
+            + "%)"
+    )
+
+    forward_str = (
+            "Forward"
+            + "<br>"
+            + str("{0:.2f}".format(climb))
+            + " [J] ("
+            + str(round(climb / propulsion * 100, 1))
+            + "%)"
+    )
+
+    avionics_str = (
+            "Avionics"
+            + "<br>"
+            + str("{0:.2f}".format(avionics))
+            + " [J] ("
+            + str(round(avionics / mission * 100, 1))
+            + "%)"
+    )
+
+    payload_str = (
+            "Payload"
+            + "<br>"
+            + str("{0:.2f}".format(payload))
+            + " [J] ("
+            + str(round(payload / mission * 100, 1))
+            + "%)"
+    )
+
+    mission_str = (
+            "Mission" + "<br>" + str("{0:.2f}".format(mission)) + " [J]"
+    )
+
+    # CREATE SUNBURST FIGURE
+    fig = go.Figure(
+        go.Sunburst(
+            labels=[
+                mission_str,
+                avionics_str,
+                payload_str,
+                propulsion_str,
+                hover_str,
+                climb_str,
+                forward_str,
+            ],
+            parents=[
+                "",
+                mission_str,
+                mission_str,
+                mission_str,
+                propulsion_str,
+                propulsion_str,
+                propulsion_str,
+            ],
+            values=[
+                mission,
+                avionics,
+                payload,
+                propulsion,
+                hover,
+                climb,
+                forward,
+            ],
+            branchvalues="total",
+        ),
+    )
+
+    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Energy Breakdown", title_x=0.5)
+
+    return fig
