@@ -36,4 +36,4 @@ class Motor(om.Group):
             self.add_subsystem("gearbox", ComputeGearboxCharacteristics(), promotes=["*"])
 
         # Constraints
-        self.add_subsystem("define_constraints", MotorConstraints(), promotes=["*"])
+        self.add_subsystem("constraints", MotorConstraints(), promotes=["*"])

@@ -21,9 +21,9 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         self.add_input('data:propeller:speed:takeoff', val=np.nan, units='rad/s')
         self.add_input('data:propeller:torque:hover', val=np.nan, units='N*m')
         self.add_input('data:propeller:power:takeoff', units='W')
-        self.add_input('data:motor:settings:k_mot', val=np.nan, units=None)
-        self.add_input('data:motor:settings:k_speed_mot', val=np.nan, units=None)
-        self.add_input('data:battery:settings:k_VB', val=np.nan, units=None)
+        self.add_input('data:motor:settings:torque:k', val=np.nan, units=None)
+        self.add_input('data:motor:settings:speed:k', val=np.nan, units=None)
+        self.add_input('data:ESC:settings:voltage:k', val=np.nan, units=None)
         self.add_input('data:motor:reference:torque:nominal', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:torque:max', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:torque:friction', val=np.nan, units='N*m')
@@ -49,9 +49,9 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         Wpro_to = inputs['data:propeller:speed:takeoff']
         Qpro_hover = inputs['data:propeller:torque:hover']
         Ppro_to = inputs['data:propeller:power:takeoff']
-        k_mot = inputs['data:motor:settings:k_mot']
-        k_speed_mot = inputs['data:motor:settings:k_speed_mot']
-        k_vb = inputs['data:battery:settings:k_VB']
+        k_mot = inputs['data:motor:settings:torque:k']
+        k_speed_mot = inputs['data:motor:settings:speed:k']
+        k_vb = inputs['data:ESC:settings:voltage:k']
         Tmot_ref = inputs['data:motor:reference:torque:nominal']
         Tmot_max_ref = inputs['data:motor:reference:torque:max']
         Tfmot_ref = inputs['data:motor:reference:torque:friction']
@@ -59,10 +59,10 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         Ktmot_ref = inputs['data:motor:reference:torque_coefficient']
 
         # Motor speed and torque for sizing
-        W_to_motor = Wpro_to * Nred  # [rad/s] Motor take-off speed with reduction
-        Tmot_hover = Qpro_hover / Nred  # [N.m] motor nominal torque with reduction
+        W_to_motor = Wpro_to * Nred  # [rad/s] Motor take-off speed
+        Tmot_hover = Qpro_hover / Nred  # [N.m] motor nominal torque
 
-        Tmot = k_mot * Tmot_hover  # [N.m] required motor nominal torque for reductor
+        Tmot = k_mot * Tmot_hover  # [N.m] required motor nominal torque
         Tmot_max = Tmot_max_ref * (Tmot / Tmot_ref) ** (1)  # [N.m] max torque
 
         # Selection with take-off speed

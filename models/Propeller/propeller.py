@@ -4,6 +4,7 @@ Propeller component
 import openmdao.api as om
 from fastoad.models.options import OpenMdaoOptionDispatcherGroup
 from models.Propeller.Aerodynamics.propeller_aero import ComputePropellerAeroMR
+from models.Propeller.Aerodynamics.propeller_incidence import ComputePropellerAeroIncidenceMR
 from models.Propeller.Geometry.propeller_geometry import ComputePropellerGeometryMR
 from models.Propeller.Performances.propeller_performance import ComputePropellerPerfoMR
 from models.Propeller.Weight.propeller_weight import ComputePropellerWeightMR
@@ -21,6 +22,7 @@ class PropellerMR(om.Group):
 
     def setup(self):
         self.add_subsystem("aerodynamics", ComputePropellerAeroMR(), promotes=["*"])
+        self.add_subsystem("incidence", ComputePropellerAeroIncidenceMR(), promotes=["*"])
         self.add_subsystem("geometry", ComputePropellerGeometryMR(), promotes=["*"])
         self.add_subsystem("catalogue", PropellerCatalogueSelection(use_catalogue=self.options['use_catalogue']),
                                                                               promotes=["*"])
@@ -28,5 +30,5 @@ class PropellerMR(om.Group):
         self.add_subsystem("weight", ComputePropellerWeightMR(), promotes=["*"])
 
         # Constraints
-        self.add_subsystem("define_constraints", PropellerConstraintsMR(), promotes=["*"])
+        self.add_subsystem("constraints", PropellerConstraintsMR(), promotes=["*"])
 

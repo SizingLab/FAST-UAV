@@ -1,0 +1,159 @@
+<FASTOAD_model>
+  <specifications>
+    <MTOW units="kg" is_input="True">100.0</MTOW>
+    <altitude units="m" is_input="True">0.0</altitude>
+    <dISA units="K" is_input="True">0.0</dISA>
+    <distance>
+      <climb units="m" is_input="True">0.0</climb>
+      <forward units="m" is_input="True">17400.0</forward>
+    </distance>
+    <maxthrust>
+      <k is_input="True">2.5</k>
+    </maxthrust>
+    <speed>
+      <climb units="m/s" is_input="True">4.0</climb>
+    </speed>
+    <time>
+      <hover units="min" is_input="True">0.0</hover>
+    </time>
+  </specifications>
+  <data>
+    <ESC>
+      <efficiency is_input="True">0.95</efficiency>
+      <reference>
+        <mass units="kg" is_input="True">0.115</mass>
+        <power units="W" is_input="True">3108.0</power>
+        <voltage units="V" is_input="True">44.4</voltage>
+      </reference>
+      <settings>
+        <mass>
+          <k is_input="True">1.0</k>
+        </mass>
+        <power>
+          <k is_input="True">1.0</k>
+        </power>
+        <voltage>
+          <k is_input="True">1.0</k>
+        </voltage>
+      </settings>
+    </ESC>
+    <avionics>
+      <power units="W" is_input="True">0.0</power>
+    </avionics>
+    <battery>
+      <discharge_limit is_input="True">0.8</discharge_limit>
+      <reference>
+        <capacity units="A*s" is_input="True">12240.0</capacity>
+        <mass units="kg" is_input="True">0.329</mass>
+        <voltage units="V" is_input="True">14.8</voltage>
+        <volume units="cm**3" is_input="True">150.93</volume>
+        <current>
+          <max units="A" is_input="True">170.0</max>
+        </current>
+      </reference>
+      <cell>
+        <voltage>
+          <estimated units="V" is_input="True">3.7</estimated>
+        </voltage>
+      </cell>
+    </battery>
+    <gearbox>
+      <mass units="kg" is_input="True">0.0</mass>
+    </gearbox>
+    <payload>
+      <mass units="kg" is_input="True">0.22</mass>
+      <power units="W" is_input="True">2.0</power>
+    </payload>
+    <mission>
+      <speed>
+        <forward units="m/s" is_input="True">15.0</forward>
+      </speed>
+    </mission>
+    <motor>
+      <reference>
+        <length units="m" is_input="True">0.088</length>
+        <mass units="kg" is_input="True">0.575</mass>
+        <resistance units="V/A" is_input="True">0.03</resistance>
+        <torque_coefficient units="N*m/A" is_input="True">0.03</torque_coefficient>
+        <torque>
+          <friction units="N*m" is_input="True">0.03</friction>
+          <max units="N*m" is_input="True">2.81714285714</max>
+          <nominal units="N*m" is_input="True">2.32</nominal>
+        </torque>
+      </reference>
+      <settings>
+        <speed>
+          <k is_input="True">1.0</k>
+        </speed>
+        <torque>
+          <k is_input="True">1.0</k>
+        </torque>
+      </settings>
+    </motor>
+    <propeller>
+      <advance_ratio>
+        <climb is_input="True">0.1</climb>
+        <forward is_input="True">0.1</forward>
+      </advance_ratio>
+      <reference>
+        <diameter units="m" is_input="True">0.2794</diameter>
+        <mass units="kg" is_input="True">0.014999</mass>
+        <ND>
+          <max units="m/s" is_input="True">44.45</max>
+        </ND>
+      </reference>
+      <geometry>
+        <beta>
+          <estimated is_input="True">0.3</estimated>
+        </beta>
+      </geometry>
+      <settings>
+        <ND>
+          <k is_input="True">1.0</k>
+        </ND>
+      </settings>
+    </propeller>
+    <structure>
+      <aerodynamics>
+        <Cd is_input="True">1.0</Cd>
+      </aerodynamics>
+      <arms>
+        <number is_input="True">4.0</number>
+        <prop_per_arm is_input="True">1.0</prop_per_arm>
+        <material>
+          <density units="kg/m**3" is_input="True">1700.0</density>
+          <stress>
+            <max units="N/m**2" is_input="True">70000000.0</max>
+          </stress>
+        </material>
+        <settings>
+          <diameter>
+            <k is_input="True">0.9</k>
+          </diameter>
+        </settings>
+      </arms>
+      <reference>
+        <arms>
+          <mass units="kg" is_input="True">0.14</mass>
+        </arms>
+        <body>
+          <mass units="kg" is_input="True">0.347</mass>
+          <surface>
+            <front units="m**2" is_input="True">0.02</front>
+            <top units="m**2" is_input="True">0.045</top>
+          </surface>
+        </body>
+      </reference>
+    </structure>
+    <system>
+      <reference>
+        <MTOW units="kg" is_input="True">1.4</MTOW>
+      </reference>
+      <settings>
+        <MTOW>
+          <k is_input="True">5.0</k>
+        </MTOW>
+      </settings>
+    </system>
+  </data>
+</FASTOAD_model>

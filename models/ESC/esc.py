@@ -26,4 +26,4 @@ class ESC(om.Group):
         self.add_subsystem("performances", ComputeESCPerfo(), promotes=["*"])
 
         # Constraints
-        self.add_subsystem("define_constraints", ESCConstraints(), promotes=["*"])
+        self.add_subsystem("constraints", ESCConstraints(), promotes=["*"])

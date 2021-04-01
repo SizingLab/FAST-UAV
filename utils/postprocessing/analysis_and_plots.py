@@ -33,13 +33,13 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     # PROPULSION
-    propellers = variables["data:propeller:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
-    motors = variables["data:motor:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+    propellers = variables["data:propeller:mass"].value[0] * variables["data:propeller:number"].value[0]
+    motors = variables["data:motor:mass"].value[0] * variables["data:propeller:number"].value[0]
     if "data:gearbox:mass" in variables.names():
-        gearboxes = variables["data:gearbox:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+        gearboxes = variables["data:gearbox:mass"].value[0] * variables["data:propeller:number"].value[0]
     else:
         gearboxes = 0
-    ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+    ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:number"].value[0]
     battery = variables["data:battery:mass"].value[0]
     propulsion = propellers + motors + gearboxes + ESC + battery
 
@@ -229,13 +229,13 @@ def mass_breakdown_bar_plot_drone(
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     # PROPULSION
-    propellers = variables["data:propeller:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
-    motors = variables["data:motor:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+    propellers = variables["data:propeller:mass"].value[0] * variables["data:propeller:number"].value[0]
+    motors = variables["data:motor:mass"].value[0] * variables["data:propeller:number"].value[0]
     if "data:gearbox:mass" in variables.names():
-        gearboxes = variables["data:gearbox:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+        gearboxes = variables["data:gearbox:mass"].value[0] * variables["data:propeller:number"].value[0]
     else:
         gearboxes = 0
-    ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:prop_number"].value[0]
+    ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:number"].value[0]
     battery = variables["data:battery:mass"].value[0]
     propulsion = propellers + motors + gearboxes + ESC + battery
 
@@ -296,11 +296,11 @@ def drone_geometry_plot(
         fig = go.Figure()
     k = len(fig.data)
 
-    A_body = variables["data:structure:body:surface:top"].value[0]  # [m]
-    N_arms = variables["data:structure:arms:arm_number"].value[0]  # [-]
+    A_body = variables["data:structure:body:surface:top"].value[0]  # [m**2]
+    N_arms = variables["data:structure:arms:number"].value[0]  # [-]
     arm_length = variables["data:structure:arms:length"].value[0]  # [m]
     arm_diameter = variables["data:structure:arms:diameter:outer"].value[0]  # [m]
-    N_pro_arm = variables["data:propeller:prop_number_per_arm"].value[0]
+    N_pro_arm = variables["data:structure:arms:prop_per_arm"].value[0]  # [-]
     D_pro = variables["data:propeller:geometry:diameter"].value[0]  # [m]
     Vol_bat = variables["data:battery:volume"].value[0] * 0.000001  # [m**3]
     Lmot = variables["data:motor:length:estimated"].value[0]  # [m] TODO: get length from catalogues too
@@ -326,13 +326,13 @@ def drone_geometry_plot(
         sep_angle = - i * 2 * np.pi / N_arms
 
         # Arms
-        x_arm = np.array(
+        y_arm = np.array(
             [- arm_diameter / 2 * np.sin(sep_angle) + R_offset * np.cos(sep_angle),
              - arm_diameter / 2 * np.sin(sep_angle) + arm_length * np.cos(sep_angle),
              arm_length * np.cos(sep_angle) + arm_diameter / 2 * np.sin(sep_angle),
              arm_diameter / 2 * np.sin(sep_angle) + R_offset * np.cos(sep_angle)]
         )
-        y_arm = np.array(
+        x_arm = np.array(
             [arm_diameter / 2 * np.cos(sep_angle) + R_offset * np.sin(sep_angle),
              arm_diameter / 2 * np.cos(sep_angle) + arm_length * np.sin(sep_angle),
              arm_length * np.sin(sep_angle) - arm_diameter / 2 * np.cos(sep_angle),
@@ -355,7 +355,7 @@ def drone_geometry_plot(
         )
 
         # Propellers
-        for j in range(int(N_pro_arm)):  # TODO: distinguish the two propellers if push/pull configuration
+        for j in range(int(N_pro_arm)):
             prop_offset = j * D_pro / 15  # slightly shift the second propeller to make it visible
             fig.add_shape(
                 dict(type="circle", line=dict(color=COLS[k], width=0), fillcolor=COLS[k], opacity=0.25,
@@ -421,10 +421,10 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     # PROPULSION
-    propulsion = variables['data:mission:energy:propulsion'].value[0]
-    hover = variables['data:mission:energy:propulsion:hover'].value[0]
-    climb = variables['data:mission:energy:propulsion:climb'].value[0]
-    forward = variables['data:mission:energy:propulsion:forward'].value[0]
+    hover = variables['data:mission:energy:hover'].value[0]
+    climb = variables['data:mission:energy:climb'].value[0]
+    forward = variables['data:mission:energy:forward'].value[0]
+    propulsion = hover + climb + forward
 
     # AVIONICS
     avionics = variables['data:mission:energy:avionics'].value[0]
@@ -440,7 +440,7 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
             "Propulsion"
             + "<br>"
             + str("{0:.2f}".format(propulsion))
-            + " [J] ("
+            + " [kJ] ("
             + str(round(propulsion / mission * 100, 1))
             + "%)"
     )
@@ -449,7 +449,7 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
             "Hover"
             + "<br>"
             + str("{0:.2f}".format(hover))
-            + " [J] ("
+            + " [kJ] ("
             + str(round(hover / propulsion * 100, 1))
             + "%)"
     )
@@ -458,7 +458,7 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
             "Climb"
             + "<br>"
             + str("{0:.2f}".format(climb))
-            + " [J] ("
+            + " [kJ] ("
             + str(round(climb / propulsion * 100, 1))
             + "%)"
     )
@@ -466,9 +466,9 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     forward_str = (
             "Forward"
             + "<br>"
-            + str("{0:.2f}".format(climb))
-            + " [J] ("
-            + str(round(climb / propulsion * 100, 1))
+            + str("{0:.2f}".format(forward))
+            + " [kJ] ("
+            + str(round(forward / propulsion * 100, 1))
             + "%)"
     )
 
@@ -476,7 +476,7 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
             "Avionics"
             + "<br>"
             + str("{0:.2f}".format(avionics))
-            + " [J] ("
+            + " [kJ] ("
             + str(round(avionics / mission * 100, 1))
             + "%)"
     )
@@ -485,13 +485,13 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
             "Payload"
             + "<br>"
             + str("{0:.2f}".format(payload))
-            + " [J] ("
+            + " [kJ] ("
             + str(round(payload / mission * 100, 1))
             + "%)"
     )
 
     mission_str = (
-            "Mission" + "<br>" + str("{0:.2f}".format(mission)) + " [J]"
+            "Mission" + "<br>" + str("{0:.2f}".format(mission)) + " [kJ]"
     )
 
     # CREATE SUNBURST FIGURE

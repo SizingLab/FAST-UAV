@@ -53,6 +53,7 @@ class BatteryDecisionTree(om.ExplicitComponent):
         self.add_output('data:battery:cell:number:catalogue', units=None)
         self.add_output('data:battery:voltage:catalogue', units='V')
         self.add_output('data:battery:capacity:catalogue', units='A*s')
+        self.add_output('data:battery:energy:catalogue', units='kJ')
         self.add_output('data:battery:current:max:catalogue', units='A')
         self.add_output('data:battery:mass:catalogue', units='kg')
         self.add_output('data:battery:cell:voltage:catalogue', units='V')
@@ -77,12 +78,14 @@ class BatteryDecisionTree(om.ExplicitComponent):
         Ncel = np.ceil(V_bat / V_bat_data)  # number of cells
         Mbat = Ncel * y_pred[0][2] / 1000  # battery weight [kg]
         Vol_bat = y_pred[0][3] * 0.001 # battery volume [cm3]
-        Imax = y_pred[0][4]
+        Imax = y_pred[0][4]  # max current [A]
+        E_bat = C_bat * V_bat_data * Ncel / 1000  # stored energy [kJ]
 
         # Outputs
         outputs['data:battery:cell:number:catalogue'] = Ncel
         outputs['data:battery:voltage:catalogue'] = V_bat_data * Ncel
         outputs['data:battery:capacity:catalogue'] = C_bat
+        outputs['data:battery:energy:catalogue'] = E_bat
         outputs['data:battery:current:max:catalogue'] = Imax
         outputs['data:battery:mass:catalogue'] = Mbat
         outputs['data:battery:cell:voltage:catalogue'] = V_bat_data
@@ -102,6 +105,7 @@ class ValueSetter(om.ExplicitComponent):
         self.add_input('data:battery:cell:number'+self._str, val=np.nan, units=None)
         self.add_input('data:battery:voltage'+self._str, val=np.nan, units='V')
         self.add_input('data:battery:capacity'+self._str, val=np.nan, units='A*s')
+        self.add_input('data:battery:energy' + self._str, val=np.nan, units='kJ')
         self.add_input('data:battery:current:max'+self._str, val=np.nan, units='A')
         self.add_input('data:battery:mass'+self._str, val=np.nan, units='kg')
         self.add_input('data:battery:cell:voltage'+self._str, val=np.nan, units='V')
@@ -110,6 +114,7 @@ class ValueSetter(om.ExplicitComponent):
         self.add_output('data:battery:cell:number', units=None)
         self.add_output('data:battery:voltage', units='V')
         self.add_output('data:battery:capacity', units='A*s')
+        self.add_output('data:battery:energy', units='kJ')
         self.add_output('data:battery:current:max', units='A')
         self.add_output('data:battery:mass', units='kg')
         self.add_output('data:battery:cell:voltage', units='V')
@@ -119,6 +124,7 @@ class ValueSetter(om.ExplicitComponent):
         self.declare_partials('data:battery:cell:number', 'data:battery:cell:number'+self._str, val=1.)
         self.declare_partials('data:battery:voltage', 'data:battery:voltage'+self._str, val=1.)
         self.declare_partials('data:battery:capacity', 'data:battery:capacity'+self._str, val=1.)
+        self.declare_partials('data:battery:energy', 'data:battery:energy' + self._str, val=1.)
         self.declare_partials('data:battery:current:max', 'data:battery:current:max'+self._str, val=1.)
         self.declare_partials('data:battery:mass', 'data:battery:mass'+self._str, val=1.)
         self.declare_partials('data:battery:cell:voltage', 'data:battery:cell:voltage'+self._str, val=1.)
@@ -128,6 +134,7 @@ class ValueSetter(om.ExplicitComponent):
         outputs['data:battery:cell:number'] = inputs['data:battery:cell:number'+self._str]
         outputs['data:battery:voltage'] = inputs['data:battery:voltage'+self._str]
         outputs['data:battery:capacity'] = inputs['data:battery:capacity'+self._str]
+        outputs['data:battery:energy'] = inputs['data:battery:energy' + self._str]
         outputs['data:battery:current:max'] = inputs['data:battery:current:max'+self._str]
         outputs['data:battery:mass'] = inputs['data:battery:mass'+self._str]
         outputs['data:battery:cell:voltage'] = inputs['data:battery:cell:voltage'+self._str]

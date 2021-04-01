@@ -23,6 +23,7 @@ from .Structure.structure import StructureMR
 from .Scenarios.sizing_scenarios import SizingScenarios
 from .Missions.Mission import Mission
 from .System.System import System
+from Tests.Trajectory.forward_flight import ForwardFlight
 from fastoad.module_management import OpenMDAOSystemRegistry
 
 
@@ -41,6 +42,8 @@ def register_openmdao_systems():
     OpenMDAOSystemRegistry.register_system(StructureMR, "multirotor.structure")
     OpenMDAOSystemRegistry.register_system(System, "multirotor.system")
     OpenMDAOSystemRegistry.register_system(Mission, "multirotor.missions")
+
+    OpenMDAOSystemRegistry.register_system(ForwardFlight, "multirotor.trajectory")
 
 
 

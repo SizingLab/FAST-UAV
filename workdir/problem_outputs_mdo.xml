@@ -1,31 +1,38 @@
 <FASTOAD_model>
   <specifications>
+    <MTOW units="kg" is_input="True">100.0</MTOW>
     <altitude units="m" is_input="True">0.0</altitude>
-    <climb_speed units="m/s" is_input="True">8.0</climb_speed>
     <dISA units="degK" is_input="True">0.0</dISA>
-    <k_maxthrust is_input="True">3.0</k_maxthrust>
-    <rho_air units="kg/m**3" is_input="False">1.2249908312368587</rho_air>
-    <hover>
-      <autonomy units="min" is_input="True">18.0</autonomy>
-    </hover>
-    <system>
-      <MTOW units="kg" is_input="True">100.0</MTOW>
-    </system>
+    <distance>
+      <climb units="m" is_input="True">0.0</climb>
+      <forward units="m" is_input="True">17400.0</forward>
+    </distance>
+    <maxthrust>
+      <k is_input="True">2.5</k>
+    </maxthrust>
+    <speed>
+      <climb units="m/s" is_input="True">4.0</climb>
+    </speed>
+    <time>
+      <hover units="min" is_input="True">0.0</hover>
+    </time>
   </specifications>
   <data>
     <ESC>
       <efficiency is_input="True">0.95</efficiency>
-      <mass units="kg" is_input="False">0.020650449479789456<estimated units="kg" is_input="False">0.020650449479789456</estimated></mass>
-      <voltage units="V" is_input="False">25.04918073732056<estimated units="V" is_input="False">25.04918073732056</estimated></voltage>
+      <mass units="kg" is_input="False">0.0017736932944015734<estimated units="kg" is_input="False">0.0017736932944015734</estimated></mass>
+      <voltage units="V" is_input="False">11.052059085694403<estimated units="V" is_input="False">11.052059085694403</estimated></voltage>
       <constraints>
-        <voltage is_input="False">0.623886175115307</voltage>
+        <voltage is_input="False">0.25323925096659444</voltage>
         <power>
-          <climb is_input="False">0.5055390068416848</climb>
+          <climb is_input="False">0.46423275151703863</climb>
+          <forward is_input="False">0.5092305196916259</forward>
         </power>
       </constraints>
       <power>
-        <climb units="W" is_input="False">275.9590972764582</climb>
-        <max units="W" is_input="False">558.100843332049<estimated units="W" is_input="False">558.100843332049</estimated></max>
+        <climb units="W" is_input="False">25.682533041652217</climb>
+        <forward units="W" is_input="False">23.525520512019774</forward>
+        <max units="W" is_input="False">47.935989208696434<estimated units="W" is_input="False">47.935989208696434</estimated></max>
       </power>
       <reference>
         <mass units="kg" is_input="True">0.115</mass>
@@ -33,24 +40,46 @@
         <voltage units="V" is_input="True">44.4</voltage>
       </reference>
       <settings>
-        <k_ESC is_input="True">1.0</k_ESC>
+        <mass>
+          <k is_input="True">1.0336460989771392</k>
+        </mass>
+        <power>
+          <k is_input="True">1.0000000000000002</k>
+        </power>
+        <voltage>
+          <k is_input="True">1.8356860746114176</k>
+        </voltage>
       </settings>
     </ESC>
     <avionics>
-      <power units="W" is_input="True">150.0</power>
+      <power units="W" is_input="True">0.0</power>
     </avionics>
     <battery>
-      <capacity units="A*s" is_input="False">17265.366246784888<estimated units="A*s" is_input="False">17265.366246784888</estimated></capacity>
+      <capacity units="A*s" is_input="False">8460.189104333253<estimated units="A*s" is_input="False">8460.189104333253</estimated></capacity>
       <discharge_limit is_input="True">0.8</discharge_limit>
-      <mass units="kg" is_input="False">2.0883476085265547<estimated units="kg" is_input="False">2.0883476085265547</estimated></mass>
-      <voltage units="V" is_input="False">66.60000000000001<estimated units="V" is_input="False">66.60000000000001</estimated><guess units="V" is_input="False">65.67942521859594</guess></voltage>
-      <volume units="cm**3" is_input="False">958.0373998629572<estimated units="cm**3" is_input="False">958.0373998629572</estimated></volume>
+      <energy units="kJ" is_input="False">125.21079874413215<estimated units="kJ" is_input="False">125.21079874413215</estimated></energy>
+      <mass units="kg" is_input="False">0.22740214177497062<estimated units="kg" is_input="False">0.22740214177497062</estimated></mass>
+      <voltage units="V" is_input="False">14.8<estimated units="V" is_input="False">14.8</estimated><guess units="V" is_input="False">12.076549836549951</guess></voltage>
+      <volume units="cm**3" is_input="False">104.32159652916813<estimated units="cm**3" is_input="False">104.32159652916813</estimated></volume>
       <cell>
-        <number is_input="False">18.0<estimated is_input="False">18.0</estimated></number>
+        <number is_input="False">4.0<estimated is_input="False">4.0</estimated></number>
         <voltage units="V" is_input="False">3.7<estimated units="V" is_input="True">3.7</estimated></voltage>
       </cell>
+      <constraints>
+        <energy is_input="False">-7.015160816714245e-09</energy>
+        <power>
+          <climb is_input="False">0.9571201845746328</climb>
+          <forward is_input="False">0.9640583395029346</forward>
+          <takeoff is_input="False">0.8839383365247689</takeoff>
+        </power>
+        <voltage>
+          <climb is_input="False">0.31041476303168125</climb>
+          <forward is_input="False">0.36899645384097024</forward>
+          <takeoff is_input="False">-1.1471066739130873e-09</takeoff>
+        </voltage>
+      </constraints>
       <current>
-        <max units="A" is_input="False">239.7967534275679<estimated units="A" is_input="False">239.7967534275679</estimated></max>
+        <max units="A" is_input="False">117.50262644907296<estimated units="A" is_input="False">117.50262644907296</estimated></max>
       </current>
       <reference>
         <capacity units="A*s" is_input="True">12240.0</capacity>
@@ -61,51 +90,39 @@
           <max units="A" is_input="True">170.0</max>
         </current>
       </reference>
-      <settings>
-        <k_Mb is_input="True">0.5220869021316387</k_Mb>
-        <k_VB is_input="True">3.991470322136261</k_VB>
-      </settings>
-      <constraints>
-        <power>
-          <climb is_input="False">0.8989267271279974</climb>
-          <takeoff is_input="False">0.705719468095904</takeoff>
-        </power>
-        <voltage>
-          <climb is_input="False">0.305387235680543</climb>
-          <takeoff is_input="False">3.4396242944302746e-13</takeoff>
-        </voltage>
-      </constraints>
     </battery>
     <gearbox>
       <mass units="kg" is_input="True">0.0</mass>
     </gearbox>
     <mission>
-      <energy units="J" is_input="False">1621898.7136288725<avionics units="J" is_input="False">162000.00000004008</avionics><payload units="J" is_input="False">540000.0000001335</payload><propulsion units="J" is_input="False">919898.713628699<climb units="J" is_input="False">0.0</climb><forward units="J" is_input="False">0.0</forward><hover units="J" is_input="False">919898.713628699</hover></propulsion></energy>
-      <hover>
-        <autonomy units="min" is_input="False">18.00000000000445</autonomy>
-      </hover>
-      <constraints>
-        <hover>
-          <autonomy is_input="False">2.473083466408848e-13</autonomy>
-        </hover>
-      </constraints>
+      <energy units="kJ" is_input="False">100.16863969800484<avionics units="kJ" is_input="False">0.0</avionics><climb units="kJ" is_input="False">0.0</climb><forward units="kJ" is_input="False">96.90468779864092</forward><hover units="kJ" is_input="False">0.0</hover><payload units="kJ" is_input="False">3.2639518993639163</payload></energy>
+      <rho_air units="kg/m**3" is_input="False">1.2249908312368587</rho_air>
+      <time units="min" is_input="False">25.839619203297673<climb units="min" is_input="False">0.0</climb><forward units="min" is_input="False">25.839619203297673</forward></time>
+      <angle>
+        <forward units="rad" is_input="False">0.22493688461750586</forward>
+      </angle>
+      <speed>
+        <forward units="m/s" is_input="True">11.22307560797916</forward>
+      </speed>
     </mission>
     <motor>
-      <mass units="kg" is_input="False">0.15375145432816378<estimated units="kg" is_input="False">0.15375145432816378</estimated></mass>
-      <resistance units="V/A" is_input="False">1.6053461386622971<estimated units="V/A" is_input="False">1.6053461386622971</estimated></resistance>
-      <torque_coefficient units="N*m/A" is_input="False">0.07310904783000775<estimated units="N*m/A" is_input="False">0.07310904783000775</estimated></torque_coefficient>
+      <mass units="kg" is_input="False">0.015046950381587152<estimated units="kg" is_input="False">0.015046950381587152</estimated></mass>
+      <resistance units="V/A" is_input="False">1.1970076125966373<estimated units="V/A" is_input="False">1.1970076125966373</estimated></resistance>
+      <torque_coefficient units="N*m/A" is_input="False">0.009101080456651877<estimated units="N*m/A" is_input="False">0.009101080456651877</estimated></torque_coefficient>
       <current>
-        <climb units="A" is_input="False">4.143529989136009</climb>
-        <hover units="A" is_input="False">2.8664468278505986</hover>
-        <takeoff units="A" is_input="False">8.379892542523258</takeoff>
+        <climb units="A" is_input="False">1.7353062865981228</climb>
+        <forward units="A" is_input="False">1.5895621967580928</forward>
+        <hover units="A" is_input="False">1.3473232152973174</hover>
+        <takeoff units="A" is_input="False">3.2389181897767854</takeoff>
       </current>
       <length>
-        <estimated units="m" is_input="False">0.05669348244734344</estimated>
+        <estimated units="m" is_input="False">0.02612619838116341</estimated>
       </length>
       <power>
-        <climb units="W" is_input="False">191.68471139830257</climb>
-        <hover units="W" is_input="False">101.14627059572312</hover>
-        <takeoff units="W" is_input="False">558.100843331857</takeoff>
+        <climb units="W" is_input="False">17.71029563347442</climb>
+        <forward units="W" is_input="False">14.844686868321471</forward>
+        <hover units="W" is_input="False">11.480624353629947</hover>
+        <takeoff units="W" is_input="False">47.93598926368412</takeoff>
       </power>
       <reference>
         <length units="m" is_input="True">0.088</length>
@@ -118,122 +135,162 @@
           <nominal units="N*m" is_input="True">2.32</nominal>
         </torque>
       </reference>
-      <settings>
-        <k_mot is_input="True">2.4705882352966104</k_mot>
-        <k_speed_mot is_input="True">1.2357981761756747</k_speed_mot>
-      </settings>
       <torque>
-        <climb units="N*m" is_input="False">0.29490771715239006</climb>
-        <friction units="N*m" is_input="False">0.008021815008425937<estimated units="N*m" is_input="False">0.008021815008425937</estimated></friction>
-        <hover units="N*m" is_input="False">0.20154138323107745</hover>
-        <max units="N*m" is_input="False">0.6046241496932293<estimated units="N*m" is_input="False">0.6046241496932293</estimated></max>
-        <nominal units="N*m" is_input="False">0.4979257703361055<estimated units="N*m" is_input="False">0.4979257703361055</estimated></nominal>
-        <takeoff units="N*m" is_input="False">0.6046241496932323</takeoff>
+        <climb units="N*m" is_input="False">0.015008103850484856</climb>
+        <forward units="N*m" is_input="False">0.013681675162769245</forward>
+        <friction units="N*m" is_input="False">0.0007850582807784601<estimated units="N*m" is_input="False">0.0007850582807784601</estimated></friction>
+        <hover units="N*m" is_input="False">0.011477038702757325</hover>
+        <max units="N*m" is_input="False">0.040168562383333016<estimated units="N*m" is_input="False">0.040168562383333016</estimated></max>
+        <nominal units="N*m" is_input="False">0.03307999255101368<estimated units="N*m" is_input="False">0.03307999255101368</estimated></nominal>
+        <takeoff units="N*m" is_input="False">0.028692596756893316</takeoff>
       </torque>
       <voltage>
-        <climb units="V" is_input="False">46.26121010367584</climb>
-        <hover units="V" is_input="False">35.28628879942194</hover>
-        <takeoff units="V" is_input="False">66.5999999999771</takeoff>
+        <climb units="V" is_input="False">10.205861507131118</climb>
+        <forward units="V" is_input="False">9.33885248315364</forward>
+        <hover units="V" is_input="False">8.521061778851994</hover>
+        <takeoff units="V" is_input="False">14.80000001697718</takeoff>
       </voltage>
       <constraints>
         <torque>
-          <climb is_input="False">0.5122462156001896</climb>
-          <takeoff is_input="False">-4.957794305782905e-15</takeoff>
+          <climb is_input="False">0.6263718948350486</climb>
+          <forward is_input="False">0.6593934571966128</forward>
+          <takeoff is_input="False">0.285695204048462</takeoff>
         </torque>
       </constraints>
+      <settings>
+        <speed>
+          <k is_input="True">1.1056084020015309</k>
+        </speed>
+        <torque>
+          <k is_input="True">2.882275943102493</k>
+        </torque>
+      </settings>
     </motor>
     <payload>
-      <mass units="kg" is_input="True">4.0</mass>
-      <power units="W" is_input="True">500.0</power>
-      <settings>
-        <k_M is_input="True">2.086121185614141</k_M>
-      </settings>
+      <mass units="kg" is_input="True">0.22</mass>
+      <power units="W" is_input="True">2.0</power>
     </payload>
     <propeller>
-      <advance_ratio is_input="True">0.241067246258388</advance_ratio>
-      <mass units="kg" is_input="False">0.03899473768889874</mass>
-      <prop_number is_input="False">8.0</prop_number>
-      <prop_number_per_arm is_input="True">1.0</prop_number_per_arm>
+      <mass units="kg" is_input="False">0.0034315561443152244</mass>
+      <number is_input="False">4.0</number>
+      <advance_ratio>
+        <climb is_input="True">0.16463767526149897</climb>
+        <forward is_input="True">0.4999999999999997</forward>
+      </advance_ratio>
       <geometry>
         <beta is_input="False">0.3<estimated is_input="True">0.3</estimated></beta>
-        <diameter units="m" is_input="False">0.38418549841720834<estimated units="m" is_input="False">0.38418549841720834</estimated></diameter>
+        <diameter units="m" is_input="False">0.17088449908028136<estimated units="m" is_input="False">0.17088449908028136</estimated></diameter>
       </geometry>
       <power>
-        <climb units="W" is_input="False">159.77667740074656</climb>
-        <hover units="W" is_input="False">84.58907451547627</hover>
-        <takeoff units="W" is_input="False">439.5377244781038</takeoff>
+        <climb units="W" is_input="False">13.404581392372709</climb>
+        <forward units="W" is_input="False">11.178757979640356</forward>
+        <hover units="W" is_input="False">8.7118108123475</hover>
+        <takeoff units="W" is_input="False">34.4364558893748</takeoff>
       </power>
       <reference>
         <diameter units="m" is_input="True">0.2794</diameter>
         <mass units="kg" is_input="True">0.014999</mass>
-        <nD_max units="m/s" is_input="True">44.45</nD_max>
+        <ND>
+          <max units="m/s" is_input="True">44.45</max>
+        </ND>
       </reference>
-      <settings>
-        <k_ND is_input="True">1.0</k_ND>
-      </settings>
       <speed>
-        <climb units="rad/s" is_input="False">541.7853386257229</climb>
-        <hover units="rad/s" is_input="False">419.7106974228245</hover>
-        <takeoff units="rad/s" is_input="False">726.9602524165</takeoff>
+        <climb units="rad/s" is_input="False">893.1562258572495</climb>
+        <forward units="rad/s" is_input="False">817.0606191601552</forward>
+        <hover units="rad/s" is_input="False">759.0643403733153</hover>
+        <takeoff units="rad/s" is_input="False">1200.1861030964908</takeoff>
       </speed>
       <thrust>
-        <climb units="N" is_input="False">10.802225871470307</climb>
-        <hover units="N" is_input="False">10.228930162451457</hover>
-        <max units="N" is_input="False">30.686790487354372</max>
+        <climb units="N" is_input="False">1.3675833108236268</climb>
+        <forward units="N" is_input="False">1.3434297303648184</forward>
+        <hover units="N" is_input="False">1.309586299242154</hover>
+        <max units="N" is_input="False">3.273965748105385</max>
       </thrust>
       <torque>
-        <climb units="N*m" is_input="False">0.29490771715239006</climb>
-        <hover units="N*m" is_input="False">0.20154138323107745</hover>
-        <takeoff units="N*m" is_input="False">0.6046241496932323</takeoff>
+        <climb units="N*m" is_input="False">0.015008103850484856</climb>
+        <forward units="N*m" is_input="False">0.013681675162769245</forward>
+        <hover units="N*m" is_input="False">0.011477038702757325</hover>
+        <takeoff units="N*m" is_input="False">0.028692596756893316</takeoff>
       </torque>
       <aerodynamics>
         <CP>
-          <dynamic is_input="False">0.024307123554182603<estimated is_input="False">0.024307123554182603</estimated></dynamic>
+          <axial is_input="False">0.026143539489528526<estimated is_input="False">0.026143539489528526</estimated></axial>
+          <incidence is_input="False">0.028478960674176355<estimated is_input="False">0.028478960674176355</estimated></incidence>
           <static is_input="False">0.02768<estimated is_input="False">0.02768</estimated></static>
         </CP>
         <CT>
-          <dynamic is_input="False">0.05444045981473791<estimated is_input="False">0.05444045981473791</estimated></dynamic>
+          <axial is_input="False">0.06479107002308437<estimated is_input="False">0.06479107002308437</estimated></axial>
+          <incidence is_input="False">0.0760540975376172<estimated is_input="False">0.0760540975376172</estimated></incidence>
           <static is_input="False">0.0859<estimated is_input="False">0.0859</estimated></static>
         </CT>
       </aerodynamics>
       <constraints>
         <speed>
-          <climb is_input="False">0.01000000000018364</climb>
-          <max is_input="False">0.25434693545650183</max>
+          <climb is_input="False">0.0001854215895791267</climb>
+          <forward is_input="False">0.009999997335413792</forward>
+          <max is_input="False">0.45351472312859775</max>
         </speed>
       </constraints>
+      <settings>
+        <ND>
+          <k is_input="True">0.7343441336014637</k>
+        </ND>
+      </settings>
     </propeller>
     <system>
-      <MTOW units="kg" is_input="False">8.344484742458196</MTOW>
+      <MTOW units="kg" is_input="False">0.5341625530468592</MTOW>
+      <autonomy>
+        <hover units="min" is_input="False">33.095175258509634</hover>
+      </autonomy>
+      <range>
+        <max units="m" is_input="False">17399.9998779362</max>
+        <min units="m" is_input="False">17399.9998779362</min>
+      </range>
+      <reference>
+        <MTOW units="kg" is_input="True">1.4</MTOW>
+      </reference>
       <constraints>
         <mass>
-          <MTOW is_input="False">10.983963430501891</MTOW>
-          <convergence is_input="False">-1.9563483975260063e-13</convergence>
+          <MTOW is_input="False">186.2089299963106</MTOW>
+          <convergence is_input="False">-7.384708262393696e-10</convergence>
         </mass>
       </constraints>
+      <settings>
+        <MTOW>
+          <k is_input="True">2.428011602965435</k>
+        </MTOW>
+      </settings>
     </system>
     <structure>
       <aerodynamics>
-        <C_D is_input="True">1.3</C_D>
+        <Cd is_input="True">1.0</Cd>
       </aerodynamics>
       <arms>
-        <D_ratio_arms is_input="True">0.99</D_ratio_arms>
-        <arm_number is_input="True">8.0</arm_number>
-        <length units="m" is_input="False">0.5019625438744961</length>
-        <mass units="kg" is_input="False">0.1578130601107918</mass>
+        <length units="m" is_input="False">0.12083358809933328</length>
+        <mass units="kg" is_input="False">0.001653440818673866</mass>
+        <number is_input="True">4.0</number>
+        <prop_per_arm is_input="True">1.0</prop_per_arm>
         <diameter>
-          <inner units="m" is_input="False">0.03807413770736276</inner>
-          <outer units="m" is_input="False">0.03845872495693208</outer>
+          <inner units="m" is_input="False">0.011233361907893645</inner>
+          <outer units="m" is_input="False">0.01134683020999359</outer>
         </diameter>
         <material>
           <density units="kg/m**3" is_input="True">1700.0</density>
-          <sigma_max units="N/m**2" is_input="True">70000000.0</sigma_max>
+          <stress>
+            <max units="N/m**2" is_input="True">70000000.0</max>
+          </stress>
         </material>
+        <settings>
+          <diameter>
+            <k is_input="True">0.9899999999999991</k>
+          </diameter>
+        </settings>
       </arms>
       <body>
-        <mass units="kg" is_input="False">0.3911509418460339</mass>
+        <mass units="kg" is_input="False">0.004098171171998796</mass>
         <surface>
-          <top units="m**2" is_input="True">0.09</top>
+          <front units="m**2" is_input="False">0.01052107858053903</front>
+          <top units="m**2" is_input="False">0.023672426806212815</top>
         </surface>
       </body>
       <reference>
@@ -242,6 +299,10 @@
         </arms>
         <body>
           <mass units="kg" is_input="True">0.347</mass>
+          <surface>
+            <front units="m**2" is_input="True">0.02</front>
+            <top units="m**2" is_input="True">0.045</top>
+          </surface>
         </body>
       </reference>
     </structure>

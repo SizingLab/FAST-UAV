@@ -5,6 +5,7 @@ import openmdao.api as om
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
 from utils.DecisionTrees.predicted_values_DT import DecisionTrees
 from models.Propeller.Aerodynamics.propeller_aero import ComputePropellerAeroMR
+from models.Propeller.Aerodynamics.propeller_incidence import ComputePropellerAeroIncidenceMR
 import pandas as pd
 import numpy as np
 
@@ -51,13 +52,17 @@ class PropellerDecisionTree(om.ExplicitComponent):
     def setup(self):
         self.add_input('data:propeller:geometry:beta:estimated', val=np.nan, units=None)
         self.add_input('data:propeller:geometry:diameter:estimated', val=np.nan, units='m')
-        self.add_input('data:propeller:advance_ratio', val=np.nan, units=None)
+        self.add_input('data:propeller:advance_ratio:climb', val=np.nan, units=None)
+        self.add_input('data:propeller:advance_ratio:forward', val=np.nan, units=None)
+        self.add_input('data:mission:angle:forward', val=np.nan, units='rad')
         self.add_output('data:propeller:geometry:beta:catalogue', units=None)
         self.add_output('data:propeller:geometry:diameter:catalogue', units='m')
         self.add_output('data:propeller:aerodynamics:CT:static:catalogue', units=None)
         self.add_output('data:propeller:aerodynamics:CP:static:catalogue', units=None)
-        self.add_output('data:propeller:aerodynamics:CT:dynamic:catalogue', units=None)
-        self.add_output('data:propeller:aerodynamics:CP:dynamic:catalogue', units=None)
+        self.add_output('data:propeller:aerodynamics:CT:axial:catalogue', units=None)
+        self.add_output('data:propeller:aerodynamics:CP:axial:catalogue', units=None)
+        self.add_output('data:propeller:aerodynamics:CT:incidence:catalogue', units=None)
+        self.add_output('data:propeller:aerodynamics:CP:incidence:catalogue', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -65,12 +70,14 @@ class PropellerDecisionTree(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         """
-        This method evaluates the decision tree
+        This method evaluates the decision tree and updates aero parameters according to the new geometry
         """
         # Continuous parameters
         beta = inputs['data:propeller:geometry:beta:estimated']
         Dpro = inputs['data:propeller:geometry:diameter:estimated']
-        J = inputs['data:propeller:advance_ratio']
+        J_climb = inputs['data:propeller:advance_ratio:climb']
+        J_forward = inputs['data:propeller:advance_ratio:forward']
+        alpha = inputs['data:mission:angle:forward']
 
         # Discrete parameters
         y_pred = self._DT.predict([np.hstack((beta, Dpro/0.0254))])
@@ -78,15 +85,19 @@ class PropellerDecisionTree(om.ExplicitComponent):
         Dpro = y_pred[0][1] * 0.0254  # [m] diameter expressed in meters
 
         # Update Ct and Cp with new parameters
-        C_t_sta, C_p_sta, C_t_dyn, C_p_dyn = ComputePropellerAeroMR.aero_coefficients(beta, J)
+        C_t_sta, C_p_sta = ComputePropellerAeroMR.aero_coefficients_static(beta)
+        C_t_axial, C_p_axial = ComputePropellerAeroMR.aero_coefficients_axial(beta, J_climb)
+        C_t_inc, C_p_inc = ComputePropellerAeroIncidenceMR.aero_coefficients_incidence(beta, J_forward, alpha)
 
         # Outputs
         outputs['data:propeller:geometry:beta:catalogue'] = beta
         outputs['data:propeller:geometry:diameter:catalogue'] = Dpro
         outputs['data:propeller:aerodynamics:CT:static:catalogue'] = C_t_sta
         outputs['data:propeller:aerodynamics:CP:static:catalogue'] = C_p_sta
-        outputs['data:propeller:aerodynamics:CT:dynamic:catalogue'] = C_t_dyn
-        outputs['data:propeller:aerodynamics:CP:dynamic:catalogue'] = C_p_dyn
+        outputs['data:propeller:aerodynamics:CT:axial:catalogue'] = C_t_axial
+        outputs['data:propeller:aerodynamics:CP:axial:catalogue'] = C_p_axial
+        outputs['data:propeller:aerodynamics:CT:incidence:catalogue'] = C_t_inc
+        outputs['data:propeller:aerodynamics:CP:incidence:catalogue'] = C_p_inc
 
 
 class ValueSetter(om.ExplicitComponent):
@@ -103,97 +114,39 @@ class ValueSetter(om.ExplicitComponent):
         self.add_input('data:propeller:geometry:diameter'+self._str, val=np.nan, units='m')
         self.add_input('data:propeller:aerodynamics:CT:static'+self._str, val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CP:static'+self._str, val=np.nan, units=None)
-        self.add_input('data:propeller:aerodynamics:CT:dynamic'+self._str, val=np.nan, units=None)
-        self.add_input('data:propeller:aerodynamics:CP:dynamic'+self._str, val=np.nan, units=None)
+        self.add_input('data:propeller:aerodynamics:CT:axial'+self._str, val=np.nan, units=None)
+        self.add_input('data:propeller:aerodynamics:CP:axial'+self._str, val=np.nan, units=None)
+        self.add_input('data:propeller:aerodynamics:CT:incidence' + self._str, val=np.nan, units=None)
+        self.add_input('data:propeller:aerodynamics:CP:incidence' + self._str, val=np.nan, units=None)
         # 'real' values
         self.add_output('data:propeller:geometry:beta', units=None)
         self.add_output('data:propeller:geometry:diameter', units='m')
         self.add_output('data:propeller:aerodynamics:CT:static', units=None)
         self.add_output('data:propeller:aerodynamics:CP:static', units=None)
-        self.add_output('data:propeller:aerodynamics:CT:dynamic', units=None)
-        self.add_output('data:propeller:aerodynamics:CP:dynamic', units=None)
+        self.add_output('data:propeller:aerodynamics:CT:axial', units=None)
+        self.add_output('data:propeller:aerodynamics:CP:axial', units=None)
+        self.add_output('data:propeller:aerodynamics:CT:incidence', units=None)
+        self.add_output('data:propeller:aerodynamics:CP:incidence', units=None)
 
     def setup_partials(self):
         self.declare_partials('data:propeller:geometry:beta', 'data:propeller:geometry:beta'+self._str, val=1.)
         self.declare_partials('data:propeller:geometry:diameter', 'data:propeller:geometry:diameter'+self._str, val=1.)
         self.declare_partials('data:propeller:aerodynamics:CT:static', 'data:propeller:aerodynamics:CT:static'+self._str, val=1.)
         self.declare_partials('data:propeller:aerodynamics:CP:static', 'data:propeller:aerodynamics:CP:static'+self._str, val=1.)
-        self.declare_partials('data:propeller:aerodynamics:CT:dynamic', 'data:propeller:aerodynamics:CT:dynamic'+self._str, val=1.)
-        self.declare_partials('data:propeller:aerodynamics:CP:dynamic', 'data:propeller:aerodynamics:CP:dynamic'+self._str, val=1.)
+        self.declare_partials('data:propeller:aerodynamics:CT:axial', 'data:propeller:aerodynamics:CT:axial'+self._str, val=1.)
+        self.declare_partials('data:propeller:aerodynamics:CP:axial', 'data:propeller:aerodynamics:CP:axial'+self._str, val=1.)
+        self.declare_partials('data:propeller:aerodynamics:CT:incidence', 'data:propeller:aerodynamics:CT:incidence' + self._str,
+                          val=1.)
+        self.declare_partials('data:propeller:aerodynamics:CP:incidence', 'data:propeller:aerodynamics:CP:incidence' + self._str,
+                          val=1.)
 
     def compute(self, inputs, outputs):
         outputs['data:propeller:geometry:beta'] = inputs['data:propeller:geometry:beta'+self._str]
         outputs['data:propeller:geometry:diameter'] = inputs['data:propeller:geometry:diameter'+self._str]
         outputs['data:propeller:aerodynamics:CT:static'] = inputs['data:propeller:aerodynamics:CT:static'+self._str]
         outputs['data:propeller:aerodynamics:CP:static'] = inputs['data:propeller:aerodynamics:CP:static'+self._str]
-        outputs['data:propeller:aerodynamics:CT:dynamic'] = inputs['data:propeller:aerodynamics:CT:dynamic'+self._str]
-        outputs['data:propeller:aerodynamics:CP:dynamic'] = inputs['data:propeller:aerodynamics:CP:dynamic'+self._str]
-
-
-# class ValueSetter(om.ExplicitComponent):
-#     def initialize(self):
-#         self.options.declare("use_catalogue", default=True, types=bool)
-#
-#     def setup(self):
-#         if self.options["use_catalogue"]:  # discrete values from catalogues
-#             self.add_input('data:propeller:geometry:beta:catalogue', val=np.nan, units=None)
-#             self.add_input('data:propeller:geometry:diameter:catalogue', val=np.nan, units='m')
-#             self.add_input('data:propeller:aerodynamics:CT:static:catalogue', val=np.nan, units=None)
-#             self.add_input('data:propeller:aerodynamics:CP:static:catalogue', val=np.nan, units=None)
-#             self.add_input('data:propeller:aerodynamics:CT:dynamic:catalogue', val=np.nan, units=None)
-#             self.add_input('data:propeller:aerodynamics:CP:dynamic:catalogue', val=np.nan, units=None)
-#         else:  # estimated values
-#             self.add_input('data:propeller:geometry:beta:estimated', val=np.nan, units=None)
-#             self.add_input('data:propeller:geometry:diameter:estimated', val=np.nan, units='m')
-#             self.add_input('data:propeller:aerodynamics:CT:static:estimated', val=np.nan, units=None)
-#             self.add_input('data:propeller:aerodynamics:CP:static:estimated', val=np.nan, units=None)
-#             self.add_input('data:propeller:aerodynamics:CT:dynamic:estimated', val=np.nan, units=None)
-#             self.add_input('data:propeller:aerodynamics:CP:dynamic:estimated', val=np.nan, units=None)
-#         # real values
-#         self.add_output('data:propeller:geometry:beta', units=None)
-#         self.add_output('data:propeller:geometry:diameter', units='m')
-#         self.add_output('data:propeller:aerodynamics:CT:static', units=None)
-#         self.add_output('data:propeller:aerodynamics:CP:static', units=None)
-#         self.add_output('data:propeller:aerodynamics:CT:dynamic', units=None)
-#         self.add_output('data:propeller:aerodynamics:CP:dynamic', units=None)
-#
-#     def setup_partials(self):
-#         if self.options["use_catalogue"]:
-#             self.declare_partials('data:propeller:geometry:beta', 'data:propeller:geometry:beta:catalogue', val=1.)
-#             self.declare_partials('data:propeller:geometry:diameter', 'data:propeller:geometry:diameter:catalogue', val=1.)
-#             self.declare_partials('data:propeller:aerodynamics:CT:static', 'data:propeller:aerodynamics:CT:static:catalogue', val=1.)
-#             self.declare_partials('data:propeller:aerodynamics:CP:static', 'data:propeller:aerodynamics:CP:static:catalogue', val=1.)
-#             self.declare_partials('data:propeller:aerodynamics:CT:dynamic', 'data:propeller:aerodynamics:CT:dynamic:catalogue', val=1.)
-#             self.declare_partials('data:propeller:aerodynamics:CP:dynamic', 'data:propeller:aerodynamics:CP:dynamic:catalogue', val=1.)
-#         else:
-#             self.declare_partials('data:propeller:geometry:beta', 'data:propeller:geometry:beta:estimated', val=1.)
-#             self.declare_partials('data:propeller:geometry:diameter', 'data:propeller:geometry:diameter:estimated', val=1.)
-#             self.declare_partials('data:propeller:aerodynamics:CT:static', 'data:propeller:aerodynamics:CT:static:estimated',
-#                                   val=1.)
-#             self.declare_partials('data:propeller:aerodynamics:CP:static', 'data:propeller:aerodynamics:CP:static:estimated',
-#                                   val=1.)
-#             self.declare_partials('data:propeller:aerodynamics:CT:dynamic', 'data:propeller:aerodynamics:CT:dynamic:estimated',
-#                                   val=1.)
-#             self.declare_partials('data:propeller:aerodynamics:CP:dynamic', 'data:propeller:aerodynamics:CP:dynamic:estimated',
-#                                   val=1.)
-#
-#     def compute(self, inputs, outputs):
-#         if self.options["use_catalogue"]:
-#             outputs['data:propeller:geometry:beta'] = inputs['data:propeller:geometry:beta:catalogue']
-#             outputs['data:propeller:geometry:diameter'] = inputs['data:propeller:geometry:diameter:catalogue']
-#             outputs['data:propeller:aerodynamics:CT:static'] = inputs[
-#                 'data:propeller:aerodynamics:CT:static:catalogue']
-#             outputs['data:propeller:aerodynamics:CP:static'] = inputs[
-#                 'data:propeller:aerodynamics:CP:static:catalogue']
-#             outputs['data:propeller:aerodynamics:CT:dynamic'] = inputs[
-#                 'data:propeller:aerodynamics:CT:dynamic:catalogue']
-#             outputs['data:propeller:aerodynamics:CP:dynamic'] = inputs[
-#                 'data:propeller:aerodynamics:CP:dynamic:catalogue']
-#         else:
-#             outputs['data:propeller:geometry:beta'] = inputs['data:propeller:geometry:beta:estimated']
-#             outputs['data:propeller:geometry:diameter'] = inputs['data:propeller:geometry:diameter:estimated']
-#             outputs['data:propeller:aerodynamics:CT:static'] = inputs['data:propeller:aerodynamics:CT:static:estimated']
-#             outputs['data:propeller:aerodynamics:CP:static'] = inputs['data:propeller:aerodynamics:CP:static:estimated']
-#             outputs['data:propeller:aerodynamics:CP:dynamic'] = inputs['data:propeller:aerodynamics:CP:dynamic:estimated']
-#             outputs['data:propeller:aerodynamics:CT:dynamic'] = inputs['data:propeller:aerodynamics:CT:dynamic:estimated']
+        outputs['data:propeller:aerodynamics:CT:axial'] = inputs['data:propeller:aerodynamics:CT:axial'+self._str]
+        outputs['data:propeller:aerodynamics:CP:axial'] = inputs['data:propeller:aerodynamics:CP:axial'+self._str]
+        outputs['data:propeller:aerodynamics:CT:incidence'] = inputs['data:propeller:aerodynamics:CT:incidence' + self._str]
+        outputs['data:propeller:aerodynamics:CP:incidence'] = inputs['data:propeller:aerodynamics:CP:incidence' + self._str]
 

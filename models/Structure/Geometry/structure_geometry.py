@@ -13,11 +13,11 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:structure:arms:material:sigma_max', val=np.nan, units='N/m**2')
-        self.add_input('data:structure:arms:D_ratio_arms', val=np.nan, units=None)
+        self.add_input('data:structure:arms:material:stress:max', val=np.nan, units='N/m**2')
+        self.add_input('data:structure:arms:settings:diameter:k', val=np.nan, units=None)
         self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
-        self.add_input('data:structure:arms:arm_number', val=np.nan, units=None)
-        self.add_input('data:propeller:prop_number_per_arm', val=np.nan, units=None)
+        self.add_input('data:structure:arms:number', val=np.nan, units=None)
+        self.add_input('data:structure:arms:prop_per_arm', val=np.nan, units=None)
         self.add_input('data:propeller:thrust:max', val=np.nan, units='N')
         self.add_output('data:structure:arms:length', units='m')
         self.add_output('data:structure:arms:diameter:outer', units='m')
@@ -29,16 +29,16 @@ class ComputeStructureGeometryMR(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         # Frame sized from max thrust
-        Sigma_max = inputs['data:structure:arms:material:sigma_max']
-        D_ratio = inputs['data:structure:arms:D_ratio_arms']
+        Sigma_max = inputs['data:structure:arms:material:stress:max']
+        D_ratio = inputs['data:structure:arms:settings:diameter:k']
         Dpro = inputs['data:propeller:geometry:diameter']
-        Narm = inputs['data:structure:arms:arm_number']
+        Narm = inputs['data:structure:arms:number']
         F_pro_to = inputs['data:propeller:thrust:max']
-        Npro_arm = inputs['data:propeller:prop_number_per_arm']
+        Npro_arm = inputs['data:structure:arms:prop_per_arm']
 
         # Length calculation
         #    sep= 2*pi/Narm #[rad] interior angle separation between propellers
-        Larm = Dpro / 2 / (math.sin(pi / Narm))  # [m] length of the arm
+        Larm = Dpro / 2 / (np.sin(pi / Narm))  # [m] length of the arm
         # Tube diameter & thickness
         Dout = (F_pro_to * Npro_arm * Larm * 32 / (pi * Sigma_max * (1 - D_ratio ** 4))) ** (1 / 3)  # [m] outer diameter of the beam
         Din = D_ratio * Dout # [m] inner diameter of the beam

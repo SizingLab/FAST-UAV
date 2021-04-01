@@ -26,5 +26,5 @@ class Battery(om.Group):
                            promotes=["*"])
 
         # Constraints
-        self.add_subsystem("define_constraints", BatteryConstraints(), promotes=["*"])
+        self.add_subsystem("constraints", BatteryConstraints(), promotes=["*"])
 

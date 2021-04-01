@@ -11,10 +11,10 @@ class ComputePropellerGeometryMR(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:propeller:thrust:max', val=np.nan, units='N')
-        self.add_input('specifications:rho_air', val=np.nan, units='kg/m**3')
+        self.add_input('data:mission:rho_air', val=np.nan, units='kg/m**3')
         self.add_input('data:propeller:aerodynamics:CT:static:estimated', val=np.nan, units=None)
-        self.add_input('data:propeller:reference:nD_max', val=np.nan, units='m/s')
-        self.add_input('data:propeller:settings:k_ND', val=np.nan, units=None)
+        self.add_input('data:propeller:reference:ND:max', val=np.nan, units='m/s')
+        self.add_input('data:propeller:settings:ND:k', val=np.nan, units=None)
         self.add_output('data:propeller:geometry:diameter:estimated', units='m')
 
     def setup_partials(self):
@@ -24,9 +24,9 @@ class ComputePropellerGeometryMR(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         F_pro_to = inputs['data:propeller:thrust:max']
         C_t_sta = inputs['data:propeller:aerodynamics:CT:static:estimated']
-        rho_air = inputs['specifications:rho_air']
-        NDmax = inputs['data:propeller:reference:nD_max']
-        k_ND = inputs['data:propeller:settings:k_ND']
+        rho_air = inputs['data:mission:rho_air']
+        NDmax = inputs['data:propeller:reference:ND:max']
+        k_ND = inputs['data:propeller:settings:ND:k']
 
         Dpro = (F_pro_to / (C_t_sta * rho_air * (NDmax * k_ND) ** 2)) ** 0.5  # [m] Propeller diameter
 
