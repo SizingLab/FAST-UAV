@@ -1,4 +1,4 @@
-# FAST-OAD-Drone
+# FAST-ODD
 
 Preliminary design of multirotor tool, based on FAST-OAD framework and DroneApp tool.
 
