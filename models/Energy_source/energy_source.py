@@ -1,6 +1,7 @@
 """
 Battery component
 """
+import fastoad.api as oad
 import openmdao.api as om
 from models.Energy_source.Battery.Characteristics.battery_characteristics import ComputeBatteryCharacteristics
 from models.Energy_source.Battery.Weight.battery_weight import ComputeBatteryWeight
@@ -9,6 +10,7 @@ from models.Energy_source.Battery.Constraints.battery_constraints import Battery
 from models.Energy_source.Battery.DecisionTree.battery_catalog import BatteryCatalogueSelection
 
 
+@oad.RegisterOpenMDAOSystem("energy.battery")
 class Battery(om.Group):
     """
     Group containing the Battery MDA.

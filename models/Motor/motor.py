@@ -1,8 +1,8 @@
 """
 Motor component
 """
+import fastoad.api as oad
 import openmdao.api as om
-from fastoad.models.options import OpenMdaoOptionDispatcherGroup
 from models.Motor.Characteristics.motor_characteristics import ComputeMotorCharacteristics
 from models.Motor.Performances.motor_performance import ComputeMotorPerfo
 from models.Motor.Weight.motor_weight import ComputeMotorWeight
@@ -11,6 +11,8 @@ from models.Motor.Constraints.motor_constraints import MotorConstraints
 from models.Motor.Gearbox.gearbox_model import ComputeGearboxCharacteristics
 from models.Motor.DecisionTree.motor_catalog import MotorCatalogueSelection
 
+
+@oad.RegisterOpenMDAOSystem("motor")
 class Motor(om.Group):
     """
     Group containing the Motor MDA.

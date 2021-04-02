@@ -18,7 +18,7 @@ class ComputeMotorPerfo(om.ExplicitComponent):
 
         self.add_input('data:motor:torque:friction', units='N*m')
         self.add_input('data:motor:resistance', units='V/A')
-        self.add_input('data:motor:torque_coefficient', units='N*m/A')
+        self.add_input('data:motor:torque:coefficient', units='N*m/A')
         self.add_input('data:propeller:speed:takeoff', val=np.nan, units='rad/s')
         self.add_input('data:propeller:speed:hover', val=np.nan, units='rad/s')
         self.add_input('data:propeller:speed:climb', val=np.nan, units='rad/s')
@@ -56,7 +56,7 @@ class ComputeMotorPerfo(om.ExplicitComponent):
 
         Tfmot = inputs['data:motor:torque:friction']
         Rmot = inputs['data:motor:resistance']
-        Ktmot = inputs['data:motor:torque_coefficient']
+        Ktmot = inputs['data:motor:torque:coefficient']
         Wpro_to = inputs['data:propeller:speed:takeoff']
         Wpro_hover = inputs['data:propeller:speed:hover']
         Wpro_cl = inputs['data:propeller:speed:climb']

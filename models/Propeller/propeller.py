@@ -1,8 +1,8 @@
 """
 Propeller component
 """
+import fastoad.api as oad
 import openmdao.api as om
-from fastoad.models.options import OpenMdaoOptionDispatcherGroup
 from models.Propeller.Aerodynamics.propeller_aero import ComputePropellerAeroMR
 from models.Propeller.Aerodynamics.propeller_incidence import ComputePropellerAeroIncidenceMR
 from models.Propeller.Geometry.propeller_geometry import ComputePropellerGeometryMR
@@ -12,7 +12,8 @@ from models.Propeller.Constraints.propeller_constraints import PropellerConstrai
 from models.Propeller.DecisionTree.propeller_catalog import PropellerCatalogueSelection
 
 
-class PropellerMR(om.Group):
+@oad.RegisterOpenMDAOSystem("multirotor.propeller")
+class Propeller(om.Group):
     """
     Group containing the Propeller MDA.
     """

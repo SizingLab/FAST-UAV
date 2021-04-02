@@ -1,12 +1,15 @@
 """
 Sizing scenarios definition
 """
+import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from fastoad.utils.physics.atmosphere import AtmosphereSI
+from fastoad.model_base.atmosphere import AtmosphereSI
 from scipy.constants import g
 from scipy.optimize import brentq
 
+
+@oad.RegisterOpenMDAOSystem("multirotor.sizing_scenarios")
 class SizingScenarios(om.ExplicitComponent):
     """
     Sizing scenarios definition: Hover and Take-off

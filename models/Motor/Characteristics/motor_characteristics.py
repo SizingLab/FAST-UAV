@@ -28,12 +28,12 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         self.add_input('data:motor:reference:torque:max', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:torque:friction', val=np.nan, units='N*m')
         self.add_input('data:motor:reference:resistance', val=np.nan, units='V/A')
-        self.add_input('data:motor:reference:torque_coefficient', val=np.nan, units='N*m/A')
+        self.add_input('data:motor:reference:torque:coefficient', val=np.nan, units='N*m/A')
         self.add_output('data:motor:torque:nominal:estimated', units='N*m')
         self.add_output('data:motor:torque:max:estimated', units='N*m')
         self.add_output('data:motor:torque:friction:estimated', units='N*m')
         self.add_output('data:motor:resistance:estimated', units='V/A')
-        self.add_output('data:motor:torque_coefficient:estimated', units='N*m/A')
+        self.add_output('data:motor:torque:coefficient:estimated', units='N*m/A')
         self.add_output('data:battery:voltage:guess', units='V')
 
     def setup_partials(self):
@@ -56,7 +56,7 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         Tmot_max_ref = inputs['data:motor:reference:torque:max']
         Tfmot_ref = inputs['data:motor:reference:torque:friction']
         Rmot_ref = inputs['data:motor:reference:resistance']
-        Ktmot_ref = inputs['data:motor:reference:torque_coefficient']
+        Ktmot_ref = inputs['data:motor:reference:torque:coefficient']
 
         # Motor speed and torque for sizing
         W_to_motor = Wpro_to * Nred  # [rad/s] Motor take-off speed
@@ -75,7 +75,7 @@ class ComputeMotorCharacteristics(om.ExplicitComponent):
         outputs['data:motor:torque:max:estimated'] = Tmot_max
         outputs['data:motor:torque:friction:estimated'] = Tfmot
         outputs['data:motor:resistance:estimated'] = Rmot
-        outputs['data:motor:torque_coefficient:estimated'] = Ktmot
+        outputs['data:motor:torque:coefficient:estimated'] = Ktmot
         outputs['data:battery:voltage:guess'] = V_bat_guess
 
 

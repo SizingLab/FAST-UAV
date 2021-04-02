@@ -1,0 +1,186 @@
+title: Multirotor Drone Design
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders: 
+    - ../models
+    - ../models/Energy_source
+    - ../models/ESC
+    - ../models/Missions
+    - ../models/Motor
+    - ../models/Propeller
+    - ../models/Scenarios
+    - ../models/Structure
+    - ../models/System
+    
+# Input and output files
+input_file: ../workdir/problem_inputs.xml
+output_file: ../workdir/problem_outputs.xml
+
+# Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
+driver: om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')
+
+# Definition of OpenMDAO model
+model:
+    
+    # Solvers are defined assuming the OpenMDAO convention import openmdao.api as om
+    #nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2)
+    #linear_solver: om.DirectSolver()
+
+    # Components can be put in sub-groups
+    sizing_scenarios:
+        id: multirotor.sizing_scenarios
+    propeller:
+        id: multirotor.propeller
+        use_catalogue: false
+    motor:
+        id: motor
+        use_catalogue: false
+        use_gearbox: false
+    battery:
+        id: energy.battery
+        use_catalogue: false
+    esc:
+        id: esc
+        use_catalogue: false
+    structure:
+        id: multirotor.structure
+    mission:
+        id: multirotor.missions
+    system:
+        id: multirotor.system
+
+
+optimization: # This section is needed only if optimization process is run
+    
+    design_variables:
+      - name: data:system:settings:MTOW:k # over sizing coefficient on the load mass
+        lower: 1.0
+        upper: 20.0
+
+      - name: data:ESC:settings:mass:k # over sizing coefficient on the battery load mass
+        upper: 60.0  
+        lower: 0.01    
+
+      - name: data:structure:arms:settings:diameter:k # aspect ratio D_out/D_in for the beam of the frame
+        lower: 0.05
+        upper: 0.99  
+
+      - name: data:propeller:geometry:beta:estimated # pitch/diameter ratio of the propeller
+        lower: 0.3
+        upper: 0.6
+
+      - name: data:propeller:advance_ratio:climb # climbing advance ratio
+        upper: 0.5
+        lower: 0.01        
+
+      - name: data:propeller:advance_ratio:forward # forward flight advance ratio
+        upper: 0.5
+        lower: 0.01
+
+      - name: data:motor:settings:torque:k # over sizing coefficient on the motor torque
+        lower: 1.0
+        upper: 20.0
+
+      - name: data:motor:settings:speed:k # over sizing coefficient on the motor speed
+        lower: 1.0
+        upper: 10.0
+
+      - name: data:ESC:settings:voltage:k # over sizing coefficient for the battery voltage
+        lower: 1.0
+        upper: 5.0
+
+      - name: data:propeller:settings:ND:k # slow down propeller coef : ND: kNDmax / k_ND
+        upper: 1.0
+        lower: 0.01
+
+      - name: data:ESC:settings:power:k # over sizing coefficient on the ESC power
+        lower: 1.0
+        upper: 15.0
+
+      - name: data:mission:speed:forward
+        lower: 1.0
+        upper: 40
+
+
+#      - name: data:gearbox:N_red # gearbox reduction ratio (if 'use_gearbox' is true)
+#        lower: 1.0
+#        upper: 20.0
+
+
+    constraints:
+      - name: data:ESC:constraints:power:climb
+        lower: 0.0
+        
+      - name: data:ESC:constraints:power:forward
+        lower: 0.0
+
+      - name: data:ESC:constraints:voltage
+        lower: 0.0
+
+      - name: data:battery:constraints:power:takeoff
+        lower: 0.0
+
+      - name: data:battery:constraints:power:climb
+        lower: 0.0
+
+      - name: data:battery:constraints:power:forward
+        lower: 0.0
+
+      - name: data:battery:constraints:voltage:takeoff
+        lower: 0.0
+
+      - name: data:battery:constraints:voltage:climb
+        lower: 0.0       
+
+      - name: data:battery:constraints:voltage:forward
+        lower: 0.0
+
+      - name: data:motor:constraints:torque:climb
+        lower: 0.0
+
+      - name: data:motor:constraints:torque:forward
+        lower: 0.0
+
+      - name: data:motor:constraints:torque:takeoff
+        lower: 0.0
+
+      - name: data:propeller:constraints:speed:climb
+        lower: 0.0
+        upper: 0.01
+        
+      - name: data:propeller:constraints:speed:forward
+        lower: 0.0
+        upper: 0.01
+
+      - name: data:propeller:constraints:speed:max
+        lower: 0.0
+
+      - name: data:system:constraints:mass:convergence
+        lower: 0.0
+
+      # FOR MASS OR ENERGY MINIMIZATION: battery must have enough energy to carry out the mission
+      - name: data:battery:constraints:energy
+        lower: 0.0   
+
+      # FOR AUTONOMY OR RANGE MAXIMIZATION: total mass must no exceed specified MTOW
+#      - name: data:system:constraints:mass:MTOW
+#        lower: 0.0
+
+
+    objective:
+      # MASS MINIMIZATION
+      - name: data:system:MTOW
+        scaler: 1e-1
+
+      # ENERGY MINIMIZATION
+#      - name: data:mission:energy
+#        scaler: 1e-3
+        
+      # RANGE MAXIMIZATION
+#      - name: data:system:range:max
+#        scaler: -1e-3
+
+      # HOVER AUTONOMY MAXIMIZATION
+#      - name: data:system:time:hover:max
+#        scaler: -1e-1
+        

@@ -35,7 +35,7 @@ class MotorCatalogueSelection(om.Group):
 @ValidityDomainChecker(
     {
         'data:motor:torque:max:estimated': (DF['Tmax_Nm'].min(), DF['Tmax_Nm'].max()),
-        'data:motor:torque_coefficient:estimated': (DF['Kt_Nm_A'].min(), DF['Kt_Nm_A'].max()),
+        'data:motor:torque:coefficient:estimated': (DF['Kt_Nm_A'].min(), DF['Kt_Nm_A'].max()),
     },
 )
 class MotorDecisionTree(om.ExplicitComponent):
@@ -52,9 +52,9 @@ class MotorDecisionTree(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:motor:torque:max:estimated', val=np.nan, units='N*m')
-        self.add_input('data:motor:torque_coefficient:estimated', val=np.nan, units='N*m/A')
+        self.add_input('data:motor:torque:coefficient:estimated', val=np.nan, units='N*m/A')
         self.add_output('data:motor:torque:max:catalogue', units='N*m')
-        self.add_output('data:motor:torque_coefficient:catalogue', units='N*m/A')
+        self.add_output('data:motor:torque:coefficient:catalogue', units='N*m/A')
         self.add_output('data:motor:torque:nominal:catalogue', units='N*m')
         self.add_output('data:motor:torque:friction:catalogue', units='N*m')
         self.add_output('data:motor:resistance:catalogue', units='V/A')
@@ -70,7 +70,7 @@ class MotorDecisionTree(om.ExplicitComponent):
         """
         # Continuous parameters
         Tmot_max = inputs['data:motor:torque:max:estimated']
-        Ktmot = inputs['data:motor:torque_coefficient:estimated']
+        Ktmot = inputs['data:motor:torque:coefficient:estimated']
 
         # Discrete parameters
         y_pred = self._DT.predict([np.hstack((Tmot_max, Ktmot))])
@@ -83,7 +83,7 @@ class MotorDecisionTree(om.ExplicitComponent):
 
         # Outputs
         outputs['data:motor:torque:max:catalogue'] = Tmot_max
-        outputs['data:motor:torque_coefficient:catalogue'] = Ktmot
+        outputs['data:motor:torque:coefficient:catalogue'] = Ktmot
         outputs['data:motor:torque:nominal:catalogue'] = Tmot
         outputs['data:motor:torque:friction:catalogue'] = Tfmot
         outputs['data:motor:resistance:catalogue'] = Rmot
@@ -101,14 +101,14 @@ class ValueSetter(om.ExplicitComponent):
         else:  # estimated values
             self._str = ':estimated'
         self.add_input('data:motor:torque:max'+self._str, val=np.nan, units='N*m')
-        self.add_input('data:motor:torque_coefficient'+self._str, val=np.nan, units='N*m/A')
+        self.add_input('data:motor:torque:coefficient'+self._str, val=np.nan, units='N*m/A')
         self.add_input('data:motor:torque:nominal'+self._str, val=np.nan, units='N*m')
         self.add_input('data:motor:torque:friction'+self._str, val=np.nan, units='N*m')
         self.add_input('data:motor:resistance'+self._str, val=np.nan, units='V/A')
         self.add_input('data:motor:mass'+self._str, val=np.nan, units='kg')
         # 'real' values
         self.add_output('data:motor:torque:max', units='N*m')
-        self.add_output('data:motor:torque_coefficient', units='N*m/A')
+        self.add_output('data:motor:torque:coefficient', units='N*m/A')
         self.add_output('data:motor:torque:nominal', units='N*m')
         self.add_output('data:motor:torque:friction', units='N*m')
         self.add_output('data:motor:resistance', units='V/A')
@@ -116,7 +116,7 @@ class ValueSetter(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials('data:motor:torque:max', 'data:motor:torque:max'+self._str, val=1.)
-        self.declare_partials('data:motor:torque_coefficient', 'data:motor:torque_coefficient'+self._str, val=1.)
+        self.declare_partials('data:motor:torque:coefficient', 'data:motor:torque:coefficient'+self._str, val=1.)
         self.declare_partials('data:motor:torque:nominal', 'data:motor:torque:nominal'+self._str, val=1.)
         self.declare_partials('data:motor:torque:friction', 'data:motor:torque:friction'+self._str, val=1.)
         self.declare_partials('data:motor:resistance', 'data:motor:resistance'+self._str, val=1.)
@@ -124,7 +124,7 @@ class ValueSetter(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         outputs['data:motor:torque:max'] = inputs['data:motor:torque:max'+self._str]
-        outputs['data:motor:torque_coefficient'] = inputs['data:motor:torque_coefficient'+self._str]
+        outputs['data:motor:torque:coefficient'] = inputs['data:motor:torque:coefficient'+self._str]
         outputs['data:motor:torque:nominal'] = inputs['data:motor:torque:nominal'+self._str]
         outputs['data:motor:torque:friction'] = inputs['data:motor:torque:friction'+self._str]
         outputs['data:motor:resistance'] = inputs['data:motor:resistance'+self._str]

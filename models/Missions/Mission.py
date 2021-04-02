@@ -1,10 +1,11 @@
 """
 Mission definition
 """
+import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 
-
+@oad.RegisterOpenMDAOSystem("multirotor.missions")
 class Mission(om.Group):
     """
     Group containing the mission parameters

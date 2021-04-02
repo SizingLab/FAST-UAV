@@ -1,6 +1,6 @@
-# FAST-ODD
+# FAST-OAD-Drone
 
-FAST-ODD is a framework for performing rapid Overall Drone Design, based on FAST-OAD framework and DroneApp tool.
+Preliminary design of multirotor tool, based on FAST-OAD framework and DroneApp tool.
 
 DroneApp: https://github.com/SizingLab/droneapp-legacy
 
