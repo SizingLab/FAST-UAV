@@ -3,33 +3,24 @@ Propeller component
 """
 import fastoad.api as oad
 import openmdao.api as om
-from models.Propeller.Aerodynamics.propeller_aero import ComputePropellerAeroMR
-from models.Propeller.Aerodynamics.propeller_incidence import ComputePropellerAeroIncidenceMR
-from models.Propeller.Geometry.propeller_geometry import ComputePropellerGeometryMR
-from models.Propeller.Performances.propeller_performance import ComputePropellerPerfoMR
-from models.Propeller.Weight.propeller_weight import ComputePropellerWeightMR
-from models.Propeller.Constraints.propeller_constraints import PropellerConstraintsMR
+from models.Propeller.Scaling.prop_scaling import PropellerScaling, Weight
+from models.Propeller.Performances.propeller_performance import PropellerPerfos
+from models.Propeller.Constraints.propeller_constraints import PropellerConstraints
 from models.Propeller.DecisionTree.propeller_catalog import PropellerCatalogueSelection
 
 
-@oad.RegisterOpenMDAOSystem("multirotor.propeller")
+@oad.RegisterOpenMDAOSystem("propeller")
 class Propeller(om.Group):
     """
     Group containing the Propeller MDA.
     """
-
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)
 
     def setup(self):
-        self.add_subsystem("aerodynamics", ComputePropellerAeroMR(), promotes=["*"])
-        self.add_subsystem("incidence", ComputePropellerAeroIncidenceMR(), promotes=["*"])
-        self.add_subsystem("geometry", ComputePropellerGeometryMR(), promotes=["*"])
-        self.add_subsystem("catalogue", PropellerCatalogueSelection(use_catalogue=self.options['use_catalogue']),
-                                                                              promotes=["*"])
-        self.add_subsystem("performances", ComputePropellerPerfoMR(), promotes=["*"])
-        self.add_subsystem("weight", ComputePropellerWeightMR(), promotes=["*"])
-
-        # Constraints
-        self.add_subsystem("constraints", PropellerConstraintsMR(), promotes=["*"])
+        self.add_subsystem("scaling", PropellerScaling(), promotes=["*"])
+        self.add_subsystem("catalogue", PropellerCatalogueSelection(use_catalogue=self.options['use_catalogue']), promotes=["*"])
+        self.add_subsystem("weight", Weight(), promotes=["*"])
+        self.add_subsystem("performances", PropellerPerfos(), promotes=["*"])
+        self.add_subsystem("constraints", PropellerConstraints(), promotes=["*"])
 

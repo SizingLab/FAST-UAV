@@ -3,13 +3,11 @@ Motor component
 """
 import fastoad.api as oad
 import openmdao.api as om
-from models.Motor.Characteristics.motor_characteristics import ComputeMotorCharacteristics
-from models.Motor.Performances.motor_performance import ComputeMotorPerfo
-from models.Motor.Weight.motor_weight import ComputeMotorWeight
-from models.Motor.Geometry.motor_geometry import ComputeMotorGeometry
-from models.Motor.Constraints.motor_constraints import MotorConstraints
-from models.Motor.Gearbox.gearbox_model import ComputeGearboxCharacteristics
+from models.Motor.Scaling.motor_scaling import MotorScaling
 from models.Motor.DecisionTree.motor_catalog import MotorCatalogueSelection
+from models.Motor.Performances.motor_performance import MotorPerfos
+from models.Motor.Constraints.motor_constraints import MotorConstraints
+from models.Motor.Gearbox.gearbox_model import Gearbox
 
 
 @oad.RegisterOpenMDAOSystem("motor")
@@ -23,19 +21,9 @@ class Motor(om.Group):
         self.options.declare("use_gearbox", default=True, types=bool)
 
     def setup(self):
-        self.add_subsystem("characteristics", ComputeMotorCharacteristics(use_gearbox=self.options["use_gearbox"]),
-                           promotes=["*"])
-        self.add_subsystem("weight", ComputeMotorWeight(), promotes=["*"])
-        self.add_subsystem("geometry", ComputeMotorGeometry(), promotes=["*"])
-
-        # Choose between estimated parameters and catalogue components
+        self.add_subsystem("scaling", MotorScaling(use_gearbox=self.options["use_gearbox"]),promotes=["*"])
         self.add_subsystem("catalogue", MotorCatalogueSelection(use_catalogue=self.options['use_catalogue']), promotes=["*"])
-
-        self.add_subsystem("performances", ComputeMotorPerfo(use_gearbox=self.options["use_gearbox"]), promotes=["*"])
-
-        # Add gearbox model if specified by user ('use_gearbox' = true)
+        self.add_subsystem("performances", MotorPerfos(use_gearbox=self.options["use_gearbox"]), promotes=["*"])
         if self.options["use_gearbox"]:
-            self.add_subsystem("gearbox", ComputeGearboxCharacteristics(), promotes=["*"])
-
-        # Constraints
+            self.add_subsystem("gearbox", Gearbox(), promotes=["*"])
         self.add_subsystem("constraints", MotorConstraints(), promotes=["*"])

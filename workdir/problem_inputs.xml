@@ -1,21 +1,17 @@
 <FASTOAD_model>
+  <safety>
+    <k_uneven is_input="True">2.0</k_uneven>
+    <rotor_fail is_input="True">2.0</rotor_fail>
+  </safety>
   <specifications>
-    <MTOW units="kg" is_input="True">100.0</MTOW>
-    <altitude units="m" is_input="True">0.0</altitude>
-    <dISA units="K" is_input="True">0.0</dISA>
-    <distance>
-      <climb units="m" is_input="True">0.0</climb>
-      <forward units="m" is_input="True">17400.0</forward>
-    </distance>
+    <MTOW units="kg" is_input="True">600.0<!--Top-level requirement: Maximum Take Off Weight--></MTOW>
+    <climb_height units="m" is_input="True">100.0<!--Top-level requirement: climb height--></climb_height>
+    <climb_speed units="m/s" is_input="True">3.0<!--Top-level requirement: climb speed--></climb_speed>
+    <hover_duration units="min" is_input="True">2.0<!--Top-level requirement: hover phase duration--></hover_duration>
+    <range units="m" is_input="True">25000.0<!--Top-level requirement: range--></range>
     <maxthrust>
-      <k is_input="True">2.5</k>
+      <k is_input="True">1.6<!--Top-level requirement: maximum thrust-to-weight ratio--></k>
     </maxthrust>
-    <speed>
-      <climb units="m/s" is_input="True">4.0</climb>
-    </speed>
-    <time>
-      <hover units="min" is_input="True">0.0</hover>
-    </time>
   </specifications>
   <data>
     <ESC>
@@ -26,15 +22,9 @@
         <voltage units="V" is_input="True">44.4<!--ESC voltage reference for scaling law--></voltage>
       </reference>
       <settings>
-        <mass>
-          <k is_input="True">1.0<!--Oversizing coefficient on ESC mass--></k>
-        </mass>
         <power>
-          <k is_input="True">1.0<!--Oversizing coefficient on ESC power--></k>
+          <k is_input="True">2.0<!--Oversizing coefficient on ESC power--></k>
         </power>
-        <voltage>
-          <k is_input="True">1.0<!--Oversizing coefficient on ESC voltage--></k>
-        </voltage>
       </settings>
     </ESC>
     <avionics>
@@ -56,22 +46,30 @@
           <estimated units="V" is_input="True">3.7<!--Voltage of one cell (estimated value)--></estimated>
         </voltage>
       </cell>
+      <settings>
+        <mass>
+          <k is_input="True">1.0<!--Oversizing coefficient on battery mass--></k>
+        </mass>
+        <voltage>
+          <k is_input="True">2.0<!--Oversizing coefficient on battery voltage--></k>
+        </voltage>
+      </settings>
     </battery>
     <gearbox>
-      <mass units="kg" is_input="True">0.0<!--Gearbox mass--></mass>
+      <mass units="kg" is_input="True">0.0<!--Gearbox mass - do not modify--></mass>
     </gearbox>
-    <payload>
-      <mass units="kg" is_input="True">0.22<!--Payload mass--></mass>
-      <power units="W" is_input="True">2.0<!--Payload power consumption--></power>
-    </payload>
-    <mission>
-      <speed>
-        <forward units="m/s" is_input="True">15.0<!--Forward flight velocity--></forward>
-      </speed>
-    </mission>
+    <mission_nominal>
+      <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
+      <forward>
+        <speed units="m/s" is_input="True">20.0<!--Forward flight velocity--></speed>
+      </forward>
+      <takeoff>
+        <altitude units="m" is_input="True">0.0<!--Takeoff altitude--></altitude>
+      </takeoff>
+    </mission_nominal>
     <motor>
+      <resistance units="V/A" is_input="True">1.0<!--Motor resistance--></resistance>
       <reference>
-        <coefficient units="N*m/A" is_input="True">0.03</coefficient>
         <length units="m" is_input="True">0.088<!--Motor length reference for scaling law--></length>
         <mass units="kg" is_input="True">0.575<!--Motor mass reference for scaling law--></mass>
         <resistance units="V/A" is_input="True">0.03<!--Motor resistance reference for scaling law--></resistance>
@@ -82,6 +80,10 @@
           <nominal units="N*m" is_input="True">2.32<!--Motor nominal torque reference for scaling law--></nominal>
         </torque>
       </reference>
+      <torque>
+        <coefficient units="N*m/A" is_input="True">1.0<!--Motor torque coefficient--></coefficient>
+        <friction units="N*m" is_input="True">1.0<!--Motor friction torque--></friction>
+      </torque>
       <settings>
         <speed>
           <k is_input="True">1.0<!--Oversizing coefficient of motor speed--></k>
@@ -91,10 +93,16 @@
         </torque>
       </settings>
     </motor>
+    <payload>
+      <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
+      <mass>
+        <max units="kg" is_input="True">15.0<!--Payload mass--></max>
+      </mass>
+    </payload>
     <propeller>
       <advance_ratio>
-        <climb is_input="True">0.1<!--Advance ratio (climb)--></climb>
-        <forward is_input="True">0.1<!--Advance ratio (forward flight)--></forward>
+        <climb is_input="True">0.1<!--Advance ratio J (climb)--></climb>
+        <forward is_input="True">0.5<!--Advance ratio J (forward flight)--></forward>
       </advance_ratio>
       <reference>
         <diameter units="m" is_input="True">0.2794<!--Propeller diameter reference for scaling law--></diameter>
@@ -105,7 +113,7 @@
       </reference>
       <geometry>
         <beta>
-          <estimated is_input="True">0.3<!--Angle pitch/diameter (estimated value)--></estimated>
+          <estimated is_input="True">0.4<!--Angle pitch/diameter (estimated value)--></estimated>
         </beta>
       </geometry>
       <settings>
@@ -116,10 +124,11 @@
     </propeller>
     <structure>
       <aerodynamics>
-        <Cd is_input="True">1.3<!--Drag coefficient--></Cd>
+        <Cd is_input="True">1.0<!--Fuselage Drag coefficient--></Cd>
+        <Cl0 is_input="True">0.0<!--Max. fuselage lift coefficient--></Cl0>
       </aerodynamics>
       <arms>
-        <number is_input="True">4.0<!--Number of arms--></number>
+        <number is_input="True">8.0<!--Number of arms--></number>
         <prop_per_arm is_input="True">1.0<!--Number of propellers per arm (single or coaxial configuration)--></prop_per_arm>
         <material>
           <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>

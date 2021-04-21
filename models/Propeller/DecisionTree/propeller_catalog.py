@@ -4,8 +4,7 @@ Propeller Decision Tree based on provided catalogue
 import openmdao.api as om
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
 from utils.DecisionTrees.predicted_values_DT import DecisionTrees
-from models.Propeller.Aerodynamics.propeller_aero import ComputePropellerAeroMR
-from models.Propeller.Aerodynamics.propeller_incidence import ComputePropellerAeroIncidenceMR
+from models.Propeller.Scaling.prop_scaling import Aerodynamics
 import pandas as pd
 import numpy as np
 
@@ -54,7 +53,7 @@ class PropellerDecisionTree(om.ExplicitComponent):
         self.add_input('data:propeller:geometry:diameter:estimated', val=np.nan, units='m')
         self.add_input('data:propeller:advance_ratio:climb', val=np.nan, units=None)
         self.add_input('data:propeller:advance_ratio:forward', val=np.nan, units=None)
-        self.add_input('data:mission:angle:forward', val=np.nan, units='rad')
+        self.add_input('data:mission_nominal:forward:angle', val=np.nan, units='rad')
         self.add_output('data:propeller:geometry:beta:catalogue', units=None)
         self.add_output('data:propeller:geometry:diameter:catalogue', units='m')
         self.add_output('data:propeller:aerodynamics:CT:static:catalogue', units=None)
@@ -77,7 +76,7 @@ class PropellerDecisionTree(om.ExplicitComponent):
         Dpro = inputs['data:propeller:geometry:diameter:estimated']
         J_climb = inputs['data:propeller:advance_ratio:climb']
         J_forward = inputs['data:propeller:advance_ratio:forward']
-        alpha = inputs['data:mission:angle:forward']
+        alpha = inputs['data:mission_nominal:forward:angle']
 
         # Discrete parameters
         y_pred = self._DT.predict([np.hstack((beta, Dpro/0.0254))])
@@ -85,9 +84,9 @@ class PropellerDecisionTree(om.ExplicitComponent):
         Dpro = y_pred[0][1] * 0.0254  # [m] diameter expressed in meters
 
         # Update Ct and Cp with new parameters
-        C_t_sta, C_p_sta = ComputePropellerAeroMR.aero_coefficients_static(beta)
-        C_t_axial, C_p_axial = ComputePropellerAeroMR.aero_coefficients_axial(beta, J_climb)
-        C_t_inc, C_p_inc = ComputePropellerAeroIncidenceMR.aero_coefficients_incidence(beta, J_forward, alpha)
+        C_t_sta, C_p_sta = Aerodynamics.aero_coefficients_static(beta)
+        C_t_axial, C_p_axial = Aerodynamics.aero_coefficients_axial(beta, J_climb)
+        C_t_inc, C_p_inc = Aerodynamics.aero_coefficients_incidence(beta, J_forward, alpha)
 
         # Outputs
         outputs['data:propeller:geometry:beta:catalogue'] = beta

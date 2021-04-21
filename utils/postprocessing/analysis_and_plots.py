@@ -49,7 +49,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     structure = body + arms
 
     # PAYLOAD
-    payload = variables["data:payload:mass"].value[0]
+    payload = variables["data:payload:mass:max"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
@@ -245,7 +245,7 @@ def mass_breakdown_bar_plot_drone(
     structure = body + arms
 
     # PAYLOAD
-    payload = variables["data:payload:mass"].value[0]
+    payload = variables["data:payload:mass:max"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
@@ -420,28 +420,61 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     """
     variables = VariableIO(drone_file_path, file_formatter).read()
 
-    # PROPULSION
-    hover = variables['data:mission:energy:hover'].value[0]
-    climb = variables['data:mission:energy:climb'].value[0]
-    forward = variables['data:mission:energy:forward'].value[0]
-    propulsion = hover + climb + forward
+    # CLIMB SEGMENT
+    climb_pro = variables['data:mission_nominal:climb:energy:propulsion'].value[0]
+    climb_payload = variables['data:mission_nominal:climb:energy:payload'].value[0]
+    climb_avionics = variables['data:mission_nominal:climb:energy:avionics'].value[0]
+    climb = variables['data:mission_nominal:climb:energy'].value[0]
 
-    # AVIONICS
-    avionics = variables['data:mission:energy:avionics'].value[0]
+    # HOVER SEGMENT
+    hover_pro = variables['data:mission_nominal:hover:energy:propulsion'].value[0]
+    hover_payload = variables['data:mission_nominal:hover:energy:payload'].value[0]
+    hover_avionics = variables['data:mission_nominal:hover:energy:avionics'].value[0]
+    hover = variables['data:mission_nominal:hover:energy'].value[0]
 
-    # PAYLOAD
-    payload = variables['data:mission:energy:payload'].value[0]
+    # FORWARD SEGMENT
+    forward_pro = variables['data:mission_nominal:forward:energy:propulsion'].value[0]
+    forward_payload = variables['data:mission_nominal:forward:energy:payload'].value[0]
+    forward_avionics = variables['data:mission_nominal:forward:energy:avionics'].value[0]
+    forward = variables['data:mission_nominal:forward:energy'].value[0]
 
     # TOTAL MISSION
-    mission = variables['data:mission:energy'].value[0]
+    mission = variables['data:mission_nominal:energy'].value[0]
 
     # DISPLAYED NAMES AND VALUES
-    propulsion_str = (
+    climb_str = (
+            "Climb"
+            + "<br>"
+            + str("{0:.2f}".format(climb))
+            + " [kJ] ("
+            + str(round(climb / mission * 100, 1) if mission != 0 else 0)
+            + "%)"
+    )
+
+    climb_pro_str = (
             "Propulsion"
             + "<br>"
-            + str("{0:.2f}".format(propulsion))
+            + str("{0:.2f}".format(climb_pro))
             + " [kJ] ("
-            + str(round(propulsion / mission * 100, 1))
+            + str(round(climb_pro / climb * 100, 1) if climb != 0 else 0)
+            + "%)"
+    )
+
+    climb_payload_str = (
+            "Payload"
+            + "<br>"
+            + str("{0:.2f}".format(climb_payload))
+            + " [kJ] ("
+            + str(round(climb_payload / climb * 100, 1) if climb != 0 else 0)
+            + "%)"
+    )
+
+    climb_avionics_str = (
+            "Avionics"
+            + "<br>"
+            + str("{0:.2f}".format(climb_avionics))
+            + " [kJ] ("
+            + str(round(climb_avionics / climb * 100, 1) if climb != 0 else 0)
             + "%)"
     )
 
@@ -450,16 +483,34 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
             + "<br>"
             + str("{0:.2f}".format(hover))
             + " [kJ] ("
-            + str(round(hover / propulsion * 100, 1))
+            + str(round(hover / mission * 100, 1) if mission != 0 else 0)
             + "%)"
     )
 
-    climb_str = (
-            "Climb"
+    hover_pro_str = (
+            "Propulsion"
             + "<br>"
-            + str("{0:.2f}".format(climb))
+            + str("{0:.2f}".format(hover_pro))
             + " [kJ] ("
-            + str(round(climb / propulsion * 100, 1))
+            + str(round(hover_pro / hover * 100, 1) if hover != 0 else 0)
+            + "%)"
+    )
+
+    hover_payload_str = (
+            "Payload"
+            + "<br>"
+            + str("{0:.2f}".format(hover_payload))
+            + " [kJ] ("
+            + str(round(hover_payload / hover * 100, 1) if hover != 0 else 0)
+            + "%)"
+    )
+
+    hover_avionics_str = (
+            "Avionics"
+            + "<br>"
+            + str("{0:.2f}".format(hover_avionics))
+            + " [kJ] ("
+            + str(round(hover_avionics / hover * 100, 1) if hover != 0 else 0)
             + "%)"
     )
 
@@ -468,25 +519,34 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
             + "<br>"
             + str("{0:.2f}".format(forward))
             + " [kJ] ("
-            + str(round(forward / propulsion * 100, 1))
+            + str(round(forward / mission * 100, 1) if mission != 0 else 0)
             + "%)"
     )
 
-    avionics_str = (
-            "Avionics"
+    forward_pro_str = (
+            "Propulsion"
             + "<br>"
-            + str("{0:.2f}".format(avionics))
+            + str("{0:.2f}".format(forward_pro))
             + " [kJ] ("
-            + str(round(avionics / mission * 100, 1))
+            + str(round(forward_pro / forward * 100, 1) if forward != 0 else 0)
             + "%)"
     )
 
-    payload_str = (
+    forward_payload_str = (
             "Payload"
             + "<br>"
-            + str("{0:.2f}".format(payload))
+            + str("{0:.2f}".format(forward_payload))
             + " [kJ] ("
-            + str(round(payload / mission * 100, 1))
+            + str(round(forward_payload / forward * 100, 1) if forward != 0 else 0)
+            + "%)"
+    )
+
+    forward_avionics_str = (
+            "Avionics"
+            + "<br>"
+            + str("{0:.2f}".format(forward_avionics) if forward != 0 else 0)
+            + " [kJ] ("
+            + str(round(forward_avionics / forward * 100, 1) if forward != 0 else 0)
             + "%)"
     )
 
@@ -499,35 +559,53 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         go.Sunburst(
             labels=[
                 mission_str,
-                avionics_str,
-                payload_str,
-                propulsion_str,
-                hover_str,
                 climb_str,
+                climb_pro_str,
+                climb_payload_str,
+                climb_avionics_str,
+                hover_str,
+                hover_pro_str,
+                hover_payload_str,
+                hover_avionics_str,
                 forward_str,
+                forward_pro_str,
+                forward_payload_str,
+                forward_avionics_str,
             ],
             parents=[
                 "",
                 mission_str,
+                climb_str,
+                climb_str,
+                climb_str,
                 mission_str,
+                hover_str,
+                hover_str,
+                hover_str,
                 mission_str,
-                propulsion_str,
-                propulsion_str,
-                propulsion_str,
+                forward_str,
+                forward_str,
+                forward_str,
             ],
             values=[
                 mission,
-                avionics,
-                payload,
-                propulsion,
-                hover,
                 climb,
+                climb_pro,
+                climb_payload,
+                climb_avionics,
+                hover,
+                hover_pro,
+                hover_payload,
+                hover_avionics,
                 forward,
+                forward_pro,
+                forward_payload,
+                forward_avionics,
             ],
             branchvalues="total",
         ),
     )
 
-    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Energy Breakdown", title_x=0.5)
+    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mission Energy Breakdown", title_x=0.5)
 
     return fig
