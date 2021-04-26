@@ -5,6 +5,17 @@ import openmdao.api as om
 import numpy as np
 
 
+class ESCModel:
+    """
+    ESC model for performances calculation
+    """
+
+    @staticmethod
+    def power(P_el, U_mot, V_bat):
+        P_esc = P_el * V_bat / U_mot  # [W] electronic power
+        return P_esc
+
+
 class ESCPerfos(om.Group):
     """
     Group containing the performance functions of the ESC
@@ -36,7 +47,8 @@ class TakeOff(om.ExplicitComponent):
         Umot_to = inputs['data:motor:voltage:takeoff']
         V_bat = inputs['data:battery:voltage']
 
-        P_esc_to = P_el_to * V_bat / Umot_to  # [W] electronic power takeoff
+        # P_esc_to = P_el_to * V_bat / Umot_to  # [W] electronic power takeoff
+        P_esc_to = ESCModel.power(P_el_to, Umot_to, V_bat)  # [W] electronic power takeoff
 
         outputs['data:ESC:power:takeoff'] = P_esc_to
 
@@ -61,7 +73,8 @@ class Hover(om.ExplicitComponent):
         Umot_hover = inputs['data:motor:voltage:hover']
         V_bat = inputs['data:battery:voltage']
 
-        P_esc_hover = P_el_hover * V_bat / Umot_hover  # [W] electronic power hover
+        # P_esc_hover = P_el_hover * V_bat / Umot_hover  # [W] electronic power hover
+        P_esc_hover = ESCModel.power(P_el_hover, Umot_hover, V_bat)  # [W] electronic power hover
 
         outputs['data:ESC:power:hover'] = P_esc_hover
 
@@ -86,7 +99,8 @@ class Climb(om.ExplicitComponent):
         Umot_cl = inputs['data:motor:voltage:climb']
         V_bat = inputs['data:battery:voltage']
 
-        P_esc_cl = P_el_cl * V_bat / Umot_cl  # [W] electronic power max climb
+        # P_esc_cl = P_el_cl * V_bat / Umot_cl  # [W] electronic power max climb
+        P_esc_cl = ESCModel.power(P_el_cl, Umot_cl, V_bat)  # [W] electronic power max climb
 
         outputs['data:ESC:power:climb'] = P_esc_cl
 
@@ -111,6 +125,7 @@ class Forward(om.ExplicitComponent):
         P_el_ff = inputs['data:motor:power:forward']
         Umot_ff = inputs['data:motor:voltage:forward']
 
-        P_esc_ff = P_el_ff * V_bat / Umot_ff # [W] electronic power max forward
+        # P_esc_ff = P_el_ff * V_bat / Umot_ff # [W] electronic power max forward
+        P_esc_ff = ESCModel.power(P_el_ff, Umot_ff, V_bat)  # [W] electronic power max forward
 
         outputs['data:ESC:power:forward'] = P_esc_ff

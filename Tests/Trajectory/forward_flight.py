@@ -18,7 +18,7 @@ class ForwardFlight(om.ExplicitComponent):
         self.add_input('data:structure:body:surface:top', val=np.nan, units='m**2')
         self.add_input('data:structure:body:surface:front', val=np.nan, units='m**2')
         self.add_input('data:structure:aerodynamics:Cd', val=np.nan, units=None)
-        self.add_input('data:mission_nominal:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
         self.add_input('data:propeller:reference:ND:max', val=np.nan, units='m/s')
         self.add_input('data:motor:torque:max', val=np.nan, units='N*m')
         self.add_input('data:battery:capacity', val=np.nan, units='A*s')
@@ -46,7 +46,7 @@ class ForwardFlight(om.ExplicitComponent):
         S_top = inputs['data:structure:body:surface:top']
         S_front = inputs['data:structure:body:surface:front']
         Cd_ref = inputs['data:structure:aerodynamics:Cd']
-        rho_air = inputs['data:mission_nominal:air_density']
+        rho_air = inputs['data:mission_design:air_density']
         C_bat = inputs['data:battery:capacity']
         U_bat = inputs['data:battery:voltage']
         distance = inputs['specifications:range']

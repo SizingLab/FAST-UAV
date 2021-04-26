@@ -421,25 +421,25 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     # CLIMB SEGMENT
-    climb_pro = variables['data:mission_nominal:climb:energy:propulsion'].value[0]
-    climb_payload = variables['data:mission_nominal:climb:energy:payload'].value[0]
-    climb_avionics = variables['data:mission_nominal:climb:energy:avionics'].value[0]
-    climb = variables['data:mission_nominal:climb:energy'].value[0]
+    climb_pro = variables['data:mission_design:climb:energy:propulsion'].value[0]
+    climb_payload = variables['data:mission_design:climb:energy:payload'].value[0]
+    climb_avionics = variables['data:mission_design:climb:energy:avionics'].value[0]
+    climb = variables['data:mission_design:climb:energy'].value[0]
 
     # HOVER SEGMENT
-    hover_pro = variables['data:mission_nominal:hover:energy:propulsion'].value[0]
-    hover_payload = variables['data:mission_nominal:hover:energy:payload'].value[0]
-    hover_avionics = variables['data:mission_nominal:hover:energy:avionics'].value[0]
-    hover = variables['data:mission_nominal:hover:energy'].value[0]
+    hover_pro = variables['data:mission_design:hover:energy:propulsion'].value[0]
+    hover_payload = variables['data:mission_design:hover:energy:payload'].value[0]
+    hover_avionics = variables['data:mission_design:hover:energy:avionics'].value[0]
+    hover = variables['data:mission_design:hover:energy'].value[0]
 
     # FORWARD SEGMENT
-    forward_pro = variables['data:mission_nominal:forward:energy:propulsion'].value[0]
-    forward_payload = variables['data:mission_nominal:forward:energy:payload'].value[0]
-    forward_avionics = variables['data:mission_nominal:forward:energy:avionics'].value[0]
-    forward = variables['data:mission_nominal:forward:energy'].value[0]
+    forward_pro = variables['data:mission_design:forward:energy:propulsion'].value[0]
+    forward_payload = variables['data:mission_design:forward:energy:payload'].value[0]
+    forward_avionics = variables['data:mission_design:forward:energy:avionics'].value[0]
+    forward = variables['data:mission_design:forward:energy'].value[0]
 
     # TOTAL MISSION
-    mission = variables['data:mission_nominal:energy'].value[0]
+    mission = variables['data:mission_design:energy'].value[0]
 
     # DISPLAYED NAMES AND VALUES
     climb_str = (

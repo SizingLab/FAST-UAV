@@ -31,7 +31,7 @@ class Aerodynamics(om.ExplicitComponent):
         self.add_input('data:propeller:geometry:beta:estimated', val=np.nan, units=None)
         self.add_input('data:propeller:advance_ratio:climb', val=np.nan, units=None)
         self.add_input('data:propeller:advance_ratio:forward', val=np.nan, units=None)
-        self.add_input('data:mission_nominal:forward:angle', val=np.nan, units='rad')
+        self.add_input('data:mission_design:forward:angle', val=np.nan, units='rad')
         self.add_output('data:propeller:aerodynamics:CT:static:estimated', units=None)
         self.add_output('data:propeller:aerodynamics:CP:static:estimated', units=None)
         self.add_output('data:propeller:aerodynamics:CT:axial:estimated', units=None)
@@ -47,7 +47,7 @@ class Aerodynamics(om.ExplicitComponent):
         beta = inputs['data:propeller:geometry:beta:estimated']
         J_cl = inputs['data:propeller:advance_ratio:climb']
         J_ff = inputs['data:propeller:advance_ratio:forward']
-        alpha = inputs['data:mission_nominal:forward:angle']
+        alpha = inputs['data:mission_design:forward:angle']
 
         C_t_sta, C_p_sta = self.aero_coefficients_static(beta)
         C_t_axial, C_p_axial = self.aero_coefficients_axial(beta, J_cl)
@@ -109,7 +109,7 @@ class Diameter(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:propeller:thrust:max', val=np.nan, units='N')
-        self.add_input('data:mission_nominal:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
         self.add_input('data:propeller:aerodynamics:CT:static:estimated', val=np.nan, units=None)
         self.add_input('data:propeller:reference:ND:max', val=np.nan, units='m/s')
         self.add_input('data:propeller:settings:ND:k', val=np.nan, units=None)
@@ -122,7 +122,7 @@ class Diameter(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         F_pro_to = inputs['data:propeller:thrust:max']
         C_t_sta = inputs['data:propeller:aerodynamics:CT:static:estimated']
-        rho_air = inputs['data:mission_nominal:air_density']
+        rho_air = inputs['data:mission_design:air_density']
         NDmax = inputs['data:propeller:reference:ND:max']
         k_ND = inputs['data:propeller:settings:ND:k']
 

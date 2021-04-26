@@ -48,9 +48,9 @@ model:
             id: multirotor.system
         nominal_mission:
             id: multirotor.nominal_mission
-    #Addons:
-    #    safety:
-     #       id: addons.safety
+    Addons:
+        safety:
+           id: addons.safety
 
 
 optimization: # This section is needed only if optimization process is run
@@ -100,7 +100,7 @@ optimization: # This section is needed only if optimization process is run
         lower: 1.0
         upper: 15.0
 
-      - name: data:mission_nominal:forward:speed
+      - name: data:mission_design:forward:speed
         lower: 1.0
         upper: 40
 
@@ -161,7 +161,7 @@ optimization: # This section is needed only if optimization process is run
         lower: 0.0
       
       # constraint over battery energy required to carry on the specified mission
-      - name: data:mission_nominal:constraints:energy
+      - name: data:mission_design:constraints:energy
         lower: 0.0
 
       # MTOW specification (for autonomy or range maximization objectives)
@@ -169,8 +169,10 @@ optimization: # This section is needed only if optimization process is run
       #  lower: 0.0
         
       # Safety add-on
-      #- name: safety:motor_constraint:hover
+      #- name: addons:safety:motor_constraint:hover
       #  lower: 0.0
+      - name: addons:safety:mission:constraints:energy
+        lower: 0.0
       
 
     objective:
@@ -179,14 +181,14 @@ optimization: # This section is needed only if optimization process is run
         scaler: 1e-1
 
       # ENERGY MINIMIZATION
-      #- name: data:mission_nominal:energy
+      #- name: data:mission_design:energy
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      #- name: data:mission_nominal:forward:distance:max
+      #- name: data:mission_design:forward:distance:max
       #  scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION
-      #- name: data:mission_nominal:hover:duration:max
+      #- name: data:mission_design:hover:duration:max
       #  scaler: -1e-1
         

@@ -5,6 +5,17 @@ import openmdao.api as om
 import numpy as np
 
 
+class BatteryModel:
+    """
+    Battery model for performances calculation
+    """
+
+    @staticmethod
+    def current(P_req, eta_ESC, V_bat):
+        I_bat = P_req / eta_ESC / V_bat  # [I] Current of the battery
+        return I_bat
+
+
 class BatteryPerfos(om.Group):
     """
     Group containing the performance functions of the battery
@@ -42,7 +53,9 @@ class TakeOff(om.ExplicitComponent):
         P_payload = inputs['data:payload:power']
         P_avionics = inputs['data:avionics:power']
 
-        I_bat_to = (P_el_to * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        # I_bat_to = (P_el_to * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        P_req = P_el_to * Npro + P_payload + P_avionics
+        I_bat_to = BatteryModel.current(P_req, eta_ESC, V_bat)
 
         outputs['data:battery:current:takeoff'] = I_bat_to
 
@@ -73,7 +86,9 @@ class Hover(om.ExplicitComponent):
         P_payload = inputs['data:payload:power']
         P_avionics = inputs['data:avionics:power']
 
-        I_bat_hov = (P_el_hover * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        # I_bat_hov = (P_el_hover * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        P_req = P_el_hover * Npro + P_payload + P_avionics
+        I_bat_hov = BatteryModel.current(P_req, eta_ESC, V_bat)
 
         outputs['data:battery:current:hover'] = I_bat_hov
 
@@ -104,7 +119,9 @@ class Climb(om.ExplicitComponent):
         P_payload = inputs['data:payload:power']
         P_avionics = inputs['data:avionics:power']
 
-        I_bat_cl = (P_el_cl * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        # I_bat_cl = (P_el_cl * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        P_req = P_el_cl * Npro + P_payload + P_avionics
+        I_bat_cl = BatteryModel.current(P_req, eta_ESC, V_bat)
 
         outputs['data:battery:current:climb'] = I_bat_cl
 
@@ -135,6 +152,8 @@ class Forward(om.ExplicitComponent):
         P_payload = inputs['data:payload:power']
         P_avionics = inputs['data:avionics:power']
 
-        I_bat_ff = (P_el_ff * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        # I_bat_ff = (P_el_ff * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        P_req = P_el_ff * Npro + P_payload + P_avionics
+        I_bat_ff = BatteryModel.current(P_req, eta_ESC, V_bat)
 
         outputs['data:battery:current:forward'] = I_bat_ff

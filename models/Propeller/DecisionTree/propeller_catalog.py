@@ -53,7 +53,7 @@ class PropellerDecisionTree(om.ExplicitComponent):
         self.add_input('data:propeller:geometry:diameter:estimated', val=np.nan, units='m')
         self.add_input('data:propeller:advance_ratio:climb', val=np.nan, units=None)
         self.add_input('data:propeller:advance_ratio:forward', val=np.nan, units=None)
-        self.add_input('data:mission_nominal:forward:angle', val=np.nan, units='rad')
+        self.add_input('data:mission_design:forward:angle', val=np.nan, units='rad')
         self.add_output('data:propeller:geometry:beta:catalogue', units=None)
         self.add_output('data:propeller:geometry:diameter:catalogue', units='m')
         self.add_output('data:propeller:aerodynamics:CT:static:catalogue', units=None)
@@ -76,7 +76,7 @@ class PropellerDecisionTree(om.ExplicitComponent):
         Dpro = inputs['data:propeller:geometry:diameter:estimated']
         J_climb = inputs['data:propeller:advance_ratio:climb']
         J_forward = inputs['data:propeller:advance_ratio:forward']
-        alpha = inputs['data:mission_nominal:forward:angle']
+        alpha = inputs['data:mission_design:forward:angle']
 
         # Discrete parameters
         y_pred = self._DT.predict([np.hstack((beta, Dpro/0.0254))])
