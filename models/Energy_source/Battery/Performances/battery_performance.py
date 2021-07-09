@@ -37,7 +37,7 @@ class TakeOff(om.ExplicitComponent):
         self.add_input('data:motor:power:takeoff', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
         self.add_input('data:battery:voltage', val=np.nan, units='V')
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         self.add_output('data:battery:current:takeoff', units='A')
 
@@ -50,7 +50,7 @@ class TakeOff(om.ExplicitComponent):
         P_el_to = inputs['data:motor:power:takeoff']
         eta_ESC = inputs['data:ESC:efficiency']
         V_bat = inputs['data:battery:voltage']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         # I_bat_to = (P_el_to * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
@@ -70,7 +70,7 @@ class Hover(om.ExplicitComponent):
         self.add_input('data:motor:power:hover', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
         self.add_input('data:battery:voltage', val=np.nan, units='V')
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         self.add_output('data:battery:current:hover', units='A')
 
@@ -83,7 +83,7 @@ class Hover(om.ExplicitComponent):
         P_el_hover = inputs['data:motor:power:hover']
         eta_ESC = inputs['data:ESC:efficiency']
         V_bat = inputs['data:battery:voltage']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         # I_bat_hov = (P_el_hover * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
@@ -103,7 +103,7 @@ class Climb(om.ExplicitComponent):
         self.add_input('data:motor:power:climb', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
         self.add_input('data:battery:voltage', val=np.nan, units='V')
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         self.add_output('data:battery:current:climb', units='A')
 
@@ -116,7 +116,7 @@ class Climb(om.ExplicitComponent):
         P_el_cl = inputs['data:motor:power:climb']
         eta_ESC = inputs['data:ESC:efficiency']
         V_bat = inputs['data:battery:voltage']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         # I_bat_cl = (P_el_cl * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
@@ -136,7 +136,7 @@ class Forward(om.ExplicitComponent):
         self.add_input('data:motor:power:forward', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
         self.add_input('data:battery:voltage', val=np.nan, units='V')
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         self.add_output('data:battery:current:forward', units='A')
 
@@ -149,7 +149,7 @@ class Forward(om.ExplicitComponent):
         P_el_ff = inputs['data:motor:power:forward']
         eta_ESC = inputs['data:ESC:efficiency']
         V_bat = inputs['data:battery:voltage']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         # I_bat_ff = (P_el_ff * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery

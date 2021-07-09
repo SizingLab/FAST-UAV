@@ -30,7 +30,7 @@ class Base(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:system:settings:MTOW:k', val=np.nan, units=None)
-        self.add_input('data:payload:mass:max', val=np.nan, units='kg')
+        self.add_input('specifications:payload:mass:max', val=np.nan, units='kg')
         self.add_input('data:structure:arms:prop_per_arm', val=np.nan, units=None)
         self.add_input('data:structure:arms:number', val=np.nan, units=None)
         self.add_input('data:mission_design:takeoff:altitude', val=np.nan, units='m')
@@ -52,7 +52,7 @@ class Base(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         k_M = inputs['data:system:settings:MTOW:k']
-        M_load = inputs['data:payload:mass:max']
+        M_load = inputs['specifications:payload:mass:max']
         Npro_arm = inputs['data:structure:arms:prop_per_arm']
         Narm = inputs['data:structure:arms:number']
         altitude_TO = inputs['data:mission_design:takeoff:altitude']
@@ -196,13 +196,16 @@ class Forward(om.ExplicitComponent):
         S_front_estimated = inputs['data:structure:body:surface:front']
 
         func = lambda x: np.tan(x) - 0.5 * rho_air * C_D * (S_top_estimated * np.sin(x) + S_front_estimated * np.cos(x)) * V_ff ** 2 \
-                         / (Mtotal_guess * g)
+                         / (Mtotal_guess * g + 0.5 * rho_air * C_L0 * (S_top_estimated * np.sin(x) + S_front_estimated * np.cos(x)) * V_ff ** 2)
         alpha = brentq(func, 0, np.pi / 2)  # [rad] angle of attack
         S_ref = S_top_estimated * np.sin(alpha) + S_front_estimated * np.cos(alpha)  # [m2] reference surface for drag and lift calculation
         drag = 0.5 * rho_air * C_D * S_ref * V_ff ** 2  # [N] drag
-        lift = - 0.5 * rho_air * C_L0 * np.sin(2*alpha) * S_top_estimated * np.sin(alpha) * V_ff ** 2  # [N] downwards force (flat plate model)
+        lift = - 0.5 * rho_air * C_L0 * S_ref * V_ff ** 2  # [N] lift (downwards force)
         weight = Mtotal_guess * g  # [N] weight
         F_pro_ff = ((weight - lift)**2 + drag**2) ** (1/2) / Npro  # [N] thrust per propeller
+
+        #lift = - 0.5 * rho_air * C_L0 * np.sin(2*alpha) * S_top_estimated * np.sin(alpha) * V_ff ** 2  # [N] downwards force (flat plate model)
+        #F_pro_ff = ((weight - lift) ** 2 + drag ** 2) ** (1 / 2) / Npro  # [N] thrust per propeller
 
         # PROVISION FOR CLIMBING FORWARD FLIGHT (PATH ANGLE THETA)
         # theta = 0  # [rad] flight path angle (steady level flight)

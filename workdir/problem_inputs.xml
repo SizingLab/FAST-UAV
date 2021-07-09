@@ -1,14 +1,66 @@
 <FASTOAD_model>
   <specifications>
-    <MTOW units="kg" is_input="True">600.0<!--Top-level requirement: Maximum Take Off Weight--></MTOW>
+    <MTOW units="kg" is_input="True">500.0<!--Top-level requirement: Maximum Take Off Weight--></MTOW>
     <climb_height units="m" is_input="True">0.0<!--Top-level requirement: climb height--></climb_height>
     <climb_speed units="m/s" is_input="True">3.0<!--Top-level requirement: climb speed--></climb_speed>
     <hover_duration units="min" is_input="True">0.0<!--Top-level requirement: hover phase duration--></hover_duration>
-    <range units="m" is_input="True">0.0<!--Top-level requirement: range--></range>
+    <range units="m" is_input="True">1000.0<!--Top-level requirement: range--></range>
     <maxthrust>
       <k is_input="True">1.6<!--Top-level requirement: maximum thrust-to-weight ratio--></k>
     </maxthrust>
+    <payload>
+      <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
+      <mass>
+        <max units="kg" is_input="True">20.0<!--Payload mass--></max>
+      </mass>
+    </payload>
   </specifications>
+  <addons>
+    <safety>
+      <k_thrust is_input="True">1.86</k_thrust>
+      <mission>
+        <route_1>
+          <climb>
+            <height units="m" is_input="True">122.0</height>
+          </climb>
+          <forward>
+            <range units="m" is_input="True">25000.0</range>
+          </forward>
+          <hover>
+            <duration units="min" is_input="True">0.5</duration>
+          </hover>
+          <payload>
+            <mass units="kg" is_input="True">5.0</mass>
+          </payload>
+        </route_1>
+        <route_2>
+          <climb>
+            <height units="m" is_input="True">122.0</height>
+          </climb>
+          <forward>
+            <range units="m" is_input="True">25000.0</range>
+          </forward>
+          <hover>
+            <duration units="min" is_input="True">0.5</duration>
+          </hover>
+          <payload>
+            <mass units="kg" is_input="True">20.0</mass>
+          </payload>
+        </route_2>
+        <route_diversion>
+          <forward>
+            <range units="m" is_input="True">0.0</range>
+          </forward>
+          <hover>
+            <duration units="min" is_input="True">0.0</duration>
+          </hover>
+          <payload>
+            <mass units="kg" is_input="True">20.0</mass>
+          </payload>
+        </route_diversion>
+      </mission>
+    </safety>
+  </addons>
   <data>
     <ESC>
       <efficiency is_input="True">0.95<!--ESC efficiency--></efficiency>
@@ -29,17 +81,17 @@
     <battery>
       <discharge_limit is_input="True">0.8<!--Battery discharge limit--></discharge_limit>
       <reference>
-        <capacity units="A*s" is_input="True">12240.0<!--Battery capacity reference for scaling law--></capacity>
-        <mass units="kg" is_input="True">0.329<!--Battery mass reference for scaling law--></mass>
-        <voltage units="V" is_input="True">14.8<!--Battery voltage reference for scaling law--></voltage>
-        <volume units="cm**3" is_input="True">150.93<!--Battery volume reference for scaling law--></volume>
+        <capacity units="A*s" is_input="True">151200.0<!--Battery capacity reference for scaling law--></capacity>
+        <mass units="kg" is_input="True">8.1<!--Battery mass reference for scaling law--></mass>
+        <voltage units="V" is_input="True">43.2<!--Battery voltage reference for scaling law--></voltage>
+        <volume units="cm**3" is_input="True">3757.32<!--Battery volume reference for scaling law--></volume>
         <current>
-          <max units="A" is_input="True">170.0<!--Battery max. current reference for scaling law--></max>
+          <max units="A" is_input="True">450.0<!--Battery max. current reference for scaling law--></max>
         </current>
       </reference>
       <cell>
         <voltage>
-          <estimated units="V" is_input="True">3.7<!--Voltage of one cell (estimated value)--></estimated>
+          <estimated units="V" is_input="True">3.6<!--Voltage of one cell (estimated value)--></estimated>
         </voltage>
       </cell>
       <settings>
@@ -51,9 +103,6 @@
         </voltage>
       </settings>
     </battery>
-    <gearbox>
-      <mass units="kg" is_input="True">0.0<!--Gearbox mass - do not modify--></mass>
-    </gearbox>
     <mission_design>
       <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
       <forward>
@@ -89,12 +138,6 @@
         </torque>
       </settings>
     </motor>
-    <payload>
-      <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
-      <mass>
-        <max units="kg" is_input="True">15.0<!--Payload mass--></max>
-      </mass>
-    </payload>
     <propeller>
       <advance_ratio>
         <climb is_input="True">0.1<!--Advance ratio J (climb)--></climb>
@@ -140,10 +183,10 @@
       </arms>
       <reference>
         <arms>
-          <mass units="kg" is_input="True">0.14<!--Arms mass reference for scaling law--></mass>
+          <mass units="kg" is_input="True">1.338<!--Arms mass reference for scaling law--></mass>
         </arms>
         <body>
-          <mass units="kg" is_input="True">0.347<!--Body mass reference for scaling law--></mass>
+          <mass units="kg" is_input="True">22.35<!--Body mass reference for scaling law--></mass>
           <surface>
             <front units="m**2" is_input="True">0.02<!--Front surface reference for scaling law--></front>
             <top units="m**2" is_input="True">0.045<!--Top surface reference for scaling law--></top>
@@ -162,46 +205,4 @@
       </settings>
     </system>
   </data>
-  <addons>
-    <safety>
-      <mission>
-        <route_1>
-          <climb>
-            <height units="m" is_input="True">100.0</height>
-          </climb>
-          <forward>
-            <range units="m" is_input="True">25000.0</range>
-          </forward>
-          <hover>
-            <duration units="min" is_input="True">0.5</duration>
-          </hover>
-          <payload>
-            <mass units="kg" is_input="True">0.0</mass>
-          </payload>
-        </route_1>
-        <route_2>
-          <climb>
-            <height units="m" is_input="True">100.0</height>
-          </climb>
-          <forward>
-            <range units="m" is_input="True">25000.0</range>
-          </forward>
-          <hover>
-            <duration units="min" is_input="True">0.5</duration>
-          </hover>
-          <payload>
-            <mass units="kg" is_input="True">15.0</mass>
-          </payload>
-        </route_2>
-        <route_diversion>
-          <hover>
-            <duration units="min" is_input="True">10.0</duration>
-          </hover>
-          <payload>
-            <mass units="kg" is_input="True">15.0</mass>
-          </payload>
-        </route_diversion>
-      </mission>
-    </safety>
-  </addons>
 </FASTOAD_model>

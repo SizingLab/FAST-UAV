@@ -24,14 +24,14 @@ class MTOW(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:gearbox:mass', val=0.0, units='kg')
+        self.add_input('data:gearbox:mass', val=np.nan, units='kg')
         self.add_input('data:ESC:mass', val=np.nan, units='kg')
         self.add_input('data:motor:mass', val=np.nan, units='kg')
         self.add_input('data:battery:mass', val=np.nan, units='kg')
         self.add_input('data:propeller:mass', val=np.nan, units='kg')
         self.add_input('data:structure:body:mass', val=np.nan, units='kg')
         self.add_input('data:structure:arms:mass', val=np.nan, units='kg')
-        self.add_input('data:payload:mass:max', val=np.nan, units='kg')
+        self.add_input('specifications:payload:mass:max', val=np.nan, units='kg')
         self.add_input('data:propeller:number', val=np.nan, units=None)
         self.add_output('data:system:MTOW', units='kg')
 
@@ -40,13 +40,13 @@ class MTOW(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        Mgear = inputs['data:gearbox:mass']  # default value = .0 if use_gearbox = false
+        Mgear = inputs['data:gearbox:mass']
         Mmot = inputs['data:motor:mass']
         Mesc = inputs['data:ESC:mass']
         Mbat = inputs['data:battery:mass']
         Mpro = inputs['data:propeller:mass']
         Npro = inputs['data:propeller:number']
-        M_load = inputs['data:payload:mass:max']
+        M_load = inputs['specifications:payload:mass:max']
         Mfra = inputs['data:structure:body:mass']
         Marm = inputs['data:structure:arms:mass']
 

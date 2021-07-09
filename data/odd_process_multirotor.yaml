@@ -12,6 +12,7 @@ module_folders:
     - ../models/Structure
     - ../models/System
     - ../models/Add_ons/Safety
+    - ../models/Add_ons/Study_missions
     
 # Input and output files
 input_file: ../workdir/problem_inputs.xml
@@ -27,7 +28,7 @@ model:
     #nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2)
     #linear_solver: om.DirectSolver()
     Core:
-        nominal_scenarios:
+        scenarios:
             id: multirotor.sizing_scenarios
         propeller:
             id: propeller
@@ -46,9 +47,11 @@ model:
             id: multirotor.structure
         system:
             id: multirotor.system
-        nominal_mission:
-            id: multirotor.nominal_mission
+        design_mission:
+            id: multirotor.design_mission
     Addons:
+        study_mission:
+           id: addons.mission_concordia
         safety:
            id: addons.safety
 
@@ -168,9 +171,11 @@ optimization: # This section is needed only if optimization process is run
       #- name: data:system:constraints:mass:MTOW
       #  lower: 0.0
         
-      # Safety add-on
-      #- name: addons:safety:motor_constraint:hover
-      #  lower: 0.0
+      # ADD-ONS: SAFETY
+      - name: addons:safety:constraints:torque:hover
+        lower: 0.0
+      - name: addons:safety:constraints:torque:forward
+        lower: 0.0
       - name: addons:safety:mission:constraints:energy
         lower: 0.0
       

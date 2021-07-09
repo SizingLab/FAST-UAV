@@ -17,6 +17,7 @@ class Gearbox(om.ExplicitComponent):
         self.add_output('data:gearbox:gear_diameter', units='m')
         self.add_output('data:gearbox:pinion_diameter', units='m')
         self.add_output('data:gearbox:inner_diameter', units='m')
+        self.add_output('data:gearbox', units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -41,5 +42,18 @@ class Gearbox(om.ExplicitComponent):
         outputs['data:gearbox:gear_diameter'] = dg
         outputs['data:gearbox:pinion_diameter'] = dp
         outputs['data:gearbox:inner_diameter'] = di
+        outputs['data:gearbox'] = True
 
 
+class NoGearbox(om.ExplicitComponent):
+    """
+    No gearbox: sets the value off 'data:gearbox' to False and 'data:gearbox:mass' to 0.0
+    """
+
+    def setup(self):
+        self.add_output('data:gearbox', units=None)
+        self.add_output('data:gearbox:mass', units='kg')
+
+    def compute(self, inputs, outputs):
+        outputs['data:gearbox'] = False
+        outputs['data:gearbox:mass'] = 0.0

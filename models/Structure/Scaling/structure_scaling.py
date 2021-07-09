@@ -76,9 +76,9 @@ class WeightArms(om.ExplicitComponent):
         Dout = inputs['data:structure:arms:diameter:outer']
         rho = inputs['data:structure:arms:material:density']
 
-        Marm = pi / 4 * (Dout ** 2 - (D_ratio * Dout) ** 2) * Larm * rho * Narm  # [kg] mass of the arms
+        Marms = pi / 4 * (Dout ** 2 - (D_ratio * Dout) ** 2) * Larm * rho * Narm  # [kg] mass of the arms
 
-        outputs['data:structure:arms:mass'] = Marm
+        outputs['data:structure:arms:mass'] = Marms
 
 
 class WeightBody(om.ExplicitComponent):
@@ -98,8 +98,8 @@ class WeightBody(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         Marm_ref = inputs['data:structure:reference:arms:mass']
         Mbody_ref = inputs['data:structure:reference:body:mass']
-        Marm = inputs['data:structure:arms:mass']
+        Marms = inputs['data:structure:arms:mass']
 
-        Mbody = Mbody_ref * (Marm / Marm_ref)  # [kg] mass of the frame
+        Mbody = Mbody_ref * (Marms / Marm_ref)  # [kg] mass of the frame
 
         outputs['data:structure:body:mass'] = Mbody

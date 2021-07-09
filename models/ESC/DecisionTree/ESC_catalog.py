@@ -24,11 +24,11 @@ class ESCCatalogueSelection(om.Group):
         # Add decision tree regressor for catalogue selection if specified by user ('use_catalogue' = true)
         # And set parameters to 'estimated' or 'catalogue' for future use
         if self.options["use_catalogue"]:
-            self.add_subsystem("getCatalogueValues", ESCDecisionTree(), promotes=["*"])
-            self.add_subsystem("keepCatalogueValues", ValueSetter(use_catalogue=self.options['use_catalogue']),
+            self.add_subsystem("selection", ESCDecisionTree(), promotes=["*"])
+            self.add_subsystem("continue", ValueSetter(use_catalogue=self.options['use_catalogue']),
                                promotes=["*"])
         else:
-            self.add_subsystem("keepEstimatedValues", ValueSetter(use_catalogue=self.options['use_catalogue']),
+            self.add_subsystem("skip", ValueSetter(use_catalogue=self.options['use_catalogue']),
                                promotes=["*"])
 
 

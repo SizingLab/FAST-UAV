@@ -25,7 +25,7 @@ class Weight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:payload:mass:max', val=np.nan, units='kg')
+        self.add_input('specifications:payload:mass:max', val=np.nan, units='kg')
         self.add_input('data:battery:settings:mass:k', val=np.nan)
         self.add_output('data:battery:mass:estimated', units='kg')
 
@@ -34,7 +34,7 @@ class Weight(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        M_load = inputs['data:payload:mass:max']
+        M_load = inputs['specifications:payload:mass:max']
         k_Mb = inputs['data:battery:settings:mass:k']
 
         Mbat = k_Mb * M_load  # Battery mass (estimated)

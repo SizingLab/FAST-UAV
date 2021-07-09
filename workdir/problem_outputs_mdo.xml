@@ -1,32 +1,23 @@
 <FASTOAD_model>
-  <specifications>
-    <MTOW units="kg" is_input="True">600.0<!--Top-level requirement: Maximum Take Off Weight--></MTOW>
-    <climb_height units="m" is_input="True">0.0<!--Top-level requirement: climb height--></climb_height>
-    <climb_speed units="m/s" is_input="True">3.0<!--Top-level requirement: climb speed--></climb_speed>
-    <hover_duration units="min" is_input="True">0.0<!--Top-level requirement: hover phase duration--></hover_duration>
-    <range units="m" is_input="True">0.0<!--Top-level requirement: range--></range>
-    <maxthrust>
-      <k is_input="True">1.6<!--Top-level requirement: maximum thrust-to-weight ratio--></k>
-    </maxthrust>
-  </specifications>
   <data>
+    <gearbox is_input="False">0.0<!--0: no gearbox ; 1: gearbox--><mass units="kg" is_input="False">0.0<!--Gearbox mass--></mass></gearbox>
     <ESC>
       <efficiency is_input="True">0.95<!--ESC efficiency--></efficiency>
-      <mass units="kg" is_input="False">0.22820864666354823<!--ESC mass--><estimated units="kg" is_input="False">0.22820864666354823<!--ESC mass (estimated value)--></estimated></mass>
-      <voltage units="V" is_input="False">55.79488522001821<!--ESC voltage--><estimated units="V" is_input="False">55.79488522001821<!--ESC voltage (estimated value)--></estimated></voltage>
+      <mass units="kg" is_input="False">0.07586751360135832<!--ESC mass--><estimated units="kg" is_input="False">0.07586751360135832<!--ESC mass (estimated value)--></estimated></mass>
+      <voltage units="V" is_input="False">38.65173325734079<!--ESC voltage--><estimated units="V" is_input="False">38.65173325734079<!--ESC voltage (estimated value)--></estimated></voltage>
       <constraints>
-        <voltage is_input="False">0.7400051946877064<!--Constraint on ESC voltage--></voltage>
+        <voltage is_input="False">0.328962964282278<!--Constraint on ESC voltage--></voltage>
         <power>
-          <climb is_input="False">0.3028627357974447<!--Constraint on ESC power (climb)--></climb>
-          <forward is_input="False">0.19451702403363239<!--Constraint on ESC power (forward flight)--></forward>
+          <climb is_input="False">0.3292372355392159<!--Constraint on ESC power (climb)--></climb>
+          <forward is_input="False">0.2847100912842727<!--Constraint on ESC power (forward flight)--></forward>
         </power>
       </constraints>
       <power>
-        <climb units="W" is_input="False">4299.654538958603<!--ESC power in climb--></climb>
-        <forward units="W" is_input="False">4967.88611297273<!--ESC power in forward flight--></forward>
-        <hover units="W" is_input="False">3871.8292322713924</hover>
-        <max units="W" is_input="False">6167.586728959199<!--Maximum ESC power--><estimated units="W" is_input="False">6167.586728959199<!--Maximum ESC power (estimated value)--></estimated></max>
-        <takeoff units="W" is_input="False">6167.586728959199</takeoff>
+        <climb units="W" is_input="False">1375.333327033819<!--ESC power in climb--></climb>
+        <forward units="W" is_input="False">1466.63187354854<!--ESC power in forward flight--></forward>
+        <hover units="W" is_input="False">1292.7780161831265</hover>
+        <max units="W" is_input="False">2050.402019765406<!--Maximum ESC power--><estimated units="W" is_input="False">2050.402019765406<!--Maximum ESC power (estimated value)--></estimated></max>
+        <takeoff units="W" is_input="False">2050.402019745636</takeoff>
       </power>
       <reference>
         <mass units="kg" is_input="True">0.115<!--ESC mass reference for scaling law--></mass>
@@ -35,7 +26,7 @@
       </reference>
       <settings>
         <power>
-          <k is_input="True">1.0<!--Oversizing coefficient on ESC power--></k>
+          <k is_input="True">1.0000000000096418<!--Oversizing coefficient on ESC power--></k>
         </power>
       </settings>
     </ESC>
@@ -43,82 +34,79 @@
       <power units="W" is_input="True">0.0<!--Avionics power consumption--></power>
     </avionics>
     <battery>
-      <capacity units="A*s" is_input="False">536940.3729457923<!--Battery capacity--><estimated units="A*s" is_input="False">536940.3729457923<!--Battery capacity (estimated value)--></estimated></capacity>
+      <capacity units="A*s" is_input="False">480176.4503868823<!--Battery capacity--><estimated units="A*s" is_input="False">480176.4503868823<!--Battery capacity (estimated value)--></estimated></capacity>
       <discharge_limit is_input="True">0.8<!--Battery discharge limit--></discharge_limit>
-      <energy units="kJ" is_input="False">115227.40403416703<!--Battery energy--><estimated units="kJ" is_input="False">115227.40403416703<!--Battery energy (estimated value)--></estimated></energy>
-      <mass units="kg" is_input="False">209.2707556485214<!--Battery mass--><estimated units="kg" is_input="False">209.2707556485214<!--Battery mass (estimated value)--></estimated></mass>
-      <voltage units="V" is_input="False">214.60000000000002<!--Battery voltage--><estimated units="V" is_input="False">214.60000000000002<!--Battery voltage (estimated value)--></estimated><guess units="V" is_input="False">211.10817513988096<!--Initial guess of Battery voltage for motor sizing--></guess></voltage>
-      <volume units="cm**3" is_input="False">96003.75425541442<!--Battery volume--><estimated units="cm**3" is_input="False">96003.75425541442<!--Battery volume (estimated value)--></estimated></volume>
+      <energy units="kJ" is_input="False">27658.163542284423<!--Battery energy--><estimated units="kJ" is_input="False">27658.163542284423<!--Battery energy (estimated value)--></estimated></energy>
+      <mass units="kg" is_input="False">34.298317884777305<!--Battery mass--><estimated units="kg" is_input="False">34.298317884777305<!--Battery mass (estimated value)--></estimated></mass>
+      <voltage units="V" is_input="False">57.6<!--Battery voltage--><estimated units="V" is_input="False">57.6<!--Battery voltage (estimated value)--></estimated><guess units="V" is_input="False">57.375161849119124<!--Initial guess of Battery voltage for motor sizing--></guess></voltage>
+      <volume units="cm**3" is_input="False">15909.84638948537<!--Battery volume--><estimated units="cm**3" is_input="False">15909.84638948537<!--Battery volume (estimated value)--></estimated></volume>
       <cell>
-        <number is_input="False">58.0<!--Cell number--><estimated is_input="False">58.0<!--Cell number (estimated value)--></estimated></number>
-        <voltage units="V" is_input="False">3.7<!--Voltage of one cell--><estimated units="V" is_input="True">3.7<!--Voltage of one cell (estimated value)--></estimated></voltage>
+        <number is_input="False">16.0<!--Cell number--><estimated is_input="False">16.0<!--Cell number (estimated value)--></estimated></number>
+        <voltage units="V" is_input="False">3.6<!--Voltage of one cell--><estimated units="V" is_input="True">3.6<!--Voltage of one cell (estimated value)--></estimated></voltage>
       </cell>
       <current>
-        <climb units="A" is_input="False">243.69041940507068</climb>
-        <forward units="A" is_input="False">254.3004330998294</forward>
-        <hover units="A" is_input="False">202.81019914453373</hover>
-        <max units="A" is_input="False">7457.505179802671<!--Maximum battery current--><estimated units="A" is_input="False">7457.505179802671<!--Maximum battery current (estimated value)--></estimated></max>
-        <takeoff units="A" is_input="False">422.0091385329089</takeoff>
+        <climb units="A" is_input="False">244.78604995940248</climb>
+        <forward units="A" is_input="False">244.62444852061748</forward>
+        <hover units="A" is_input="False">220.05427396606936</hover>
+        <max units="A" is_input="False">1429.0965785323879<!--Maximum battery current--><estimated units="A" is_input="False">1429.0965785323879<!--Maximum battery current (estimated value)--></estimated></max>
+        <takeoff units="A" is_input="False">449.6495657120826</takeoff>
       </current>
       <reference>
-        <capacity units="A*s" is_input="True">12240.0<!--Battery capacity reference for scaling law--></capacity>
-        <mass units="kg" is_input="True">0.329<!--Battery mass reference for scaling law--></mass>
-        <voltage units="V" is_input="True">14.8<!--Battery voltage reference for scaling law--></voltage>
-        <volume units="cm**3" is_input="True">150.93<!--Battery volume reference for scaling law--></volume>
+        <capacity units="A*s" is_input="True">151200.0<!--Battery capacity reference for scaling law--></capacity>
+        <mass units="kg" is_input="True">8.1<!--Battery mass reference for scaling law--></mass>
+        <voltage units="V" is_input="True">43.2<!--Battery voltage reference for scaling law--></voltage>
+        <volume units="cm**3" is_input="True">3757.32<!--Battery volume reference for scaling law--></volume>
         <current>
-          <max units="A" is_input="True">170.0<!--Battery max. current reference for scaling law--></max>
+          <max units="A" is_input="True">450.0<!--Battery max. current reference for scaling law--></max>
         </current>
       </reference>
       <constraints>
         <power>
-          <climb is_input="False">0.9673227958238549<!--Constraint on battery power (climb)--></climb>
-          <forward is_input="False">0.9659000661791617<!--Constraint on battery power (forward flight)--></forward>
-          <takeoff is_input="False">0.9434114856968728<!--Constraint on battery power (takeoff)--></takeoff>
+          <climb is_input="False">0.8287127310802285<!--Constraint on battery power (climb)--></climb>
+          <forward is_input="False">0.828825810518814<!--Constraint on battery power (forward flight)--></forward>
+          <takeoff is_input="False">0.6853609668747156<!--Constraint on battery power (takeoff)--></takeoff>
         </power>
         <voltage>
-          <climb is_input="False">0.037109350802541775<!--Constraint on battery voltage (climb)--></climb>
-          <forward is_input="False">0.13034390420973926<!--Constraint on battery voltage (forward flight)--></forward>
-          <takeoff is_input="False">-0.16246173819138213<!--Constraint on battery voltage (takeoff)--></takeoff>
+          <climb is_input="False">0.18839719370268132<!--Constraint on battery voltage (climb)--></climb>
+          <forward is_input="False">0.23942230809761728<!--Constraint on battery voltage (forward flight)--></forward>
+          <takeoff is_input="False">4.805847078317684e-11<!--Constraint on battery voltage (takeoff)--></takeoff>
         </voltage>
       </constraints>
       <settings>
         <mass>
-          <k is_input="True">13.951383709901426<!--Oversizing coefficient on battery mass--></k>
+          <k is_input="True">1.7149158942388654<!--Oversizing coefficient on battery mass--></k>
         </mass>
         <voltage>
-          <k is_input="True">4.999999978115271<!--Oversizing coefficient on battery voltage--></k>
+          <k is_input="True">2.082884626531811<!--Oversizing coefficient on battery voltage--></k>
         </voltage>
       </settings>
     </battery>
-    <gearbox>
-      <mass units="kg" is_input="True">0.0<!--Gearbox mass - do not modify--></mass>
-    </gearbox>
     <mission_design>
       <air_density units="kg/m**3" is_input="False">1.2249908312368587<!--Air density--></air_density>
       <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
-      <duration units="min" is_input="False">0.0<!--Mission duration--></duration>
-      <energy units="kJ" is_input="False">0.0<!--Total energy consumption to accomplish the mission--></energy>
+      <duration units="min" is_input="False">0.5349340583603001<!--Mission duration--></duration>
+      <energy units="kJ" is_input="False">452.24507181755826<!--Total energy consumption to accomplish the mission--></energy>
       <climb>
         <duration units="min" is_input="False">0.0<!--Climb segment duration--></duration>
         <energy units="kJ" is_input="False">0.0<!--Climb segment energy consumption--><avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">0.0</propulsion></energy>
       </climb>
       <constraints>
-        <energy is_input="False">1.0<!--Constraint on battery energy to meet mission requirements--></energy>
+        <energy is_input="False">0.9795609589585479<!--Constraint on battery energy to meet mission requirements--></energy>
       </constraints>
       <forward>
         <altitude units="m" is_input="False">0.0<!--Cruise altitude--></altitude>
-        <angle units="rad" is_input="False">0.15267397855832698<!--Angle of attack of the drone during forward flight--></angle>
-        <duration units="min" is_input="False">0.0<!--Cruise segment duration--></duration>
-        <energy units="kJ" is_input="False">0.0<!--Forward flight segment energy consumption--><avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">0.0</propulsion></energy>
-        <speed units="m/s" is_input="True">40.0<!--Forward flight velocity--></speed>
+        <angle units="rad" is_input="False">0.14135541476395347<!--Angle of attack of the drone during forward flight--></angle>
+        <duration units="min" is_input="False">0.5349340583603001<!--Cruise segment duration--></duration>
+        <energy units="kJ" is_input="False">452.24507181755826<!--Forward flight segment energy consumption--><avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">452.24507181755826</propulsion></energy>
+        <speed units="m/s" is_input="True">31.156488180531927<!--Forward flight velocity--></speed>
         <distance>
-          <max units="m" is_input="False">67566.11353280813<!--Range without climb and hover segment, at given forward flight velocity--></max>
+          <max units="m" is_input="False">48925.974460930505<!--Range without climb and hover segment, at given forward flight velocity--></max>
         </distance>
       </forward>
       <hover>
         <energy units="kJ" is_input="False">0.0<!--Hover segment energy consumption--><avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">0.0</propulsion></energy>
         <duration>
-          <max units="min" is_input="False">35.30002437159741<!--Drone endurance in hover flight--></max>
+          <max units="min" is_input="False">29.094425463475844<!--Drone endurance in hover flight--></max>
         </duration>
       </hover>
       <takeoff>
@@ -126,22 +114,22 @@
       </takeoff>
     </mission_design>
     <motor>
-      <mass units="kg" is_input="False">4.639387345453743<!--Motor mass--><estimated units="kg" is_input="False">4.639387345453743<!--Motor mass (estimated value)--></estimated></mass>
-      <resistance units="V/A" is_input="False">1.3345937216454757<!--Motor resistance--><estimated units="V/A" is_input="False">1.3345937216454757<!--Motor resistance (estimated value)--></estimated></resistance>
+      <mass units="kg" is_input="False">1.3230361468795875<!--Motor mass--><estimated units="kg" is_input="False">1.3230361468795875<!--Motor mass (estimated value)--></estimated></mass>
+      <resistance units="V/A" is_input="False">0.14530989129799163<!--Motor resistance--><estimated units="V/A" is_input="False">0.14530989129799163<!--Motor resistance (estimated value)--></estimated></resistance>
       <current>
-        <climb units="A" is_input="False">20.03566886746786<!--Motor current (climb)--></climb>
-        <forward units="A" is_input="False">23.149515903880378<!--Motor current (forward flight)--></forward>
-        <hover units="A" is_input="False">18.04207470769521<!--Motor current (hover)--></hover>
-        <takeoff units="A" is_input="False">28.73991951984715<!--Motor current (takeoff)--></takeoff>
+        <climb units="A" is_input="False">23.877314705448246<!--Motor current (climb)--></climb>
+        <forward units="A" is_input="False">25.462358915773265<!--Motor current (forward flight)--></forward>
+        <hover units="A" is_input="False">22.444062780957058<!--Motor current (hover)--></hover>
+        <takeoff units="A" is_input="False">35.59725728725063<!--Motor current (takeoff)--></takeoff>
       </current>
       <length>
-        <estimated units="m" is_input="False">0.17650090441197136<!--Motor length (estimated value)--></estimated>
+        <estimated units="m" is_input="False">0.11617623391556813<!--Motor length (estimated value)--></estimated>
       </length>
       <power>
-        <climb units="W" is_input="False">4140.097150342647<!--Motor power (climb)--></climb>
-        <forward units="W" is_input="False">4320.3524413385185<!--Motor power (forward flight)--></forward>
-        <hover units="W" is_input="False">3445.576274966341<!--Motor power (hover)--></hover>
-        <takeoff units="W" is_input="False">7169.583589392011<!--Motor power (takeoff)--></takeoff>
+        <climb units="W" is_input="False">1116.2243878148754<!--Motor power (climb)--></climb>
+        <forward units="W" is_input="False">1115.4874852540158<!--Motor power (forward flight)--></forward>
+        <hover units="W" is_input="False">1003.4474892852762<!--Motor power (hover)--></hover>
+        <takeoff units="W" is_input="False">2050.402019647097<!--Motor power (takeoff)--></takeoff>
       </power>
       <reference>
         <length units="m" is_input="True">0.088<!--Motor length reference for scaling law--></length>
@@ -155,59 +143,53 @@
         </torque>
       </reference>
       <torque>
-        <climb units="N*m" is_input="False">22.59813272383824<!--Motor torque (climb)--></climb>
-        <coefficient units="N*m/A" is_input="False">1.13997630260604<!--Motor torque coefficient--><estimated units="N*m/A" is_input="False">1.13997630260604<!--Motor torque coefficient (estimated value)--></estimated></coefficient>
-        <forward units="N*m" is_input="False">26.14784455528856<!--Motor torque (forward flight)--></forward>
-        <friction units="N*m" is_input="False">0.24205499193671706<!--Motor friction torque--><estimated units="N*m" is_input="False">0.24205499193671706<!--Motor friction torque (estimated value)--></estimated></friction>
-        <hover units="N*m" is_input="False">20.325482624683623<!--Motor torque (hover)--></hover>
-        <max units="N*m" is_input="False">32.19094980923975<!--Maximum motor torque--><estimated units="N*m" is_input="False">32.19094980923975<!--Maximum motor torque (estimated value)--></estimated></max>
-        <nominal units="N*m" is_input="False">26.51019396057726<!--Nominal motor torque--><estimated units="N*m" is_input="False">26.51019396057726<!--Nominal motor torque (estimated value)--></estimated></nominal>
-        <takeoff units="N*m" is_input="False">32.52077219949379<!--Motor torque (takeoff)--></takeoff>
+        <climb units="N*m" is_input="False">3.0880132597847667<!--Motor torque (climb)--></climb>
+        <coefficient units="N*m/A" is_input="False">0.13221927472208914<!--Motor torque coefficient--><estimated units="N*m/A" is_input="False">0.13221927472208914<!--Motor torque coefficient (estimated value)--></estimated></coefficient>
+        <forward units="N*m" is_input="False">3.297586655676387<!--Motor torque (forward flight)--></forward>
+        <friction units="N*m" is_input="False">0.06902797288067414<!--Motor friction torque--><estimated units="N*m" is_input="False">0.06902797288067414<!--Motor friction torque (estimated value)--></estimated></friction>
+        <hover units="N*m" is_input="False">2.8985097298345033<!--Motor torque (hover)--></hover>
+        <max units="N*m" is_input="False">7.447834997348775<!--Maximum motor torque--><estimated units="N*m" is_input="False">7.447834997348775<!--Maximum motor torque (estimated value)--></estimated></max>
+        <nominal units="N*m" is_input="False">6.133511174293447<!--Nominal motor torque--><estimated units="N*m" is_input="False">6.133511174293447<!--Nominal motor torque (estimated value)--></estimated></nominal>
+        <takeoff units="N*m" is_input="False">4.637615567735206<!--Motor torque (takeoff)--></takeoff>
       </torque>
       <voltage>
-        <climb units="V" is_input="False">206.63633331777456<!--Motor voltage (climb)--></climb>
-        <forward units="V" is_input="False">186.62819815658997<!--Motor voltage (forward flight)--></forward>
-        <hover units="V" is_input="False">190.97450436211486<!--Motor voltage (hover)--></hover>
-        <takeoff units="V" is_input="False">249.46428901587063<!--Motor voltage (takeoff)--></takeoff>
+        <climb units="V" is_input="False">46.74832164272556<!--Motor voltage (climb)--></climb>
+        <forward units="V" is_input="False">43.809275053577245<!--Motor voltage (forward flight)--></forward>
+        <hover units="V" is_input="False">44.70881671818632<!--Motor voltage (hover)--></hover>
+        <takeoff units="V" is_input="False">57.59999999723183<!--Motor voltage (takeoff)--></takeoff>
       </voltage>
       <constraints>
         <torque>
-          <climb is_input="False">0.297997329754094<!--Constraint on motor torque (climb)--></climb>
-          <forward is_input="False">0.1877268390576235<!--Constraint on motor torque (forward flight)--></forward>
-          <takeoff is_input="False">-0.01024581108070864<!--Constraint on motor torque (takeoff)--></takeoff>
+          <climb is_input="False">0.5853810857941919<!--Constraint on motor torque (climb)--></climb>
+          <forward is_input="False">0.38077166312446115<!--Constraint on motor torque (forward flight)--></forward>
+          <takeoff is_input="False">0.37732031262963406<!--Constraint on motor torque (takeoff)--></takeoff>
         </torque>
       </constraints>
       <settings>
         <speed>
-          <k is_input="True">1.0000000107802296<!--Oversizing coefficient of motor speed--></k>
+          <k is_input="True">1.0943742891847963<!--Oversizing coefficient of motor speed--></k>
         </speed>
         <torque>
-          <k is_input="True">1.3042836153067685<!--Oversizing coefficient on motor torque--></k>
+          <k is_input="True">2.1160912834484957<!--Oversizing coefficient on motor torque--></k>
         </torque>
       </settings>
     </motor>
-    <payload>
-      <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
-      <mass>
-        <max units="kg" is_input="True">15.0<!--Payload mass--></max>
-      </mass>
-    </payload>
     <propeller>
-      <mass units="kg" is_input="False">2.1983303192853687<!--Propeller mass--></mass>
+      <mass units="kg" is_input="False">0.24029690962061903<!--Propeller mass--></mass>
       <number is_input="False">12.0<!--Number of propellers--></number>
       <advance_ratio>
-        <climb is_input="True">0.07905285164174941<!--Advance ratio J (climb)--></climb>
-        <forward is_input="True">1.2647774919803738<!--Advance ratio J (forward flight)--></forward>
+        <climb is_input="True">0.08094096960859193<!--Advance ratio J (climb)--></climb>
+        <forward is_input="True">0.90703580174516<!--Advance ratio J (forward flight)--></forward>
       </advance_ratio>
       <geometry>
-        <beta is_input="False">0.30000000019032885<!--Angle pitch/diameter--><estimated is_input="True">0.30000000019032885<!--Angle pitch/diameter (estimated value)--></estimated></beta>
-        <diameter units="m" is_input="False">1.4731148809456867<!--Propeller diameter--><estimated units="m" is_input="False">1.4731148809456867<!--Propeller diameter (estimated value)--></estimated></diameter>
+        <beta is_input="False">0.3696860608004985<!--Angle pitch/diameter--><estimated is_input="True">0.3696860608004985<!--Angle pitch/diameter (estimated value)--></estimated></beta>
+        <diameter units="m" is_input="False">0.7043497453284555<!--Propeller diameter--><estimated units="m" is_input="False">0.7043497453284555<!--Propeller diameter (estimated value)--></estimated></diameter>
       </geometry>
       <power>
-        <climb units="W" is_input="False">3566.155723151388<!--Propeller power (climb)--></climb>
-        <forward units="W" is_input="False">3572.0762402096784<!--Propeller power (forward flight)--></forward>
-        <hover units="W" is_input="False">2975.70653520229<!--Propeller power (hover)--></hover>
-        <takeoff units="W" is_input="False">6022.406591671842<!--Propeller power (takeoff)--></takeoff>
+        <climb units="W" is_input="False">1010.7848170144212<!--Propeller power (climb)--></climb>
+        <forward units="W" is_input="False">1000.3385111610536<!--Propeller power (forward flight)--></forward>
+        <hover units="W" is_input="False">908.6111103471677<!--Propeller power (hover)--></hover>
+        <takeoff units="W" is_input="False">1838.8995942602464<!--Propeller power (takeoff)--></takeoff>
       </power>
       <reference>
         <diameter units="m" is_input="True">0.2794<!--Propeller diameter reference for scaling law--></diameter>
@@ -217,62 +199,62 @@
         </ND>
       </reference>
       <speed>
-        <climb units="rad/s" is_input="False">157.80753953133188<!--Rotational speed (climb)--></climb>
-        <forward units="rad/s" is_input="False">136.61073411449527<!--Rotational speed (forward flight)--></forward>
-        <hover units="rad/s" is_input="False">146.4027492064833<!--Rotational speed (hover)--></hover>
-        <takeoff units="rad/s" is_input="False">185.18645728115843<!--Rotational speed (takeoff)--></takeoff>
+        <climb units="rad/s" is_input="False">327.3252839221527<!--Rotational speed (climb)--></climb>
+        <forward units="rad/s" is_input="False">303.35473047814975<!--Rotational speed (forward flight)--></forward>
+        <hover units="rad/s" is_input="False">313.4752666153882<!--Rotational speed (hover)--></hover>
+        <takeoff units="rad/s" is_input="False">396.51833305326744<!--Rotational speed (takeoff)--></takeoff>
       </speed>
       <thrust>
-        <climb units="N" is_input="False">269.4302647560211<!--Propeller thrust (climb)--></climb>
-        <forward units="N" is_input="False">272.2027714079214<!--Propeller thrust (forward flight)--></forward>
-        <hover units="N" is_input="False">269.0364949201239<!--Propeller thrust (hover)--></hover>
-        <max units="N" is_input="False">430.45839187219826<!--Max. propeller thrust--></max>
+        <climb units="N" is_input="False">72.15966778899535<!--Propeller thrust (climb)--></climb>
+        <forward units="N" is_input="False">72.72147420591794<!--Propeller thrust (forward flight)--></forward>
+        <hover units="N" is_input="False">71.99614643235486<!--Propeller thrust (hover)--></hover>
+        <max units="N" is_input="False">115.19383429176779<!--Max. propeller thrust--></max>
       </thrust>
       <torque>
-        <climb units="N*m" is_input="False">22.59813272383824<!--Propeller torque (climb)--></climb>
-        <forward units="N*m" is_input="False">26.14784455528856<!--Propeller torque (forward flight)--></forward>
-        <hover units="N*m" is_input="False">20.325482624683623<!--Propeller torque (hover)--></hover>
-        <takeoff units="N*m" is_input="False">32.52077219949379<!--Propeller torque (takeoff)--></takeoff>
+        <climb units="N*m" is_input="False">3.0880132597847667<!--Propeller torque (climb)--></climb>
+        <forward units="N*m" is_input="False">3.297586655676387<!--Propeller torque (forward flight)--></forward>
+        <hover units="N*m" is_input="False">2.8985097298345033<!--Propeller torque (hover)--></hover>
+        <takeoff units="N*m" is_input="False">4.637615567735206<!--Propeller torque (takeoff)--></takeoff>
       </torque>
       <aerodynamics>
         <CP>
-          <axial is_input="False">0.026487486091070534<!--Propeller power coefficient in axial flow conditions--><estimated is_input="False">0.026487486091070534<!--Propeller power coefficient in axial flow conditions (estimated value)--></estimated></axial>
-          <incidence is_input="False">0.04089685652951113<!--Propeller power coefficient at non-zero incidence angle--><estimated is_input="False">0.04089685652951113<!--Propeller power coefficient at non-zero incidence angle (estimated value)--></estimated></incidence>
-          <static is_input="False">0.027680000018499965<!--Propeller power coefficient in static conditions--><estimated is_input="False">0.027680000018499965<!--Propeller power coefficient in static conditions (estimated value)--></estimated></static>
+          <axial is_input="False">0.03366549522493951<!--Propeller power coefficient in axial flow conditions--><estimated is_input="False">0.03366549522493951<!--Propeller power coefficient in axial flow conditions (estimated value)--></estimated></axial>
+          <incidence is_input="False">0.04185618395842652<!--Propeller power coefficient at non-zero incidence angle--><estimated is_input="False">0.04185618395842652<!--Propeller power coefficient at non-zero incidence angle (estimated value)--></estimated></incidence>
+          <static is_input="False">0.034453485109808446<!--Propeller power coefficient in static conditions--><estimated is_input="False">0.034453485109808446<!--Propeller power coefficient in static conditions (estimated value)--></estimated></static>
         </CP>
         <CT>
-          <axial is_input="False">0.07404083583640522<!--Propeller thrust coefficient in axial flow conditions--><estimated is_input="False">0.07404083583640522<!--Propeller thrust coefficient in axial flow conditions (estimated value)--></estimated></axial>
-          <incidence is_input="False">0.09981672680625298<!--Propeller thrust coefficient at non-zero incidence angle--><estimated is_input="False">0.09981672680625298<!--Propeller thrust coefficient at non-zero incidence angle (estimated value)--></estimated></incidence>
-          <static is_input="False">0.08590000002740736<!--Propeller thrust coefficient in static conditions--><estimated is_input="False">0.08590000002740736<!--Propeller thrust coefficient in static conditions (estimated value)--></estimated></static>
+          <axial is_input="False">0.08818787331688784<!--Propeller thrust coefficient in axial flow conditions--><estimated is_input="False">0.08818787331688784<!--Propeller thrust coefficient in axial flow conditions (estimated value)--></estimated></axial>
+          <incidence is_input="False">0.10347479672569504<!--Propeller thrust coefficient at non-zero incidence angle--><estimated is_input="False">0.10347479672569504<!--Propeller thrust coefficient at non-zero incidence angle (estimated value)--></estimated></incidence>
+          <static is_input="False">0.09593479275527178<!--Propeller thrust coefficient in static conditions--><estimated is_input="False">0.09593479275527178<!--Propeller thrust coefficient in static conditions (estimated value)--></estimated></static>
         </CT>
       </aerodynamics>
       <constraints>
         <speed>
-          <climb is_input="False">0.02505350389082069<!--Constraint on propeller rotational speed (climb)--></climb>
-          <forward is_input="False">-0.012734745746181986<!--Constraint on propeller rotational speed (forward flight)--></forward>
-          <max is_input="False">0.16763706763370706<!--Constraint on maximum propeller rotational speed--></max>
+          <climb is_input="False">0.009999999812652613<!--Constraint on propeller rotational speed (climb)--></climb>
+          <forward is_input="False">0.00999999979376983<!--Constraint on propeller rotational speed (forward flight)--></forward>
+          <max is_input="False">0.17450151320448407<!--Constraint on maximum propeller rotational speed--></max>
         </speed>
       </constraints>
       <settings>
         <ND>
-          <k is_input="True">0.9767742598031324<!--Undersizing coefficient on propeller rotational speed--></k>
+          <k is_input="True">1.0<!--Undersizing coefficient on propeller rotational speed--></k>
         </ND>
       </settings>
     </propeller>
     <system>
-      <MTOW units="kg" is_input="False">331.92946379638727<!--Maximum Take Off Weight--><guess units="kg" is_input="False">329.20905090336527<!--Initial guess of Maximum Take Off Weight for sizing scenarios--></guess></MTOW>
+      <MTOW units="kg" is_input="False">88.09876535506582<!--Maximum Take Off Weight--><guess units="kg" is_input="False">88.09876534680635<!--Initial guess of Maximum Take Off Weight for sizing scenarios--></guess></MTOW>
       <reference>
         <MTOW units="kg" is_input="True">1.4<!--Maximum Take Off Weight reference for scaling law--></MTOW>
       </reference>
       <constraints>
         <mass>
-          <MTOW is_input="False">0.80761295830024<!--Constraint on MTOW maximum allowable value--></MTOW>
-          <convergence is_input="False">-0.008195755995589355<!--Constraint on MTOW convergence--></convergence>
+          <MTOW is_input="False">4.675448435455846<!--Constraint on MTOW maximum allowable value--></MTOW>
+          <convergence is_input="False">-9.375246775456551e-11<!--Constraint on MTOW convergence--></convergence>
         </mass>
       </constraints>
       <settings>
         <MTOW>
-          <k is_input="True">21.94727006022435<!--Oversizing coefficient on load mass--></k>
+          <k is_input="True">4.4049382673403175<!--Oversizing coefficient on load mass--></k>
         </MTOW>
       </settings>
     </system>
@@ -282,13 +264,13 @@
         <Cl0 is_input="True">0.0<!--Max. fuselage lift coefficient--></Cl0>
       </aerodynamics>
       <arms>
-        <length units="m" is_input="False">1.4731148809456869<!--Arms length--></length>
-        <mass units="kg" is_input="False">6.5738458676483615<!--Total arms mass--></mass>
+        <length units="m" is_input="False">0.7043497453284556<!--Arms length--></length>
+        <mass units="kg" is_input="False">0.7981253952083467<!--Total arms mass--></mass>
         <number is_input="True">6.0<!--Number of arms--></number>
         <prop_per_arm is_input="True">2.0<!--Number of propellers per arm (single or coaxial configuration)--></prop_per_arm>
         <diameter>
-          <inner units="m" is_input="False">0.16563613200281668<!--Inner diameter of the beam--></inner>
-          <outer units="m" is_input="False">0.16730922424526937<!--Outer diameter of the beam--></outer>
+          <inner units="m" is_input="False">0.08346511837250599<!--Inner diameter of the beam--></inner>
+          <outer units="m" is_input="False">0.08430820037648416<!--Outer diameter of the beam--></outer>
         </diameter>
         <material>
           <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
@@ -298,23 +280,23 @@
         </material>
         <settings>
           <diameter>
-            <k is_input="True">0.99<!--Inner to outer beam diameter ratio--></k>
+            <k is_input="True">0.9899999999974697<!--Inner to outer beam diameter ratio--></k>
           </diameter>
         </settings>
       </arms>
       <body>
-        <mass units="kg" is_input="False">16.29374654338558<!--Body mass--></mass>
+        <mass units="kg" is_input="False">13.331915233861396<!--Body mass--></mass>
         <surface>
-          <front units="m**2" is_input="False">0.7619488472528442<!--Front surface of the body--></front>
-          <top units="m**2" is_input="False">1.7143849063188992<!--Top surface of the body--></top>
+          <front units="m**2" is_input="False">0.31641557538191906<!--Front surface of the body--></front>
+          <top units="m**2" is_input="False">0.7119350446093179<!--Top surface of the body--></top>
         </surface>
       </body>
       <reference>
         <arms>
-          <mass units="kg" is_input="True">0.14<!--Arms mass reference for scaling law--></mass>
+          <mass units="kg" is_input="True">1.338<!--Arms mass reference for scaling law--></mass>
         </arms>
         <body>
-          <mass units="kg" is_input="True">0.347<!--Body mass reference for scaling law--></mass>
+          <mass units="kg" is_input="True">22.35<!--Body mass reference for scaling law--></mass>
           <surface>
             <front units="m**2" is_input="True">0.02<!--Front surface reference for scaling law--></front>
             <top units="m**2" is_input="True">0.045<!--Top surface reference for scaling law--></top>
@@ -323,71 +305,99 @@
       </reference>
     </structure>
   </data>
+  <specifications>
+    <MTOW units="kg" is_input="True">500.0<!--Top-level requirement: Maximum Take Off Weight--></MTOW>
+    <climb_height units="m" is_input="True">0.0<!--Top-level requirement: climb height--></climb_height>
+    <climb_speed units="m/s" is_input="True">3.0<!--Top-level requirement: climb speed--></climb_speed>
+    <hover_duration units="min" is_input="True">0.0<!--Top-level requirement: hover phase duration--></hover_duration>
+    <range units="m" is_input="True">1000.0<!--Top-level requirement: range--></range>
+    <maxthrust>
+      <k is_input="True">1.6<!--Top-level requirement: maximum thrust-to-weight ratio--></k>
+    </maxthrust>
+    <payload>
+      <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
+      <mass>
+        <max units="kg" is_input="True">20.0<!--Payload mass--></max>
+      </mass>
+    </payload>
+  </specifications>
   <addons>
     <safety>
+      <k_thrust is_input="True">1.86</k_thrust>
       <mission>
-        <duration units="min" is_input="False">32.94444444444444</duration>
-        <energy units="kJ" is_input="False">99583.83244039037</energy>
+        <duration units="min" is_input="False">29.102258473570558</duration>
+        <energy units="kJ" is_input="False">22126.53084509298</energy>
         <constraints>
-          <energy is_input="False">-0.08029675400460648</energy>
+          <energy is_input="False">-5.091372730863117e-10</energy>
         </constraints>
         <route_1>
-          <duration units="min" is_input="False">11.472222222222221</duration>
-          <energy units="kJ" is_input="False">35633.8455268982</energy>
-          <tow units="kg" is_input="False">316.92946379638727</tow>
+          <duration units="min" is_input="False">14.551129236785279</duration>
+          <energy units="kJ" is_input="False">9866.763419415445</energy>
+          <tow units="kg" is_input="False">73.09876535506582</tow>
           <climb>
-            <duration units="min" is_input="False">0.5555555555555556</duration>
-            <energy units="kJ" is_input="False">1643.4744357453583<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">1643.4744357453583</propulsion></energy>
-            <height units="m" is_input="True">100.0</height>
+            <duration units="min" is_input="False">0.6777777777777777</duration>
+            <energy units="kJ" is_input="False">432.86991301596265<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">432.86991301596265</propulsion></energy>
+            <height units="m" is_input="True">122.0</height>
           </climb>
           <forward>
-            <duration units="min" is_input="False">10.416666666666666</duration>
-            <energy units="kJ" is_input="False">32759.34455657904<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">32759.34455657904</propulsion></energy>
+            <duration units="min" is_input="False">13.373351459007502</duration>
+            <energy units="kJ" is_input="False">9146.908911733737<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">9146.908911733737</propulsion></energy>
             <range units="m" is_input="True">25000.0</range>
           </forward>
           <hover>
             <duration units="min" is_input="True">0.5</duration>
-            <energy units="kJ" is_input="False">1231.0265345737973<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">1231.0265345737973</propulsion></energy>
+            <energy units="kJ" is_input="False">286.98459466574565<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">286.98459466574565</propulsion></energy>
           </hover>
           <payload>
-            <mass units="kg" is_input="True">0.0</mass>
+            <mass units="kg" is_input="True">5.0</mass>
           </payload>
         </route_1>
         <route_2>
-          <duration units="min" is_input="False">11.472222222222221</duration>
-          <energy units="kJ" is_input="False">37500.92069357416</energy>
-          <tow units="kg" is_input="False">331.92946379638727</tow>
+          <duration units="min" is_input="False">14.551129236785279</duration>
+          <energy units="kJ" is_input="False">12259.767425677535</energy>
+          <tow units="kg" is_input="False">88.09876535506582</tow>
           <climb>
-            <duration units="min" is_input="False">0.5555555555555556</duration>
-            <energy units="kJ" is_input="False">1765.5862385818382<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">1765.5862385818382</propulsion></energy>
-            <height units="m" is_input="True">100.0</height>
+            <duration units="min" is_input="False">0.6777777777777777</duration>
+            <energy units="kJ" is_input="False">573.3868435060871<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">573.3868435060871</propulsion></energy>
+            <height units="m" is_input="True">122.0</height>
           </climb>
           <forward>
-            <duration units="min" is_input="False">10.416666666666666</duration>
-            <energy units="kJ" is_input="False">34412.88114399642<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">34412.88114399642</propulsion></energy>
+            <duration units="min" is_input="False">13.373351459007502</duration>
+            <energy units="kJ" is_input="False">11306.126796704195<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">11306.126796704195</propulsion></energy>
             <range units="m" is_input="True">25000.0</range>
           </forward>
           <hover>
             <duration units="min" is_input="True">0.5</duration>
-            <energy units="kJ" is_input="False">1322.4533109959007<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">1322.4533109959007</propulsion></energy>
+            <energy units="kJ" is_input="False">380.25378546725307<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">380.25378546725307</propulsion></energy>
           </hover>
           <payload>
-            <mass units="kg" is_input="True">15.0</mass>
+            <mass units="kg" is_input="True">20.0</mass>
           </payload>
         </route_2>
         <route_diversion>
-          <duration units="min" is_input="False">10.0</duration>
-          <energy units="kJ" is_input="False">26449.06621991801</energy>
-          <tow units="kg" is_input="False">331.92946379638727</tow>
+          <duration units="min" is_input="False">0.0</duration>
+          <energy units="kJ" is_input="False">0.0</energy>
+          <tow units="kg" is_input="False">88.09876535506582</tow>
+          <forward>
+            <duration units="min" is_input="False">0.0</duration>
+            <energy units="kJ" is_input="False">0.0<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">0.0</propulsion></energy>
+            <range units="m" is_input="True">0.0</range>
+          </forward>
           <hover>
-            <duration units="min" is_input="True">10.0</duration>
-            <energy units="kJ" is_input="False">26449.06621991801<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">26449.06621991801</propulsion></energy>
+            <duration units="min" is_input="True">0.0</duration>
+            <energy units="kJ" is_input="False">0.0<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">0.0</propulsion></energy>
           </hover>
           <payload>
-            <mass units="kg" is_input="True">15.0</mass>
+            <mass units="kg" is_input="True">20.0</mass>
           </payload>
         </route_diversion>
       </mission>
+      <constraints>
+        <torque>
+          <forward is_input="False">-8.583390713850864e-10</forward>
+          <hover is_input="False">0.12102090559682997</hover>
+        </torque>
+      </constraints>
     </safety>
   </addons>
 </FASTOAD_model>

@@ -25,10 +25,10 @@ class PropellerCatalogueSelection(om.Group):
         # Add decision tree regressor for catalogue selection if specified by user ('use_catalogue' = true)
         # And set parameters to 'estimated' or 'catalogue' for future use
         if self.options["use_catalogue"]:
-            self.add_subsystem("getCatalogueValues", PropellerDecisionTree(), promotes=["*"])
-            self.add_subsystem("keepCatalogueValues", ValueSetter(use_catalogue=self.options['use_catalogue']), promotes=["*"])
+            self.add_subsystem("selection", PropellerDecisionTree(), promotes=["*"])
+            self.add_subsystem("continue", ValueSetter(use_catalogue=self.options['use_catalogue']), promotes=["*"])
         else:
-            self.add_subsystem("keepEstimatedValues", ValueSetter(use_catalogue=self.options['use_catalogue']), promotes=["*"])
+            self.add_subsystem("skip", ValueSetter(use_catalogue=self.options['use_catalogue']), promotes=["*"])
 
 
 @ValidityDomainChecker(
@@ -81,7 +81,7 @@ class PropellerDecisionTree(om.ExplicitComponent):
         # Discrete parameters
         y_pred = self._DT.predict([np.hstack((beta, Dpro/0.0254))])
         beta = y_pred[0][0]  # [-] beta
-        Dpro = y_pred[0][1] * 0.0254  # [m] diameter expressed in meters
+        Dpro = y_pred[0][1] * 0.0254  # [m] diameter
 
         # Update Ct and Cp with new parameters
         C_t_sta, C_p_sta = Aerodynamics.aero_coefficients_static(beta)

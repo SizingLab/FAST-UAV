@@ -1,15 +1,15 @@
 """
-Nominal mission
+Design mission
 """
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 
 
-@oad.RegisterOpenMDAOSystem("multirotor.nominal_mission")
+@oad.RegisterOpenMDAOSystem("multirotor.design_mission")
 class Mission(om.Group):
     """
-    Group containing the nominal mission parameters
+    Group containing the design mission parameters
     """
     def setup(self):
         self.add_subsystem("climb_segment", ClimbSegment(), promotes=['*'])
@@ -29,7 +29,7 @@ class ClimbSegment(om.ExplicitComponent):
         self.add_input('data:propeller:number', val=np.nan, units=None)
         self.add_input('data:motor:power:climb', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         self.add_output('data:mission_design:climb:duration', units='min')
         self.add_output('data:mission_design:climb:energy:propulsion', units='kJ')
@@ -47,7 +47,7 @@ class ClimbSegment(om.ExplicitComponent):
         P_el_cl = inputs['data:motor:power:climb']
         eta_ESC = inputs['data:ESC:efficiency']
         V_cl = inputs['specifications:climb_speed']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         t_cl = D_cl / V_cl # [s]
@@ -72,7 +72,7 @@ class HoverSegment(om.ExplicitComponent):
         self.add_input('data:propeller:number', val=np.nan, units=None)
         self.add_input('data:motor:power:hover', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         self.add_output('data:mission_design:hover:energy:propulsion', units='kJ')
         self.add_output('data:mission_design:hover:energy:payload', units='kJ')
@@ -88,7 +88,7 @@ class HoverSegment(om.ExplicitComponent):
         Npro = inputs['data:propeller:number']
         P_el_hover = inputs['data:motor:power:hover']
         eta_ESC = inputs['data:ESC:efficiency']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         E_hover_pro = (P_el_hover * Npro) / eta_ESC * t_hov  # [J] consumed energy for propulsion
@@ -112,7 +112,7 @@ class ForwardSegment(om.ExplicitComponent):
         self.add_input('data:propeller:number', val=np.nan, units=None)
         self.add_input('data:motor:power:forward', val=np.nan, units='W')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         self.add_output('data:mission_design:forward:duration', units='min')
         self.add_output('data:mission_design:forward:energy:propulsion', units='kJ')
@@ -130,7 +130,7 @@ class ForwardSegment(om.ExplicitComponent):
         P_el_ff = inputs['data:motor:power:forward']
         eta_ESC = inputs['data:ESC:efficiency']
         V_ff = inputs['data:mission_design:forward:speed']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         t_ff = D_ff / V_ff  # [s]
@@ -235,7 +235,7 @@ class MissionConstraints(om.ExplicitComponent):
 #         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
 #         self.add_input('data:battery:energy', val=np.nan, units='J')
 #         self.add_input('data:battery:discharge_limit', val=0.8, units=None)
-#         self.add_input('data:payload:power', val=.0, units='W')
+#         self.add_input('specifications:payload:power', val=.0, units='W')
 #         self.add_input('data:avionics:power', val=.0, units='W')
 #         self.add_input('data:mission_design:hover:energy', val=np.nan, units='J')
 #         self.add_input('data:mission_design:climb:energy', val=np.nan, units='J')
@@ -257,7 +257,7 @@ class MissionConstraints(om.ExplicitComponent):
 #         V_ff = inputs['data:mission_design:forward:speed']
 #         C_ratio = inputs['data:battery:discharge_limit']
 #         E_bat = inputs['data:battery:energy']
-#         P_payload = inputs['data:payload:power']
+#         P_payload = inputs['specifications:payload:power']
 #         P_avionics = inputs['data:avionics:power']
 #         E_hov = inputs['data:mission_design:hover:energy']
 #         E_cl = inputs['data:mission_design:climb:energy']

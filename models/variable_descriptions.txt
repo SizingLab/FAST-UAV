@@ -58,7 +58,8 @@ data:battery:reference:volume || Battery volume reference for scaling law
 data:battery:reference:current:max || Battery max. current reference for scaling law
 data:battery:settings:mass:k || Oversizing coefficient on battery mass
 data:battery:settings:voltage:k || Oversizing coefficient on battery voltage
-data:gearbox:mass || Gearbox mass - do not modify
+data:gearbox || 0: no gearbox ; 1: gearbox
+data:gearbox:mass || Gearbox mass
 data:mission_design:energy || Total energy consumption to accomplish the mission
 data:mission_design:avionics:energy || Energy consumption of the avionics during the mission
 data:mission_design:climb:energy || Climb segment energy consumption
@@ -121,8 +122,8 @@ data:motor:constraints:torque:forward || Constraint on motor torque (forward fli
 data:motor:constraints:torque:takeoff || Constraint on motor torque (takeoff)
 data:motor:settings:speed:k || Oversizing coefficient of motor speed
 data:motor:settings:torque:k || Oversizing coefficient on motor torque
-data:payload:mass:max || Payload mass
-data:payload:power || Payload power consumption
+specifications:payload:mass:max || Payload mass
+specifications:payload:power || Payload power consumption
 data:propeller:mass || Propeller mass
 data:propeller:number || Number of propellers
 data:propeller:advance_ratio:climb || Advance ratio J (climb)

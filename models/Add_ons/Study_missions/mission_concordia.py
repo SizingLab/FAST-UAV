@@ -2,6 +2,7 @@
 Organ delivery mission
 """
 
+import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 from scipy.constants import g
@@ -11,6 +12,7 @@ from models.Motor.Performances.motor_performance import MotorModel
 from models.Propeller.Scaling.prop_scaling import Aerodynamics
 
 
+@oad.RegisterOpenMDAOSystem("addons.mission_concordia")
 class Mission(om.Group):
     """
     Organ delivery mission definition
@@ -33,8 +35,9 @@ class Mission(om.Group):
 
         diversion = self.add_subsystem("diversion", om.Group(), promotes=['*'])
         diversion.add_subsystem("tow", ComputeTOW(route='_diversion'), promotes=['*'])
+        diversion.add_subsystem("forward", ForwardSegment(route='_diversion'), promotes=['*'])
         diversion.add_subsystem("hover", HoverSegment(route='_diversion'), promotes=['*'])
-        diversion.add_subsystem("route", RouteComponent(route='_diversion', segments_list=['hover']), promotes=['*'])
+        diversion.add_subsystem("route", RouteComponent(route='_diversion', segments_list=['forward','hover']), promotes=['*'])
 
         mission = self.add_subsystem("mission", MissionComponent(routes_list=['_1', '_2', '_diversion']), promotes=['*'])
         constraints = self.add_subsystem("constraints", MissionConstraints(), promotes=['*'])
@@ -50,7 +53,7 @@ class ComputeTOW(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:system:MTOW', val=np.nan, units='kg')
-        self.add_input('data:payload:mass:max', val=np.nan, units='kg')
+        self.add_input('specifications:payload:mass:max', val=np.nan, units='kg')
         self.add_input('addons:safety:mission:route%s:payload:mass' % self.options['route'], val=np.nan, units='kg')
         self.add_output('addons:safety:mission:route%s:tow' % self.options['route'], units='kg')
 
@@ -60,7 +63,7 @@ class ComputeTOW(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         mtow = inputs['data:system:MTOW']
-        m_pay_design = inputs['data:payload:mass:max']
+        m_pay_design = inputs['specifications:payload:mass:max']
         m_pay_mission = inputs['addons:safety:mission:route%s:payload:mass' % self.options['route']]
 
         tow = mtow - m_pay_design + m_pay_mission
@@ -98,7 +101,7 @@ class ClimbSegment(om.ExplicitComponent):
         self.add_input('addons:safety:mission:route%s:climb:height' % self.options['route'], val=np.nan, units='m')
         self.add_input('specifications:climb_speed', val=np.nan, units='m/s')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         # Outputs: energy
         self.add_output('addons:safety:mission:route%s:climb:duration' % self.options['route'], units='min')
@@ -130,7 +133,7 @@ class ClimbSegment(om.ExplicitComponent):
         D_cl = inputs['addons:safety:mission:route%s:climb:height' % self.options['route']]
         V_cl = inputs['specifications:climb_speed']
         eta_ESC = inputs['data:ESC:efficiency']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         # Compute new flight parameters
@@ -178,7 +181,7 @@ class HoverSegment(om.ExplicitComponent):
         # Mission parameters
         self.add_input('addons:safety:mission:route%s:hover:duration' % self.options['route'], val=np.nan, units='min')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         # Outputs: energy
         self.add_output('addons:safety:mission:route%s:hover:energy:propulsion' % self.options['route'], units='kJ')
@@ -206,7 +209,7 @@ class HoverSegment(om.ExplicitComponent):
 
         t_hov = inputs['addons:safety:mission:route%s:hover:duration' % self.options['route']] * 60  # [s]
         eta_ESC = inputs['data:ESC:efficiency']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         # Compute new flight parameters
@@ -260,7 +263,7 @@ class ForwardSegment(om.ExplicitComponent):
         self.add_input('addons:safety:mission:route%s:forward:range' % self.options['route'], val=np.nan, units='m')
         self.add_input('data:mission_design:forward:speed', val=np.nan, units='m/s')
         self.add_input('data:ESC:efficiency', val=np.nan, units=None)
-        self.add_input('data:payload:power', val=.0, units='W')
+        self.add_input('specifications:payload:power', val=.0, units='W')
         self.add_input('data:avionics:power', val=.0, units='W')
         # Outputs: energy
         self.add_output('addons:safety:mission:route%s:forward:duration' % self.options['route'], units='min')
@@ -295,7 +298,7 @@ class ForwardSegment(om.ExplicitComponent):
         V_ff = inputs['data:mission_design:forward:speed']
         t_ff = D_ff / V_ff  # [s]
         eta_ESC = inputs['data:ESC:efficiency']
-        P_payload = inputs['data:payload:power']
+        P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
         # Compute new flight parameters

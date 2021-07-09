@@ -49,7 +49,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     structure = body + arms
 
     # PAYLOAD
-    payload = variables["data:payload:mass:max"].value[0]
+    payload = variables["specifications:payload:mass:max"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
@@ -245,7 +245,7 @@ def mass_breakdown_bar_plot_drone(
     structure = body + arms
 
     # PAYLOAD
-    payload = variables["data:payload:mass:max"].value[0]
+    payload = variables["specifications:payload:mass:max"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
@@ -257,8 +257,12 @@ def mass_breakdown_bar_plot_drone(
         MTOW = propulsion + structure + payload + fuel_mission
 
     # DISPLAYED NAMES AND VALUES
-    weight_labels = ["MTOW", "Payload", "Structure", "Propellers", "Motors", "ESC", "Battery", "Gearboxes"]
-    weight_values = [MTOW, payload, structure, propellers, motors, ESC, battery, gearboxes]
+    if gearboxes==0:
+        weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Propellers", "Structure"]
+        weight_values = [MTOW, payload, battery, ESC, motors, propellers, structure]
+    else:
+        weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Gearboxes", "Propellers", "Structure"]
+        weight_values = [MTOW, payload, battery, ESC, motors, gearboxes, propellers, structure]
 
     if fig is None:
         fig = go.Figure()
@@ -270,7 +274,7 @@ def mass_breakdown_bar_plot_drone(
     )
 
     fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
-    fig.update_layout(yaxis_title="[kg]")
+    fig.update_layout(yaxis_title="Mass [kg]")
 
     return fig
 
