@@ -19,7 +19,7 @@ class Battery(om.Group):
 
     def setup(self):
         self.add_subsystem("scaling", BatteryScaling(), promotes=["*"])
-        self.add_subsystem("catalogue", BatteryCatalogueSelection(use_catalogue=self.options['use_catalogue']),
+        self.add_subsystem("selection", BatteryCatalogueSelection(use_catalogue=self.options['use_catalogue']),
                            promotes=["*"])
         self.add_subsystem("performances", BatteryPerfos(), promotes=["*"])
         self.add_subsystem("constraints", BatteryConstraints(), promotes=["*"])

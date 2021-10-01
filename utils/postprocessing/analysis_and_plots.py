@@ -13,10 +13,14 @@ Defines the analysis and plotting functions for postprocessing
 #  GNU General Public License for more details.
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+from typing import Dict
 import numpy as np
 import plotly
 import plotly.graph_objects as go
 from fastoad.io import VariableIO
+from fastoad.openmdao.variables import VariableList
+from openmdao.utils.units import convert_units
 
 COLS = plotly.colors.DEFAULT_PLOTLY_COLORS
 
@@ -257,7 +261,7 @@ def mass_breakdown_bar_plot_drone(
         MTOW = propulsion + structure + payload + fuel_mission
 
     # DISPLAYED NAMES AND VALUES
-    if gearboxes==0:
+    if gearboxes == 0:
         weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Propellers", "Structure"]
         weight_values = [MTOW, payload, battery, ESC, motors, propellers, structure]
     else:
@@ -315,10 +319,10 @@ def drone_geometry_plot(
     # Hbat = 2 * (Vol_bat / 6) ** (1 / 3)  # [m]
     fig.add_shape(
         dict(type="rect", line=dict(color=COLS[k], width=3), fillcolor=COLS[k],
-             x0= - Lbat / 2,
-             y0= - Wbat / 2,
-             x1= Lbat / 2,
-             y1= Wbat / 2,
+             x0=- Lbat / 2,
+             y0=- Wbat / 2,
+             x1=Lbat / 2,
+             y1=Wbat / 2,
              )
     )
 
@@ -377,15 +381,15 @@ def drone_geometry_plot(
 
     # Push-pull configuration annotation
     if N_pro_arm == 2:
-        config_text='Coaxial propellers (push-pull)'
+        config_text = 'Coaxial propellers (push-pull)'
     else:
-        config_text='Single propellers'
+        config_text = 'Single propellers'
 
     fig.add_annotation(
         xanchor='right',
         yanchor='top',
-        x=1, #x_arms[len(x_arms)-3],
-        y=1, #x_arms[len(y_arms)-3],
+        x=1,
+        y=1,
         xref="paper",
         yref="paper",
         text=config_text,
@@ -412,204 +416,144 @@ def drone_geometry_plot(
     return fig
 
 
-
-def energy_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
+def energy_breakdown_sun_plot_drone(drone_file_path: str, mission_name: str = 'sizing_mission', file_formatter=None,
+                                    fig=None):
     """
     Returns a figure sunburst plot of the drone energy consumption breakdown.
 
     :param drone_file_path: path of data file
+    :param mission_name: name of the mission to plot
+    :param fig: existing figure to which add the plot
     :param file_formatter: the formatter that defines the format of data file. If not provided, default format will
                            be assumed.
     :return: sunburst plot figure
     """
     variables = VariableIO(drone_file_path, file_formatter).read()
 
-    # CLIMB SEGMENT
-    climb_pro = variables['data:mission_design:climb:energy:propulsion'].value[0]
-    climb_payload = variables['data:mission_design:climb:energy:payload'].value[0]
-    climb_avionics = variables['data:mission_design:climb:energy:avionics'].value[0]
-    climb = variables['data:mission_design:climb:energy'].value[0]
+    var_names_and_new_units = {
+        'mission:%s:energy' % mission_name: "W*h",
+    }
 
-    # HOVER SEGMENT
-    hover_pro = variables['data:mission_design:hover:energy:propulsion'].value[0]
-    hover_payload = variables['data:mission_design:hover:energy:payload'].value[0]
-    hover_avionics = variables['data:mission_design:hover:energy:avionics'].value[0]
-    hover = variables['data:mission_design:hover:energy'].value[0]
+    total_energy = _get_variable_values_with_new_units(
+        variables, var_names_and_new_units
+    )[0]
 
-    # FORWARD SEGMENT
-    forward_pro = variables['data:mission_design:forward:energy:propulsion'].value[0]
-    forward_payload = variables['data:mission_design:forward:energy:payload'].value[0]
-    forward_avionics = variables['data:mission_design:forward:energy:avionics'].value[0]
-    forward = variables['data:mission_design:forward:energy'].value[0]
-
-    # TOTAL MISSION
-    mission = variables['data:mission_design:energy'].value[0]
-
-    # DISPLAYED NAMES AND VALUES
-    climb_str = (
-            "Climb"
-            + "<br>"
-            + str("{0:.2f}".format(climb))
-            + " [kJ] ("
-            + str(round(climb / mission * 100, 1) if mission != 0 else 0)
-            + "%)"
+    categories_values, categories_names, categories_labels = _data_mission_decomposition(
+        variables, mission_name=mission_name
     )
 
-    climb_pro_str = (
-            "Propulsion"
-            + "<br>"
-            + str("{0:.2f}".format(climb_pro))
-            + " [kJ] ("
-            + str(round(climb_pro / climb * 100, 1) if climb != 0 else 0)
-            + "%)"
-    )
+    sub_categories_values = []
+    sub_categories_labels = []
+    sub_categories_parent = []
+    for variable in variables.names():
+        name_split = variable.split(":")
+        if isinstance(name_split, list) and len(name_split) == 5:
+            parent_name = name_split[2]
+            if parent_name in categories_names and name_split[-1] == "energy":
+                variable_name = name_split[3]
+                # variable_name = "_".join(name_split[3:-1])
+                sub_categories_values.append(
+                    convert_units(variables[variable].value[0], variables[variable].units, "W*h")
+                )
+                sub_categories_parent.append(categories_labels[categories_names.index(parent_name)])
+                # sub_categories_labels.append(variable_name)
 
-    climb_payload_str = (
-            "Payload"
-            + "<br>"
-            + str("{0:.2f}".format(climb_payload))
-            + " [kJ] ("
-            + str(round(climb_payload / climb * 100, 1) if climb != 0 else 0)
-            + "%)"
-    )
+                sub_categories_labels.append(
+                    variable_name
+                    + "<br>"
+                    + str(int(sub_categories_values[-1]))
+                    + " [Wh] "
+                )
 
-    climb_avionics_str = (
-            "Avionics"
-            + "<br>"
-            + str("{0:.2f}".format(climb_avionics))
-            + " [kJ] ("
-            + str(round(climb_avionics / climb * 100, 1) if climb != 0 else 0)
-            + "%)"
-    )
+    # Define figure data
+    figure_labels = [mission_name + "<br>" + str(int(total_energy)) + " [Wh]"]
+    figure_labels.extend(categories_labels)
+    figure_labels.extend(sub_categories_labels)
+    figure_parents = [""]
+    for _ in categories_names:
+        figure_parents.append(mission_name + "<br>" + str(int(total_energy)) + " [Wh]")
+    figure_parents.extend(sub_categories_parent)
+    figure_values = [total_energy]
+    figure_values.extend(categories_values)
+    figure_values.extend(sub_categories_values)
 
-    hover_str = (
-            "Hover"
-            + "<br>"
-            + str("{0:.2f}".format(hover))
-            + " [kJ] ("
-            + str(round(hover / mission * 100, 1) if mission != 0 else 0)
-            + "%)"
-    )
+    # Plot figure
+    if fig is None:
+        fig = go.Figure()
 
-    hover_pro_str = (
-            "Propulsion"
-            + "<br>"
-            + str("{0:.2f}".format(hover_pro))
-            + " [kJ] ("
-            + str(round(hover_pro / hover * 100, 1) if hover != 0 else 0)
-            + "%)"
-    )
-
-    hover_payload_str = (
-            "Payload"
-            + "<br>"
-            + str("{0:.2f}".format(hover_payload))
-            + " [kJ] ("
-            + str(round(hover_payload / hover * 100, 1) if hover != 0 else 0)
-            + "%)"
-    )
-
-    hover_avionics_str = (
-            "Avionics"
-            + "<br>"
-            + str("{0:.2f}".format(hover_avionics))
-            + " [kJ] ("
-            + str(round(hover_avionics / hover * 100, 1) if hover != 0 else 0)
-            + "%)"
-    )
-
-    forward_str = (
-            "Forward"
-            + "<br>"
-            + str("{0:.2f}".format(forward))
-            + " [kJ] ("
-            + str(round(forward / mission * 100, 1) if mission != 0 else 0)
-            + "%)"
-    )
-
-    forward_pro_str = (
-            "Propulsion"
-            + "<br>"
-            + str("{0:.2f}".format(forward_pro))
-            + " [kJ] ("
-            + str(round(forward_pro / forward * 100, 1) if forward != 0 else 0)
-            + "%)"
-    )
-
-    forward_payload_str = (
-            "Payload"
-            + "<br>"
-            + str("{0:.2f}".format(forward_payload))
-            + " [kJ] ("
-            + str(round(forward_payload / forward * 100, 1) if forward != 0 else 0)
-            + "%)"
-    )
-
-    forward_avionics_str = (
-            "Avionics"
-            + "<br>"
-            + str("{0:.2f}".format(forward_avionics) if forward != 0 else 0)
-            + " [kJ] ("
-            + str(round(forward_avionics / forward * 100, 1) if forward != 0 else 0)
-            + "%)"
-    )
-
-    mission_str = (
-            "Mission" + "<br>" + str("{0:.2f}".format(mission)) + " [kJ]"
-    )
-
-    # CREATE SUNBURST FIGURE
-    fig = go.Figure(
+    fig.add_trace(
         go.Sunburst(
-            labels=[
-                mission_str,
-                climb_str,
-                climb_pro_str,
-                climb_payload_str,
-                climb_avionics_str,
-                hover_str,
-                hover_pro_str,
-                hover_payload_str,
-                hover_avionics_str,
-                forward_str,
-                forward_pro_str,
-                forward_payload_str,
-                forward_avionics_str,
-            ],
-            parents=[
-                "",
-                mission_str,
-                climb_str,
-                climb_str,
-                climb_str,
-                mission_str,
-                hover_str,
-                hover_str,
-                hover_str,
-                mission_str,
-                forward_str,
-                forward_str,
-                forward_str,
-            ],
-            values=[
-                mission,
-                climb,
-                climb_pro,
-                climb_payload,
-                climb_avionics,
-                hover,
-                hover_pro,
-                hover_payload,
-                hover_avionics,
-                forward,
-                forward_pro,
-                forward_payload,
-                forward_avionics,
-            ],
+            labels=figure_labels,
+            parents=figure_parents,
+            values=figure_values,
             branchvalues="total",
-        ),
+            domain=dict(column=len(fig.data))
+        )
     )
 
-    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mission Energy Breakdown", title_x=0.5)
+    fig.update_layout(
+        grid=dict(columns=len(fig.data), rows=1),
+        margin=dict(t=80, l=0, r=0, b=0),
+        title_text="Mission Energy Breakdown",
+        title_x=0.5)
 
     return fig
+
+
+def _data_mission_decomposition(variables: VariableList, mission_name: str = 'sizing_mission'):
+    """
+    Returns the routes decomposition of mission.
+
+    :param variables: instance containing variables information
+    :return: route names
+    """
+    var_names_and_new_units = {
+        'mission:%s:energy' % mission_name: "W*h",
+    }
+    total_energy = _get_variable_values_with_new_units(
+        variables, var_names_and_new_units
+    )[0]
+
+    category_values = []
+    category_names = []
+    categories_labels = []
+    for variable in variables.names():
+        name_split = variable.split(":")
+        if isinstance(name_split, list) and len(name_split) == 4:
+            if name_split[0] == "mission" and name_split[1] == mission_name and name_split[-1] == "energy" \
+                    and "constraints" not in name_split[2]:
+                category_values.append(
+                    convert_units(variables[variable].value[0], variables[variable].units, "W*h")
+                )
+                category_names.append(name_split[2])
+                categories_labels.append(
+                    name_split[2]
+                    + "<br>"
+                    + str(int(category_values[-1]))
+                    + " [Wh] ("
+                    + str(round(category_values[-1] / total_energy * 100, 1))
+                    + "%)"
+                )
+
+    result = category_values, category_names, categories_labels
+    return result
+
+
+def _get_variable_values_with_new_units(
+    variables: VariableList, var_names_and_new_units: Dict[str, str]
+):
+    """
+    Returns the value of the requested variable names with respect to their new units in the order
+    in which their were given. This function works only for variable of value with shape=1 or float.
+
+    :param variables: instance containing variables information
+    :param var_names_and_new_units: dictionary of the variable names as keys and units as value
+    :return: values of the requested variables with respect to their new units
+    """
+    new_values = []
+    for variable_name, unit in var_names_and_new_units.items():
+        new_values.append(
+            convert_units(variables[variable_name].value[0], variables[variable_name].units, unit)
+        )
+
+    return new_values

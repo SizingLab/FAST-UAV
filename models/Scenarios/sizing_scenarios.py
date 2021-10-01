@@ -7,7 +7,6 @@ import numpy as np
 from fastoad.model_base.atmosphere import AtmosphereSI
 from scipy.constants import g
 from scipy.optimize import brentq
-from models.Scenarios.flight_model import FlightModel
 
 
 @oad.RegisterOpenMDAOSystem("multirotor.sizing_scenarios")
@@ -33,14 +32,14 @@ class Base(om.ExplicitComponent):
         self.add_input('specifications:payload:mass:max', val=np.nan, units='kg')
         self.add_input('data:structure:arms:prop_per_arm', val=np.nan, units=None)
         self.add_input('data:structure:arms:number', val=np.nan, units=None)
-        self.add_input('data:mission_design:takeoff:altitude', val=np.nan, units='m')
-        self.add_input('data:mission_design:dISA', val=np.nan, units='K')
+        self.add_input('mission:sizing_mission:takeoff:altitude', val=np.nan, units='m')
+        self.add_input('mission:sizing_mission:dISA', val=np.nan, units='K')
         self.add_input('specifications:climb_height', val=np.nan, units='m')
         self.add_input('data:structure:reference:body:surface:top', val=np.nan, units='m**2')
         self.add_input('data:structure:reference:body:surface:front', val=np.nan, units='m**2')
         self.add_input('data:system:reference:MTOW', val=np.nan, units='kg')
-        self.add_output('data:mission_design:air_density', units='kg/m**3')
-        self.add_output('data:mission_design:forward:altitude', units='m')
+        self.add_output('mission:sizing_mission:air_density', units='kg/m**3')
+        self.add_output('mission:sizing_mission:forward:altitude', units='m')
         self.add_output('data:propeller:number', units=None)
         self.add_output('data:system:MTOW:guess', units='kg')
         self.add_output('data:structure:body:surface:top', units='m**2')
@@ -55,8 +54,8 @@ class Base(om.ExplicitComponent):
         M_load = inputs['specifications:payload:mass:max']
         Npro_arm = inputs['data:structure:arms:prop_per_arm']
         Narm = inputs['data:structure:arms:number']
-        altitude_TO = inputs['data:mission_design:takeoff:altitude']
-        dISA = inputs['data:mission_design:dISA']
+        altitude_TO = inputs['mission:sizing_mission:takeoff:altitude']
+        dISA = inputs['mission:sizing_mission:dISA']
         D_cl = inputs['specifications:climb_height']
         S_top_ref = inputs['data:structure:reference:body:surface:top']
         S_front_ref = inputs['data:structure:reference:body:surface:front']
@@ -68,7 +67,8 @@ class Base(om.ExplicitComponent):
 
         # Flight conditions
         altitude_FF = altitude_TO + D_cl  # [m] Cruise altitude
-        rho_air = AtmosphereSI(altitude_FF, dISA).density  # [kg/m3] Air density at cruise level TODO: define rho_air for takeoff / climb / descent ? For now we are conservative
+        rho_air = AtmosphereSI(altitude_FF, dISA).density  # [kg/m3] Air density at cruise level
+        # TODO: define rho_air for takeoff / climb / descent ? For now we are conservative
 
         # Surfaces scaling laws
         S_top_estimated = S_top_ref * (Mtotal_guess / MTOW_ref) ** (2 / 3)  # [m2] top surface estimation
@@ -76,8 +76,8 @@ class Base(om.ExplicitComponent):
 
         outputs['data:propeller:number'] = Npro
         outputs['data:system:MTOW:guess'] = Mtotal_guess
-        outputs['data:mission_design:air_density'] = rho_air
-        outputs['data:mission_design:forward:altitude'] = altitude_FF
+        outputs['mission:sizing_mission:air_density'] = rho_air
+        outputs['mission:sizing_mission:forward:altitude'] = altitude_FF
         outputs['data:structure:body:surface:top'] = S_top_estimated
         outputs['data:structure:body:surface:front'] = S_front_estimated
 
@@ -134,10 +134,10 @@ class Climb(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('mission:sizing_mission:air_density', val=np.nan, units='kg/m**3')
         self.add_input('data:system:MTOW:guess', val=np.nan, units='kg')
         self.add_input('data:propeller:number', val=np.nan, units=None)
-        self.add_input('data:structure:aerodynamics:Cd', val=np.nan, units=None)
+        self.add_input('data:aerodynamics:Cd', val=np.nan, units=None)
         self.add_input('specifications:climb_speed', val=np.nan, units='m/s')
         self.add_input('data:structure:body:surface:top', val=np.nan, units='m**2')
         self.add_output('data:propeller:thrust:climb', units='N')
@@ -149,9 +149,9 @@ class Climb(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         Mtotal_guess = inputs['data:system:MTOW:guess']
         Npro = inputs['data:propeller:number']
-        C_D = inputs['data:structure:aerodynamics:Cd']
+        C_D = inputs['data:aerodynamics:Cd']
         V_cl = inputs['specifications:climb_speed']
-        rho_air = inputs['data:mission_design:air_density']
+        rho_air = inputs['mission:sizing_mission:air_density']
         S_top_estimated = inputs['data:structure:body:surface:top']
 
         F_pro_cl = (Mtotal_guess * g + 0.5 * rho_air * C_D * S_top_estimated * V_cl ** 2) / Npro
@@ -170,16 +170,16 @@ class Forward(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('mission:sizing_mission:air_density', val=np.nan, units='kg/m**3')
         self.add_input('data:system:MTOW:guess', val=np.nan, units='kg')
         self.add_input('data:propeller:number', val=np.nan, units=None)
-        self.add_input('data:structure:aerodynamics:Cd', val=np.nan, units=None)
-        self.add_input('data:structure:aerodynamics:Cl0', val=np.nan, units=None)
-        self.add_input('data:mission_design:forward:speed', val=np.nan, units='m/s')
+        self.add_input('data:aerodynamics:Cd', val=np.nan, units=None)
+        self.add_input('data:aerodynamics:Cl0', val=np.nan, units=None)
+        self.add_input('mission:sizing_mission:forward:speed', val=np.nan, units='m/s')
         self.add_input('data:structure:body:surface:top', val=np.nan, units='m**2')
         self.add_input('data:structure:body:surface:front', val=np.nan, units='m**2')
         self.add_output('data:propeller:thrust:forward', units='N')
-        self.add_output('data:mission_design:forward:angle', units='rad')
+        self.add_output('mission:sizing_mission:forward:angle', units='rad')
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -188,10 +188,10 @@ class Forward(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         Mtotal_guess = inputs['data:system:MTOW:guess']
         Npro = inputs['data:propeller:number']
-        C_D = inputs['data:structure:aerodynamics:Cd']
-        C_L0 = inputs['data:structure:aerodynamics:Cl0']
-        V_ff = inputs['data:mission_design:forward:speed']
-        rho_air = inputs['data:mission_design:air_density']
+        C_D = inputs['data:aerodynamics:Cd']
+        C_L0 = inputs['data:aerodynamics:Cl0']
+        V_ff = inputs['mission:sizing_mission:forward:speed']
+        rho_air = inputs['mission:sizing_mission:air_density']
         S_top_estimated = inputs['data:structure:body:surface:top']
         S_front_estimated = inputs['data:structure:body:surface:front']
 
@@ -213,4 +213,4 @@ class Forward(om.ExplicitComponent):
         # F_pro_ff = F_pro_ff / Npro # [N] thrust per propeller
 
         outputs['data:propeller:thrust:forward'] = F_pro_ff
-        outputs['data:mission_design:forward:angle'] = alpha
+        outputs['mission:sizing_mission:forward:angle'] = alpha

@@ -63,6 +63,7 @@ class Voltage(om.ExplicitComponent):
         P_esc = inputs['data:ESC:power:max:estimated']
 
         V_esc = Vesc_ref * (P_esc / Pesc_ref) ** (1 / 3)  # [V] ESC voltage
+        # V_esc = 1.84 * (P_esc) ** (0.36)  # [V] ESC voltage
 
         outputs['data:ESC:voltage:estimated'] = V_esc
 

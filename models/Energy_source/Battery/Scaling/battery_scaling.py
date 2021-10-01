@@ -77,22 +77,70 @@ class CellNumber(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:battery:voltage:guess', val=np.nan, units='V')
+        # self.add_input('data:battery:settings:voltage:k2', val=np.nan, units=None)
+        # self.add_input('data:battery:voltage:guess', val=np.nan, units='V')
+        self.add_input('data:motor:voltage:takeoff', val=np.nan, units='V')
         self.add_input('data:battery:cell:voltage:estimated', val=3.7, units='V')
         self.add_output('data:battery:cell:number:estimated', units=None)
+        self.add_output('data:battery:cell:number:series:estimated', units=None)
+        self.add_output('data:battery:cell:number:parallel:estimated', units=None)
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials('*', '*', method='fd')
+        # Approximate derivatives provided by user as analytic expressions to avoid issues with ceil function.
+        self.declare_partials('*', '*', method='exact')
+        # self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        V_bat_guess = inputs['data:battery:voltage:guess']
-        Vcell = inputs['data:battery:cell:voltage:estimated']
+        # V_bat_guess = inputs['data:battery:voltage:guess']
+        # k_vb2 = inputs['data:battery:settings:voltage:k2']
+        V_cell = inputs['data:battery:cell:voltage:estimated']
+        Umot_to = inputs['data:motor:voltage:takeoff']
 
-        Ncel = np.ceil(V_bat_guess / Vcell)  # [-] Cell number, round (up value)
+        # N_series = np.ceil(V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
+        # N_series = np.ceil(k_vb2 * Umot_to / V_cell)  # [-] Number of series connections (for voltage upgrade)
+        N_series = np.ceil(Umot_to / V_cell)  # [-] Number of series connections (for voltage upgrade)
+        N_parallel = 1  # [-] Number of parallel connections (for capacity upgrade)
+        N_cell = N_parallel * N_series
 
-        outputs['data:battery:cell:number:estimated'] = Ncel
+        outputs['data:battery:cell:number:series:estimated'] = N_series
+        outputs['data:battery:cell:number:parallel:estimated'] = N_parallel
+        outputs['data:battery:cell:number:estimated'] = N_cell
 
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        V_cell = inputs['data:battery:cell:voltage:estimated']
+        Umot_to = inputs['data:motor:voltage:takeoff']
+        # k_vb2 = inputs['data:battery:settings:voltage:k2']
+
+        partials[
+            'data:battery:cell:number:estimated',
+            'data:motor:voltage:takeoff',
+        ] = 1 / V_cell # (1 + np.cos(2 * np.pi * Umot_to / V_cell)) / V_cell  # Smooth ceil function derivative
+
+        partials[
+            'data:battery:cell:number:series:estimated',
+            'data:motor:voltage:takeoff',
+        ] = 1 / V_cell # (1 + np.cos(2 * np.pi * Umot_to / V_cell)) / V_cell  # Smooth ceil function derivative
+
+        partials[
+            'data:battery:cell:number:estimated',
+            'data:battery:cell:voltage:estimated',
+        ] = - Umot_to / V_cell ** 2
+
+        partials[
+            'data:battery:cell:number:series:estimated',
+            'data:battery:cell:voltage:estimated',
+        ] = - Umot_to / V_cell ** 2
+
+
+        # partials[
+        #     'data:battery:cell:number:estimated',
+        #     'data:battery:settings:voltage:k2',
+        # ] = Umot_to / V_cell
+        #
+        # partials[
+        #     'data:battery:cell:number:series:estimated',
+        #     'data:battery:settings:voltage:k2',
+        # ] = Umot_to / V_cell
 
 class Voltage(om.ExplicitComponent):
     """
@@ -101,7 +149,7 @@ class Voltage(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:battery:cell:voltage:estimated', val=3.7, units='V')
-        self.add_input('data:battery:cell:number:estimated', val=np.nan, units=None)
+        self.add_input('data:battery:cell:number:series:estimated', val=np.nan, units=None)
         self.add_output('data:battery:voltage:estimated', units='V')
 
     def setup_partials(self):
@@ -109,10 +157,10 @@ class Voltage(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        Vcell = inputs['data:battery:cell:voltage:estimated']
-        Ncel = inputs['data:battery:cell:number:estimated']
+        V_cell = inputs['data:battery:cell:voltage:estimated']
+        N_series = inputs['data:battery:cell:number:series:estimated']
 
-        V_bat = Vcell * Ncel  # [V] Battery voltage
+        V_bat = V_cell * N_series  # [V] Battery voltage
 
         outputs['data:battery:voltage:estimated'] = V_bat
 

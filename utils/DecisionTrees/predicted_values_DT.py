@@ -117,6 +117,8 @@ class DecisionTrees:
                 extra_pts = pd.concat([df_X_rest, df_yPrev], axis=1)
                 df1 = df1.append(extra_pts)
 
+            #sorted_xy = df1.append(sorted_xy) # TEST 29/07/2021
+
         #     sorted_xy.columns = df1.columns
         sorted_xy = df1.append(sorted_xy)
         self._df_X = sorted_xy.iloc[:, :len(self._df_X.columns)]

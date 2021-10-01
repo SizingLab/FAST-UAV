@@ -53,7 +53,7 @@ class TakeOff(om.ExplicitComponent):
     def setup(self):
         # self.add_input('data:propeller:geometry:diameter', val=np.nan, units='m')
         # self.add_input('data:propeller:aerodynamics:CP:static', val=np.nan, units=None)
-        # self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
+        # self.add_input('mission:sizing_mission:air_density', val=np.nan, units='kg/m**3')
         # self.add_input('data:propeller:reference:ND:max', val=np.nan, units='m/s')
         # self.add_input('data:propeller:settings:ND:k', val=np.nan, units=None)
 
@@ -61,7 +61,7 @@ class TakeOff(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CT:static', val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CP:static', val=np.nan, units=None)
         self.add_input('data:propeller:thrust:max', val=np.nan, units='N')
-        self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('mission:sizing_mission:air_density', val=np.nan, units='kg/m**3')
         self.add_output('data:propeller:speed:takeoff', units='rad/s')
         self.add_output('data:propeller:torque:takeoff', units='N*m')
         self.add_output('data:propeller:power:takeoff', units='W')
@@ -75,11 +75,11 @@ class TakeOff(om.ExplicitComponent):
         C_t_sta = inputs['data:propeller:aerodynamics:CT:static']
         C_p_sta = inputs['data:propeller:aerodynamics:CP:static']
         F_pro_to = inputs['data:propeller:thrust:max']
-        rho_air = inputs['data:mission_design:air_density']
+        rho_air = inputs['mission:sizing_mission:air_density']
 
         # Dpro = inputs['data:propeller:geometry:diameter']
         # C_p_sta = inputs['data:propeller:aerodynamics:CP:static']
-        # rho_air = inputs['data:mission_design:air_density']
+        # rho_air = inputs['mission:sizing_mission:air_density']
         # NDmax = inputs['data:propeller:reference:ND:max']
         # k_ND = inputs['data:propeller:settings:ND:k']
 
@@ -108,7 +108,7 @@ class Hover(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CT:static', val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CP:static', val=np.nan, units=None)
         self.add_input('data:propeller:thrust:hover', val=np.nan, units='N')
-        self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('mission:sizing_mission:air_density', val=np.nan, units='kg/m**3')
         self.add_output('data:propeller:speed:hover', units='rad/s')
         self.add_output('data:propeller:torque:hover', units='N*m')
         self.add_output('data:propeller:power:hover', units='W')
@@ -122,7 +122,7 @@ class Hover(om.ExplicitComponent):
         C_t_sta = inputs['data:propeller:aerodynamics:CT:static']
         C_p_sta = inputs['data:propeller:aerodynamics:CP:static']
         F_pro_hov = inputs['data:propeller:thrust:hover']
-        rho_air = inputs['data:mission_design:air_density']
+        rho_air = inputs['mission:sizing_mission:air_density']
 
         # n_pro_hover = (F_pro_hov / (C_t_sta * rho_air * Dpro ** 4)) ** 0.5  # [Hz] Propeller speed for hover
         # Wpro_hover = n_pro_hover * 2 * np.pi  # [rad/s] Propeller speed for hover
@@ -148,7 +148,7 @@ class Climb(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CT:axial', val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CP:axial', val=np.nan, units=None)
         self.add_input('data:propeller:thrust:climb', val=np.nan, units='N')
-        self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('mission:sizing_mission:air_density', val=np.nan, units='kg/m**3')
         self.add_output('data:propeller:speed:climb', units='rad/s')
         self.add_output('data:propeller:torque:climb', units='N*m')
         self.add_output('data:propeller:power:climb', units='W')
@@ -162,7 +162,7 @@ class Climb(om.ExplicitComponent):
         C_t_axial = inputs['data:propeller:aerodynamics:CT:axial']
         C_p_axial = inputs['data:propeller:aerodynamics:CP:axial']
         F_pro_cl = inputs['data:propeller:thrust:climb']
-        rho_air = inputs['data:mission_design:air_density']
+        rho_air = inputs['mission:sizing_mission:air_density']
 
         # n_pro_cl = (F_pro_cl / (C_t_axial * rho_air * Dpro ** 4)) ** 0.5  # [Hz] Propeller speed for climbing
         # Wpro_cl = n_pro_cl * 2 * np.pi  # [rad/s] Propeller speed for climbing
@@ -188,7 +188,7 @@ class Forward(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CT:incidence', val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CP:incidence', val=np.nan, units=None)
         self.add_input('data:propeller:thrust:forward', val=np.nan, units='N')
-        self.add_input('data:mission_design:air_density', val=np.nan, units='kg/m**3')
+        self.add_input('mission:sizing_mission:air_density', val=np.nan, units='kg/m**3')
         self.add_output('data:propeller:speed:forward', units='rad/s')
         self.add_output('data:propeller:torque:forward', units='N*m')
         self.add_output('data:propeller:power:forward', units='W')
@@ -202,7 +202,7 @@ class Forward(om.ExplicitComponent):
         C_t_inc = inputs['data:propeller:aerodynamics:CT:incidence']
         C_p_inc = inputs['data:propeller:aerodynamics:CP:incidence']
         F_pro_ff = inputs['data:propeller:thrust:forward']
-        rho_air = inputs['data:mission_design:air_density']
+        rho_air = inputs['mission:sizing_mission:air_density']
 
         # n_pro_ff = (F_pro_ff / (C_t_inc * rho_air * Dpro ** 4)) ** 0.5  # [Hz] Propeller speed for forward flight
         # Wpro_ff = n_pro_ff * 2 * np.pi  # [rad/s] Propeller speed for forward flight

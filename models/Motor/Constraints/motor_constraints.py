@@ -32,7 +32,7 @@ class MotorConstraints(om.ExplicitComponent):
 
         motor_con1 = (Tmot_max - Tmot_to) / Tmot_max  # transient torque
         motor_con2 = (Tmot_max - Tmot_cl) / Tmot_max  # transient torque
-        motor_con3 = (Tmot_nom - Tmot_ff) / Tmot_max  # steady torque
+        motor_con3 = (Tmot_nom - Tmot_ff) / Tmot_nom  # steady torque
 
         outputs['data:motor:constraints:torque:takeoff'] = motor_con1
         outputs['data:motor:constraints:torque:climb'] = motor_con2

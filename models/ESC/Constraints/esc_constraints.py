@@ -24,14 +24,14 @@ class ESCConstraints(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         P_esc = inputs['data:ESC:power:max']
-        Vesc = inputs['data:ESC:voltage']
+        V_esc = inputs['data:ESC:voltage']
         V_bat = inputs['data:battery:voltage']
         P_esc_cl = inputs['data:ESC:power:climb']
         P_esc_ff = inputs['data:ESC:power:forward']
 
         ESC_con1 = (P_esc - P_esc_cl) / P_esc
         ESC_con2 = (P_esc - P_esc_ff) / P_esc
-        ESC_con3 = (V_bat - Vesc) / V_bat
+        ESC_con3 = (V_esc - V_bat) / V_esc
 
         outputs['data:ESC:constraints:power:climb'] = ESC_con1
         outputs['data:ESC:constraints:power:forward'] = ESC_con2
@@ -39,7 +39,7 @@ class ESCConstraints(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         P_esc = inputs['data:ESC:power:max']
-        Vesc = inputs['data:ESC:voltage']
+        V_esc = inputs['data:ESC:voltage']
         V_bat = inputs['data:battery:voltage']
         P_esc_cl = inputs['data:ESC:power:climb']
         P_esc_ff = inputs['data:ESC:power:forward']
@@ -65,8 +65,8 @@ class ESCConstraints(om.ExplicitComponent):
         partials[
             'data:ESC:constraints:voltage',
             'data:battery:voltage',
-        ] = Vesc / V_bat**2
+        ] = - 1.0 / V_esc
         partials[
             'data:ESC:constraints:voltage',
             'data:ESC:voltage',
-        ] = - 1.0 / V_bat
+        ] = V_bat / V_esc**2

@@ -11,8 +11,8 @@ class ESCModel:
     """
 
     @staticmethod
-    def power(P_el, U_mot, V_bat):
-        P_esc = P_el * V_bat / U_mot  # [W] electronic power
+    def power(P_mot, U_mot, V_bat):
+        P_esc = P_mot * V_bat / U_mot  # [W] electronic power
         return P_esc
 
 
@@ -43,12 +43,12 @@ class TakeOff(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        P_el_to = inputs['data:motor:power:takeoff']
-        Umot_to = inputs['data:motor:voltage:takeoff']
+        P_mot_to = inputs['data:motor:power:takeoff']
+        U_mot_to = inputs['data:motor:voltage:takeoff']
         V_bat = inputs['data:battery:voltage']
 
-        # P_esc_to = P_el_to * V_bat / Umot_to  # [W] electronic power takeoff
-        P_esc_to = ESCModel.power(P_el_to, Umot_to, V_bat)  # [W] electronic power takeoff
+        # P_esc_to = P_mot_to * V_bat / U_mot_to  # [W] electronic power takeoff
+        P_esc_to = ESCModel.power(P_mot_to, U_mot_to, V_bat)  # [W] electronic power takeoff
 
         outputs['data:ESC:power:takeoff'] = P_esc_to
 
@@ -69,12 +69,12 @@ class Hover(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        P_el_hover = inputs['data:motor:power:hover']
-        Umot_hover = inputs['data:motor:voltage:hover']
+        P_mot_hover = inputs['data:motor:power:hover']
+        U_mot_hover = inputs['data:motor:voltage:hover']
         V_bat = inputs['data:battery:voltage']
 
         # P_esc_hover = P_el_hover * V_bat / Umot_hover  # [W] electronic power hover
-        P_esc_hover = ESCModel.power(P_el_hover, Umot_hover, V_bat)  # [W] electronic power hover
+        P_esc_hover = ESCModel.power(P_mot_hover, U_mot_hover, V_bat)  # [W] electronic power hover
 
         outputs['data:ESC:power:hover'] = P_esc_hover
 
@@ -95,12 +95,12 @@ class Climb(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        P_el_cl = inputs['data:motor:power:climb']
-        Umot_cl = inputs['data:motor:voltage:climb']
+        P_mot_cl = inputs['data:motor:power:climb']
+        U_mot_cl = inputs['data:motor:voltage:climb']
         V_bat = inputs['data:battery:voltage']
 
         # P_esc_cl = P_el_cl * V_bat / Umot_cl  # [W] electronic power max climb
-        P_esc_cl = ESCModel.power(P_el_cl, Umot_cl, V_bat)  # [W] electronic power max climb
+        P_esc_cl = ESCModel.power(P_mot_cl, U_mot_cl, V_bat)  # [W] electronic power max climb
 
         outputs['data:ESC:power:climb'] = P_esc_cl
 
@@ -122,10 +122,10 @@ class Forward(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         V_bat = inputs['data:battery:voltage']
-        P_el_ff = inputs['data:motor:power:forward']
-        Umot_ff = inputs['data:motor:voltage:forward']
+        P_mot_ff = inputs['data:motor:power:forward']
+        U_mot_ff = inputs['data:motor:voltage:forward']
 
         # P_esc_ff = P_el_ff * V_bat / Umot_ff # [W] electronic power max forward
-        P_esc_ff = ESCModel.power(P_el_ff, Umot_ff, V_bat)  # [W] electronic power max forward
+        P_esc_ff = ESCModel.power(P_mot_ff, U_mot_ff, V_bat)  # [W] electronic power max forward
 
         outputs['data:ESC:power:forward'] = P_esc_ff

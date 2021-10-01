@@ -41,7 +41,7 @@ data:battery:cell:number:catalogue || Cell number (catalogue value)
 data:battery:cell:voltage || Voltage of one cell
 data:battery:cell:voltage:estimated || Voltage of one cell (estimated value)
 data:battery:cell:voltage:catalogue || Voltage of one cell (catalogue value)
-data:mission_design:constraints:energy || Constraint on battery energy to meet mission requirements
+mission:sizing_mission:constraints:energy || Constraint on battery energy to meet mission requirements
 data:battery:constraints:power:climb || Constraint on battery power (climb)
 data:battery:constraints:power:forward || Constraint on battery power (forward flight)
 data:battery:constraints:power:takeoff || Constraint on battery power (takeoff)
@@ -60,21 +60,21 @@ data:battery:settings:mass:k || Oversizing coefficient on battery mass
 data:battery:settings:voltage:k || Oversizing coefficient on battery voltage
 data:gearbox || 0: no gearbox ; 1: gearbox
 data:gearbox:mass || Gearbox mass
-data:mission_design:energy || Total energy consumption to accomplish the mission
-data:mission_design:avionics:energy || Energy consumption of the avionics during the mission
-data:mission_design:climb:energy || Climb segment energy consumption
-data:mission_design:forward:energy || Forward flight segment energy consumption
-data:mission_design:hover:energy || Hover segment energy consumption
-data:mission_design:payload:energy || Energy consumption of the payload during the mission
-data:mission_design:air_density|| Air density
-data:mission_design:duration || Mission duration
-data:mission_design:climb:duration || Climb segment duration
-data:mission_design:forward:duration || Cruise segment duration
-data:mission_design:forward:angle || Angle of attack of the drone during forward flight
-data:mission_design:forward:speed || Forward flight velocity
-data:mission_design:takeoff:altitude || Takeoff altitude
-data:mission_design:forward:altitude || Cruise altitude
-data:mission_design:dISA || Temperature variation w.r.t. ISA
+mission:sizing_mission:energy || Total energy consumption to accomplish the mission
+mission:sizing_mission:avionics:energy || Energy consumption of the avionics during the mission
+mission:sizing_mission:climb:energy || Climb segment energy consumption
+mission:sizing_mission:forward:energy || Forward flight segment energy consumption
+mission:sizing_mission:hover:energy || Hover segment energy consumption
+mission:sizing_mission:payload:energy || Energy consumption of the payload during the mission
+mission:sizing_mission:air_density|| Air density
+mission:sizing_mission:duration || Mission duration
+mission:sizing_mission:climb:duration || Climb segment duration
+mission:sizing_mission:forward:duration || Cruise segment duration
+mission:sizing_mission:forward:angle || Angle of attack of the drone during forward flight
+mission:sizing_mission:forward:speed || Forward flight velocity
+mission:sizing_mission:takeoff:altitude || Takeoff altitude
+mission:sizing_mission:forward:altitude || Cruise altitude
+mission:sizing_mission:dISA || Temperature variation w.r.t. ISA
 data:motor:mass || Motor mass
 data:motor:mass:estimated || Motor mass (estimated value)
 data:motor:mass:catalogue || Motor mass (catalogue value)
@@ -177,15 +177,15 @@ data:propeller:constraints:speed:max || Constraint on maximum propeller rotation
 data:propeller:settings:ND:k || Undersizing coefficient on propeller rotational speed
 data:system:MTOW || Maximum Take Off Weight
 data:system:MTOW:guess || Initial guess of Maximum Take Off Weight for sizing scenarios
-data:mission_design:hover:duration:max || Drone endurance in hover flight
-data:mission_design:forward:distance:max || Range without climb and hover segment, at given forward flight velocity
-data:mission_design:forward:distance || Range with specified climb and hover segments, at given forward flight velocity
+mission:sizing_mission:hover:duration:max || Drone endurance in hover flight
+mission:sizing_mission:forward:distance:max || Max. Range at given flight speed
+mission:sizing_mission:forward:distance || Max. Range at given flight speed
 data:system:reference:MTOW || Maximum Take Off Weight reference for scaling law
 data:system:constraints:mass:MTOW || Constraint on MTOW maximum allowable value
 data:system:constraints:mass:convergence || Constraint on MTOW convergence
 data:system:settings:MTOW:k || Oversizing coefficient on load mass
-data:structure:aerodynamics:Cd || Fuselage Drag coefficient
-data:structure:aerodynamics:Cl0 || Max. fuselage lift coefficient
+data:aerodynamics:Cd || Fuselage Drag coefficient
+data:aerodynamics:Cl0 || Max. fuselage lift coefficient
 data:structure:arms:length || Arms length
 data:structure:arms:mass || Total arms mass
 data:structure:arms:number || Number of arms

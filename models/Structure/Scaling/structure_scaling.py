@@ -4,6 +4,7 @@ Structure Scaling
 import openmdao.api as om
 import numpy as np
 from math import *
+from fastoad.openmdao.validity_checker import ValidityDomainChecker
 
 
 class StructureScaling(om.Group):
@@ -27,9 +28,9 @@ class Geometry(om.ExplicitComponent):
         self.add_input('data:structure:arms:number', val=np.nan, units=None)
         self.add_input('data:structure:arms:prop_per_arm', val=np.nan, units=None)
         self.add_input('data:propeller:thrust:max', val=np.nan, units='N')
-        self.add_output('data:structure:arms:length', units='m')
-        self.add_output('data:structure:arms:diameter:outer', units='m')
-        self.add_output('data:structure:arms:diameter:inner', units='m')
+        self.add_output('data:structure:arms:length', units='m', lower=.0)
+        self.add_output('data:structure:arms:diameter:outer', units='m', lower=.0)
+        self.add_output('data:structure:arms:diameter:inner', units='m', lower=.0)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -43,6 +44,10 @@ class Geometry(om.ExplicitComponent):
         Narm = inputs['data:structure:arms:number']
         F_pro_to = inputs['data:propeller:thrust:max']
         Npro_arm = inputs['data:structure:arms:prop_per_arm']
+
+        # SANITY CHECK FOR COBYLA
+        #if D_ratio >= 1.0:
+        #    D_ratio = 0.1
 
         Larm = Dpro / 2 / (np.sin(pi / Narm))  # [m] length of the arm
         Dout = (F_pro_to * Npro_arm * Larm * 32 / (pi * Sigma_max * (1 - D_ratio ** 4))) ** (1 / 3)  # [m] outer diameter of the beam
@@ -75,6 +80,10 @@ class WeightArms(om.ExplicitComponent):
         Larm = inputs['data:structure:arms:length']
         Dout = inputs['data:structure:arms:diameter:outer']
         rho = inputs['data:structure:arms:material:density']
+
+        # SANITY CHECK FOR COBYLA
+        #if D_ratio >= 1.0:
+        #    D_ratio = 0.1
 
         Marms = pi / 4 * (Dout ** 2 - (D_ratio * Dout) ** 2) * Larm * rho * Narm  # [kg] mass of the arms
 
