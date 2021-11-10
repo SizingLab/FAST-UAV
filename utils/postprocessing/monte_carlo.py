@@ -2,7 +2,6 @@
 Defines the Monte Carlo Simulation and post processing
 """
 
-
 import fastoad.api as oad
 from fastoad.io.variable_io import DataFile
 import openmdao.api as om
@@ -63,14 +62,14 @@ def doe_montecarlo(des_vars_dict: dict, obj_var: str, conf_file: str, ns: int = 
     return df
 
 
-def doe_single_io(conf_file, output_file):
+def montecarlo_siso(conf_file, output_file):
     """
-    Interactive interface to define and simulate a Monte Carlo simulation with a single input and a single output.
+    Interactive interface to define and simulate a Monte Carlo simulation with a Single Input and a Single Output.
     Plots the distribution of the input and output variables as well as the scatter plot and the parallel coordinates
     plot.
 
     :param conf_file: configuration file of the problem
-    :param output_file: output file of the initial problem
+    :param output_file: output file of the initial problem, to set up initial values.
     """
     # Get variables names
     variables = DataFile(output_file)
@@ -86,24 +85,44 @@ def doe_single_io(conf_file, output_file):
         value=None
     )
 
+    # Values boxes
+    value_box = widgets.Text(
+        value='',
+        description='',
+        continuous_update=False,
+        disabled=True
+    )
+    var_box = widgets.FloatSlider(
+        value=0.1,
+        min=0.01,
+        max=1.0,
+        step=0.01,
+        description='std',
+        tooltip='standard deviation',
+        disabled=False,
+        continuous_update=False,
+        readout=True,
+        readout_format='.0%',
+    )
+
     # Distribution law boxes
     law_buttons = widgets.ToggleButtons(
-        options=['Normal', 'Uniform', 'Exponential'],
+        options=['Normal', 'Uniform'], #['Normal', 'Uniform', 'Exponential'],
         description='Distribution Law:',
         disabled=False,
         button_style='',
     )
-    law_param_box_1 = widgets.FloatText(
-        value=None,
-        description='mu:',
-        continuous_update=False,
-        step=0.01
-    )
-    law_param_box_2 = widgets.FloatText(
-        value=None,
-        description='sigma:',
-        continuous_update=False
-    )
+    #law_param_box_1 = widgets.FloatText(
+    #    value=None,
+    #    description='mu:',
+    #    continuous_update=False,
+    #    step=0.01
+    #)
+    #law_param_box_2 = widgets.FloatText(
+    #    value=None,
+    #    description='sigma:',
+    #    continuous_update=False
+    #)
 
     # Monte Carlo n_samples
     samples = widgets.IntSlider(
@@ -151,32 +170,39 @@ def doe_single_io(conf_file, output_file):
                                )
                            ))
 
-    def law_parameters(change):
+    def variable_data(change):
         x_data = table.loc[table['Name'] == inputbox.value]
         if x_data["Value"].unique().size != 0:  # check data exists
             x_value = x_data["Value"].unique()[0]  # get value
+            x_unit = x_data["Unit"].unique()[0]  # get unit
         else:
             # print("Please select value in dropwdown menu")
             return False
+        value_box.value = "{:10.3f} ".format(x_value) + (x_unit if x_unit is not None else '')
+        var_box.value = 0.1
         if law_buttons.value == "Normal":
-            mu = x_value
-            sigma = 0.1 * mu if mu != 0 else 0.1
-            widg.children[0].children[0].children[2].description = 'mu'
-            widg.children[0].children[0].children[2].value = mu
-            widg.children[0].children[0].children[3].description = 'sigma'
-            widg.children[0].children[0].children[3].value = sigma
+            var_box.description = 'std'
+            var_box.tooltip = 'standard deviation'
+            #mu = x_value
+            #sigma = 0.1 * mu if mu != 0 else 0.1
+            #widg.children[0].children[0].children[2].description = 'mu'
+            #widg.children[0].children[0].children[2].value = mu
+            #widg.children[0].children[0].children[3].description = 'sigma'
+            #widg.children[0].children[0].children[3].value = sigma
 
         if law_buttons.value == "Uniform":
-            widg.children[0].children[0].children[2].description = 'a'
-            widg.children[0].children[0].children[2].value = x_value / 2 if x_value != 0 else 0.0
-            widg.children[0].children[0].children[3].description = 'b'
-            widg.children[0].children[0].children[3].value = x_value * 2
+            var_box.description = 'error interval'
+            var_box.tooltip = 'error interval'
+            #widg.children[0].children[0].children[2].description = 'a'
+            #widg.children[0].children[0].children[2].value = x_value / 2 if x_value != 0 else 0.0
+            #widg.children[0].children[0].children[3].description = 'b'
+            #widg.children[0].children[0].children[3].value = x_value * 2
 
-        if law_buttons.value == "Exponential":
-            widg.children[0].children[0].children[2].description = 'lambda'
-            widg.children[0].children[0].children[2].value = 10.0
-            widg.children[0].children[0].children[3].description = 'gamma'
-            widg.children[0].children[0].children[3].value = x_value
+        #if law_buttons.value == "Exponential":
+        #    widg.children[0].children[0].children[2].description = 'lambda'
+        #    widg.children[0].children[0].children[2].value = 10.0
+        #    widg.children[0].children[0].children[3].description = 'gamma'
+        #    widg.children[0].children[0].children[3].value = x_value
 
     def validate():
         if outputbox.value in table['Name'].unique() and inputbox.value in table['Name'].unique():
@@ -189,20 +215,26 @@ def doe_single_io(conf_file, output_file):
             # Get data corresponding to user entries
             x_data = table.loc[table['Name'] == inputbox.value]
             y_data = table.loc[table['Name'] == outputbox.value]
-            ns = samples.value
+            ns = int(samples.value)
             if x_data["Value"].unique().size != 0:  # check not empty input
+                x_value = x_data["Value"].unique()[0]
+                x_var = var_box.value
                 if law_buttons.value == "Normal":
-                    mu = law_param_box_1.value
-                    sigma = law_param_box_2.value
+                    mu = x_value
+                    sigma = x_var
+                    #mu = law_param_box_1.value
+                    #sigma = law_param_box_2.value
                     dist_law = ot.Normal(mu, sigma)
                 elif law_buttons.value == "Uniform":
-                    a = law_param_box_1.value
-                    b = law_param_box_2.value
+                    a = x_value * (1. - x_var)
+                    b = x_value * (1. + x_var)
+                    #a = law_param_box_1.value
+                    #b = law_param_box_2.value
                     dist_law = ot.Uniform(a, b)
-                elif law_buttons.value == "Exponential":
-                    lmbda = law_param_box_1.value
-                    gamma = law_param_box_2.value
-                    dist_law = ot.Exponential(lmbda, gamma)
+                #elif law_buttons.value == "Exponential":
+                #    lmbda = law_param_box_1.value
+                #    gamma = law_param_box_2.value
+                #    dist_law = ot.Exponential(lmbda, gamma)
                 else:
                     return 0
             else:
@@ -236,12 +268,12 @@ def doe_single_io(conf_file, output_file):
                 fig4.data[0].line = dict(color=df[outputbox.value], colorscale='Viridis')
 
     # Events
-    law_buttons.observe(law_parameters, names="value")  # update law parameters when the user changes law
-    inputbox.observe(law_parameters, names="value")  # update law parameters when the user changes input variable
+    law_buttons.observe(variable_data, names="value")  # update data when the user changes law
+    inputbox.observe(variable_data, names="value")  # update data when the user changes input variable
     update_button.on_click(update_charts)  # Run the Monte Carlo with provided parameters, and display the charts
 
     # Set up Figure
-    options_panel = widgets.VBox([widgets.HBox([inputbox, law_buttons, law_param_box_1, law_param_box_2]),
+    options_panel = widgets.VBox([widgets.HBox([inputbox, value_box, law_buttons, var_box]),
                                   widgets.HBox([outputbox, samples, update_button])])
     widg = widgets.VBox([options_panel,
                          widgets.HBox([fig1, fig2]),
@@ -252,14 +284,14 @@ def doe_single_io(conf_file, output_file):
     return widg
 
 
-def doe_multiple_io(conf_file, output_file):
+def montecarlo_miso(conf_file, output_file):
     """
-    Interactive interface to define and simulate a Monte Carlo simulation with multiple inputs and a single output.
+    Interactive interface to define and simulate a Monte Carlo simulation with Multiple Inputs and a Single Output.
     Plots the distribution of the input and output variables as well as the scatter plot and the parallel coordinates
     plot.
 
     :param conf_file: configuration file of the problem
-    :param output_file: output file of the initial problem
+    :param output_file: output file of the initial problem, to set up initial values.
     """
     # Get variables data from output file
     variables = DataFile(output_file)
@@ -275,25 +307,46 @@ def doe_multiple_io(conf_file, output_file):
             options=table.loc[table['is_input']]["Name"].unique().tolist(),
             value=None
         )
-        # Distribution law boxes
+
+        # Values boxes
+        value_box = widgets.Text(
+            value='',
+            description='',
+            continuous_update=False,
+            disabled=True
+        )
+        var_box = widgets.FloatSlider(
+            value=0.1,
+            min=0.01,
+            max=1.0,
+            step=0.01,
+            description='std',
+            tooltip='standard deviation',
+            disabled=False,
+            continuous_update=False,
+            readout=True,
+            readout_format='.0%',
+        )
+
+        # Input distribution parameters boxes
         law_buttons = widgets.ToggleButtons(
-            options=['Normal', 'Uniform', 'Exponential'],
+            options=['Normal', 'Uniform'],
             description='Distribution Law:',
             disabled=False,
             button_style='',
         )
-        law_param_box_1 = widgets.FloatText(
-            value=None,
-            description='mu:',
-            continuous_update=False,
-            step=0.01
-        )
-        law_param_box_2 = widgets.FloatText(
-            value=None,
-            description='sigma:',
-            continuous_update=False
-        )
-        return widgets.HBox([inputbox, law_buttons, law_param_box_1, law_param_box_2])
+        #law_param_box_1 = widgets.FloatText(
+        #    value=None,
+        #    description='mu:',
+        #    continuous_update=False,
+        #    step=0.01
+        #)
+        #law_param_box_2 = widgets.FloatText(
+        #    value=None,
+        #    description='sigma:',
+        #    continuous_update=False
+        #)
+        return widgets.HBox([inputbox, value_box, law_buttons, var_box])
 
     # "add input" button
     addinput_button = widgets.Button(description="add input")
@@ -317,7 +370,7 @@ def doe_multiple_io(conf_file, output_file):
     # "Update" button
     update_button = widgets.Button(description="update")
 
-    # Assign empty figures 
+    # Assign empty figures
     fig1 = go.FigureWidget(data=go.Parcoords(),
                            layout=go.Layout(
                                title=dict(
@@ -326,7 +379,7 @@ def doe_multiple_io(conf_file, output_file):
                            ))
     fig1.update_layout(width=1000)
 
-    fig2 = go.FigureWidget(data=go.Splom(),
+    fig2 = go.FigureWidget(data=go.Splom(showupperhalf=False),
                            layout=go.Layout(
                                title=dict(
                                    text='Scatterplot Matrix'
@@ -340,40 +393,58 @@ def doe_multiple_io(conf_file, output_file):
         widg.children = widg.children[:-1] + (new_input, addinput_button)
         n_input = len(inputs_array) - 1  # input row indice
 
-        def law_parameters(change):
+        def variable_data(change):
             inputbox = inputs_array[n_input].children[0]  # variable selected from dropdown
             x_data = table.loc[table['Name'] == inputbox.value]  # corresponding data from output file
             if x_data["Value"].unique().size != 0:  # check data exists
                 x_value = x_data["Value"].unique()[0]  # get value
+                x_unit = x_data["Unit"].unique()[0]  # get unit
             else:
                 # print("Please select value in dropwdown menu")
                 return False
-            law_buttons = inputs_array[n_input].children[1]  # probability law button
-            law_param_box_1 = inputs_array[n_input].children[2]  # first law parameters
-            law_param_box_2 = inputs_array[n_input].children[3]  # second law parameters
-            if law_buttons.value == "Normal":  # Normal law
-                mu = x_value
-                sigma = 0.1 * mu if mu != 0.0 else 0.1
-                law_param_box_1.description = 'mu'
-                law_param_box_1.value = mu
-                law_param_box_2.description = 'sigma'
-                law_param_box_2.value = sigma
+            value_box = inputs_array[n_input].children[1]  # value of the variable
+            law_buttons = inputs_array[n_input].children[2]  # distribution law
+            var_box = inputs_array[n_input].children[3]  # variation to apply for the DoE
+            value_box.value = "{:10.3f} ".format(x_value) + (x_unit if x_unit is not None else '')
+            var_box.value = 0.1
 
-            if law_buttons.value == "Uniform":  # Uniform law
-                law_param_box_1.description = 'a'
-                law_param_box_1.value = x_value / 2 if x_value != 0 else 0.0
-                law_param_box_2.description = 'b'
-                law_param_box_2.value = x_value * 2
+            if law_buttons.value == "Normal":
+                var_box.description = 'std'
+                var_box.tooltip = 'standard deviation'
+            #mu = x_value
+            #sigma = 0.1 * mu if mu != 0 else 0.1
+            #widg.children[0].children[0].children[2].description = 'mu'
+            #widg.children[0].children[0].children[2].value = mu
+            #widg.children[0].children[0].children[3].description = 'sigma'
+            #widg.children[0].children[0].children[3].value = sigma
 
-            if law_buttons.value == "Exponential":  # Log Uniform law
-                law_param_box_1.description = 'lambda'
-                law_param_box_1.value = 10.0
-                law_param_box_2.description = 'gamma'
-                law_param_box_2.value = x_value
+            if law_buttons.value == "Uniform":
+                var_box.description = 'error interval'
+                var_box.tooltip = 'error interval'
+
+            #f law_buttons.value == "Normal":  # Normal law
+            #    mu = x_value
+            #    sigma = 0.1 * mu if mu != 0.0 else 0.1
+            #    law_param_box_1.description = 'mu'
+            #    law_param_box_1.value = mu
+            #    law_param_box_2.description = 'sigma'
+            #    law_param_box_2.value = sigma
+
+            #if law_buttons.value == "Uniform":  # Uniform law
+            #    law_param_box_1.description = 'a'
+            #    law_param_box_1.value = x_value / 2 if x_value != 0 else 0.0
+            #    law_param_box_2.description = 'b'
+            #    law_param_box_2.value = x_value * 2
+
+            #if law_buttons.value == "Exponential":  # Log Uniform law
+            #    law_param_box_1.description = 'lambda'
+            #    law_param_box_1.value = 10.0
+            #    law_param_box_2.description = 'gamma'
+            #    law_param_box_2.value = x_value
 
         # add an observe event: probability law parameters update
-        new_input.children[0].observe(law_parameters, names="value")
-        new_input.children[1].observe(law_parameters, names="value")
+        new_input.children[0].observe(variable_data, names="value")
+        new_input.children[2].observe(variable_data, names="value")
 
         # add an observe event: if this row is filled, a new input row will be added
         # new_input.children[0].observe(add_input, names="value")
@@ -382,37 +453,55 @@ def doe_multiple_io(conf_file, output_file):
         # for previous_input in inputs_array[:-1]:
         #    previous_input.children[0].unobserve(add_input, names="value")
 
-    def update_charts(change):
-        x_dict = {}
+    def validate(outputbox, x_dict):
+        if outputbox.value is None or len(x_dict) == 0:
+            return False
+        else:
+            return True
 
+    def update_charts(change):
         # Get data from each input row
+        x_dict = {}
         for inputrow in inputs_array:
             inputbox = inputrow.children[0]
-            law_buttons = inputrow.children[1]
-            law_param_box_1 = inputrow.children[2]
-            law_param_box_2 = inputrow.children[3]
             x_data = table.loc[table['Name'] == inputbox.value]
             if x_data["Value"].unique().size != 0:  # not empty input
+                law_buttons = inputrow.children[2]  # distribution law
+                var_box = inputrow.children[3]  # variation to apply for the DoE
+                x_value = x_data["Value"].unique()[0]
+                x_var = var_box.value
                 if law_buttons.value == "Normal":
-                    mu = law_param_box_1.value
-                    sigma = law_param_box_2.value
+                    mu = x_value
+                    sigma = x_var
+                    #mu = law_param_box_1.value
+                    #sigma = law_param_box_2.value
                     dist_law = ot.Normal(mu, sigma)
                 elif law_buttons.value == "Uniform":
-                    a = law_param_box_1.value
-                    b = law_param_box_2.value
+                    a = x_value * (1. - x_var)
+                    b = x_value * (1. + x_var)
+                    #a = law_param_box_1.value
+                    #b = law_param_box_2.value
                     dist_law = ot.Uniform(a, b)
-                elif law_buttons.value == "Exponential":
-                    lmbda = law_param_box_1.value
-                    gamma = law_param_box_2.value
-                    dist_law = ot.Exponential(lmbda, gamma)
-                else:
-                    continue
                 x_dict[inputbox.value] = dist_law
+                #if law_buttons.value == "Normal":
+                #    mu = law_param_box_1.value
+                #    sigma = law_param_box_2.value
+                #    dist_law = ot.Normal(mu, sigma)
+                #elif law_buttons.value == "Uniform":
+                #    a = law_param_box_1.value
+                #    b = law_param_box_2.value
+                #    dist_law = ot.Uniform(a, b)
+                #elif law_buttons.value == "Exponential":
+                #    lmbda = law_param_box_1.value
+                #    gamma = law_param_box_2.value
+                #    dist_law = ot.Exponential(lmbda, gamma)
 
-        ns = samples.value  # number of samples for MC simulation
+        if not validate(outputbox, x_dict):
+            return False
+
+        # Design of experiments
+        ns = int(samples.value)  # number of samples
         y = outputbox.value
-
-        # Monte Carlo
         df = doe_montecarlo(x_dict, y, conf_file, ns)
 
         # Update figures
