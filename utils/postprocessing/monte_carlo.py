@@ -221,7 +221,7 @@ def montecarlo_siso(conf_file, output_file):
                 x_var = var_box.value
                 if law_buttons.value == "Normal":
                     mu = x_value
-                    sigma = x_var
+                    sigma = x_var * x_value
                     #mu = law_param_box_1.value
                     #sigma = law_param_box_2.value
                     dist_law = ot.Normal(mu, sigma)

@@ -233,7 +233,8 @@ def morris_analysis(conf_file, output_file):
             fig1.data[0].x = list(x_dict.keys())
             fig1.data[0].y = Si['mu_star']
             fig1.data[0].error_y = dict(type='data', array=Si['mu_star_conf'])
-            fig1.update_layout(yaxis=dict(title='$\\mu^* \\text{ (' + (y_unit if y_unit is not None else '') + ')}$'))
+            fig1.update_layout(yaxis=dict(title='$\\mu^* \\text{ (' + (y_unit if y_unit is not None else '') + ')}$'),
+                               xaxis={'categoryorder':'total descending'})
 
         with fig2.batch_update():
             fig2.data[0].x = Si['mu_star']

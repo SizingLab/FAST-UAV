@@ -2,7 +2,8 @@
 Sobol-Saltelli 2002 Analysis Method
 """
 
-from openmdao_extensions.salib_doe_driver import SalibDOEDriver
+#from openmdao_extensions.salib_doe_driver import SalibDOEDriver
+from utils.drivers.salib_doe_driver import SalibDOEDriver
 import fastoad.api as oad
 from fastoad.io.variable_io import DataFile
 import openmdao.api as om
@@ -34,7 +35,7 @@ def doe_sobol(des_vars_dict: dict, obj_var: str, conf_file: str, ns: int = 1024,
     for des_var in list(des_vars_dict.items()):
         prob.model.add_design_var(des_var[0], lower=des_var[1][0],
                                   upper=des_var[1][1])  # add design variable to problem
-        dist = des_var[1]  # add associated distribution law (not used here)
+        dist = des_var[1][2]  # add distribution type ('unif' or 'norm')
         dists.append(dist)
     prob.model.add_objective(obj_var)  # add objective
 
@@ -42,6 +43,7 @@ def doe_sobol(des_vars_dict: dict, obj_var: str, conf_file: str, ns: int = 1024,
     prob.driver = SalibDOEDriver(
         sa_method_name="Sobol",
         sa_doe_options={"n_samples": ns, "calc_second_order": calc_second_order},
+        distributions=dists,
     )
 
     # Run problem
@@ -100,13 +102,20 @@ def sobol_analysis(conf_file, output_file):
             min=0.01,
             max=1.0,
             step=0.01,
-            description='error interval:',
+            description='relative error interval:',
             disabled=False,
             continuous_update=False,
             readout=True,
             readout_format='.0%',
         )
-        return widgets.HBox([inputbox, value_box, var_box])
+        # Input distribution parameters boxes
+        law_buttons = widgets.ToggleButtons(
+            options=['Uniform','Normal'],
+            description='Distribution Law:',
+            disabled=False,
+            button_style='',
+        )
+        return widgets.HBox([inputbox, value_box, law_buttons, var_box])
 
     # "add input" button
     addinput_button = widgets.Button(description="add input")
@@ -179,29 +188,69 @@ def sobol_analysis(conf_file, output_file):
             textinfo='label+percent entry',
         ))
 
+    # Output distribution
+    fig4 = go.FigureWidget(data=[go.Histogram(histnorm='probability', autobinx=True)],
+                           layout=go.Layout(
+                               title=dict(
+                                   text='Output Distribution'
+                               )
+                           ))
+
+    # Parallel corrdinates plot
+    fig5 = go.FigureWidget(data=go.Parcoords(),
+                           layout=go.Layout(
+                               title=dict(
+                                   text='Parallel Coordinates Plot'
+                               )
+                           ))
+    fig5.update_layout(width=1000)
+
+    # Inputs distribution
+    input_display = widgets.Dropdown(
+            description='',
+            options=[],
+            value=None
+        )
+    fig6 = go.FigureWidget(data=[],
+                           layout=go.Layout(
+                               title=dict(
+                                   text='Inputs Distribution',
+                               ),
+                               barmode='overlay'
+                           ))
+
     def add_input(change):
         # add new input row
         new_input = input_box()
         inputs_array.append(new_input)
-        widg.children = widg.children[:-1] + (new_input, addinput_button)
+        #widg.children = widg.children[0:1] + (new_input, addinput_button) + widg.children[2:]
+        widg.children = widg.children[:-1] + (new_input, addinput_button) # update display
         n_input = len(inputs_array) - 1  # input row indice
 
         def variable_data(change):
             inputbox = inputs_array[n_input].children[0]  # variable selected from dropdown
             x_data = table.loc[table['Name'] == inputbox.value]  # corresponding data from output file
+            value_box = inputs_array[n_input].children[1]  # value of the variable
+            law_buttons = inputs_array[n_input].children[2]  # distribution law
+            var_box = inputs_array[n_input].children[3]  # variation to apply for the DoE
+            var_box.value = 0.1
+
+            if law_buttons.value == "Normal":
+                var_box.description = 'relative std'
+            elif law_buttons.value == "Uniform":
+                var_box.description = 'relative error'
+
             if x_data["Value"].unique().size != 0:  # check data exists
                 x_value = x_data["Value"].unique()[0]  # get value
                 x_unit = x_data["Unit"].unique()[0]  # get unit
+                value_box.value = "{:10.3f} ".format(x_value) + (x_unit if x_unit is not None else '')
             else:
                 # print("Please select value in dropwdown menu")
                 return False
-            value_box = inputs_array[n_input].children[1]  # value of the variable
-            var_box = inputs_array[n_input].children[2]  # variation to apply for the DoE
-            value_box.value = "{:10.3f} ".format(x_value) + (x_unit if x_unit is not None else '')
-            var_box.value = 0.1
 
-        # add an observe event to update value according to selected variable
+        # add observe events to update values according to selected variable and distribution law
         new_input.children[0].observe(variable_data, names="value")
+        new_input.children[2].observe(variable_data, names="value")
 
     def validate(outputbox, x_dict):
         if outputbox.value is None or len(x_dict) == 0:
@@ -214,15 +263,23 @@ def sobol_analysis(conf_file, output_file):
         x_dict = {}
         for inputrow in inputs_array:
             inputbox = inputrow.children[0]
-            var_box = inputrow.children[2]
+            law_buttons = inputrow.children[2]  # distribution law
+            var_box = inputrow.children[3]
             x_data = table.loc[table['Name'] == inputbox.value]
+
             if x_data["Value"].unique().size != 0:  # not empty input
                 x_value = x_data["Value"].unique()[0]
                 x_var = var_box.value
-                a = x_value * (1. - x_var)
-                b = x_value * (1. + x_var)
-                bounds = [a, b]
-                x_dict[inputbox.value] = bounds
+
+                if law_buttons.value == "Normal":
+                    mu = x_value
+                    sigma = x_var * x_value
+                    x_dict[inputbox.value] = [mu,sigma,'norm']  # add bounds and distribution type
+
+                elif law_buttons.value == "Uniform":
+                    a = x_value * (1. - x_var)
+                    b = x_value * (1. + x_var)
+                    x_dict[inputbox.value] = [a,b,'unif']  # add bounds and distribution type
 
         if not validate(outputbox, x_dict):
             return False
@@ -300,14 +357,35 @@ def sobol_analysis(conf_file, output_file):
             fig3.data[0].parents = parents
             fig3.data[0].values = values
 
+        with fig4.batch_update():  # Output Distribution
+            fig4.data[0].x = df[y]
+            fig4.layout.xaxis.title = y + ' [%s]' % (
+                y_data["Unit"].unique()[0] if y_data["Unit"].unique()[0] is not None else "-")
+
+        with fig5.batch_update():  # Parallel coordinate plot
+            dimensions = [dict(label=des_var, values=df[des_var]) for des_var in x_dict]
+            dimensions.append(dict(label=y, values=df[y]))
+            fig5.data[
+                0].dimensions = dimensions
+            fig5.data[0].line = dict(color=df[y], colorscale='Viridis')
+
+        with fig6.batch_update():  # Inputs Distributions
+            fig6.data = []  # empty traces
+            for des_var in x_dict:  # add new traces
+                fig6.add_trace(go.Histogram(x=df[des_var], name=des_var, histnorm='probability', autobinx=True))
+            fig6.layout.xaxis.title = 'values'
+            fig6.update_traces(opacity=0.75)
+
     # Set up Figure
     inputs_array = []
     options_panel = widgets.VBox([widgets.HBox([outputbox, samples, second_order_box, update_button])])
     widg = widgets.VBox([widgets.HBox([fig1, fig2]),
-                         widgets.HBox([fig3]),
+                         widgets.HBox([fig3, fig5]),
+                         widgets.HBox([fig6,
+                                       fig4]),
                          options_panel,
-                         addinput_button
-                         ],
+                         addinput_button,
+                        ],
                         layout=Layout(align_items="flex-start"))
 
     # add first input
