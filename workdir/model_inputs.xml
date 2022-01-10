@@ -32,7 +32,7 @@
       </reference>
       <settings>
         <power>
-          <k is_input="True">1.0<!--Oversizing coefficient on ESC power--></k>
+          <k is_input="True">1.0633434690643477<!--Oversizing coefficient on ESC power--></k>
         </power>
       </settings>
     </ESC>
@@ -57,10 +57,10 @@
       </cell>
       <settings>
         <mass>
-          <k is_input="True">1.0<!--Oversizing coefficient on battery mass--></k>
+          <k is_input="True">0.6010066514085498<!--Oversizing coefficient on battery mass--></k>
         </mass>
         <voltage>
-          <k is_input="True">2.0<!--Oversizing coefficient on battery voltage--></k>
+          <k is_input="True">1.7268164247818532<!--Oversizing coefficient on battery voltage--></k>
         </voltage>
       </settings>
     </battery>
@@ -85,17 +85,17 @@
       </reference>
       <settings>
         <speed>
-          <k is_input="True">1.0<!--Oversizing coefficient of motor speed--></k>
+          <k is_input="True">1.4462554674446815<!--Oversizing coefficient of motor speed--></k>
         </speed>
         <torque>
-          <k is_input="True">1.0<!--Oversizing coefficient on motor torque--></k>
+          <k is_input="True">1.6223529412610405<!--Oversizing coefficient on motor torque--></k>
         </torque>
       </settings>
     </motor>
     <propeller>
       <advance_ratio>
-        <climb is_input="True">0.126<!--Advance ratio J (climb)--></climb>
-        <forward is_input="True">0.5527207621855417<!--Advance ratio J (forward flight)--></forward>
+        <climb is_input="True">0.13822939208172247<!--Advance ratio J (climb)--></climb>
+        <forward is_input="True">0.6181862393971507<!--Advance ratio J (forward flight)--></forward>
       </advance_ratio>
       <reference>
         <diameter units="m" is_input="True">0.2794<!--Propeller diameter reference for scaling law--></diameter>
@@ -150,7 +150,7 @@
       </reference>
       <settings>
         <MTOW>
-          <k is_input="True">2.0<!--Oversizing coefficient on load mass--></k>
+          <k is_input="True">2.427749444889281<!--Oversizing coefficient on load mass--></k>
         </MTOW>
       </settings>
     </system>
@@ -159,7 +159,7 @@
     <sizing_mission>
       <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
       <forward>
-        <speed units="m/s" is_input="True">19.99891634519401<!--Forward flight velocity--></speed>
+        <speed units="m/s" is_input="True">19.997232320430363<!--Forward flight velocity--></speed>
       </forward>
       <takeoff>
         <altitude units="m" is_input="True">0.0<!--Takeoff altitude--></altitude>
@@ -188,10 +188,10 @@
       </power>
     </ESC>
     <battery>
-      <capacity>
-        <abs units="A*s" is_input="True">0.0</abs>
+      <energy>
+        <abs units="kJ" is_input="True">0.0</abs>
         <rel is_input="True">0.0</rel>
-      </capacity>
+      </energy>
       <mass>
         <abs units="kg" is_input="True">0.0</abs>
         <rel is_input="True">0.0</rel>

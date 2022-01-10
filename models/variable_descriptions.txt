@@ -21,7 +21,7 @@ data:avionics:power || Avionics power consumption
 data:battery:capacity || Battery capacity
 data:battery:capacity:estimated || Battery capacity (estimated value)
 data:battery:capacity:catalogue || Battery capacity (catalogue value)
-data:battery:discharge_limit || Battery discharge limit
+data:battery:DoD:max:estimated || Battery depth of discharge
 data:battery:energy || Battery energy
 data:battery:energy:estimated || Battery energy (estimated value)
 data:battery:energy:catalogue || Battery energy (catalogue value)

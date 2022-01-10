@@ -5,11 +5,8 @@ Safety module
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from scipy.constants import g
-from models.Scenarios.flight_model import FlightModel
-from models.Propeller.Performances.propeller_performance import PropellerModel
-from models.Motor.Performances.motor_performance import MotorModel
-from models.Propeller.Scaling.prop_scaling import Aerodynamics
+from models.Components.Propeller.performances import PropellerModel
+from models.Components.Motor.performances import MotorModel
 
 
 @oad.RegisterOpenMDAOSystem("addons.safety")

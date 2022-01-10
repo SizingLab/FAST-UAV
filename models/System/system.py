@@ -24,13 +24,14 @@ class MTOW(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:gearbox:mass', val=np.nan, units='kg')
-        self.add_input('data:ESC:mass', val=np.nan, units='kg')
-        self.add_input('data:motor:mass', val=np.nan, units='kg')
-        self.add_input('data:battery:mass', val=np.nan, units='kg')
-        self.add_input('data:propeller:mass', val=np.nan, units='kg')
-        self.add_input('data:structure:body:mass', val=np.nan, units='kg')
-        self.add_input('data:structure:arms:mass', val=np.nan, units='kg')
+        self.add_input('data:gearbox:mass', val=0.0, units='kg')
+        self.add_input('data:ESC:mass', val=0.0, units='kg')
+        self.add_input('data:cables:mass', val=0.0, units='kg')
+        self.add_input('data:motor:mass', val=0.0, units='kg')
+        self.add_input('data:battery:mass', val=0.0, units='kg')
+        self.add_input('data:propeller:mass', val=0.0, units='kg')
+        self.add_input('data:structure:body:mass', val=0.0, units='kg')
+        self.add_input('data:structure:arms:mass', val=0.0, units='kg')
         self.add_input('specifications:payload:mass:max', val=np.nan, units='kg')
         self.add_input('data:propeller:number', val=np.nan, units=None)
         self.add_output('data:system:MTOW', units='kg')
@@ -41,6 +42,7 @@ class MTOW(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Mgear = inputs['data:gearbox:mass']
+        Mcables = inputs['data:cables:mass']
         Mmot = inputs['data:motor:mass']
         Mesc = inputs['data:ESC:mass']
         Mbat = inputs['data:battery:mass']
@@ -50,7 +52,7 @@ class MTOW(om.ExplicitComponent):
         Mfra = inputs['data:structure:body:mass']
         Marm = inputs['data:structure:arms:mass']
 
-        Mtotal = (Mesc + Mpro + Mmot + Mgear) * Npro + M_load + Mbat + Mfra + Marm  # total mass
+        Mtotal = (Mesc + Mpro + Mmot + Mgear) * Npro + M_load + Mbat + Mfra + Marm + Mcables  # total mass
 
         outputs['data:system:MTOW'] = Mtotal
 
@@ -63,7 +65,7 @@ class MaxHoverAutonomy(om.ExplicitComponent):
 
     def setup(self):
         self.add_input('data:battery:capacity', val=np.nan, units='A*s')
-        self.add_input('data:battery:discharge_limit', val=0.8, units=None)
+        self.add_input('data:battery:DoD:max', val=0.8, units=None)
         self.add_input('data:battery:current:hover', val=np.nan, units='A')
         self.add_output('mission:sizing_mission:hover:duration:max', units='min')
 
@@ -72,7 +74,7 @@ class MaxHoverAutonomy(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        C_ratio = inputs['data:battery:discharge_limit']
+        C_ratio = inputs['data:battery:DoD:max']
         C_bat = inputs['data:battery:capacity']
         I_bat_hov = inputs['data:battery:current:hover']
 
@@ -90,7 +92,7 @@ class MaxRange(om.ExplicitComponent):
     def setup(self):
         self.add_input('mission:sizing_mission:forward:speed', val=np.nan, units='m/s')
         self.add_input('data:battery:capacity', val=np.nan, units='A*s')
-        self.add_input('data:battery:discharge_limit', val=0.8, units=None)
+        self.add_input('data:battery:DoD:max', val=0.8, units=None)
         self.add_input('data:battery:current:forward', val=np.nan, units='A')
         self.add_output('mission:sizing_mission:forward:distance:max', units='m')
 
@@ -100,7 +102,7 @@ class MaxRange(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         V_ff = inputs['mission:sizing_mission:forward:speed']
-        C_ratio = inputs['data:battery:discharge_limit']
+        C_ratio = inputs['data:battery:DoD:max']
         C_bat = inputs['data:battery:capacity']
         I_bat_ff = inputs['data:battery:current:forward']
 

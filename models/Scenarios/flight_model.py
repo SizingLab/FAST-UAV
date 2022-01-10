@@ -1,3 +1,7 @@
+"""
+UAV flight model - static methods definition.
+"""
+
 import numpy as np
 from scipy.constants import g
 from scipy.optimize import brentq

@@ -7,9 +7,9 @@ import openmdao.api as om
 import numpy as np
 from scipy.constants import g
 from models.Scenarios.flight_model import FlightModel
-from models.Propeller.Performances.propeller_performance import PropellerModel
-from models.Motor.Performances.motor_performance import MotorModel
-from models.Propeller.Scaling.prop_scaling import Aerodynamics
+from models.Components.Propeller.performances import PropellerModel
+from models.Components.Motor.performances import MotorModel
+from models.Components.Propeller.estimation.models import PropellerAerodynamicsModel
 
 
 @oad.RegisterOpenMDAOSystem("multirotor.mission_concordia")
@@ -78,7 +78,6 @@ class ClimbSegment(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('route', default='', types=str)
-        self.options.declare('use_gearbox', default=False, types=bool)  # TODO: define gearbox option in conf file?
 
     def setup(self):
         # System parameters
@@ -92,8 +91,7 @@ class ClimbSegment(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CT:axial', val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CP:axial', val=np.nan, units=None)
         # Motor parameters
-        if self.options["use_gearbox"]:
-            self.add_input('data:gearbox:N_red', val=1.0, units=None)
+        self.add_input('data:gearbox:N_red', val=1.0, units=None)
         self.add_input('data:motor:torque:friction', val=np.nan, units='N*m')
         self.add_input('data:motor:resistance', val=np.nan, units='V/A')
         self.add_input('data:motor:torque:coefficient', val=np.nan, units='N*m/A')
@@ -125,7 +123,7 @@ class ClimbSegment(om.ExplicitComponent):
         C_t = inputs['data:propeller:aerodynamics:CT:axial']  # TODO: compute new C_t based on climb speed and propeller diameter
         C_p = inputs['data:propeller:aerodynamics:CP:axial']  # TODO: compute new C_p based on climb speed and propeller diameter
 
-        N_red = inputs['data:gearbox:N_red'] if self.options["use_gearbox"] else 1.0
+        N_red = inputs['data:gearbox:N_red']
         Tf_mot = inputs['data:motor:torque:friction']
         Kt_mot = inputs['data:motor:torque:coefficient']
         R_mot = inputs['data:motor:resistance']
@@ -161,7 +159,6 @@ class HoverSegment(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('route', default='', types=str)
-        self.options.declare('use_gearbox', default=False, types=bool)  # TODO: define gearbox option in conf file?
 
     def setup(self):
         # System parameters
@@ -173,8 +170,7 @@ class HoverSegment(om.ExplicitComponent):
         self.add_input('data:propeller:aerodynamics:CT:static', val=np.nan, units=None)
         self.add_input('data:propeller:aerodynamics:CP:static', val=np.nan, units=None)
         # Motor parameters
-        if self.options["use_gearbox"]:
-            self.add_input('data:gearbox:N_red', val=1.0, units=None)
+        self.add_input('data:gearbox:N_red', val=1.0, units=None)
         self.add_input('data:motor:torque:friction', val=np.nan, units='N*m')
         self.add_input('data:motor:resistance', val=np.nan, units='V/A')
         self.add_input('data:motor:torque:coefficient', val=np.nan, units='N*m/A')
@@ -202,7 +198,7 @@ class HoverSegment(om.ExplicitComponent):
         C_t = inputs['data:propeller:aerodynamics:CT:static']
         C_p = inputs['data:propeller:aerodynamics:CP:static']
 
-        N_red = inputs['data:gearbox:N_red'] if self.options["use_gearbox"] else 1.0
+        N_red = inputs['data:gearbox:N_red']
         Tf_mot = inputs['data:motor:torque:friction']
         Kt_mot = inputs['data:motor:torque:coefficient']
         R_mot = inputs['data:motor:resistance']
@@ -236,7 +232,6 @@ class ForwardSegment(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('route', default='', types=str)
-        self.options.declare('use_gearbox', default=False, types=bool)  # TODO: define gearbox option in conf file?
 
     def setup(self):
         # System parameters
@@ -254,8 +249,7 @@ class ForwardSegment(om.ExplicitComponent):
         #self.add_input('data:propeller:aerodynamics:CT:incidence', val=np.nan, units=None)
         #self.add_input('data:propeller:aerodynamics:CP:incidence', val=np.nan, units=None)
         # Motor parameters
-        if self.options["use_gearbox"]:
-            self.add_input('data:gearbox:N_red', val=1.0, units=None)
+        self.add_input('data:gearbox:N_red', val=1.0, units=None)
         self.add_input('data:motor:torque:friction', val=np.nan, units='N*m')
         self.add_input('data:motor:resistance', val=np.nan, units='V/A')
         self.add_input('data:motor:torque:coefficient', val=np.nan, units='N*m/A')
@@ -289,7 +283,7 @@ class ForwardSegment(om.ExplicitComponent):
         beta = inputs['data:propeller:geometry:beta']
         J_ff = inputs['data:propeller:advance_ratio:forward']  # TODO: compute new J_ff based on cruise speed and propeller diameter (requires solver to get C_t, C_p as well)
 
-        N_red = inputs['data:gearbox:N_red'] if self.options["use_gearbox"] else 1.0
+        N_red = inputs['data:gearbox:N_red']
         Tf_mot = inputs['data:motor:torque:friction']
         Kt_mot = inputs['data:motor:torque:coefficient']
         R_mot = inputs['data:motor:resistance']
@@ -303,7 +297,7 @@ class ForwardSegment(om.ExplicitComponent):
 
         # Compute new flight parameters
         thrust, alpha = FlightModel.get_thrust(Mtotal, V_ff, 0, S_front, S_top, C_D, C_L0, rho_air)  # flight parameters
-        C_t, C_p = Aerodynamics.aero_coefficients_incidence(beta, J_ff, alpha)
+        C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_incidence(beta, J_ff, alpha)
         F_pro = thrust / Npro  # [N] thrust per propeller
         W_pro, P_pro, Q_pro = PropellerModel.performances(F_pro, D_pro, C_t, C_p, rho_air)  # propeller performances
         T_mot, W_mot, I_mot, U_mot, P_el = MotorModel.performances(Q_pro, W_pro, N_red, Tf_mot, Kt_mot, R_mot)  # motor performances
@@ -424,7 +418,7 @@ class MissionConstraints(om.ExplicitComponent):
     def setup(self):
         self.add_input('mission:concordia_study:energy', val=np.nan, units='kJ')
         self.add_input('data:battery:energy', val=np.nan, units='kJ')
-        self.add_input('data:battery:discharge_limit', val=.8, units=None)
+        self.add_input('data:battery:DoD:max', val=.8, units=None)
         self.add_output('mission:concordia_study:constraints:energy', units=None)
 
     def setup_partials(self):
@@ -434,7 +428,7 @@ class MissionConstraints(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         E_mission = inputs['mission:concordia_study:energy']
         E_bat = inputs['data:battery:energy']
-        C_ratio = inputs['data:battery:discharge_limit']
+        C_ratio = inputs['data:battery:DoD:max']
 
         energy_con = (E_bat * C_ratio - E_mission) / (E_bat * C_ratio)
 
@@ -443,7 +437,7 @@ class MissionConstraints(om.ExplicitComponent):
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         E_mission = inputs['mission:concordia_study:energy']
         E_bat = inputs['data:battery:energy']
-        C_ratio = inputs['data:battery:discharge_limit']
+        C_ratio = inputs['data:battery:DoD:max']
 
         partials[
             'mission:concordia_study:constraints:energy',
@@ -455,7 +449,7 @@ class MissionConstraints(om.ExplicitComponent):
         ] = E_mission / (E_bat**2 * C_ratio)
         partials[
             'mission:concordia_study:constraints:energy',
-            'data:battery:discharge_limit',
+            'data:battery:DoD:max',
         ] = E_mission / (E_bat * C_ratio**2)
 
 
