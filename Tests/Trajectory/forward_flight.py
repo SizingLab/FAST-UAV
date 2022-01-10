@@ -23,7 +23,7 @@ class ForwardFlight(om.ExplicitComponent):
         self.add_input('data:motor:torque:max', val=np.nan, units='N*m')
         self.add_input('data:battery:capacity', val=np.nan, units='A*s')
         self.add_input('data:battery:voltage', val=np.nan, units='V')
-        self.add_input('data:battery:discharge_limit', val=np.nan, units=None)
+        self.add_input('data:battery:DoD:max', val=np.nan, units=None)
         self.add_input('specifications:range', val=np.nan, units='m')
         self.add_input('trajectory:forward_flight:velocity', val=np.nan, units='m/s')
         self.add_output('trajectory:forward_flight:power', units='W')
@@ -51,7 +51,7 @@ class ForwardFlight(om.ExplicitComponent):
         U_bat = inputs['data:battery:voltage']
         distance = inputs['specifications:range']
         V_inf = inputs['trajectory:forward_flight:velocity']
-        C_ratio = inputs['data:battery:discharge_limit']
+        C_ratio = inputs['data:battery:DoD:max']
         # TODO : add gearbox reduction ratio
 
         self._ForwardFlightModel = ForwardFlightModel(V_inf,

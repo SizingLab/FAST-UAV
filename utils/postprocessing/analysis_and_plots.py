@@ -45,7 +45,8 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         gearboxes = 0
     ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:number"].value[0]
     battery = variables["data:battery:mass"].value[0]
-    propulsion = propellers + motors + gearboxes + ESC + battery
+    cables = variables["data:cables:mass"].value[0]
+    propulsion = propellers + motors + gearboxes + ESC + battery + cables
 
     # STRUCTURE
     body = variables["data:structure:body:mass"].value[0]
@@ -60,7 +61,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
 
     # MTOW
     MTOW = variables["data:system:MTOW"].value[0]
-    # TODO: Deal with this in a more generic manner ?
+
     if round(MTOW, 6) == round(propulsion + structure + payload + fuel_mission, 6):
         MTOW = propulsion + structure + payload + fuel_mission
 
@@ -103,6 +104,14 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
             + str("{0:.2f}".format(battery))
             + " [kg] ("
             + str(round(battery / propulsion * 100, 1))
+            + "%)"
+    )
+    cables_str = (
+            "Cables"
+            + "<br>"
+            + str("{0:.2f}".format(cables))
+            + " [kg] ("
+            + str(round(cables / propulsion * 100, 1))
             + "%)"
     )
     propulsion_str = (
@@ -175,6 +184,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
                 gearboxes_str,
                 ESC_str,
                 battery_str,
+                cables_str,
                 body_str,
                 arms_str,
             ],
@@ -184,6 +194,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
                 MTOW_str,
                 MTOW_str,
                 MTOW_str,
+                propulsion_str,
                 propulsion_str,
                 propulsion_str,
                 propulsion_str,
@@ -203,6 +214,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
                 gearboxes,
                 ESC,
                 battery,
+                cables,
                 body,
                 arms,
             ],
@@ -241,7 +253,8 @@ def mass_breakdown_bar_plot_drone(
         gearboxes = 0
     ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:number"].value[0]
     battery = variables["data:battery:mass"].value[0]
-    propulsion = propellers + motors + gearboxes + ESC + battery
+    cables = variables["data:cables:mass"].value[0]
+    propulsion = propellers + motors + gearboxes + ESC + battery + cables
 
     # STRUCTURE
     body = variables["data:structure:body:mass"].value[0]
@@ -256,17 +269,17 @@ def mass_breakdown_bar_plot_drone(
 
     # MTOW
     MTOW = variables["data:system:MTOW"].value[0]
-    # TODO: Deal with this in a more generic manner ?
+
     if round(MTOW, 6) == round(propulsion + structure + payload + fuel_mission, 6):
         MTOW = propulsion + structure + payload + fuel_mission
 
     # DISPLAYED NAMES AND VALUES
     if gearboxes == 0:
-        weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Propellers", "Structure"]
-        weight_values = [MTOW, payload, battery, ESC, motors, propellers, structure]
+        weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Propellers", "Cables", "Structure"]
+        weight_values = [MTOW, payload, battery, ESC, motors, propellers, cables, structure]
     else:
-        weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Gearboxes", "Propellers", "Structure"]
-        weight_values = [MTOW, payload, battery, ESC, motors, gearboxes, propellers, structure]
+        weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Gearboxes", "Propellers", "Cables", "Structure"]
+        weight_values = [MTOW, payload, battery, ESC, motors, gearboxes, propellers, cables, structure]
 
     if fig is None:
         fig = go.Figure()

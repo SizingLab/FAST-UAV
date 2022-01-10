@@ -187,7 +187,7 @@ class MissionConstraints(om.ExplicitComponent):
     def setup(self):
         self.add_input('mission:sizing_mission:energy', val=np.nan, units='kJ')
         self.add_input('data:battery:energy', val=np.nan, units='kJ')
-        self.add_input('data:battery:discharge_limit', val=.8, units=None)
+        self.add_input('data:battery:DoD:max', val=.8, units=None)
         self.add_output('mission:sizing_mission:constraints:energy', units=None)
 
     def setup_partials(self):
@@ -197,7 +197,7 @@ class MissionConstraints(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         E_mission = inputs['mission:sizing_mission:energy']
         E_bat = inputs['data:battery:energy']
-        C_ratio = inputs['data:battery:discharge_limit']
+        C_ratio = inputs['data:battery:DoD:max']
 
         energy_con = (E_bat * C_ratio - E_mission) / (E_bat * C_ratio)
 
@@ -206,7 +206,7 @@ class MissionConstraints(om.ExplicitComponent):
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         E_mission = inputs['mission:sizing_mission:energy']
         E_bat = inputs['data:battery:energy']
-        C_ratio = inputs['data:battery:discharge_limit']
+        C_ratio = inputs['data:battery:DoD:max']
 
         partials[
             'mission:sizing_mission:constraints:energy',
@@ -218,7 +218,7 @@ class MissionConstraints(om.ExplicitComponent):
         ] = E_mission / (E_bat**2 * C_ratio)
         partials[
             'mission:sizing_mission:constraints:energy',
-            'data:battery:discharge_limit',
+            'data:battery:DoD:max',
         ] = E_mission / (E_bat * C_ratio**2)
 
 

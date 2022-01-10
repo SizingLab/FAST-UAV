@@ -1,0 +1,26 @@
+title: Multirotor Drone Operational Mission
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders: 
+    - ../models
+    - ../models/Missions
+    - ../models/Scenarios
+    - ../models/System
+    - ../models/Components/Energy/Battery
+    - ../models/Components/ESC
+    - ../models/Components/Motor
+    - ../models/Components/Propeller
+    - ../models/Components/Structure
+    - ../models/Components/Cables
+    - ../models/Add_ons/Safety
+    
+# Input and output files
+input_file: ../workdir/operational_mission_in.xml
+output_file: ../workdir/operational_mission_out.xml
+
+# Definition of OpenMDAO model
+model:
+    Performance:
+        operational_mission:
+           id: multirotor.design_mission
+           #id: multirotor.mission_concordia

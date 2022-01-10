@@ -6,12 +6,12 @@
     <hover_duration units="min" is_input="True">18.0<!--Top-level requirement: hover phase duration--></hover_duration>
     <range units="m" is_input="True">0.0<!--Top-level requirement: range--></range>
     <maxthrust>
-      <k is_input="True">1.97<!--Top-level requirement: maximum thrust-to-weight ratio--></k>
+      <k is_input="True">1.6<!--Top-level requirement: maximum thrust-to-weight ratio--></k>
     </maxthrust>
     <payload>
       <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
       <mass>
-        <max units="kg" is_input="True">6.35<!--Payload mass--></max>
+        <max units="kg" is_input="True">7.0<!--Payload mass--></max>
       </mass>
     </payload>
   </specifications>
@@ -32,35 +32,32 @@
       </reference>
       <settings>
         <power>
-          <k is_input="True">1.0<!--Oversizing coefficient on ESC power--></k>
+          <k is_input="True">1.7436333486877988<!--Oversizing coefficient on ESC power--></k>
         </power>
       </settings>
     </ESC>
     <battery>
       <reference>
         <capacity units="A*s" is_input="True">20520.0<!--Battery capacity reference for scaling law--></capacity>
-        <energy units="kJ" is_input="True">467.856</energy>
+        <DoD is_input="True">0.8</DoD>
         <mass units="kg" is_input="True">0.68<!--Battery mass reference for scaling law--></mass>
         <voltage units="V" is_input="True">22.8<!--Battery voltage reference for scaling law--></voltage>
         <volume units="cm**3" is_input="True">500.0<!--Battery volume reference for scaling law--></volume>
-        <DoD>
-          <max is_input="True">0.8</max>
-        </DoD>
         <current>
           <max units="A" is_input="True">200.0<!--Battery max. current reference for scaling law--></max>
         </current>
       </reference>
       <cell>
         <voltage>
-          <estimated units="V" is_input="True">3.8<!--Voltage of one cell (estimated value)--></estimated>
+          <estimated units="V" is_input="True">3.7<!--Voltage of one cell (estimated value)--></estimated>
         </voltage>
       </cell>
       <settings>
         <mass>
-          <k is_input="True">1.0<!--Oversizing coefficient on battery mass--></k>
+          <k is_input="True">0.6076631839470281<!--Oversizing coefficient on battery mass--></k>
         </mass>
         <voltage>
-          <k is_input="True">2.0<!--Oversizing coefficient on battery voltage--></k>
+          <k is_input="True">1.8213292393496212<!--Oversizing coefficient on battery voltage--></k>
         </voltage>
       </settings>
     </battery>
@@ -85,16 +82,16 @@
       </reference>
       <settings>
         <speed>
-          <k is_input="True">1.0<!--Oversizing coefficient of motor speed--></k>
+          <k is_input="True">1.3192239608757066<!--Oversizing coefficient of motor speed--></k>
         </speed>
         <torque>
-          <k is_input="True">1.0<!--Oversizing coefficient on motor torque--></k>
+          <k is_input="True">1.3176470589212923<!--Oversizing coefficient on motor torque--></k>
         </torque>
       </settings>
     </motor>
     <propeller>
       <advance_ratio>
-        <climb is_input="True">0.126<!--Advance ratio J (climb)--></climb>
+        <climb is_input="True">0.12580977683760008<!--Advance ratio J (climb)--></climb>
         <forward is_input="True">0.5527207621855417<!--Advance ratio J (forward flight)--></forward>
       </advance_ratio>
       <reference>
@@ -106,7 +103,7 @@
       </reference>
       <geometry>
         <beta>
-          <guess is_input="True">0.3</guess>
+          <guess is_input="True">0.3000000000071871</guess>
         </beta>
       </geometry>
       <settings>
@@ -150,7 +147,7 @@
       </reference>
       <settings>
         <MTOW>
-          <k is_input="True">2.0<!--Oversizing coefficient on load mass--></k>
+          <k is_input="True">2.176660701177107<!--Oversizing coefficient on load mass--></k>
         </MTOW>
       </settings>
     </system>
@@ -192,20 +189,14 @@
         <abs units="A*s" is_input="True">0.0</abs>
         <rel is_input="True">0.0</rel>
       </capacity>
-      <mass>
-        <abs units="kg" is_input="True">0.0</abs>
+      <DoD>
+        <abs is_input="True">0.0</abs>
         <rel is_input="True">0.0</rel>
-      </mass>
+      </DoD>
       <voltage>
         <abs units="V" is_input="True">0.0</abs>
         <rel is_input="True">0.0</rel>
       </voltage>
-      <DoD>
-        <max>
-          <abs is_input="True">0.0</abs>
-          <rel is_input="True">0.0</rel>
-        </max>
-      </DoD>
       <current>
         <max>
           <abs units="A" is_input="True">0.0</abs>
