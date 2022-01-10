@@ -1,3 +1,6 @@
-fast-oad==1.0.5
+fast-oad==1.2.1
 cma==3.1.0
 matplotlib
+scikit-learn==0.24.1
+psutil
+kaleido
