@@ -4,3 +4,4 @@ matplotlib
 scikit-learn==0.24.1
 psutil
 kaleido
+pysizing
