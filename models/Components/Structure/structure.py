@@ -78,7 +78,7 @@ class WeightArms(om.ExplicitComponent):
         Dout = inputs['data:structure:arms:diameter:outer']
         rho = inputs['data:structure:arms:material:density']
 
-        Marms = pi / 4 * (Dout ** 2 - (D_ratio * Dout) ** 2) * Larm * rho * Narm  # [kg] mass of the arms
+        Marms = np.pi / 4 * (Dout ** 2 - (D_ratio * Dout) ** 2) * Larm * rho * Narm  # [kg] mass of the arms
 
         outputs['data:structure:arms:mass'] = Marms
 

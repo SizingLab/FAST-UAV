@@ -33,7 +33,9 @@ class CellNumber(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:battery:voltage:guess', val=np.nan, units='V')
+        self.add_input('data:motor:voltage:takeoff', val=np.nan, units='V')  # TEST 20/01/2022
+        self.add_input('data:battery:settings:voltage:k2', val=np.nan, units=None) # TEST 27/01/2022
+        # self.add_input('data:battery:voltage:guess', val=np.nan, units='V')
         self.add_input('data:battery:cell:voltage:estimated', val=3.7, units='V')
         self.add_output('data:battery:cell:number:estimated', units=None)
         self.add_output('data:battery:cell:number:series:estimated', units=None)
@@ -44,9 +46,13 @@ class CellNumber(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         V_cell = inputs['data:battery:cell:voltage:estimated']
-        V_bat_guess = inputs['data:battery:voltage:guess']
+        # V_bat_guess = inputs['data:battery:voltage:guess']
+        U_mot_to = inputs['data:motor:voltage:takeoff']  # TEST 20/01/2022
+        kv = inputs['data:battery:settings:voltage:k2']  # TEST 27/01/2022
 
-        N_series = (V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
+        # N_series = np.ceil(V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
+        # N_series = (V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
+        N_series = kv * (U_mot_to / V_cell)  # TEST 20/01/2022
         N_parallel = 1  # [-] Number of parallel connections (for capacity upgrade)
         N_cell = N_parallel * N_series
 

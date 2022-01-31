@@ -2,13 +2,13 @@
 Off-the-shelf motor selection.
 """
 import openmdao.api as om
-from utils.DecisionTrees.predicted_values_DT import DecisionTrees
+from utils.catalogues.estimators import NearestNeighbor
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
 import pandas as pd
 import numpy as np
 
 
-PATH = './data/DecisionTrees/Motors/'
+PATH = './data/catalogues/Motors/'
 DF = pd.read_csv(PATH + 'Non-Dominated-Motors.csv', sep=';')
 
 
@@ -30,12 +30,8 @@ class MotorCatalogueSelection(om.ExplicitComponent):
         self.options.declare("use_catalogue", default=True, types=bool)
         T_selection = 'next'
         Kt_selection = 'average'
-        # self._DT = DecisionTrees(DF[['Tnom_Nm', 'Kt_Nm_A']].values,
-        #                          DF[['Tnom_Nm', 'Kt_Nm_A', 'R_ohm', 'Tmax_Nm', 'Mass_g', 'Cf_Nm']].values,
-        #                          [T_selection, Kt_selection]).DT_handling(dist=1000)
-        self._DT = DecisionTrees(DF[['Tmax_Nm', 'Kt_Nm_A']].values,
-                                 DF[['Tnom_Nm', 'Kt_Nm_A', 'R_ohm', 'Tmax_Nm', 'Mass_g', 'Cf_Nm']].values,
-                                 [T_selection, Kt_selection]).DT_handling(dist=1000)
+        self._clf = NearestNeighbor(df=DF, X_names=['Tmax_Nm', 'Kt_Nm_A'], crits=[T_selection, Kt_selection])
+        self._clf.train()
 
     def setup(self):
         # inputs: estimated values
@@ -79,18 +75,17 @@ class MotorCatalogueSelection(om.ExplicitComponent):
 
             # Definition parameters for motor selection
             Tmax_opt = inputs['data:motor:torque:max:estimated']
-            # Tnom_opt = inputs['data:motor:torque:nominal:estimated']
+            Tnom_opt = inputs['data:motor:torque:nominal:estimated']
             Ktmot_opt = inputs['data:motor:torque:coefficient:estimated']
 
-            # Decision tree
-            y_pred = self._DT.predict([np.hstack((Tmax_opt, Ktmot_opt))])
-            # y_pred = self._DT.predict([np.hstack((Tnom_opt, Ktmot_opt))])
-            Tnom = y_pred[0][0]  # nominal torque [N.m]
-            Ktmot = y_pred[0][1]  # Kt constant [N.m./A]
-            Rmot = y_pred[0][2]  # motor resistance [ohm]
-            Tmax = y_pred[0][3]  # max motor torque [Nm]
-            Mmot = y_pred[0][4] / 1000  # motor mass [kg]
-            Tfmot = y_pred[0][5]  # friction torque [Nm]
+            # Get closest product
+            df_y = self._clf.predict([Tmax_opt, Ktmot_opt])
+            Tnom = df_y['Tnom_Nm'].iloc[0]  # nominal torque [N.m]
+            Ktmot = df_y['Kt_Nm_A'].iloc[0]  # Kt constant [N.m./A]
+            Rmot = df_y['R_ohm'].iloc[0]  # motor resistance [ohm]
+            Tmax = df_y['Tmax_Nm'].iloc[0]  # max motor torque [Nm]
+            Mmot = df_y['Mass_g'].iloc[0] / 1000  # motor mass [kg]
+            Tfmot = df_y['Cf_Nm'].iloc[0]  # friction torque [Nm]
 
             # Outputs
             outputs['data:motor:torque:max'] = outputs['data:motor:torque:max:catalogue'] = Tmax

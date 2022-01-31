@@ -2,13 +2,13 @@
 Off-the-shelf ESC selection.
 """
 import openmdao.api as om
-from utils.DecisionTrees.predicted_values_DT import DecisionTrees
+from utils.catalogues.estimators import NearestNeighbor
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
 import pandas as pd
 import numpy as np
 
 
-PATH = './data/DecisionTrees/ESC/'
+PATH = './data/catalogues/ESC/'
 DF = pd.read_csv(PATH + 'Non-Dominated-ESC.csv', sep=';')
 
 
@@ -29,10 +29,9 @@ class ESCCatalogueSelection(om.ExplicitComponent):
         """
         self.options.declare("use_catalogue", default=True, types=bool)
         Pmax_selection = 'average'
-        Vmax_selection = 'next'
-        self._DT = DecisionTrees(DF[['Pmax_W', 'Vmax_V']].values,
-                                 DF[['Pmax_W', 'Vmax_V', 'Weight_g']].values,
-                                 [Pmax_selection, Vmax_selection]).DT_handling()
+        Vmax_selection = 'average'
+        self._clf = NearestNeighbor(df=DF, X_names=['Pmax_W', 'Vmax_V'], crits=[Pmax_selection, Vmax_selection])
+        self._clf.train()
 
     def setup(self):
         # inputs: estimated values
@@ -69,11 +68,11 @@ class ESCCatalogueSelection(om.ExplicitComponent):
             P_esc_opt = inputs['data:ESC:power:max:estimated']
             V_esc_opt = inputs['data:ESC:voltage:estimated']
 
-            # Decision tree
-            y_pred = self._DT.predict([np.hstack((P_esc_opt, V_esc_opt))])
-            P_esc = y_pred[0][0]  # [W] ESC power
-            V_esc = y_pred[0][1]  # [V] ESC voltage
-            M_esc = y_pred[0][2] / 1000  # [kg] ESC mass
+            # Get closest product
+            df_y = self._clf.predict([P_esc_opt, V_esc_opt])
+            P_esc = df_y['Pmax_W'].iloc[0]  # [W] ESC power
+            V_esc = df_y['Vmax_V'].iloc[0]  # [V] ESC voltage
+            M_esc = df_y['Weight_g'].iloc[0] / 1000  # [kg] ESC mass
 
             # Outputs
             outputs['data:ESC:power:max'] = outputs['data:ESC:power:max:catalogue'] = P_esc

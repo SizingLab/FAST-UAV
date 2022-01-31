@@ -50,7 +50,7 @@ class ClimbSegment(om.ExplicitComponent):
         P_payload = inputs['specifications:payload:power']
         P_avionics = inputs['data:avionics:power']
 
-        t_cl = D_cl / V_cl # [s]
+        t_cl = D_cl / V_cl  # [s]
         E_cl_pro = (P_el_cl * Npro) / eta_ESC * t_cl # [J] consumed energy for propulsion
         E_payload = P_payload / eta_ESC * t_cl  # [J] consumed energy for payload
         E_avionics = P_avionics / eta_ESC * t_cl  # [J] consumed energy for avionics

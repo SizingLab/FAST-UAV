@@ -82,7 +82,6 @@ class TorqueCoefficient(om.ExplicitComponent):
         k_speed_mot = inputs['data:motor:settings:speed:k']
 
         W_to_motor = Wpro_to * Nred  # [rad/s] Motor take-off speed
-        # Ktmot = V_bat_guess / W_to_motor  # [N.m/A] or [V/(rad/s)]
         Ktmot = V_bat_guess / (k_speed_mot * W_to_motor)  # [N.m/A] or [V/(rad/s)]
 
         outputs['data:motor:torque:coefficient:estimated'] = Ktmot

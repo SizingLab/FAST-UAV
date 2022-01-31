@@ -42,7 +42,7 @@ class Power(om.ExplicitComponent):
         V_bat = inputs['data:battery:voltage']
         Umot_to = inputs['data:motor:voltage:takeoff']
 
-        P_esc = k_ESC * P_el_to * V_bat / Umot_to  # [W] power electronic power max thrust
+        P_esc = k_ESC * (P_el_to / Umot_to) * V_bat   # [W] power electronic power max thrust
 
         outputs['data:ESC:power:max:estimated'] = P_esc
 
@@ -96,3 +96,28 @@ class Voltage(om.ExplicitComponent):
 
         partials['data:ESC:voltage:estimated',
                  'data:ESC:power:max:estimated'] = (1/3) * Vesc_ref / Pesc_ref ** (1/3) / P_esc ** (2/3)
+
+
+# class Voltage(om.ExplicitComponent):
+#     """
+#     Computes ESC voltage
+#     """
+#
+#     def setup(self):
+#         self.add_input('data:battery:voltage', val=np.nan, units='V')
+#         self.add_output('data:ESC:voltage:estimated', units='V')
+#
+#     def setup_partials(self):
+#         self.declare_partials('*', '*', method='exact')
+#
+#     def compute(self, inputs, outputs):
+#         Vbat = inputs['data:battery:voltage']
+#
+#         V_esc = Vbat  # [V] ESC voltage
+#         #V_esc = 1.84 * P_esc ** 0.36  # [V] ESC voltage
+#
+#         outputs['data:ESC:voltage:estimated'] = V_esc
+#
+#     def compute_partials(self, inputs, partials, discrete_inputs=None):
+#         partials['data:ESC:voltage:estimated',
+#                  'data:battery:voltage'] = 1

@@ -3,14 +3,14 @@ Off-the-shelf propeller selection.
 """
 import openmdao.api as om
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
-from utils.DecisionTrees.predicted_values_DT import DecisionTrees
+from utils.catalogues.estimators import NearestNeighbor
 from models.Components.Propeller.estimation.models import PropellerAerodynamicsModel
 from models.Uncertainty.uncertainty import add_subsystem_with_deviation
 import pandas as pd
 import numpy as np
 
 
-PATH = './data/DecisionTrees/Propeller/'
+PATH = './data/catalogues/Propeller/'
 DF = pd.read_csv(PATH + 'APC_propellers_MR.csv', sep=';')
 
 
@@ -32,9 +32,9 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         self.options.declare("use_catalogue", default=True, types=bool)
         beta_selection = 'average'
         Dpro_selection = 'next'
-        self._DT = DecisionTrees(DF[['Pitch (-)', 'Diameter (METERS)']],
-                                 DF[['Pitch (-)', 'Diameter (METERS)', 'Weight (KG)']],
-                                 [beta_selection, Dpro_selection]).DT_handling()
+        self._clf = NearestNeighbor(df=DF, X_names=['Pitch (-)', 'Diameter (METERS)'],
+                                    crits=[beta_selection, Dpro_selection])
+        self._clf.train()
 
     def setup(self):
         # inputs: estimated values
@@ -96,11 +96,11 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             beta_opt = inputs['data:propeller:geometry:beta:estimated']
             Dpro_opt = inputs['data:propeller:geometry:diameter:estimated']
 
-            # Decision tree
-            y_pred = self._DT.predict([np.hstack((beta_opt, Dpro_opt))])
-            beta = y_pred[0][0]  # [-] beta
-            Dpro = y_pred[0][1]  # [m] diameter
-            Mpro = y_pred[0][2]  # [kg] mass
+            # Get closest product
+            df_y = self._clf.predict([beta_opt, Dpro_opt])
+            beta = df_y['Pitch (-)'].iloc[0]  # [-] beta
+            Dpro = df_y['Diameter (METERS)'].iloc[0]  # [m] diameter
+            Mpro = df_y['Weight (KG)'].iloc[0]  # [kg] mass
 
             # Update Ct and Cp with new parameters
             J_climb = inputs['data:propeller:advance_ratio:climb']

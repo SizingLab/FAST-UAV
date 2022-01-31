@@ -13,8 +13,10 @@ class ESCConstraints(om.ExplicitComponent):
         self.add_input('data:ESC:voltage', val=np.nan, units='V')
         self.add_input('data:battery:voltage', val=np.nan, units='V')
         self.add_input('data:ESC:power:max', val=np.nan, units='W')
+        self.add_input('data:ESC:power:takeoff', val=np.nan, units='W')
         self.add_input('data:ESC:power:climb', val=np.nan, units='W')
         self.add_input('data:ESC:power:forward', val=np.nan, units='W')
+        self.add_output('data:ESC:constraints:power:takeoff', units=None)
         self.add_output('data:ESC:constraints:power:climb', units=None)
         self.add_output('data:ESC:constraints:power:forward', units=None)
         self.add_output('data:ESC:constraints:voltage', units=None)
@@ -26,13 +28,16 @@ class ESCConstraints(om.ExplicitComponent):
         P_esc = inputs['data:ESC:power:max']
         V_esc = inputs['data:ESC:voltage']
         V_bat = inputs['data:battery:voltage']
+        P_esc_to = inputs['data:ESC:power:takeoff']
         P_esc_cl = inputs['data:ESC:power:climb']
         P_esc_ff = inputs['data:ESC:power:forward']
 
+        ESC_con0 = (P_esc - P_esc_to) / P_esc
         ESC_con1 = (P_esc - P_esc_cl) / P_esc
         ESC_con2 = (P_esc - P_esc_ff) / P_esc
         ESC_con3 = (V_esc - V_bat) / V_esc
 
+        outputs['data:ESC:constraints:power:takeoff'] = ESC_con0
         outputs['data:ESC:constraints:power:climb'] = ESC_con1
         outputs['data:ESC:constraints:power:forward'] = ESC_con2
         outputs['data:ESC:constraints:voltage'] = ESC_con3

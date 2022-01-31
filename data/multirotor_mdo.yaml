@@ -1,4 +1,4 @@
-title: Multirotor Drone Design
+title: Multirotor Drone Optimal Design
 
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders: 
@@ -23,10 +23,6 @@ driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
 
 # Definition of OpenMDAO model
 model:
-    
-    # Solvers are defined assuming the OpenMDAO convention import openmdao.api as om
-    #nonlinear_solver: om.NonlinearBlockGS(maxiter=100, atol=1e-2)
-    #linear_solver: om.DirectSolver()
     Core:
         scenarios:
             id: multirotor.sizing_scenarios
@@ -70,7 +66,7 @@ optimization: # This section is needed only if optimization process is run
         lower: 0.01
         upper: 60.0
         
-      - name: data:battery:settings:voltage:k # over estimation coefficient on the battery voltage
+      - name: data:battery:settings:voltage:k2 # over estimation coefficient on the battery voltage
         lower: 1.0
         upper: 10.0
 
@@ -95,7 +91,7 @@ optimization: # This section is needed only if optimization process is run
         upper: 20.0
 
       - name: data:motor:settings:speed:k # over estimation coefficient on the motor speed
-        lower: 1.0
+        lower: 0.1
         upper: 10.0
 
       - name: data:propeller:settings:ND:k # slow down propeller coef : k_ND: ND / NDmax
@@ -133,9 +129,12 @@ optimization: # This section is needed only if optimization process is run
 
       - name: data:battery:constraints:power:forward  # solved by k_mot
         lower: 0.0
+        
+      #- name: data:battery:constraints:voltage:consistency  # solved by k_speedmot
+      #  lower: 0.0
 
-      - name: data:battery:constraints:voltage:takeoff  # solved by k_speedmot
-        lower: 0.0
+      #- name: data:battery:constraints:voltage:takeoff  # solved by k_speedmot
+      #  lower: 0.0
 
       - name: data:battery:constraints:voltage:climb  # solved by k_speedmot
         lower: 0.0

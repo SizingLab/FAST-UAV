@@ -1,5 +1,8 @@
 """
 Driver that uses Covariance Matrix Adaptation Evolution Strategy (CMAES).
+Based on pycma (https://github.com/CMA-ES/pycma)
+Adapted from  OpenMDAO / RevHack2020 (https://github.com/OpenMDAO/RevHack2020/)
+New in this version: use of the fmin_con method from pycma for handling constraints with an Augmented Lagrangian.
 """
 import os
 import copy
@@ -96,6 +99,23 @@ class CMAESDriver(Driver):
         self.options.declare('multi_obj_exponent', default=1., lower=0.,
                              desc='Multi-objective weighting exponent.')
 
+        # Felix Pollet 01/2022
+        self.options.declare('augmented_lagrangian', types=bool, default=False,
+                             desc='Set to True to use augmented lagrangian to handle constraint. '
+                             ' Else a penalty method will be used.')
+        self.options.declare('restarts', types=int, default=0, lower=0,
+                             desc='number of restarts with increasing population size')
+        self.options.declare('restart_from_best', types=bool, default=False,
+                             desc='which point to restart from')
+        self.options.declare('bipop', types=bool, default=False,
+                             desc='if `True`, run as BIPOP-CMA-ES; BIPOP is a special restart'
+                                  'strategy switching between two population sizings - small'
+                                  '(like the default CMA, but with more focused search) and'
+                                  'large (progressively increased as in IPOP). This makes the'
+                                  'algorithm perform well both on functions with many regularly'
+                                  'or irregularly arranged local optima (the latter by frequently'
+                                  'restarting with small populations).')
+
     def _setup_driver(self, problem):
         """
         Prepare the driver for execution.
@@ -114,7 +134,28 @@ class CMAESDriver(Driver):
         elif not self.options['run_parallel']:
             comm = None
 
-        self._cmaes = CMAES(self.objective_callback, comm=comm, model_mpi=model_mpi)
+        aug_lagrangian = self.options['augmented_lagrangian']
+        restarts = self.options['restarts']
+        restart_from_best = self.options['restart_from_best']
+        bipop = self.options['bipop']
+
+        if aug_lagrangian:
+            self._cmaes = CMAES(objfun=self.objective_callback,
+                                gfun=self.g_constraints_callback,
+                                hfun=self.h_constraints_callback,
+                                aug_lagrangian=aug_lagrangian,
+                                restarts=restarts,
+                                restart_from_best=restart_from_best,
+                                bipop=bipop,
+                                comm=comm,
+                                model_mpi=model_mpi)
+        else:
+            self._cmaes = CMAES(objfun=self.objective_penalty_callback,
+                                restarts=restarts,
+                                restart_from_best=restart_from_best,
+                                bipop=bipop,
+                                comm=comm,
+                                model_mpi=model_mpi)
 
     def _setup_comm(self, comm):
         """
@@ -197,6 +238,7 @@ class CMAESDriver(Driver):
         self.CMAOptions['bounds'] = [lower_bound, upper_bound]
 
         desvar_new, obj = self._cmaes.execute(x0, self.options['sigma0'], self.CMAOptions)
+        # desvar_new, obj = self._cmaes.execute(lambda: np.random.uniform(lower_bound, upper_bound), self.options['sigma0'], self.CMAOptions)
 
         # Pull optimal parameters back into framework and re-run, so that
         # framework is left in the right final state
@@ -213,7 +255,7 @@ class CMAESDriver(Driver):
 
         return False
 
-    def objective_callback(self, x):
+    def objective_penalty_callback(self, x):
         r"""
         Evaluate problem objective at the requested point.
         In case of multi-objective optimization, a simple weighted sum method is used:
@@ -325,13 +367,15 @@ class CMAESDriver(Driver):
                     if (con['lower'] is not None) and np.any(con['lower'] > -almost_inf):
                         diff = val - con['lower']
                         violation = np.array([0. if d >= 0 else abs(d) for d in diff])
-                    elif (con['upper'] is not None) and np.any(con['upper'] < almost_inf):
+                        constraint_violations = np.hstack((constraint_violations, violation))
+                    if (con['upper'] is not None) and np.any(con['upper'] < almost_inf):
                         diff = val - con['upper']
                         violation = np.array([0. if d <= 0 else abs(d) for d in diff])
-                    elif (con['equals'] is not None) and np.any(np.abs(con['equals']) < almost_inf):
+                        constraint_violations = np.hstack((constraint_violations, violation))
+                    if (con['equals'] is not None) and np.any(np.abs(con['equals']) < almost_inf):
                         diff = val - con['equals']
                         violation = np.absolute(diff)
-                    constraint_violations = np.hstack((constraint_violations, violation))
+                        constraint_violations = np.hstack((constraint_violations, violation))
                 fun = obj + penalty * sum(np.power(constraint_violations, exponent))
 
             # Record after getting obj to assure they have
@@ -340,6 +384,191 @@ class CMAESDriver(Driver):
             rec.rel = 0.0
 
         return fun
+
+
+    def objective_callback(self, x):
+        r"""
+        Evaluate problem objective at the requested point.
+        In case of multi-objective optimization, a simple weighted sum method is used:
+        .. math::
+           f = (\sum_{k=1}^{N_f} w_k \cdot f_k)^a
+        where :math:`N_f` is the number of objectives and :math:`a>0` is an exponential
+        weight. Choosing :math:`a=1` is equivalent to the conventional weighted sum method.
+        The weights given in the options are normalized, so:
+        .. math::
+            \sum_{k=1}^{N_f} w_k = 1
+        If one of the objectives :math:`f_k` is not a scalar, its elements will have the same
+        weights, and it will be normed with length of the vector.
+
+        Parameters
+        ----------
+        x : ndarray
+            Value of design variables.
+        Returns
+        -------
+        float
+            Objective value
+        """
+        model = self._problem().model
+
+        objs = self.get_objective_values()
+        nr_objectives = len(objs)
+
+        # Single objective, if there is only one objective, which has only one element
+        if nr_objectives > 1:
+            is_single_objective = False
+        else:
+            for obj in objs.items():
+                is_single_objective = len(obj) == 1
+                break
+
+        obj_exponent = self.options['multi_obj_exponent']
+        if self.options['multi_obj_weights']:  # not empty
+            obj_weights = self.options['multi_obj_weights']
+        else:
+            # Same weight for all objectives, if not specified
+            obj_weights = {name: 1. for name in objs.keys()}
+        sum_weights = sum(obj_weights.values())
+
+        for name in self._designvars:
+            i, j = self._desvar_idx[name]
+            self.set_design_var(name, x[i:j])
+
+        # a very large number, but smaller than the result of nan_to_num in Numpy
+        almost_inf = openmdao.INF_BOUND
+
+        # Execute the model
+        with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
+            self.iter_count += 1
+            try:
+                model.run_solve_nonlinear()
+
+            # Tell the optimizer that this is a bad point.
+            except AnalysisError:
+                model._clear_iprint()
+                success = 0
+
+            obj_values = self.get_objective_values()
+            if is_single_objective:  # Single objective optimization
+                for i in obj_values.values():
+                    obj = i  # First and only key in the dict
+            else:  # Multi-objective optimization with weighted sums
+                weighted_objectives = np.array([])
+                for name, val in obj_values.items():
+                    # element-wise multiplication with scalar
+                    # takes the average, if an objective is a vector
+                    try:
+                        weighted_obj = val * obj_weights[name] / val.size
+                    except KeyError:
+                        msg = ('Name "{}" in "multi_obj_weights" option '
+                               'is not an absolute name of an objective.')
+                        raise KeyError(msg.format(name))
+                    weighted_objectives = np.hstack((weighted_objectives, weighted_obj))
+
+                obj = sum(weighted_objectives / sum_weights)**obj_exponent
+
+            # Record after getting obj to assure they have
+            # been gathered in MPI.
+            rec.abs = 0.0
+            rec.rel = 0.0
+
+        return obj
+
+    def g_constraints_callback(self, x):
+        r"""
+        Evaluate problem inequality constraints at the requested point.
+        ----------
+        x : ndarray
+            Value of design variables.
+        Returns
+        -------
+        ndarray
+            Equality constraints values
+        """
+        model = self._problem().model
+
+        for name in self._designvars:
+            i, j = self._desvar_idx[name]
+            self.set_design_var(name, x[i:j])
+
+        # a very large number, but smaller than the result of nan_to_num in Numpy
+        almost_inf = openmdao.INF_BOUND
+
+        # Execute the model
+        with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
+            self.iter_count += 1
+            try:
+                model.run_solve_nonlinear()
+
+            # Tell the optimizer that this is a bad point.
+            except AnalysisError:
+                model._clear_iprint()
+                success = 0
+
+            gfun = np.array([])
+            for name, val in self.get_constraint_values().items():
+                con = self._cons[name]
+                if (con['lower'] is not None) and np.any(con['lower'] > -almost_inf):
+                    diff = - (val - con['lower'])
+                    violation = np.array([0. if d >= 0 else abs(d) for d in diff])
+                    gfun = np.hstack((gfun, diff))
+                if (con['upper'] is not None) and np.any(con['upper'] < almost_inf):
+                    diff = val - con['upper']
+                    violation = np.array([0. if d <= 0 else abs(d) for d in diff])
+                    gfun = np.hstack((gfun, diff))
+
+            # Record after getting obj to assure they have
+            # been gathered in MPI.
+           # rec.abs = 0.0
+           # rec.rel = 0.0
+
+        return gfun
+
+    def h_constraints_callback(self, x):
+        r"""
+        Evaluate problem inequality constraints at the requested point.
+        ----------
+        x : ndarray
+            Value of design variables.
+        Returns
+        -------
+        ndarray
+            Equality constraints values
+        """
+        model = self._problem().model
+
+        for name in self._designvars:
+            i, j = self._desvar_idx[name]
+            self.set_design_var(name, x[i:j])
+
+        # a very large number, but smaller than the result of nan_to_num in Numpy
+        almost_inf = openmdao.INF_BOUND
+
+        # Execute the model
+        with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
+            self.iter_count += 1
+            try:
+                model.run_solve_nonlinear()
+
+            # Tell the optimizer that this is a bad point.
+            except AnalysisError:
+                model._clear_iprint()
+                success = 0
+
+            hfun = np.array([])
+            for name, val in self.get_constraint_values().items():
+                con = self._cons[name]
+                if (con['equals'] is not None) and np.any(np.abs(con['equals']) < almost_inf):
+                    diff = val - con['equals']
+                    violation = np.absolute(diff)
+                    hfun = np.hstack((hfun, diff))
+
+            # Record after getting obj to assure they have
+            # been gathered in MPI.
+           # rec.abs = 0.0
+           # rec.rel = 0.0
+
+        return hfun
 
 
 class CMAES(object):
@@ -357,13 +586,26 @@ class CMAES(object):
         Objective function callback.
     """
 
-    def __init__(self, objfun, comm=None, model_mpi=None):
+    def __init__(self,
+                 objfun,
+                 gfun=[],
+                 hfun=[],
+                 aug_lagrangian=False,
+                 restarts=0,
+                 restart_from_best='False',
+                 bipop='False',
+                 comm=None,
+                 model_mpi=None):
         """
         Initialize CMA Evolution Strategy object.
         Parameters
         ----------
         objfun : function
             Objective callback function.
+        gfun : functions
+            Inequality Constraints callback functions.
+        hfun : functions
+            Equality Constraints callback functions.
         comm : MPI communicator or None
             The MPI communicator that will be used objective evaluation.
         model_mpi : None or tuple
@@ -374,6 +616,12 @@ class CMAES(object):
         self.comm = comm
         self.model_mpi = model_mpi
         self.objfun = objfun
+        self.gfun = gfun
+        self.hfun = hfun
+        self.aug_lagrangian = aug_lagrangian
+        self.restarts = restarts
+        self.restart_from_best = restart_from_best
+        self.bipop = bipop
 
     def execute(self, x0, sigma0, CMAOptions):
         """
@@ -398,13 +646,24 @@ class CMAES(object):
             Objective value at best design point.
         """
         comm = self.comm
+        restarts = self.restarts
+        restart_from_best = self.restart_from_best
+        bipop = self.bipop
 
         if comm is None:
             # Running non-parallel, use functional interface
 
-            res = cma.fmin(self.objfun, x0, sigma0, options=CMAOptions)
+            if self.aug_lagrangian:
+                xopt, es = cma.fmin_con(self.objfun, x0, sigma0, g=self.gfun, h=self.hfun, options=CMAOptions,
+                                        restarts=restarts, restart_from_best=restart_from_best, bipop=bipop)
+                fopt = es.best_feasible
+            else:
+                res = cma.fmin(self.objfun, x0, sigma0, options=CMAOptions,
+                               restarts=restarts, restart_from_best=restart_from_best, bipop=bipop)
+                xopt = res[0]
+                fopt = res[1]
 
-            return res[0], res[1]
+            return xopt, fopt
 
         else:
             # Running parallel, use OO interface

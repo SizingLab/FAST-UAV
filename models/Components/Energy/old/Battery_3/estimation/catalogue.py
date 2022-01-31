@@ -2,13 +2,13 @@
 Off-the-shelf Battery selection.
 """
 import openmdao.api as om
-from utils.DecisionTrees.predicted_values_DT import DecisionTrees
+from utils.catalogues.estimators import DecisionTreeRgr
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
 import pandas as pd
 import numpy as np
 
 # Database import
-path = './data/DecisionTrees/Batteries/'
+path = './data/product_selection/Batteries/'
 DF = pd.read_csv(path + 'Non-Dominated-Augmented-Batteries.csv', sep=';')
 
 
@@ -29,7 +29,7 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
         self.options.declare("use_catalogue", default=True, types=bool)
         C_bat_selection = 'average'
         V_bat_selection = 'average'
-        self._DT = DecisionTrees(DF[['Voltage_V', 'Capacity_As']].values,
+        self._DT = DecisionTreeRgr(DF[['Voltage_V', 'Capacity_As']].values,
                                  DF[['Voltage_V', 'Capacity_As', 'Weight_kg', 'Volume_cm3', 'Imax [A]', 'n_series', 'n_parallel']].values,
                                  [V_bat_selection, C_bat_selection]).DT_handling(dist=1000000)
 
