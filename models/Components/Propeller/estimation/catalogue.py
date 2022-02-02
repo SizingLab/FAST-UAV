@@ -107,13 +107,11 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             "data:propeller:geometry:beta",
             "data:propeller:geometry:beta:estimated",
             val=1.0,
-            method="fd",
         )
         self.declare_partials(
             "data:propeller:geometry:diameter",
             "data:propeller:geometry:diameter:estimated",
             val=1.0,
-            method="fd",
         )
         self.declare_partials(
             "data:propeller:mass", "data:propeller:mass:estimated", val=1.0, method="fd"
@@ -122,37 +120,31 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             "data:propeller:aerodynamics:CT:static",
             "data:propeller:aerodynamics:CT:static:estimated",
             val=1.0,
-            method="fd",
         )
         self.declare_partials(
             "data:propeller:aerodynamics:CP:static",
             "data:propeller:aerodynamics:CP:static:estimated",
             val=1.0,
-            method="fd",
         )
         self.declare_partials(
             "data:propeller:aerodynamics:CT:axial",
             "data:propeller:aerodynamics:CT:axial:estimated",
             val=1.0,
-            method="fd",
         )
         self.declare_partials(
             "data:propeller:aerodynamics:CP:axial",
             "data:propeller:aerodynamics:CP:axial:estimated",
             val=1.0,
-            method="fd",
         )
         self.declare_partials(
             "data:propeller:aerodynamics:CT:incidence",
             "data:propeller:aerodynamics:CT:incidence:estimated",
             val=1.0,
-            method="fd",
         )
         self.declare_partials(
             "data:propeller:aerodynamics:CP:incidence",
             "data:propeller:aerodynamics:CP:incidence:estimated",
             val=1.0,
-            method="fd",
         )
 
     def compute(self, inputs, outputs):
