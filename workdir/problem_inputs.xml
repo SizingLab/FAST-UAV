@@ -60,7 +60,8 @@
           <k is_input="True">1.0<!--Oversizing coefficient on battery mass--></k>
         </mass>
         <voltage>
-          <k is_input="True">2.0<!--Oversizing coefficient on battery voltage--></k>
+          <k is_input="True">1.0<!--Oversizing coefficient on battery voltage--></k>
+          <k2 is_input="True">1.0</k2>
         </voltage>
       </settings>
     </battery>
@@ -159,7 +160,7 @@
     <sizing_mission>
       <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
       <forward>
-        <speed units="m/s" is_input="True">19.99891634519401<!--Forward flight velocity--></speed>
+        <speed units="m/s" is_input="True">20.0<!--Forward flight velocity--></speed>
       </forward>
       <takeoff>
         <altitude units="m" is_input="True">0.0<!--Takeoff altitude--></altitude>

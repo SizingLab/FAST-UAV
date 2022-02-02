@@ -74,7 +74,7 @@ class SalibDOEGenerator(DOEGenerator):
                 "names": names,
                 "bounds": bounds,
                 "groups": None,
-                "dists": self.distribution
+                "dists": self.distribution,
             }
 
         self._compute_cases()
@@ -195,7 +195,9 @@ class SalibDOEDriver(DOEDriver):
             n_samples = self.sa_settings["n_samples"]
             calc_snd = self.sa_settings["calc_second_order"]
             dist = self.options["distributions"]
-            self.options["generator"] = SalibSobolDOEGenerator(n_samples, calc_snd, dist)
+            self.options["generator"] = SalibSobolDOEGenerator(
+                n_samples, calc_snd, dist
+            )
         else:
             raise RuntimeError(
                 "Bad sensitivity analysis method name '{}'".format(

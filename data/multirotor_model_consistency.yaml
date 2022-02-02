@@ -1,0 +1,93 @@
+title: Multirotor Drone model with consistency constraints solving
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders: 
+    - ../models
+    - ../models/Missions
+    - ../models/Scenarios
+    - ../models/System
+    - ../models/Components/Energy/Battery
+    - ../models/Components/ESC
+    - ../models/Components/Motor
+    - ../models/Components/Propeller
+    - ../models/Components/Structure
+    - ../models/Components/Cables
+    - ../models/Add_ons/Safety
+    
+# Input and output files
+input_file: ../workdir/model_inputs.xml
+output_file: ../workdir/model_outputs.xml
+
+# Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
+driver: om.ScipyOptimizeDriver(tol=1e-3, optimizer='SLSQP')
+
+# Definition of OpenMDAO model
+model:
+    Core:
+        scenarios:
+            id: multirotor.sizing_scenarios
+        propeller:
+            id: propeller
+            use_catalogue: false
+        motor:
+            id: motor
+            use_catalogue: false
+            use_gearbox: false
+        battery:
+            id: energy.battery
+            use_catalogue: false
+        esc:
+            id: esc
+            use_catalogue: false
+        structure:
+            id: multirotor.structure
+        cables:
+            id: cables
+        system:
+            id: multirotor.system
+        missions:
+            sizing_mission:
+                id: multirotor.design_mission
+            #concordia_study:
+            #    id: multirotor.mission_concordia
+    #Addons:
+    #    safety:
+    #       id: addons.safety
+
+
+optimization: # This section is needed only if optimization process is run
+    
+    design_variables:
+      - name: data:system:settings:MTOW:k # over estimation coefficient on the load mass
+        upper: 40.0
+        lower: 1.0
+
+      #- name: data:motor:settings:speed:k # over estimation coefficient on the motor speed
+      #  lower: 1.0
+      #  upper: 10.0
+
+
+    constraints:
+      #- name: data:battery:constraints:voltage:takeoff
+      #  lower: 0.0
+
+      - name: data:system:constraints:mass:convergence
+        lower: 0.0
+        
+      
+    objective:
+      # MASS MINIMIZATION
+      - name: data:system:MTOW
+        scaler: 1e-1
+
+      # ENERGY MINIMIZATION
+      #- name: mission:sizing_mission:energy
+      #  scaler: 1e-3
+        
+      # MAX. RANGE MAXIMIZATION
+      #- name: mission:sizing_mission:forward:distance:max
+      #  scaler: -1e-3
+
+      # HOVER AUTONOMY MAXIMIZATION
+      #- name: mission:sizing_mission:hover:duration:max
+      #  scaler: -1e-1

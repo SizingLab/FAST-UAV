@@ -31,7 +31,7 @@ data:battery:mass:catalogue || Battery mass (catalogue value)
 data:battery:voltage || Battery voltage
 data:battery:voltage:estimated || Battery voltage (estimated value)
 data:battery:voltage:catalogue || Battery voltage (catalogue value)
-data:battery:voltage:guess || Initial guess of Battery voltage for motor sizing
+data:battery:voltage:guess || Initial guess of Battery voltage for motor sizing (deprecated)
 data:battery:volume || Battery volume
 data:battery:volume:estimated || Battery volume (estimated value)
 data:battery:volume:catalogue || Battery volume (catalogue value)

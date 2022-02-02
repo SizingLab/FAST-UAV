@@ -2,13 +2,13 @@
 Off-the-shelf Battery selection.
 """
 import openmdao.api as om
-from utils.DecisionTrees.predicted_values_DT import DecisionTrees
+from utils.catalogues.estimators import NearestNeighbor
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
 import pandas as pd
 import numpy as np
 
 # Database import
-path = './data/DecisionTrees/Batteries/'
+path = './data/catalogues/Batteries/'
 DF = pd.read_csv(path + 'Non-Dominated-Augmented-Batteries.csv', sep=';')
 
 
@@ -27,11 +27,14 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
     """
     def initialize(self):
         self.options.declare("use_catalogue", default=True, types=bool)
-        C_bat_selection = 'average'
-        V_bat_selection = 'average'
-        self._DT = DecisionTrees(DF[['Voltage_V', 'Capacity_As']].values,
-                                 DF[['Voltage_V', 'Capacity_As', 'Weight_kg', 'Volume_cm3', 'Imax [A]', 'n_series', 'n_parallel']].values,
-                                 [V_bat_selection, C_bat_selection]).DT_handling(dist=1000000)
+        C_bat_selection = 'next'
+        V_bat_selection = 'next'
+        # E_bat_selection = 'next'
+        self._clf = NearestNeighbor(df=DF, X_names=['Voltage_V', 'Capacity_As'],
+                                     crits=[V_bat_selection, C_bat_selection])
+        # self._clf = NearestNeighbor(df=DF, X_names=['Voltage_V', 'Energy_kJ'],
+        #                             crits=[V_bat_selection, E_bat_selection])
+        self._clf.train()
 
     def setup(self):
         # inputs: estimated values
@@ -86,21 +89,22 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             # Definition parameters for battery selection
             V_bat_opt = inputs['data:battery:voltage:estimated']  # [V]
             C_bat_opt = inputs['data:battery:capacity:estimated']  # [A*s]
+            # E_bat_opt = inputs['data:battery:energy:estimated']  # [kJ]
 
-            # Decision Tree
-            y_pred = self._DT.predict([np.hstack((V_bat_opt, C_bat_opt))])
+            # Get closest product
+            df_y = self._clf.predict2([V_bat_opt, C_bat_opt])
+            # df_y = self._clf.predict2([V_bat_opt, E_bat_opt])
+            V_bat = df_y['Voltage_V'].iloc[0]  # battery pack voltage [V]
+            C_bat = df_y['Capacity_As'].iloc[0]  # battery pack capacity [A*s]
+            M_bat = df_y['Weight_kg'].iloc[0]  # battery pack weight [kg]
+            Vol_bat = df_y['Volume_cm3'].iloc[0]  # battery pack volume [cm3]
+            Imax = df_y['Imax_A'].iloc[0]  # max current [A]
+            N_series = df_y['n_series'].iloc[0]  # number of series connections to ensure sufficient voltage
+            N_parallel = df_y['n_parallel'].iloc[0]  # number of parallel connections
+            N_cell = N_series * N_parallel  # number of cells
+            E_bat = df_y['Energy_kJ'].iloc[0]  # C_bat * V_bat / 1000  # stored energy [kJ]
 
             # Outputs
-            V_bat = y_pred[0][0]  # battery pack voltage [V]
-            C_bat = y_pred[0][1]  # battery pack capacity [A*s]
-            M_bat = y_pred[0][2]  # battery pack weight [kg]
-            Vol_bat = y_pred[0][3]  # battery pack volume [cm3]
-            Imax = y_pred[0][4]  # max current [A]
-            N_series = y_pred[0][5]  # number of series connections to ensure sufficient voltage
-            N_parallel = y_pred[0][6]  # number of parallel connections
-            N_cell = N_series * N_parallel  # number of cells
-            E_bat = C_bat * V_bat / 1000  # stored energy [kJ]
-
             outputs['data:battery:cell:number'] = outputs['data:battery:cell:number:catalogue'] = N_cell
             outputs['data:battery:cell:number:series'] = outputs['data:battery:cell:number:series:catalogue'] = N_series
             outputs['data:battery:cell:number:parallel'] = outputs['data:battery:cell:number:parallel:catalogue'] = N_parallel
