@@ -52,10 +52,10 @@ class ESCCatalogueSelection(om.ExplicitComponent):
         self.add_output('data:ESC:efficiency', units=None)
 
     def setup_partials(self):
-        self.declare_partials('data:ESC:voltage', 'data:ESC:voltage:estimated', val=1.)
-        self.declare_partials('data:ESC:power:max', 'data:ESC:power:max:estimated', val=1.)
-        self.declare_partials('data:ESC:mass', 'data:ESC:mass:estimated', val=1.)
-        self.declare_partials('data:ESC:efficiency', 'data:ESC:efficiency:estimated', val=1.)
+        self.declare_partials('data:ESC:voltage', 'data:ESC:voltage:estimated', val=1., method='fd')
+        self.declare_partials('data:ESC:power:max', 'data:ESC:power:max:estimated', val=1., method='fd')
+        self.declare_partials('data:ESC:mass', 'data:ESC:mass:estimated', val=1., method='fd')
+        self.declare_partials('data:ESC:efficiency', 'data:ESC:efficiency:estimated', val=1., method='fd')
 
     def compute(self, inputs, outputs):
         """

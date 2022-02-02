@@ -73,12 +73,12 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
         self.add_output('data:battery:DoD:max', units=None)
 
     def setup_partials(self):
-        self.declare_partials('data:battery:voltage', 'data:battery:voltage:estimated', val=1.)
-        self.declare_partials('data:battery:capacity', 'data:battery:capacity:estimated', val=1.)
-        self.declare_partials('data:battery:energy', 'data:battery:energy:estimated', val=1.)
-        self.declare_partials('data:battery:current:max', 'data:battery:current:max:estimated', val=1.)
-        self.declare_partials('data:battery:mass', 'data:battery:mass:estimated', val=1.)
-        self.declare_partials('data:battery:DoD:max', 'data:battery:DoD:max:estimated', val=1.)
+        self.declare_partials('data:battery:voltage', 'data:battery:voltage:estimated', val=1., method='fd')
+        self.declare_partials('data:battery:capacity', 'data:battery:capacity:estimated', val=1., method='fd')
+        self.declare_partials('data:battery:energy', 'data:battery:energy:estimated', val=1., method='fd')
+        self.declare_partials('data:battery:current:max', 'data:battery:current:max:estimated', val=1., method='fd')
+        self.declare_partials('data:battery:mass', 'data:battery:mass:estimated', val=1., method='fd')
+        self.declare_partials('data:battery:DoD:max', 'data:battery:DoD:max:estimated', val=1., method='fd')
 
     def compute(self, inputs, outputs):
         # OFF-THE-SHELF COMPONENTS SELECTION

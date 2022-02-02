@@ -58,12 +58,12 @@ class MotorCatalogueSelection(om.ExplicitComponent):
         self.add_output('data:motor:mass', units='kg')
 
     def setup_partials(self):
-        self.declare_partials('data:motor:torque:max', 'data:motor:torque:max:estimated', val=1.)
-        self.declare_partials('data:motor:torque:coefficient', 'data:motor:torque:coefficient:estimated', val=1.)
-        self.declare_partials('data:motor:torque:nominal', 'data:motor:torque:nominal:estimated', val=1.)
-        self.declare_partials('data:motor:torque:friction', 'data:motor:torque:friction:estimated', val=1.)
-        self.declare_partials('data:motor:resistance', 'data:motor:resistance:estimated', val=1.)
-        self.declare_partials('data:motor:mass', 'data:motor:mass:estimated', val=1.)
+        self.declare_partials('data:motor:torque:max', 'data:motor:torque:max:estimated', val=1., method='fd')
+        self.declare_partials('data:motor:torque:coefficient', 'data:motor:torque:coefficient:estimated', val=1., method='fd')
+        self.declare_partials('data:motor:torque:nominal', 'data:motor:torque:nominal:estimated', val=1., method='fd')
+        self.declare_partials('data:motor:torque:friction', 'data:motor:torque:friction:estimated', val=1., method='fd')
+        self.declare_partials('data:motor:resistance', 'data:motor:resistance:estimated', val=1., method='fd')
+        self.declare_partials('data:motor:mass', 'data:motor:mass:estimated', val=1., method='fd')
 
     def compute(self, inputs, outputs):
         """
