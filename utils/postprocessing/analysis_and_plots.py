@@ -37,13 +37,25 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     # PROPULSION
-    propellers = variables["data:propeller:mass"].value[0] * variables["data:propeller:number"].value[0]
-    motors = variables["data:motor:mass"].value[0] * variables["data:propeller:number"].value[0]
+    propellers = (
+        variables["data:propeller:mass"].value[0]
+        * variables["data:propeller:number"].value[0]
+    )
+    motors = (
+        variables["data:motor:mass"].value[0]
+        * variables["data:propeller:number"].value[0]
+    )
     if "data:gearbox:mass" in variables.names():
-        gearboxes = variables["data:gearbox:mass"].value[0] * variables["data:propeller:number"].value[0]
+        gearboxes = (
+            variables["data:gearbox:mass"].value[0]
+            * variables["data:propeller:number"].value[0]
+        )
     else:
         gearboxes = 0
-    ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:number"].value[0]
+    ESC = (
+        variables["data:ESC:mass"].value[0]
+        * variables["data:propeller:number"].value[0]
+    )
     battery = variables["data:battery:mass"].value[0]
     cables = variables["data:cables:mass"].value[0]
     propulsion = propellers + motors + gearboxes + ESC + battery + cables
@@ -67,108 +79,106 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
 
     # DISPLAYED NAMES AND VALUES
     propellers_str = (
-            "Propellers"
-            + "<br>"
-            + str("{0:.2f}".format(propellers))
-            + " [kg] ("
-            + str(round(propellers / propulsion * 100, 1))
-            + "%)"
+        "Propellers"
+        + "<br>"
+        + str("{0:.2f}".format(propellers))
+        + " [kg] ("
+        + str(round(propellers / propulsion * 100, 1))
+        + "%)"
     )
     motors_str = (
-            "Motors"
-            + "<br>"
-            + str("{0:.2f}".format(motors))
-            + " [kg] ("
-            + str(round(motors / propulsion * 100, 1))
-            + "%)"
+        "Motors"
+        + "<br>"
+        + str("{0:.2f}".format(motors))
+        + " [kg] ("
+        + str(round(motors / propulsion * 100, 1))
+        + "%)"
     )
     gearboxes_str = (
-            "Gearboxes"
-            + "<br>"
-            + str("{0:.2f}".format(gearboxes))
-            + " [kg] ("
-            + str(round(gearboxes / propulsion * 100, 1))
-            + "%)"
+        "Gearboxes"
+        + "<br>"
+        + str("{0:.2f}".format(gearboxes))
+        + " [kg] ("
+        + str(round(gearboxes / propulsion * 100, 1))
+        + "%)"
     )
     ESC_str = (
-            "ESC"
-            + "<br>"
-            + str("{0:.2f}".format(ESC))
-            + " [kg] ("
-            + str(round(ESC / propulsion * 100, 1))
-            + "%)"
+        "ESC"
+        + "<br>"
+        + str("{0:.2f}".format(ESC))
+        + " [kg] ("
+        + str(round(ESC / propulsion * 100, 1))
+        + "%)"
     )
     battery_str = (
-            "Battery"
-            + "<br>"
-            + str("{0:.2f}".format(battery))
-            + " [kg] ("
-            + str(round(battery / propulsion * 100, 1))
-            + "%)"
+        "Battery"
+        + "<br>"
+        + str("{0:.2f}".format(battery))
+        + " [kg] ("
+        + str(round(battery / propulsion * 100, 1))
+        + "%)"
     )
     cables_str = (
-            "Cables"
-            + "<br>"
-            + str("{0:.2f}".format(cables))
-            + " [kg] ("
-            + str(round(cables / propulsion * 100, 1))
-            + "%)"
+        "Cables"
+        + "<br>"
+        + str("{0:.2f}".format(cables))
+        + " [kg] ("
+        + str(round(cables / propulsion * 100, 1))
+        + "%)"
     )
     propulsion_str = (
-            "Propulsion"
-            + "<br>"
-            + str("{0:.2f}".format(propulsion))
-            + " [kg] ("
-            + str(round(propulsion / MTOW * 100, 1))
-            + "%)"
+        "Propulsion"
+        + "<br>"
+        + str("{0:.2f}".format(propulsion))
+        + " [kg] ("
+        + str(round(propulsion / MTOW * 100, 1))
+        + "%)"
     )
 
     arms_str = (
-            "Arms"
-            + "<br>"
-            + str("{0:.2f}".format(arms))
-            + " [kg] ("
-            + str(round(arms / structure * 100, 1))
-            + "%)"
+        "Arms"
+        + "<br>"
+        + str("{0:.2f}".format(arms))
+        + " [kg] ("
+        + str(round(arms / structure * 100, 1))
+        + "%)"
     )
     body_str = (
-            "Body"
-            + "<br>"
-            + str("{0:.2f}".format(body))
-            + " [kg] ("
-            + str(round(body / structure * 100, 1))
-            + "%)"
+        "Body"
+        + "<br>"
+        + str("{0:.2f}".format(body))
+        + " [kg] ("
+        + str(round(body / structure * 100, 1))
+        + "%)"
     )
     structure_str = (
-            "Structure"
-            + "<br>"
-            + str("{0:.2f}".format(structure))
-            + " [kg] ("
-            + str(round(structure / MTOW * 100, 1))
-            + "%)"
+        "Structure"
+        + "<br>"
+        + str("{0:.2f}".format(structure))
+        + " [kg] ("
+        + str(round(structure / MTOW * 100, 1))
+        + "%)"
     )
 
     payload_str = (
-            "Payload"
-            + "<br>"
-            + str("{0:.2f}".format(payload))
-            + " [kg] ("
-            + str(round(payload / MTOW * 100, 1))
-            + "%)"
+        "Payload"
+        + "<br>"
+        + str("{0:.2f}".format(payload))
+        + " [kg] ("
+        + str(round(payload / MTOW * 100, 1))
+        + "%)"
     )
 
     fuel_mission_str = (
-            "Fuel mission"
-            + "<br>"
-            + str("{0:.2f}".format(fuel_mission))
-            + " [kg] ("
-            + str(round(fuel_mission / MTOW * 100, 1))
-            + "%)"
+        "Fuel mission"
+        + "<br>"
+        + str("{0:.2f}".format(fuel_mission))
+        + " [kg] ("
+        + str(round(fuel_mission / MTOW * 100, 1))
+        + "%)"
     )
 
-    MTOW_str = (
-            "MTOW" + "<br>" + str("{0:.2f}".format(MTOW)) + " [kg]"
-    )
+    MTOW_str = "MTOW" + "<br>" + str("{0:.2f}".format(MTOW)) + " [kg]"
 
     # CREATE SUNBURST FIGURE
     fig = go.Figure(
@@ -222,13 +232,15 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         ),
     )
 
-    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
+    fig.update_layout(
+        margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5
+    )
 
     return fig
 
 
 def mass_breakdown_bar_plot_drone(
-        drone_file_path: str, name=None, fig=None, file_formatter=None
+    drone_file_path: str, name=None, fig=None, file_formatter=None
 ) -> go.FigureWidget:
     """
     Returns a figure plot of the drone mass breakdown using bar plots.
@@ -245,13 +257,25 @@ def mass_breakdown_bar_plot_drone(
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     # PROPULSION
-    propellers = variables["data:propeller:mass"].value[0] * variables["data:propeller:number"].value[0]
-    motors = variables["data:motor:mass"].value[0] * variables["data:propeller:number"].value[0]
+    propellers = (
+        variables["data:propeller:mass"].value[0]
+        * variables["data:propeller:number"].value[0]
+    )
+    motors = (
+        variables["data:motor:mass"].value[0]
+        * variables["data:propeller:number"].value[0]
+    )
     if "data:gearbox:mass" in variables.names():
-        gearboxes = variables["data:gearbox:mass"].value[0] * variables["data:propeller:number"].value[0]
+        gearboxes = (
+            variables["data:gearbox:mass"].value[0]
+            * variables["data:propeller:number"].value[0]
+        )
     else:
         gearboxes = 0
-    ESC = variables["data:ESC:mass"].value[0] * variables["data:propeller:number"].value[0]
+    ESC = (
+        variables["data:ESC:mass"].value[0]
+        * variables["data:propeller:number"].value[0]
+    )
     battery = variables["data:battery:mass"].value[0]
     cables = variables["data:cables:mass"].value[0]
     propulsion = propellers + motors + gearboxes + ESC + battery + cables
@@ -275,11 +299,49 @@ def mass_breakdown_bar_plot_drone(
 
     # DISPLAYED NAMES AND VALUES
     if gearboxes == 0:
-        weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Propellers", "Cables", "Structure"]
-        weight_values = [MTOW, payload, battery, ESC, motors, propellers, cables, structure]
+        weight_labels = [
+            "MTOW",
+            "Payload",
+            "Battery",
+            "ESC",
+            "Motors",
+            "Propellers",
+            "Cables",
+            "Structure",
+        ]
+        weight_values = [
+            MTOW,
+            payload,
+            battery,
+            ESC,
+            motors,
+            propellers,
+            cables,
+            structure,
+        ]
     else:
-        weight_labels = ["MTOW", "Payload", "Battery", "ESC", "Motors", "Gearboxes", "Propellers", "Cables", "Structure"]
-        weight_values = [MTOW, payload, battery, ESC, motors, gearboxes, propellers, cables, structure]
+        weight_labels = [
+            "MTOW",
+            "Payload",
+            "Battery",
+            "ESC",
+            "Motors",
+            "Gearboxes",
+            "Propellers",
+            "Cables",
+            "Structure",
+        ]
+        weight_values = [
+            MTOW,
+            payload,
+            battery,
+            ESC,
+            motors,
+            gearboxes,
+            propellers,
+            cables,
+            structure,
+        ]
 
     if fig is None:
         fig = go.Figure()
@@ -290,14 +352,16 @@ def mass_breakdown_bar_plot_drone(
         go.Bar(name=name, x=weight_labels, y=weight_values, marker_color=COLS[i]),
     )
 
-    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
+    fig.update_layout(
+        margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5
+    )
     fig.update_layout(yaxis_title="Mass [kg]")
 
     return fig
 
 
 def drone_geometry_plot(
-        drone_file_path: str, name=None, fig=None, file_formatter=None
+    drone_file_path: str, name=None, fig=None, file_formatter=None
 ) -> go.FigureWidget:
     """
     Returns a figure plot of the top view of the drone.
@@ -324,40 +388,53 @@ def drone_geometry_plot(
     N_pro_arm = variables["data:structure:arms:prop_per_arm"].value[0]  # [-]
     D_pro = variables["data:propeller:geometry:diameter"].value[0]  # [m]
     Vol_bat = variables["data:battery:volume"].value[0] * 0.000001  # [m**3]
-    Lmot = variables["data:motor:length:estimated"].value[0]  # [m] TODO: get length from catalogues too
+    Lmot = variables["data:motor:length:estimated"].value[
+        0
+    ]  # [m] TODO: get length from catalogues too
 
     # BATTERY
     Lbat = 3 * (Vol_bat / 6) ** (1 / 3)  # [m]
     Wbat = (Vol_bat / 6) ** (1 / 3)  # [m]
     # Hbat = 2 * (Vol_bat / 6) ** (1 / 3)  # [m]
     fig.add_shape(
-        dict(type="rect", line=dict(color=COLS[k], width=3), fillcolor=COLS[k],
-             x0=- Lbat / 2,
-             y0=- Wbat / 2,
-             x1=Lbat / 2,
-             y1=Wbat / 2,
-             )
+        dict(
+            type="rect",
+            line=dict(color=COLS[k], width=3),
+            fillcolor=COLS[k],
+            x0=-Lbat / 2,
+            y0=-Wbat / 2,
+            x1=Lbat / 2,
+            y1=Wbat / 2,
+        )
     )
 
     # BODY - ARMS - PROPELLERS - MOTORS
-    R_offset = (A_body / (N_arms * np.cos(np.pi / N_arms) * np.sin(np.pi / N_arms))) ** (1/2)  # body radius offset
+    R_offset = (
+        A_body / (N_arms * np.cos(np.pi / N_arms) * np.sin(np.pi / N_arms))
+    ) ** (
+        1 / 2
+    )  # body radius offset
     x_arms = []
     y_arms = []
     for i in range(int(N_arms)):
-        sep_angle = - i * 2 * np.pi / N_arms
+        sep_angle = -i * 2 * np.pi / N_arms
 
         # Arms
         y_arm = np.array(
-            [- arm_diameter / 2 * np.sin(sep_angle) + R_offset * np.cos(sep_angle),
-             - arm_diameter / 2 * np.sin(sep_angle) + arm_length * np.cos(sep_angle),
-             arm_length * np.cos(sep_angle) + arm_diameter / 2 * np.sin(sep_angle),
-             arm_diameter / 2 * np.sin(sep_angle) + R_offset * np.cos(sep_angle)]
+            [
+                -arm_diameter / 2 * np.sin(sep_angle) + R_offset * np.cos(sep_angle),
+                -arm_diameter / 2 * np.sin(sep_angle) + arm_length * np.cos(sep_angle),
+                arm_length * np.cos(sep_angle) + arm_diameter / 2 * np.sin(sep_angle),
+                arm_diameter / 2 * np.sin(sep_angle) + R_offset * np.cos(sep_angle),
+            ]
         )
         x_arm = np.array(
-            [arm_diameter / 2 * np.cos(sep_angle) + R_offset * np.sin(sep_angle),
-             arm_diameter / 2 * np.cos(sep_angle) + arm_length * np.sin(sep_angle),
-             arm_length * np.sin(sep_angle) - arm_diameter / 2 * np.cos(sep_angle),
-             - arm_diameter / 2 * np.cos(sep_angle) + R_offset * np.sin(sep_angle)]
+            [
+                arm_diameter / 2 * np.cos(sep_angle) + R_offset * np.sin(sep_angle),
+                arm_diameter / 2 * np.cos(sep_angle) + arm_length * np.sin(sep_angle),
+                arm_length * np.sin(sep_angle) - arm_diameter / 2 * np.cos(sep_angle),
+                -arm_diameter / 2 * np.cos(sep_angle) + R_offset * np.sin(sep_angle),
+            ]
         )
         x_arms = np.concatenate((x_arms, x_arm))
         y_arms = np.concatenate((y_arms, y_arm))
@@ -367,70 +444,86 @@ def drone_geometry_plot(
         # Dhd = 0.25 * 2.54  # [m] this shaft diameter is commonly used along the series of APC MR propellers
         Dmot = 0.7 * Lmot  # [m] geometric ratio used for AXI 2208, 2212, 2217
         fig.add_shape(
-            dict(type="circle", line=dict(color=COLS[k], width=3), fillcolor=COLS[k],
-                 x0=arm_length * np.cos(sep_angle) - Dmot / 2,
-                 y0=arm_length * np.sin(sep_angle) - Dmot / 2,
-                 x1=arm_length * np.cos(sep_angle) + Dmot / 2,
-                 y1=arm_length * np.sin(sep_angle) + Dmot / 2,
-                 )
+            dict(
+                type="circle",
+                line=dict(color=COLS[k], width=3),
+                fillcolor=COLS[k],
+                x0=arm_length * np.cos(sep_angle) - Dmot / 2,
+                y0=arm_length * np.sin(sep_angle) - Dmot / 2,
+                x1=arm_length * np.cos(sep_angle) + Dmot / 2,
+                y1=arm_length * np.sin(sep_angle) + Dmot / 2,
+            )
         )
 
         # Propellers
         for j in range(int(N_pro_arm)):
-            prop_offset = j * D_pro / 15  # slightly shift the second propeller to make it visible
+            prop_offset = (
+                j * D_pro / 15
+            )  # slightly shift the second propeller to make it visible
             fig.add_shape(
-                dict(type="circle", line=dict(color=COLS[k], width=0), fillcolor=COLS[k], opacity=0.25,
-                     x0=arm_length * np.cos(sep_angle) - D_pro / 2 + prop_offset,
-                     y0=arm_length * np.sin(sep_angle) - D_pro / 2 + prop_offset,
-                     x1=arm_length * np.cos(sep_angle) + D_pro / 2 + prop_offset,
-                     y1=arm_length * np.sin(sep_angle) + D_pro / 2 + prop_offset,
-                     )
+                dict(
+                    type="circle",
+                    line=dict(color=COLS[k], width=0),
+                    fillcolor=COLS[k],
+                    opacity=0.25,
+                    x0=arm_length * np.cos(sep_angle) - D_pro / 2 + prop_offset,
+                    y0=arm_length * np.sin(sep_angle) - D_pro / 2 + prop_offset,
+                    x1=arm_length * np.cos(sep_angle) + D_pro / 2 + prop_offset,
+                    y1=arm_length * np.sin(sep_angle) + D_pro / 2 + prop_offset,
+                )
             )
     # Arms
     x_arms = np.concatenate((x_arms, [x_arms[0]]))  # to close the trace
     y_arms = np.concatenate((y_arms, [y_arms[0]]))  # to close the trace
-    scatter = go.Scatter(x=y_arms, y=x_arms, mode="lines", line_color=COLS[k], name=name)
+    scatter = go.Scatter(
+        x=y_arms, y=x_arms, mode="lines", line_color=COLS[k], name=name
+    )
     fig.add_trace(scatter)
 
     # Push-pull configuration annotation
     if N_pro_arm == 2:
-        config_text = 'Coaxial propellers (push-pull)'
+        config_text = "Coaxial propellers (push-pull)"
     else:
-        config_text = 'Single propellers'
+        config_text = "Single propellers"
 
     fig.add_annotation(
-        xanchor='right',
-        yanchor='top',
+        xanchor="right",
+        yanchor="top",
         x=1,
         y=1,
         xref="paper",
         yref="paper",
         text=config_text,
         showarrow=False,
-        font=dict(
-            color=COLS[k]
-        ),
+        font=dict(color=COLS[k]),
         align="center",
         xshift=0,
-        yshift=-k*35,
+        yshift=-k * 35,
         bordercolor=COLS[k],
         borderwidth=2,
         borderpad=4,
-        bgcolor='white'
+        bgcolor="white",
     )
 
     fig = go.FigureWidget(fig)
     fig.update_shapes(xref="x", yref="y")
     fig.update_layout(
-        title_text="Drone Geometry", title_x=0.5, xaxis_title="y", yaxis_title="x",
+        title_text="Drone Geometry",
+        title_x=0.5,
+        xaxis_title="y",
+        yaxis_title="x",
     )
     fig.update_layout(yaxis=dict(scaleanchor="x", scaleratio=1))
 
     return fig
 
 
-def energy_breakdown_sun_plot_drone(drone_file_path: str, mission_name: str = 'sizing_mission', file_formatter=None,
-                                    fig=None):
+def energy_breakdown_sun_plot_drone(
+    drone_file_path: str,
+    mission_name: str = "sizing_mission",
+    file_formatter=None,
+    fig=None,
+):
     """
     Returns a figure sunburst plot of the drone energy consumption breakdown.
 
@@ -444,16 +537,18 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, mission_name: str = 's
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     var_names_and_new_units = {
-        'mission:%s:energy' % mission_name: "W*h",
+        "mission:%s:energy" % mission_name: "W*h",
     }
 
     total_energy = _get_variable_values_with_new_units(
         variables, var_names_and_new_units
     )[0]
 
-    categories_values, categories_names, categories_labels = _data_mission_decomposition(
-        variables, mission_name=mission_name
-    )
+    (
+        categories_values,
+        categories_names,
+        categories_labels,
+    ) = _data_mission_decomposition(variables, mission_name=mission_name)
 
     sub_categories_values = []
     sub_categories_labels = []
@@ -466,9 +561,13 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, mission_name: str = 's
                 variable_name = name_split[3]
                 # variable_name = "_".join(name_split[3:-1])
                 sub_categories_values.append(
-                    convert_units(variables[variable].value[0], variables[variable].units, "W*h")
+                    convert_units(
+                        variables[variable].value[0], variables[variable].units, "W*h"
+                    )
                 )
-                sub_categories_parent.append(categories_labels[categories_names.index(parent_name)])
+                sub_categories_parent.append(
+                    categories_labels[categories_names.index(parent_name)]
+                )
                 # sub_categories_labels.append(variable_name)
 
                 sub_categories_labels.append(
@@ -500,7 +599,7 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, mission_name: str = 's
             parents=figure_parents,
             values=figure_values,
             branchvalues="total",
-            domain=dict(column=len(fig.data))
+            domain=dict(column=len(fig.data)),
         )
     )
 
@@ -508,12 +607,15 @@ def energy_breakdown_sun_plot_drone(drone_file_path: str, mission_name: str = 's
         grid=dict(columns=len(fig.data), rows=1),
         margin=dict(t=80, l=0, r=0, b=0),
         title_text="Mission Energy Breakdown",
-        title_x=0.5)
+        title_x=0.5,
+    )
 
     return fig
 
 
-def _data_mission_decomposition(variables: VariableList, mission_name: str = 'sizing_mission'):
+def _data_mission_decomposition(
+    variables: VariableList, mission_name: str = "sizing_mission"
+):
     """
     Returns the routes decomposition of mission.
 
@@ -521,7 +623,7 @@ def _data_mission_decomposition(variables: VariableList, mission_name: str = 'si
     :return: route names
     """
     var_names_and_new_units = {
-        'mission:%s:energy' % mission_name: "W*h",
+        "mission:%s:energy" % mission_name: "W*h",
     }
     total_energy = _get_variable_values_with_new_units(
         variables, var_names_and_new_units
@@ -533,10 +635,16 @@ def _data_mission_decomposition(variables: VariableList, mission_name: str = 'si
     for variable in variables.names():
         name_split = variable.split(":")
         if isinstance(name_split, list) and len(name_split) == 4:
-            if name_split[0] == "mission" and name_split[1] == mission_name and name_split[-1] == "energy" \
-                    and "constraints" not in name_split[2]:
+            if (
+                name_split[0] == "mission"
+                and name_split[1] == mission_name
+                and name_split[-1] == "energy"
+                and "constraints" not in name_split[2]
+            ):
                 category_values.append(
-                    convert_units(variables[variable].value[0], variables[variable].units, "W*h")
+                    convert_units(
+                        variables[variable].value[0], variables[variable].units, "W*h"
+                    )
                 )
                 category_names.append(name_split[2])
                 categories_labels.append(
@@ -566,7 +674,9 @@ def _get_variable_values_with_new_units(
     new_values = []
     for variable_name, unit in var_names_and_new_units.items():
         new_values.append(
-            convert_units(variables[variable_name].value[0], variables[variable_name].units, unit)
+            convert_units(
+                variables[variable_name].value[0], variables[variable_name].units, unit
+            )
         )
 
     return new_values

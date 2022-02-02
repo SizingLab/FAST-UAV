@@ -5,7 +5,7 @@ Adapted from SALib plotting module
 import pandas as pd
 
 # magic string indicating DF columns holding conf bound values
-CONF_COLUMN = '_conf'
+CONF_COLUMN = "_conf"
 
 
 def sobol_plot(Si, ax=None):
@@ -28,11 +28,11 @@ def sobol_plot(Si, ax=None):
     conf_cols = Si_df.columns.str.contains(CONF_COLUMN)
 
     confs = Si_df.loc[:, conf_cols]
-    confs.columns = [c.replace(CONF_COLUMN, '') for c in confs.columns]
+    confs.columns = [c.replace(CONF_COLUMN, "") for c in confs.columns]
     confs = confs.rename(columns={"S1": "first-order", "ST": "total-order"})
 
     Sis = Si_df.loc[:, ~conf_cols]
     Sis = Sis.rename(columns={"S1": "first-order", "ST": "total-order"})
 
-    ax = Sis.plot(kind='bar', yerr=confs, ax=ax, ylabel="Sobol' Index")
+    ax = Sis.plot(kind="bar", yerr=confs, ax=ax, ylabel="Sobol' Index")
     return ax
