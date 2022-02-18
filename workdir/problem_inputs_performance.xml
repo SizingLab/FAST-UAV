@@ -1,0 +1,127 @@
+<FASTOAD_model>
+  <specifications>
+    <climb_height units="m" is_input="True">0.0<!--Top-level requirement: climb height--></climb_height>
+    <climb_speed units="m/s" is_input="True">5.0<!--Top-level requirement: climb speed--></climb_speed>
+    <hover_duration units="min" is_input="True">18.0<!--Top-level requirement: hover phase duration--></hover_duration>
+    <range units="m" is_input="True">0.0<!--Top-level requirement: range--></range>
+    <payload>
+      <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
+      <mass>
+        <max units="kg" is_input="True">6.35<!--Payload mass--></max>
+      </mass>
+    </payload>
+  </specifications>
+  <data>
+    <ESC>
+      <efficiency is_input="True">0.95<!--ESC efficiency--></efficiency>
+    </ESC>
+    <aerodynamics>
+      <Cd is_input="True">0.5<!--Fuselage Drag coefficient--></Cd>
+      <Cl0 is_input="True">0.0<!--Max. fuselage lift coefficient--></Cl0>
+    </aerodynamics>
+    <avionics>
+      <power units="W" is_input="True">0.0<!--Avionics power consumption--></power>
+    </avionics>
+    <battery>
+      <energy units="kJ" is_input="True">2611.187440108554<!--Battery energy--></energy>
+      <DoD>
+        <max is_input="True">0.8</max>
+      </DoD>
+    </battery>
+    <gearbox>
+      <N_red is_input="True">1.0</N_red>
+    </gearbox>
+    <motor>
+      <resistance units="V/A" is_input="True">0.18426092688145526<!--Motor resistance--></resistance>
+      <power>
+        <climb units="W" is_input="True">426.1104637027645<!--Motor power (climb)--></climb>
+        <forward units="W" is_input="True">337.9468700649726<!--Motor power (forward flight)--></forward>
+        <hover units="W" is_input="True">306.2503787897911<!--Motor power (hover)--></hover>
+      </power>
+      <torque>
+        <coefficient units="N*m/A" is_input="True">0.04121192170935815<!--Motor torque coefficient--></coefficient>
+        <friction units="N*m" is_input="True">0.014778011165877503<!--Motor friction torque--></friction>
+      </torque>
+    </motor>
+    <propeller>
+      <number is_input="True">6.0<!--Number of propellers--></number>
+      <advance_ratio>
+        <forward is_input="True">0.6178077290719869<!--Advance ratio J (forward flight)--></forward>
+      </advance_ratio>
+      <geometry>
+        <beta is_input="True">0.3<!--Angle pitch/diameter--></beta>
+        <diameter units="m" is_input="True">0.4872255421826556<!--Propeller diameter--></diameter>
+      </geometry>
+      <aerodynamics>
+        <CP>
+          <axial is_input="True">0.02644288945469999<!--Propeller power coefficient in axial flow conditions--></axial>
+          <static is_input="True">0.02768<!--Propeller power coefficient in static conditions--></static>
+        </CP>
+        <CT>
+          <axial is_input="True">0.06791551053793528<!--Propeller thrust coefficient in axial flow conditions--></axial>
+          <static is_input="True">0.0859<!--Propeller thrust coefficient in static conditions--></static>
+        </CT>
+      </aerodynamics>
+    </propeller>
+    <system>
+      <MTOW units="kg" is_input="True">15.328299458777947<!--Maximum Take Off Weight--></MTOW>
+    </system>
+    <structure>
+      <body>
+        <surface>
+          <front units="m**2" is_input="True">0.09861446496000378<!--Front surface of the body--></front>
+          <top units="m**2" is_input="True">0.2218825461600085<!--Top surface of the body--></top>
+        </surface>
+      </body>
+    </structure>
+  </data>
+  <mission>
+    <design_mission>
+      <air_density units="kg/m**3" is_input="True">1.2249908312368587<!--Air density--></air_density>
+      <forward>
+        <speed units="m/s" is_input="True">20.0<!--Forward flight velocity--></speed>
+      </forward>
+    </design_mission>
+    <concordia_study>
+      <route_1>
+        <climb>
+          <height units="m" is_input="True">100.0</height>
+        </climb>
+        <forward>
+          <range units="m" is_input="True">5000.0</range>
+        </forward>
+        <hover>
+          <duration units="min" is_input="True">0.5</duration>
+        </hover>
+        <payload>
+          <mass units="kg" is_input="True">5.0</mass>
+        </payload>
+      </route_1>
+      <route_2>
+        <climb>
+          <height units="m" is_input="True">200.0</height>
+        </climb>
+        <forward>
+          <range units="m" is_input="True">1000.0</range>
+        </forward>
+        <hover>
+          <duration units="min" is_input="True">5.0</duration>
+        </hover>
+        <payload>
+          <mass units="kg" is_input="True">3.0</mass>
+        </payload>
+      </route_2>
+      <route_diversion>
+        <forward>
+          <range units="m" is_input="True">0.0</range>
+        </forward>
+        <hover>
+          <duration units="min" is_input="True">0.0</duration>
+        </hover>
+        <payload>
+          <mass units="kg" is_input="True">0.0</mass>
+        </payload>
+      </route_diversion>
+    </concordia_study>
+  </mission>
+</FASTOAD_model>
