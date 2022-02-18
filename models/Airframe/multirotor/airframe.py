@@ -14,5 +14,4 @@ class Airframe(om.Group):
 
     def setup(self):
         self.add_subsystem("geometry", Geometry(), promotes=["*"])
-        self.add_subsystem("weight_arms", WeightArms(), promotes=["*"])
-        self.add_subsystem("weight_body", WeightBody(), promotes=["*"])
+        self.add_subsystem("weights", Weights(), promotes=["*"])

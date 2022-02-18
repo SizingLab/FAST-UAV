@@ -5,6 +5,17 @@ import openmdao.api as om
 import numpy as np
 
 
+
+class Weights(om.Group):
+    """
+    Group containing the airframe weights calculation
+    """
+
+    def setup(self):
+        self.add_subsystem("weight_arms", WeightArms(), promotes=["*"])
+        self.add_subsystem("weight_body", WeightBody(), promotes=["*"])
+
+
 class WeightArms(om.ExplicitComponent):
     """
     Computes arms weight
