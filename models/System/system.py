@@ -31,8 +31,8 @@ class MTOW(om.ExplicitComponent):
         self.add_input("data:motor:mass", val=0.0, units="kg")
         self.add_input("data:battery:mass", val=0.0, units="kg")
         self.add_input("data:propeller:mass", val=0.0, units="kg")
-        self.add_input("data:structure:body:mass", val=0.0, units="kg")
-        self.add_input("data:structure:arms:mass", val=0.0, units="kg")
+        self.add_input("data:airframe:body:mass", val=0.0, units="kg")
+        self.add_input("data:airframe:arms:mass", val=0.0, units="kg")
         self.add_input("specifications:payload:mass:max", val=np.nan, units="kg")
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_output("data:system:MTOW", units="kg")
@@ -50,8 +50,8 @@ class MTOW(om.ExplicitComponent):
         Mpro = inputs["data:propeller:mass"]
         Npro = inputs["data:propeller:number"]
         M_load = inputs["specifications:payload:mass:max"]
-        Mfra = inputs["data:structure:body:mass"]
-        Marm = inputs["data:structure:arms:mass"]
+        Mfra = inputs["data:airframe:body:mass"]
+        Marm = inputs["data:airframe:arms:mass"]
 
         Mtotal = (
             (Mesc + Mpro + Mmot + Mgear) * Npro + M_load + Mbat + Mfra + Marm + Mcables

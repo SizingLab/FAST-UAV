@@ -120,7 +120,7 @@ class ClimbSegment(om.ExplicitComponent):
             "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
         )
         self.add_input("data:aerodynamics:Cd", val=np.nan, units=None)
-        self.add_input("data:structure:body:surface:top", val=np.nan, units="m**2")
+        self.add_input("data:airframe:body:surface:top", val=np.nan, units="m**2")
         # Propeller parameters
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
@@ -173,7 +173,7 @@ class ClimbSegment(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         Mtotal = inputs["mission:concordia_study:route%s:tow" % self.options["route"]]
         rho_air = inputs["mission:design_mission:air_density"]
-        S_top = inputs["data:structure:body:surface:top"]
+        S_top = inputs["data:airframe:body:surface:top"]
         C_D = inputs["data:aerodynamics:Cd"]
 
         Npro = inputs["data:propeller:number"]
@@ -391,8 +391,8 @@ class ForwardSegment(om.ExplicitComponent):
         )
         self.add_input("data:aerodynamics:Cd", val=np.nan, units=None)
         self.add_input("data:aerodynamics:Cl0", val=np.nan, units=None)
-        self.add_input("data:structure:body:surface:top", val=np.nan, units="m**2")
-        self.add_input("data:structure:body:surface:front", val=np.nan, units="m**2")
+        self.add_input("data:airframe:body:surface:top", val=np.nan, units="m**2")
+        self.add_input("data:airframe:body:surface:front", val=np.nan, units="m**2")
         # Propeller parameters
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
@@ -449,8 +449,8 @@ class ForwardSegment(om.ExplicitComponent):
         rho_air = inputs["mission:design_mission:air_density"]
         C_D = inputs["data:aerodynamics:Cd"]
         C_L0 = inputs["data:aerodynamics:Cl0"]
-        S_top = inputs["data:structure:body:surface:top"]
-        S_front = inputs["data:structure:body:surface:front"]
+        S_top = inputs["data:airframe:body:surface:top"]
+        S_front = inputs["data:airframe:body:surface:front"]
 
         Npro = inputs["data:propeller:number"]
         D_pro = inputs["data:propeller:geometry:diameter"]

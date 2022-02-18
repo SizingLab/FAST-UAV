@@ -61,8 +61,8 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     propulsion = propellers + motors + gearboxes + ESC + battery + cables
 
     # STRUCTURE
-    body = variables["data:structure:body:mass"].value[0]
-    arms = variables["data:structure:arms:mass"].value[0]
+    body = variables["data:airframe:body:mass"].value[0]
+    arms = variables["data:airframe:arms:mass"].value[0]
     structure = body + arms
 
     # PAYLOAD
@@ -281,8 +281,8 @@ def mass_breakdown_bar_plot_drone(
     propulsion = propellers + motors + gearboxes + ESC + battery + cables
 
     # STRUCTURE
-    body = variables["data:structure:body:mass"].value[0]
-    arms = variables["data:structure:arms:mass"].value[0]
+    body = variables["data:airframe:body:mass"].value[0]
+    arms = variables["data:airframe:arms:mass"].value[0]
     structure = body + arms
 
     # PAYLOAD
@@ -381,11 +381,11 @@ def drone_geometry_plot(
         fig = go.Figure()
     k = len(fig.data)
 
-    A_body = variables["data:structure:body:surface:top"].value[0]  # [m**2]
-    N_arms = variables["data:structure:arms:number"].value[0]  # [-]
-    arm_length = variables["data:structure:arms:length"].value[0]  # [m]
-    arm_diameter = variables["data:structure:arms:diameter:outer"].value[0]  # [m]
-    N_pro_arm = variables["data:structure:arms:prop_per_arm"].value[0]  # [-]
+    A_body = variables["data:airframe:body:surface:top"].value[0]  # [m**2]
+    N_arms = variables["data:airframe:arms:number"].value[0]  # [-]
+    arm_length = variables["data:airframe:arms:length"].value[0]  # [m]
+    arm_diameter = variables["data:airframe:arms:diameter:outer"].value[0]  # [m]
+    N_pro_arm = variables["data:airframe:arms:prop_per_arm"].value[0]  # [-]
     D_pro = variables["data:propeller:geometry:diameter"].value[0]  # [m]
     Vol_bat = variables["data:battery:volume"].value[0] * 0.000001  # [m**3]
     Lmot = variables["data:motor:length:estimated"].value[

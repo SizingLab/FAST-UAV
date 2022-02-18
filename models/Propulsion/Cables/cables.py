@@ -53,8 +53,8 @@ class Weight(om.ExplicitComponent):
         self.add_input("data:cables:reference:density", val=np.nan, units="kg/m")
         self.add_input("data:cables:reference:current", val=np.nan, units="A")
         self.add_input("data:motor:current:hover", val=np.nan, units="A")
-        self.add_input("data:structure:arms:length", val=np.nan, units="m")
-        self.add_input("data:structure:arms:number", val=np.nan, units=None)
+        self.add_input("data:airframe:arms:length", val=np.nan, units="m")
+        self.add_input("data:airframe:arms:number", val=np.nan, units=None)
         self.add_output("data:cables:density", units="kg/m")
         self.add_output("data:cables:mass", units="kg")
 
@@ -69,9 +69,9 @@ class Weight(om.ExplicitComponent):
             "data:cables:reference:current"
         ]  # [A] max allowable current (continuous) of reference cable
         I = inputs["data:motor:current:hover"]  # [A] max current (continuous)
-        Larm = inputs["data:structure:arms:length"]  # [m] arms length
+        Larm = inputs["data:airframe:arms:length"]  # [m] arms length
         Narm = inputs[
-            "data:structure:arms:number"
+            "data:airframe:arms:number"
         ]  # [-] number of arms (i.e. number of cables)
 
         mu = mu_ref * (I / I_ref) ** (2 / 1.5)  # [kg/m] linear mass of cable
@@ -88,9 +88,9 @@ class Weight(om.ExplicitComponent):
             "data:cables:reference:current"
         ]  # [A] max allowable current (continuous) of reference cable
         I = inputs["data:motor:current:hover"]  # [A] max current (continuous)
-        Larm = inputs["data:structure:arms:length"]  # [m] arms length
+        Larm = inputs["data:airframe:arms:length"]  # [m] arms length
         Narm = inputs[
-            "data:structure:arms:number"
+            "data:airframe:arms:number"
         ]  # [-] number of arms (i.e. number of cables)
 
         mu = mu_ref * (I / I_ref) ** (2 / 1.5)
@@ -101,4 +101,4 @@ class Weight(om.ExplicitComponent):
         partials["data:cables:mass", "data:motor:current:hover"] = (
             mu_ref / I_ref ** (2 / 1.5) * (2 / 1.5) * I ** (1 / 3) * Larm * Narm * 2
         )
-        partials["data:cables:mass", "data:structure:arms:length"] = mu * Narm * 2
+        partials["data:cables:mass", "data:airframe:arms:length"] = mu * Narm * 2

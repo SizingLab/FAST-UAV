@@ -66,14 +66,14 @@
     <system>
       <MTOW units="kg" is_input="True">15.328299458777947<!--Maximum Take Off Weight--></MTOW>
     </system>
-    <structure>
+    <airframe>
       <body>
         <surface>
           <front units="m**2" is_input="True">0.09861446496000378<!--Front surface of the body--></front>
           <top units="m**2" is_input="True">0.2218825461600085<!--Top surface of the body--></top>
         </surface>
       </body>
-    </structure>
+    </airframe>
   </data>
   <mission>
     <design_mission>

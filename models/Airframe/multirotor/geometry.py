@@ -12,18 +12,18 @@ class Geometry(om.ExplicitComponent):
 
     def setup(self):
         self.add_input(
-            "data:structure:arms:material:stress:max", val=np.nan, units="N/m**2"
+            "data:airframe:arms:material:stress:max", val=np.nan, units="N/m**2"
         )
         self.add_input(
-            "data:structure:arms:settings:diameter:k", val=np.nan, units=None
+            "data:airframe:arms:settings:diameter:k", val=np.nan, units=None
         )
         self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
-        self.add_input("data:structure:arms:number", val=np.nan, units=None)
-        self.add_input("data:structure:arms:prop_per_arm", val=np.nan, units=None)
+        self.add_input("data:airframe:arms:number", val=np.nan, units=None)
+        self.add_input("data:airframe:arms:prop_per_arm", val=np.nan, units=None)
         self.add_input("data:propeller:thrust:max", val=np.nan, units="N")
-        self.add_output("data:structure:arms:length", units="m", lower=0.0)
-        self.add_output("data:structure:arms:diameter:outer", units="m", lower=0.0)
-        self.add_output("data:structure:arms:diameter:inner", units="m", lower=0.0)
+        self.add_output("data:airframe:arms:length", units="m", lower=0.0)
+        self.add_output("data:airframe:arms:diameter:outer", units="m", lower=0.0)
+        self.add_output("data:airframe:arms:diameter:inner", units="m", lower=0.0)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -31,12 +31,12 @@ class Geometry(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         # Frame sized from max thrust
-        Sigma_max = inputs["data:structure:arms:material:stress:max"]
-        D_ratio = inputs["data:structure:arms:settings:diameter:k"]
+        Sigma_max = inputs["data:airframe:arms:material:stress:max"]
+        D_ratio = inputs["data:airframe:arms:settings:diameter:k"]
         Dpro = inputs["data:propeller:geometry:diameter"]
-        Narm = inputs["data:structure:arms:number"]
+        Narm = inputs["data:airframe:arms:number"]
         F_pro_to = inputs["data:propeller:thrust:max"]
-        Npro_arm = inputs["data:structure:arms:prop_per_arm"]
+        Npro_arm = inputs["data:airframe:arms:prop_per_arm"]
 
         Larm = Dpro / 2 / (np.sin(np.pi / Narm))  # [m] length of the arm
         Dout = (
@@ -46,6 +46,6 @@ class Geometry(om.ExplicitComponent):
         )  # [m] outer diameter of the beam
         Din = D_ratio * Dout  # [m] inner diameter of the beam
 
-        outputs["data:structure:arms:length"] = Larm
-        outputs["data:structure:arms:diameter:outer"] = Dout
-        outputs["data:structure:arms:diameter:inner"] = Din
+        outputs["data:airframe:arms:length"] = Larm
+        outputs["data:airframe:arms:diameter:outer"] = Dout
+        outputs["data:airframe:arms:diameter:inner"] = Din

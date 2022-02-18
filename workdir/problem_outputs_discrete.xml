@@ -252,7 +252,7 @@
         </MTOW>
       </settings>
     </system>
-    <structure>
+    <airframe>
       <arms>
         <length units="m" is_input="False">0.45720000000000005<!--Arms length--></length>
         <mass units="kg" is_input="False">0.13562010776707673<!--Total arms mass--></mass>
@@ -268,6 +268,9 @@
             <max units="N/m**2" is_input="True">70000000.0<!--Arms material maximum allowable stress--></max>
           </stress>
         </material>
+        <reference>
+          <mass units="kg" is_input="True">1.338<!--Arms mass reference for scaling law--></mass>
+        </reference>
         <settings>
           <diameter>
             <k is_input="True">0.99<!--Inner to outer beam diameter ratio--></k>
@@ -276,24 +279,19 @@
       </arms>
       <body>
         <mass units="kg" is_input="False">2.2654031454365957<!--Body mass--></mass>
-        <surface>
-          <front units="m**2" is_input="False">0.09617972849087707<!--Front surface of the body--></front>
-          <top units="m**2" is_input="False">0.2164043891044734<!--Top surface of the body--></top>
-        </surface>
-      </body>
-      <reference>
-        <arms>
-          <mass units="kg" is_input="True">1.338<!--Arms mass reference for scaling law--></mass>
-        </arms>
-        <body>
+        <reference>
           <mass units="kg" is_input="True">22.35<!--Body mass reference for scaling law--></mass>
           <surface>
             <front units="m**2" is_input="True">0.02<!--Front surface reference for scaling law--></front>
             <top units="m**2" is_input="True">0.045<!--Top surface reference for scaling law--></top>
           </surface>
-        </body>
-      </reference>
-    </structure>
+        </reference>
+        <surface>
+          <front units="m**2" is_input="False">0.09617972849087707<!--Front surface of the body--></front>
+          <top units="m**2" is_input="False">0.2164043891044734<!--Top surface of the body--></top>
+        </surface>
+      </body>
+    </airframe>
   </data>
   <specifications>
     <MTOW units="kg" is_input="True">100.0<!--Top-level requirement: Maximum Take Off Weight--></MTOW>

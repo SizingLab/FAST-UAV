@@ -187,22 +187,22 @@ data:system:constraints:mass:convergence || Constraint on MTOW convergence
 data:system:settings:MTOW:k || Oversizing coefficient on load mass
 data:aerodynamics:Cd || Fuselage Drag coefficient
 data:aerodynamics:Cl0 || Max. fuselage lift coefficient
-data:structure:arms:length || Arms length
-data:structure:arms:mass || Total arms mass
-data:structure:arms:number || Number of arms
-data:structure:arms:prop_per_arm || Number of propellers per arm (single or coaxial configuration)
-data:structure:arms:diameter:inner || Inner diameter of the beam
-data:structure:arms:diameter:outer || Outer diameter of the beam
-data:structure:arms:material:density || Arms material density
-data:structure:arms:material:stress:max || Arms material maximum allowable stress
-data:structure:arms:settings:diameter:k || Inner to outer beam diameter ratio
-data:structure:body:mass || Body mass
-data:structure:body:surface:front || Front surface of the body
-data:structure:body:surface:top || Top surface of the body
-data:structure:reference:arms:mass || Arms mass reference for scaling law
-data:structure:reference:body:mass || Body mass reference for scaling law
-data:structure:reference:body:surface:front || Front surface reference for scaling law
-data:structure:reference:body:surface:top || Top surface reference for scaling law
+data:airframe:arms:length || Arms length
+data:airframe:arms:mass || Total arms mass
+data:airframe:arms:number || Number of arms
+data:airframe:arms:prop_per_arm || Number of propellers per arm (single or coaxial configuration)
+data:airframe:arms:diameter:inner || Inner diameter of the beam
+data:airframe:arms:diameter:outer || Outer diameter of the beam
+data:airframe:arms:material:density || Arms material density
+data:airframe:arms:material:stress:max || Arms material maximum allowable stress
+data:airframe:arms:settings:diameter:k || Inner to outer beam diameter ratio
+data:airframe:body:mass || Body mass
+data:airframe:body:surface:front || Front surface of the body
+data:airframe:body:surface:top || Top surface of the body
+data:airframe:arms:reference:mass || Arms mass reference for scaling law
+data:airframe:body:reference:mass || Body mass reference for scaling law
+data:airframe:body:reference:surface:front || Front surface reference for scaling law
+data:airframe:body:reference:surface:top || Top surface reference for scaling law
 specifications:MTOW || Top-level requirement: Maximum Take Off Weight
 specifications:dISA || Temperature variation w.r.t. ISA
 specifications:climb_height || Top-level requirement: climb height

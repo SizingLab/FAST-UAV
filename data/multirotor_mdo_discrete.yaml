@@ -65,7 +65,7 @@ optimization: # This section is needed only if optimization process is run
         lower: 1.0
         upper: 5.0
 
-      - name: data:structure:arms:settings:diameter:k # aspect ratio D_out/D_in for the beam of the frame
+      - name: data:airframe:arms:settings:diameter:k # aspect ratio D_out/D_in for the beam of the frame
         lower: 0.5
         upper: 0.99
 

@@ -36,6 +36,35 @@
         </power>
       </settings>
     </ESC>
+    <airframe>
+      <arms>
+        <number is_input="True">6.0<!--Number of arms--></number>
+        <prop_per_arm is_input="True">1.0<!--Number of propellers per arm (single or coaxial configuration)--></prop_per_arm>
+        <material>
+          <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
+          <stress>
+            <max units="N/m**2" is_input="True">70000000.0<!--Arms material maximum allowable stress--></max>
+          </stress>
+        </material>
+        <reference>
+          <mass units="kg" is_input="True">1.338<!--Arms mass reference for scaling law--></mass>
+        </reference>
+        <settings>
+          <diameter>
+            <k is_input="True">0.9899999999998789<!--Inner to outer beam diameter ratio--></k>
+          </diameter>
+        </settings>
+      </arms>
+      <body>
+        <reference>
+          <mass units="kg" is_input="True">22.35<!--Body mass reference for scaling law--></mass>
+          <surface>
+            <front units="m**2" is_input="True">0.02<!--Front surface reference for scaling law--></front>
+            <top units="m**2" is_input="True">0.045<!--Top surface reference for scaling law--></top>
+          </surface>
+        </reference>
+      </body>
+    </airframe>
     <battery>
       <reference>
         <capacity units="A*s" is_input="True">20520.0<!--Battery capacity reference for scaling law--></capacity>
@@ -115,35 +144,6 @@
         </ND>
       </settings>
     </propeller>
-    <structure>
-      <arms>
-        <number is_input="True">6.0<!--Number of arms--></number>
-        <prop_per_arm is_input="True">1.0<!--Number of propellers per arm (single or coaxial configuration)--></prop_per_arm>
-        <material>
-          <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
-          <stress>
-            <max units="N/m**2" is_input="True">70000000.0<!--Arms material maximum allowable stress--></max>
-          </stress>
-        </material>
-        <settings>
-          <diameter>
-            <k is_input="True">0.9899999999998789<!--Inner to outer beam diameter ratio--></k>
-          </diameter>
-        </settings>
-      </arms>
-      <reference>
-        <arms>
-          <mass units="kg" is_input="True">1.338<!--Arms mass reference for scaling law--></mass>
-        </arms>
-        <body>
-          <mass units="kg" is_input="True">22.35<!--Body mass reference for scaling law--></mass>
-          <surface>
-            <front units="m**2" is_input="True">0.02<!--Front surface reference for scaling law--></front>
-            <top units="m**2" is_input="True">0.045<!--Top surface reference for scaling law--></top>
-          </surface>
-        </body>
-      </reference>
-    </structure>
     <system>
       <reference>
         <MTOW units="kg" is_input="True">1.4<!--Maximum Take Off Weight reference for scaling law--></MTOW>
