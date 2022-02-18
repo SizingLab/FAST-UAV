@@ -520,7 +520,7 @@ def drone_geometry_plot(
 
 def energy_breakdown_sun_plot_drone(
     drone_file_path: str,
-    mission_name: str = "sizing_mission",
+    mission_name: str = "design_mission",
     file_formatter=None,
     fig=None,
 ):
@@ -614,7 +614,7 @@ def energy_breakdown_sun_plot_drone(
 
 
 def _data_mission_decomposition(
-    variables: VariableList, mission_name: str = "sizing_mission"
+    variables: VariableList, mission_name: str = "design_mission"
 ):
     """
     Returns the routes decomposition of mission.

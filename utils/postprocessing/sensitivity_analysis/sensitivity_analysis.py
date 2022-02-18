@@ -68,7 +68,7 @@ def doe_salib(
             conf = self.options["conf"]
             prob = conf.get_problem(read_inputs=True)
 
-            # COMMENT THESE LINES IF NOT USING CMA-ES Driver
+            # UNCOMMENT THESE LINES IF USING CMA-ES Driver
             # driver = prob.driver = CMAESDriver()
             # driver.CMAOptions['tolfunhist'] = 1e-4
             # driver.CMAOptions['popsize'] = 100

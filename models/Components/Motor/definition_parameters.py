@@ -132,7 +132,7 @@ class BatteryVoltageEstimation(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propeller:power:takeoff", val=np.nan, units="W")
-        self.add_input("data:battery:settings:voltage:k", val=np.nan, units=None)
+        # self.add_input("data:battery:settings:voltage:guess:k", val=np.nan, units=None)
         self.add_output("data:battery:voltage:guess", units="V")
 
     def setup_partials(self):
@@ -140,20 +140,20 @@ class BatteryVoltageEstimation(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Ppro_to = inputs["data:propeller:power:takeoff"]
-        k_vb = inputs["data:battery:settings:voltage:k"]
+        k_vb_guess = 1  # inputs["data:battery:settings:voltage:guess:k"]
 
-        V_bat_guess = k_vb * 1.84 * Ppro_to**0.36  # [V] battery voltage estimation
+        V_bat_guess = k_vb_guess * 1.84 * Ppro_to ** 0.36  # [V] battery voltage estimation
 
         outputs["data:battery:voltage:guess"] = V_bat_guess
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         Ppro_to = inputs["data:propeller:power:takeoff"]
-        k_vb = inputs["data:battery:settings:voltage:k"]
+        k_vb_guess = 1  # inputs["data:battery:settings:voltage:guess:k"]
 
         partials["data:battery:voltage:guess", "data:propeller:power:takeoff"] = (
-            k_vb * 0.6624 * Ppro_to ** (-0.64)
+            k_vb_guess * 0.6624 * Ppro_to ** (-0.64)
         )
 
-        partials["data:battery:voltage:guess", "data:battery:settings:voltage:k"] = (
-            1.84 * Ppro_to**0.36
-        )
+        # partials["data:battery:voltage:guess", "data:battery:settings:voltage:guess:k"] = (
+        #     1.84 * Ppro_to**0.36
+        # )

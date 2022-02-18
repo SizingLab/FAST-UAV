@@ -117,7 +117,7 @@ class ClimbSegment(om.ExplicitComponent):
             units="kg",
         )
         self.add_input(
-            "mission:sizing_mission:air_density", val=np.nan, units="kg/m**3"
+            "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
         )
         self.add_input("data:aerodynamics:Cd", val=np.nan, units=None)
         self.add_input("data:structure:body:surface:top", val=np.nan, units="m**2")
@@ -172,7 +172,7 @@ class ClimbSegment(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Mtotal = inputs["mission:concordia_study:route%s:tow" % self.options["route"]]
-        rho_air = inputs["mission:sizing_mission:air_density"]
+        rho_air = inputs["mission:design_mission:air_density"]
         S_top = inputs["data:structure:body:surface:top"]
         C_D = inputs["data:aerodynamics:Cd"]
 
@@ -259,7 +259,7 @@ class HoverSegment(om.ExplicitComponent):
             units="kg",
         )
         self.add_input(
-            "mission:sizing_mission:air_density", val=np.nan, units="kg/m**3"
+            "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
         )
         # Propeller parameters
         self.add_input("data:propeller:number", val=np.nan, units=None)
@@ -307,7 +307,7 @@ class HoverSegment(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Mtotal = inputs["mission:concordia_study:route%s:tow" % self.options["route"]]
-        rho_air = inputs["mission:sizing_mission:air_density"]
+        rho_air = inputs["mission:design_mission:air_density"]
 
         Npro = inputs["data:propeller:number"]
         D_pro = inputs["data:propeller:geometry:diameter"]
@@ -387,7 +387,7 @@ class ForwardSegment(om.ExplicitComponent):
             units="kg",
         )
         self.add_input(
-            "mission:sizing_mission:air_density", val=np.nan, units="kg/m**3"
+            "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
         )
         self.add_input("data:aerodynamics:Cd", val=np.nan, units=None)
         self.add_input("data:aerodynamics:Cl0", val=np.nan, units=None)
@@ -411,7 +411,7 @@ class ForwardSegment(om.ExplicitComponent):
             val=np.nan,
             units="m",
         )
-        self.add_input("mission:sizing_mission:forward:speed", val=np.nan, units="m/s")
+        self.add_input("mission:design_mission:forward:speed", val=np.nan, units="m/s")
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
         self.add_input("specifications:payload:power", val=0.0, units="W")
         self.add_input("data:avionics:power", val=0.0, units="W")
@@ -446,7 +446,7 @@ class ForwardSegment(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Mtotal = inputs["mission:concordia_study:route%s:tow" % self.options["route"]]
-        rho_air = inputs["mission:sizing_mission:air_density"]
+        rho_air = inputs["mission:design_mission:air_density"]
         C_D = inputs["data:aerodynamics:Cd"]
         C_L0 = inputs["data:aerodynamics:Cl0"]
         S_top = inputs["data:structure:body:surface:top"]
@@ -468,7 +468,7 @@ class ForwardSegment(om.ExplicitComponent):
             "mission:concordia_study:route%s:forward:range" % self.options["route"]
         ]
         V_ff = inputs[
-            "mission:sizing_mission:forward:speed"
+            "mission:design_mission:forward:speed"
         ]  # TODO: compute optimal speed
         t_ff = D_ff / V_ff  # [s]
         eta_ESC = inputs["data:ESC:efficiency"]

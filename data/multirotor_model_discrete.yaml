@@ -1,4 +1,4 @@
-title: Multirotor Drone model with catalogue components selection
+title: Multirotor Drone model
 
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders: 
@@ -12,7 +12,6 @@ module_folders:
     - ../models/Components/Propeller
     - ../models/Components/Structure
     - ../models/Components/Cables
-    - ../models/Add_ons/Safety
     
 # Input and output files
 input_file: ../workdir/model_inputs.xml
@@ -32,7 +31,7 @@ model:
             use_gearbox: false
         battery:
             id: energy.battery
-            use_catalogue: true
+            use_catalogue: false
         esc:
             id: esc
             use_catalogue: false
@@ -44,4 +43,3 @@ model:
             id: multirotor.system
         operational_mission:
            id: multirotor.design_mission
-           #id: multirotor.mission_concordia

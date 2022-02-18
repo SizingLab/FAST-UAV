@@ -44,7 +44,7 @@ class EmergencyMotorTorque_hover(om.ExplicitComponent):
         # System parameters
         self.add_input("data:propeller:thrust:hover", val=np.nan, units="N")
         self.add_input(
-            "mission:sizing_mission:air_density", val=np.nan, units="kg/m**3"
+            "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
         )
         self.add_input("addons:safety:k_thrust", val=np.nan, units=None)
         # Propeller parameters
@@ -72,7 +72,7 @@ class EmergencyMotorTorque_hover(om.ExplicitComponent):
         k_thrust = inputs[
             "addons:safety:k_thrust"
         ]  # [-] thrust ratio of failure case to normal operation
-        rho_air = inputs["mission:sizing_mission:air_density"]
+        rho_air = inputs["mission:design_mission:air_density"]
 
         D_pro = inputs["data:propeller:geometry:diameter"]
         C_t = inputs["data:propeller:aerodynamics:CT:static"]
@@ -120,7 +120,7 @@ class EmergencyMotorTorque_forward(om.ExplicitComponent):
         # System parameters
         self.add_input("data:propeller:thrust:forward", val=np.nan, units="N")
         self.add_input(
-            "mission:sizing_mission:air_density", val=np.nan, units="kg/m**3"
+            "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
         )
         self.add_input("addons:safety:k_thrust", val=np.nan, units=None)
         # Propeller parameters
@@ -152,7 +152,7 @@ class EmergencyMotorTorque_forward(om.ExplicitComponent):
         k_thrust = inputs[
             "addons:safety:k_thrust"
         ]  # [-] thrust ratio of failure case to normal operation
-        rho_air = inputs["mission:sizing_mission:air_density"]
+        rho_air = inputs["mission:design_mission:air_density"]
 
         D_pro = inputs["data:propeller:geometry:diameter"]
         C_t = inputs["data:propeller:aerodynamics:CT:incidence"]

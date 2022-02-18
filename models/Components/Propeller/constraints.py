@@ -18,7 +18,7 @@ class PropellerConstraints(om.ExplicitComponent):
         self.add_input("data:propeller:speed:climb", val=np.nan, units="rad/s")
         self.add_input("data:propeller:speed:forward", val=np.nan, units="rad/s")
         self.add_input("specifications:climb_speed", val=np.nan, units="m/s")
-        self.add_input("mission:sizing_mission:forward:speed", val=np.nan, units="m/s")
+        self.add_input("mission:design_mission:forward:speed", val=np.nan, units="m/s")
         self.add_output("data:propeller:constraints:speed:climb", units=None)
         self.add_output("data:propeller:constraints:speed:forward", units=None)
         self.add_output("mission:constraints:speed:climb", units=None)
@@ -35,7 +35,7 @@ class PropellerConstraints(om.ExplicitComponent):
         W_pro_cl = inputs["data:propeller:speed:climb"]
         W_pro_ff = inputs["data:propeller:speed:forward"]
         V_cl = inputs["specifications:climb_speed"]
-        V_ff = inputs["mission:sizing_mission:forward:speed"]
+        V_ff = inputs["mission:design_mission:forward:speed"]
 
         prop_con1 = (NDmax - W_pro_cl * Dpro / 2 / np.pi) / NDmax
         prop_con2 = (NDmax - W_pro_ff * Dpro / 2 / np.pi) / NDmax
@@ -55,7 +55,7 @@ class PropellerConstraints(om.ExplicitComponent):
         W_pro_cl = inputs["data:propeller:speed:climb"]
         W_pro_ff = inputs["data:propeller:speed:forward"]
         V_cl = inputs["specifications:climb_speed"]
-        V_ff = inputs["mission:sizing_mission:forward:speed"]
+        V_ff = inputs["mission:design_mission:forward:speed"]
 
         partials[
             "data:propeller:constraints:speed:climb",
@@ -116,7 +116,7 @@ class PropellerConstraints(om.ExplicitComponent):
 
         partials[
             "mission:constraints:speed:forward",
-            "mission:sizing_mission:forward:speed",
+            "mission:design_mission:forward:speed",
         ] = (
             J_forward * W_pro_ff * Dpro / V_ff**2 / 2 / np.pi
         )

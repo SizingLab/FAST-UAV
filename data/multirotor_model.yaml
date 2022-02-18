@@ -12,7 +12,6 @@ module_folders:
     - ../models/Components/Propeller
     - ../models/Components/Structure
     - ../models/Components/Cables
-    - ../models/Add_ons/Safety
     
 # Input and output files
 input_file: ../workdir/model_inputs.xml
@@ -44,4 +43,3 @@ model:
             id: multirotor.system
         operational_mission:
            id: multirotor.design_mission
-           #id: multirotor.mission_concordia

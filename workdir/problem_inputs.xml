@@ -25,7 +25,7 @@
     </avionics>
     <ESC>
       <reference>
-        <efficiency is_input="True">0.95</efficiency>
+        <efficiency is_input="True">0.95<!--ESC efficiency reference--></efficiency>
         <mass units="kg" is_input="True">0.115<!--ESC mass reference for scaling law--></mass>
         <power units="W" is_input="True">3108.0<!--ESC max. power reference for scaling law--></power>
         <voltage units="V" is_input="True">44.4<!--ESC voltage reference for scaling law--></voltage>
@@ -39,12 +39,12 @@
     <battery>
       <reference>
         <capacity units="A*s" is_input="True">20520.0<!--Battery capacity reference for scaling law--></capacity>
-        <energy units="kJ" is_input="True">467.856</energy>
+        <energy units="kJ" is_input="True">467.856<!--Battery energy reference for scaling law--></energy>
         <mass units="kg" is_input="True">0.68<!--Battery mass reference for scaling law--></mass>
         <voltage units="V" is_input="True">22.8<!--Battery voltage reference for scaling law--></voltage>
         <volume units="cm**3" is_input="True">500.0<!--Battery volume reference for scaling law--></volume>
         <DoD>
-          <max is_input="True">0.8</max>
+          <max is_input="True">0.8<!--Battery depth of discharge reference--></max>
         </DoD>
         <current>
           <max units="A" is_input="True">200.0<!--Battery max. current reference for scaling law--></max>
@@ -61,15 +61,14 @@
         </mass>
         <voltage>
           <k is_input="True">1.0<!--Oversizing coefficient on battery voltage--></k>
-          <k2 is_input="True">1.0</k2>
         </voltage>
       </settings>
     </battery>
     <cables>
       <reference>
-        <current units="A" is_input="True">120.0</current>
-        <density units="kg/m" is_input="True">0.19028501</density>
-        <radius units="m" is_input="True">0.0052</radius>
+        <current units="A" is_input="True">120.0<!--Cables current reference for scaling law--></current>
+        <density units="kg/m" is_input="True">0.19028501<!--Cables linear density reference for scaling law--></density>
+        <radius units="m" is_input="True">0.0052<!--Cables radius reference for scaling law--></radius>
       </reference>
     </cables>
     <motor>
@@ -107,7 +106,7 @@
       </reference>
       <geometry>
         <beta>
-          <guess is_input="True">0.3</guess>
+          <guess is_input="True">0.3<!--Angle pitch/diameter (initial guess)--></guess>
         </beta>
       </geometry>
       <settings>
@@ -157,7 +156,7 @@
     </system>
   </data>
   <mission>
-    <sizing_mission>
+    <design_mission>
       <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
       <forward>
         <speed units="m/s" is_input="True">20.0<!--Forward flight velocity--></speed>
@@ -165,7 +164,7 @@
       <takeoff>
         <altitude units="m" is_input="True">0.0<!--Takeoff altitude--></altitude>
       </takeoff>
-    </sizing_mission>
+    </design_mission>
   </mission>
   <uncertainty>
     <ESC>

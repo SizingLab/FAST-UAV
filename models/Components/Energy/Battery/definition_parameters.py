@@ -33,9 +33,9 @@ class CellNumber(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('data:motor:voltage:takeoff', val=np.nan, units='V')  # TEST 20/01/2022
-        self.add_input('data:battery:settings:voltage:k2', val=np.nan, units=None) # TEST 27/01/2022
+        self.add_input('data:motor:voltage:takeoff', val=np.nan, units='V')
         # self.add_input('data:battery:voltage:guess', val=np.nan, units='V')
+        self.add_input('data:battery:settings:voltage:k', val=np.nan, units=None)
         self.add_input('data:battery:cell:voltage:estimated', val=3.7, units='V')
         self.add_output('data:battery:cell:number:estimated', units=None)
         self.add_output('data:battery:cell:number:series:estimated', units=None)
@@ -46,13 +46,13 @@ class CellNumber(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         V_cell = inputs['data:battery:cell:voltage:estimated']
-        # V_bat_guess = inputs['data:battery:voltage:guess']
         U_mot_to = inputs['data:motor:voltage:takeoff']
-        kv = inputs['data:battery:settings:voltage:k2']
+        k_vb = inputs['data:battery:settings:voltage:k']
+        # V_bat_guess = inputs['data:battery:voltage:guess']
 
         # N_series = np.ceil(V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
         # N_series = (V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
-        N_series = kv * (U_mot_to / V_cell) # [-] Number of series connections (for voltage upgrade)
+        N_series = k_vb * (U_mot_to / V_cell)  # [-] Number of series connections (for voltage upgrade)
         N_parallel = 1  # [-] Number of parallel connections (for capacity upgrade)
         N_cell = N_parallel * N_series
 
@@ -68,45 +68,18 @@ class CellNumber(om.ExplicitComponent):
     #
     #     V_cell = inputs['data:battery:cell:voltage:estimated']
     #     # V_bat_guess = inputs['data:battery:voltage:guess']
-    #     kv = inputs['data:battery:settings:voltage:k2']
+    #     k_vb = inputs['data:battery:settings:voltage:k']
     #     U_mot_to = inputs['data:motor:voltage:takeoff']
     #
     #     partials[
     #         'data:battery:cell:number:series:estimated',
     #         'data:motor:voltage:takeoff',
-    #     ] = (1 + np.cos(2 * np.pi * kv * U_mot_to / V_cell)) * kv / V_cell  # Smooth ceil function derivative
+    #     ] = (1 + np.cos(2 * np.pi * k_vb * U_mot_to / V_cell)) * k_vb / V_cell  # Smooth ceil function derivative
     #
     #     partials[
     #         'data:battery:cell:number:series:estimated',
-    #         'data:battery:settings:voltage:k2',
-    #     ] = (1 + np.cos(2 * np.pi * kv * U_mot_to / V_cell)) * U_mot_to / V_cell  # Smooth ceil function derivative
-
-
-# class CellNumber(om.ExplicitComponent):
-#     """
-#     Computes the voltage of the battery. Also returns the number of cells.
-#     """
-#
-#     def setup(self):
-#         self.add_input('data:battery:cell:number:series:guess', val=1., units=None)
-#         self.add_output('data:battery:cell:number:series:estimated', units=None)
-#         self.add_output('data:battery:cell:number:estimated', units=None)
-#         self.add_output('data:battery:cell:number:parallel:estimated', units=None)
-#
-#     def setup_partials(self):
-#         self.declare_partials('data:battery:cell:number:series:estimated', 'data:battery:cell:number:series:guess',
-#                               val=1.)
-#         self.declare_partials('data:battery:cell:number:estimated', 'data:battery:cell:number:series:guess',
-#                               val=1.)
-#
-#     def compute(self, inputs, outputs):
-#         N_series = np.ceil(inputs['data:battery:cell:number:series:guess'])
-#         N_parallel = 1  # [-] Number of parallel connections (for capacity upgrade)
-#         N_cell = N_parallel * N_series
-#
-#         outputs['data:battery:cell:number:series:estimated'] = N_series
-#         outputs['data:battery:cell:number:parallel:estimated'] = N_parallel
-#         outputs['data:battery:cell:number:estimated'] = N_cell
+    #         'data:battery:settings:voltage:k',
+    #     ] = (1 + np.cos(2 * np.pi * k_vb * U_mot_to / V_cell)) * U_mot_to / V_cell  # Smooth ceil function derivative
 
 
 class Voltage(om.ExplicitComponent):

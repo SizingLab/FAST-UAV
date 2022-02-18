@@ -70,7 +70,7 @@ class MaxHoverAutonomy(om.ExplicitComponent):
         self.add_input("data:battery:capacity", val=np.nan, units="A*s")
         self.add_input("data:battery:DoD:max", val=0.8, units=None)
         self.add_input("data:battery:current:hover", val=np.nan, units="A")
-        self.add_output("mission:sizing_mission:hover:duration:max", units="min")
+        self.add_output("mission:design_mission:hover:duration:max", units="min")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -83,7 +83,7 @@ class MaxHoverAutonomy(om.ExplicitComponent):
 
         t_hov_max = C_ratio * C_bat / I_bat_hov  # [s] Max. hover flight time
 
-        outputs["mission:sizing_mission:hover:duration:max"] = t_hov_max / 60  # [min]
+        outputs["mission:design_mission:hover:duration:max"] = t_hov_max / 60  # [min]
 
 
 class MaxRange(om.ExplicitComponent):
@@ -93,25 +93,25 @@ class MaxRange(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("mission:sizing_mission:forward:speed", val=np.nan, units="m/s")
+        self.add_input("mission:design_mission:forward:speed", val=np.nan, units="m/s")
         self.add_input("data:battery:capacity", val=np.nan, units="A*s")
         self.add_input("data:battery:DoD:max", val=0.8, units=None)
         self.add_input("data:battery:current:forward", val=np.nan, units="A")
-        self.add_output("mission:sizing_mission:forward:distance:max", units="m")
+        self.add_output("mission:design_mission:forward:distance:max", units="m")
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        V_ff = inputs["mission:sizing_mission:forward:speed"]
+        V_ff = inputs["mission:design_mission:forward:speed"]
         C_ratio = inputs["data:battery:DoD:max"]
         C_bat = inputs["data:battery:capacity"]
         I_bat_ff = inputs["data:battery:current:forward"]
 
         D_ff_max = V_ff * (C_ratio * C_bat) / I_bat_ff  # [m] Max. Range
 
-        outputs["mission:sizing_mission:forward:distance:max"] = D_ff_max  # [m]
+        outputs["mission:design_mission:forward:distance:max"] = D_ff_max  # [m]
 
 
 class SystemConstraints(om.ExplicitComponent):

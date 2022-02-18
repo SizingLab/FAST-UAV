@@ -12,15 +12,14 @@ module_folders:
     - ../models/Components/Propeller
     - ../models/Components/Structure
     - ../models/Components/Cables
-    - ../models/Add_ons/Safety
     
 # Input and output files
 input_file: ../workdir/problem_inputs_discrete.xml
 output_file: ../workdir/problem_outputs_discrete.xml
 
 # Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
-# driver: om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')
-driver: om.pyOptSparseDriver(optimizer='SLSQP')
+driver: om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')
+# driver: om.pyOptSparseDriver(optimizer='SLSQP')  # not supported yet for windows users
 # driver: CMAESDriver()
 
 # Definition of OpenMDAO model
@@ -30,14 +29,14 @@ model:
             id: multirotor.sizing_scenarios
         propeller:
             id: propeller
-            use_catalogue: false
+            use_catalogue: true
         motor:
             id: motor
             use_catalogue: false
             use_gearbox: false
         battery:
             id: energy.battery
-            use_catalogue: true
+            use_catalogue: false
         esc:
             id: esc
             use_catalogue: false
@@ -48,13 +47,8 @@ model:
         system:
             id: multirotor.system
         missions:
-            sizing_mission:
+            design_mission:
                 id: multirotor.design_mission
-            #concordia_study:
-            #    id: multirotor.mission_concordia
-    #Addons:
-    #    safety:
-    #       id: addons.safety
 
 
 optimization: # This section is needed only if optimization process is run
@@ -68,17 +62,9 @@ optimization: # This section is needed only if optimization process is run
         lower: 0.01
         upper: 10.0
         
-      #- name: data:battery:cell:number:series:guess
-      #  lower: 1.0
-      #  upper: 20.0
-        
-      - name: data:battery:settings:voltage:k2 # over estimation coefficient on the battery voltage
+      - name: data:battery:settings:voltage:k # over estimation coefficient on the battery voltage
         lower: 1.0
         upper: 5.0
-        
-      #- name: data:battery:settings:voltage:k # over estimation coefficient on the battery voltage
-      #  lower: 1.0
-      #  upper: 10.0
 
       - name: data:structure:arms:settings:diameter:k # aspect ratio D_out/D_in for the beam of the frame
         lower: 0.5
@@ -112,13 +98,13 @@ optimization: # This section is needed only if optimization process is run
         lower: 1.0
         upper: 5.0
 
-      #- name: mission:sizing_mission:forward:speed
-      #  lower: 1.0
-      #  upper: 40
+      # - name: mission:design_mission:forward:speed
+      #   lower: 1.0
+      #   upper: 40
 
-#      - name: data:gearbox:N_red # gearbox reduction ratio (if 'use_gearbox' is true)
-#        lower: 1.0
-#        upper: 20.0
+      # - name: data:gearbox:N_red # gearbox reduction ratio (if 'use_gearbox' is true)
+      #   lower: 1.0
+      #   upper: 20.0
 
 
     constraints:
@@ -172,7 +158,7 @@ optimization: # This section is needed only if optimization process is run
         lower: 0.0
         upper: 0.01
       
-      - name: mission:sizing_mission:constraints:energy
+      - name: mission:design_mission:constraints:energy
         lower: 0.0
 
       - name: data:system:constraints:mass:convergence
@@ -180,8 +166,8 @@ optimization: # This section is needed only if optimization process is run
 
       # New constraints required because of catalog selection :
         
-      - name: data:battery:constraints:voltage:takeoff  # not enforced anymore by sizing procedure Vbat = kv * Umot_to
-        lower: 0.0
+      #- name: data:battery:constraints:voltage:takeoff  # not enforced anymore by sizing procedure Vbat = kv * Umot_to
+      #  lower: 0.0
         
       #- name: data:motor:constraints:torque:hover  # not enforced anymore by sizing procedure Tnom = kmot * T_hov
       #  lower: 0.0
@@ -196,15 +182,15 @@ optimization: # This section is needed only if optimization process is run
         scaler: 1.e-1
 
       # ENERGY MINIMIZATION
-      #- name: mission:sizing_mission:energy
+      #- name: mission:design_mission:energy
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      #- name: mission:sizing_mission:forward:distance:max
+      #- name: mission:design_mission:forward:distance:max
       #  scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION
-      #- name: mission:sizing_mission:hover:duration:max
+      #- name: mission:design_mission:hover:duration:max
       #  scaler: -1e-1
         
         

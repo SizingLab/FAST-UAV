@@ -65,7 +65,7 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         )
         self.add_input("data:propeller:advance_ratio:climb", val=np.nan, units=None)
         self.add_input("data:propeller:advance_ratio:forward", val=np.nan, units=None)
-        self.add_input("mission:sizing_mission:forward:angle", val=np.nan, units="rad")
+        self.add_input("mission:design_mission:forward:angle", val=np.nan, units="rad")
 
         # outputs: catalogue values if use_catalogues is True
         if self.options["use_catalogue"]:
@@ -167,7 +167,7 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             # Update Ct and Cp with new parameters
             J_climb = inputs["data:propeller:advance_ratio:climb"]
             J_forward = inputs["data:propeller:advance_ratio:forward"]
-            alpha = inputs["mission:sizing_mission:forward:angle"]
+            alpha = inputs["mission:design_mission:forward:angle"]
             C_t_sta, C_p_sta = PropellerAerodynamicsModel.aero_coefficients_static(beta)
             C_t_axial, C_p_axial = PropellerAerodynamicsModel.aero_coefficients_axial(
                 beta, J_climb

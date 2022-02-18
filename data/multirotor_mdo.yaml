@@ -12,11 +12,11 @@ module_folders:
     - ../models/Components/Propeller
     - ../models/Components/Structure
     - ../models/Components/Cables
-    - ../models/Add_ons/Safety
+    # - ../models/Add_ons/Safety
     
 # Input and output files
 input_file: ../workdir/problem_inputs.xml
-output_file: ../workdir/problem_outputs_continuous.xml
+output_file: ../workdir/problem_outputs.xml
 
 # Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
 driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
@@ -46,16 +46,12 @@ model:
         system:
             id: multirotor.system
         missions:
-            sizing_mission:
+            design_mission:
                 id: multirotor.design_mission
-            #concordia_study:
-            #    id: multirotor.mission_concordia
-    #Addons:
-    #    safety:
-    #       id: addons.safety
 
 
-optimization: # This section is needed only if optimization process is run
+# This section is needed only if optimization process is run
+optimization: 
     
     design_variables:
       - name: data:system:settings:MTOW:k # over estimation coefficient on the load mass
@@ -66,7 +62,7 @@ optimization: # This section is needed only if optimization process is run
         lower: 0.01
         upper: 60.0
         
-      - name: data:battery:settings:voltage:k2 # over estimation coefficient on the battery voltage
+      - name: data:battery:settings:voltage:k # over estimation coefficient on the battery voltage
         lower: 1.0
         upper: 10.0
 
@@ -102,95 +98,77 @@ optimization: # This section is needed only if optimization process is run
         lower: 1.0
         upper: 15.0
 
-      #- name: mission:sizing_mission:forward:speed
-      #  lower: 1.0
-      #  upper: 40
+      # - name: mission:design_mission:forward:speed
+      #   lower: 1.0
+      #   upper: 40
 
-#      - name: data:gearbox:N_red # gearbox reduction ratio (if 'use_gearbox' is true)
-#        lower: 1.0
-#        upper: 20.0
+      # - name: data:gearbox:N_red # gearbox reduction ratio (if 'use_gearbox' is true)
+      #   lower: 1.0
+      #   upper: 20.0
 
 
     constraints:
-      - name: data:ESC:constraints:power:climb  # solved by k_esc
+      - name: data:ESC:constraints:power:climb
         lower: 0.0
         
-      - name: data:ESC:constraints:power:forward  # solved by k_esc
+      - name: data:ESC:constraints:power:forward
         lower: 0.0
 
-      - name: data:ESC:constraints:voltage  # solved by k_vb
+      - name: data:ESC:constraints:voltage
         lower: 0.0
 
-      - name: data:battery:constraints:power:takeoff  # solved by k_mot
+      - name: data:battery:constraints:power:takeoff
         lower: 0.0
 
-      - name: data:battery:constraints:power:climb  # solved by k_mot
+      - name: data:battery:constraints:power:climb
         lower: 0.0
 
-      - name: data:battery:constraints:power:forward  # solved by k_mot
+      - name: data:battery:constraints:power:forward
         lower: 0.0
         
-      #- name: data:battery:constraints:voltage:consistency  # solved by k_speedmot
+      #- name: data:battery:constraints:voltage:consistency
       #  lower: 0.0
 
-      #- name: data:battery:constraints:voltage:takeoff  # solved by k_speedmot
+      #- name: data:battery:constraints:voltage:takeoff
       #  lower: 0.0
 
-      - name: data:battery:constraints:voltage:climb  # solved by k_speedmot
+      - name: data:battery:constraints:voltage:climb
         lower: 0.0
 
-      - name: data:battery:constraints:voltage:forward  # solved by k_speedmot
+      - name: data:battery:constraints:voltage:forward
         lower: 0.0
 
-      - name: data:motor:constraints:torque:climb  # solved by k_mot
+      - name: data:motor:constraints:torque:climb
         lower: 0.0
 
-      - name: data:motor:constraints:torque:forward  # solved by k_mot
+      - name: data:motor:constraints:torque:forward
         lower: 0.0
 
-      - name: data:motor:constraints:torque:takeoff  # solved by k_mot
+      - name: data:motor:constraints:torque:takeoff
         lower: 0.0
         
-      - name: data:propeller:constraints:speed:climb  # solved by k_nd
+      - name: data:propeller:constraints:speed:climb
         lower: 0.0
         
-      - name: data:propeller:constraints:speed:forward  # solved by k_nd
+      - name: data:propeller:constraints:speed:forward
         lower: 0.0
 
-      - name: mission:constraints:speed:climb  # solved by J_cl
+      - name: mission:constraints:speed:climb
         lower: 0.0
         upper: 0.01
         
-      - name: mission:constraints:speed:forward  # solved by J_ff
+      - name: mission:constraints:speed:forward
         lower: 0.0
         upper: 0.01
-        
-      #- name: mission:constraints:speed:climb  # for CMA-ES only
-      #  equals: 0.0
-        
-      #- name: mission:constraints:speed:forward  # for CMA-ES only
-      #  equals: 0.0
       
-      # constraint over battery energy required to carry on the specified mission
-      - name: mission:sizing_mission:constraints:energy  # solved by k_mb
+      - name: mission:design_mission:constraints:energy  # Energy constraint
         lower: 0.0
 
-      # Mass convergence to ensure consistency
-      - name: data:system:constraints:mass:convergence  # solved by k_M
+      - name: data:system:constraints:mass:convergence # Mass consistency
         lower: 0.0
 
-      # MTOW specification (for autonomy or range maximization objectives)
-      #- name: data:system:constraints:mass:MTOW
-      #  lower: 0.0
-        
-      # ADD-ONS: SAFETY
-      #- name: addons:safety:constraints:torque:hover
-      #  lower: 0.0
-      #- name: addons:safety:constraints:torque:forward
-      #  lower: 0.0
-      #- name: mission:concordia_study:constraints:energy
-      #  lower: 0.0
-        
+      - name: data:system:constraints:mass:MTOW # MTOW specification
+        lower: 0.0
       
 
     objective:
@@ -199,14 +177,14 @@ optimization: # This section is needed only if optimization process is run
         scaler: 1e-1
 
       # ENERGY MINIMIZATION
-      #- name: mission:sizing_mission:energy
+      #- name: mission:design_mission:energy
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      #- name: mission:sizing_mission:forward:distance:max
+      #- name: mission:design_mission:forward:distance:max
       #  scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION
-      #- name: mission:sizing_mission:hover:duration:max
+      #- name: mission:design_mission:hover:duration:max
       #  scaler: -1e-1
         

@@ -12,15 +12,15 @@ module_folders:
     - ../models/Components/Propeller
     - ../models/Components/Structure
     - ../models/Components/Cables
-    - ../models/Add_ons/Safety
     
 # Input and output files
-input_file: ../workdir/operational_mission_in.xml
-output_file: ../workdir/operational_mission_out.xml
+input_file: ../workdir/problem_inputs_performance.xml
+output_file: ../workdir/problem_outputs_performance.xml
 
-# Definition of OpenMDAO model
+# Definition of OpenMDAO model for performance analysis
 model:
     Performance:
+        design_mission:
+            id: multirotor.design_mission
         operational_mission:
-           id: multirotor.design_mission
-           #id: multirotor.mission_concordia
+           id: multirotor.mission_concordia

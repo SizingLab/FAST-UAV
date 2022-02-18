@@ -33,11 +33,11 @@ class ClimbSegment(om.ExplicitComponent):
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
         self.add_input("specifications:payload:power", val=0.0, units="W")
         self.add_input("data:avionics:power", val=0.0, units="W")
-        self.add_output("mission:sizing_mission:climb:duration", units="min")
-        self.add_output("mission:sizing_mission:climb:energy:propulsion", units="kJ")
-        self.add_output("mission:sizing_mission:climb:energy:payload", units="kJ")
-        self.add_output("mission:sizing_mission:climb:energy:avionics", units="kJ")
-        self.add_output("mission:sizing_mission:climb:energy", units="kJ")
+        self.add_output("mission:design_mission:climb:duration", units="min")
+        self.add_output("mission:design_mission:climb:energy:propulsion", units="kJ")
+        self.add_output("mission:design_mission:climb:energy:payload", units="kJ")
+        self.add_output("mission:design_mission:climb:energy:avionics", units="kJ")
+        self.add_output("mission:design_mission:climb:energy", units="kJ")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -59,17 +59,17 @@ class ClimbSegment(om.ExplicitComponent):
         E_payload = P_payload / eta_ESC * t_cl  # [J] consumed energy for payload
         E_avionics = P_avionics / eta_ESC * t_cl  # [J] consumed energy for avionics
 
-        outputs["mission:sizing_mission:climb:duration"] = t_cl / 60  # [min]
-        outputs["mission:sizing_mission:climb:energy:propulsion"] = (
+        outputs["mission:design_mission:climb:duration"] = t_cl / 60  # [min]
+        outputs["mission:design_mission:climb:energy:propulsion"] = (
             E_cl_pro / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:climb:energy:payload"] = (
+        outputs["mission:design_mission:climb:energy:payload"] = (
             E_payload / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:climb:energy:avionics"] = (
+        outputs["mission:design_mission:climb:energy:avionics"] = (
             E_avionics / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:climb:energy"] = (
+        outputs["mission:design_mission:climb:energy"] = (
             E_cl_pro + E_payload + E_avionics
         ) / 1000  # [kJ]
 
@@ -86,10 +86,10 @@ class HoverSegment(om.ExplicitComponent):
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
         self.add_input("specifications:payload:power", val=0.0, units="W")
         self.add_input("data:avionics:power", val=0.0, units="W")
-        self.add_output("mission:sizing_mission:hover:energy:propulsion", units="kJ")
-        self.add_output("mission:sizing_mission:hover:energy:payload", units="kJ")
-        self.add_output("mission:sizing_mission:hover:energy:avionics", units="kJ")
-        self.add_output("mission:sizing_mission:hover:energy", units="kJ")
+        self.add_output("mission:design_mission:hover:energy:propulsion", units="kJ")
+        self.add_output("mission:design_mission:hover:energy:payload", units="kJ")
+        self.add_output("mission:design_mission:hover:energy:avionics", units="kJ")
+        self.add_output("mission:design_mission:hover:energy", units="kJ")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -109,16 +109,16 @@ class HoverSegment(om.ExplicitComponent):
         E_payload = P_payload / eta_ESC * t_hov  # [J] consumed energy for payload
         E_avionics = P_avionics / eta_ESC * t_hov  # [J] consumed energy for avionics
 
-        outputs["mission:sizing_mission:hover:energy:propulsion"] = (
+        outputs["mission:design_mission:hover:energy:propulsion"] = (
             E_hover_pro / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:hover:energy:payload"] = (
+        outputs["mission:design_mission:hover:energy:payload"] = (
             E_payload / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:hover:energy:avionics"] = (
+        outputs["mission:design_mission:hover:energy:avionics"] = (
             E_avionics / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:hover:energy"] = (
+        outputs["mission:design_mission:hover:energy"] = (
             E_hover_pro + E_payload + E_avionics
         ) / 1000  # [kJ]
 
@@ -130,17 +130,17 @@ class ForwardSegment(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("specifications:range", val=np.nan, units="m")
-        self.add_input("mission:sizing_mission:forward:speed", val=np.nan, units="m/s")
+        self.add_input("mission:design_mission:forward:speed", val=np.nan, units="m/s")
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_input("data:motor:power:forward", val=np.nan, units="W")
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
         self.add_input("specifications:payload:power", val=0.0, units="W")
         self.add_input("data:avionics:power", val=0.0, units="W")
-        self.add_output("mission:sizing_mission:forward:duration", units="min")
-        self.add_output("mission:sizing_mission:forward:energy:propulsion", units="kJ")
-        self.add_output("mission:sizing_mission:forward:energy:payload", units="kJ")
-        self.add_output("mission:sizing_mission:forward:energy:avionics", units="kJ")
-        self.add_output("mission:sizing_mission:forward:energy", units="kJ")
+        self.add_output("mission:design_mission:forward:duration", units="min")
+        self.add_output("mission:design_mission:forward:energy:propulsion", units="kJ")
+        self.add_output("mission:design_mission:forward:energy:payload", units="kJ")
+        self.add_output("mission:design_mission:forward:energy:avionics", units="kJ")
+        self.add_output("mission:design_mission:forward:energy", units="kJ")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -151,7 +151,7 @@ class ForwardSegment(om.ExplicitComponent):
         Npro = inputs["data:propeller:number"]
         P_el_ff = inputs["data:motor:power:forward"]
         eta_ESC = inputs["data:ESC:efficiency"]
-        V_ff = inputs["mission:sizing_mission:forward:speed"]
+        V_ff = inputs["mission:design_mission:forward:speed"]
         P_payload = inputs["specifications:payload:power"]
         P_avionics = inputs["data:avionics:power"]
 
@@ -162,17 +162,17 @@ class ForwardSegment(om.ExplicitComponent):
         E_payload = P_payload / eta_ESC * t_ff  # [J] consumed energy for payload
         E_avionics = P_avionics / eta_ESC * t_ff  # [J] consumed energy for avionics
 
-        outputs["mission:sizing_mission:forward:duration"] = t_ff / 60  # [min]
-        outputs["mission:sizing_mission:forward:energy:propulsion"] = (
+        outputs["mission:design_mission:forward:duration"] = t_ff / 60  # [min]
+        outputs["mission:design_mission:forward:energy:propulsion"] = (
             E_ff_pro / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:forward:energy:payload"] = (
+        outputs["mission:design_mission:forward:energy:payload"] = (
             E_payload / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:forward:energy:avionics"] = (
+        outputs["mission:design_mission:forward:energy:avionics"] = (
             E_avionics / 1000
         )  # [kJ]
-        outputs["mission:sizing_mission:forward:energy"] = (
+        outputs["mission:design_mission:forward:energy"] = (
             E_ff_pro + E_payload + E_avionics
         ) / 1000  # [kJ]
 
@@ -183,34 +183,34 @@ class MissionComponent(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("mission:sizing_mission:hover:energy", val=np.nan, units="kJ")
-        self.add_input("mission:sizing_mission:climb:energy", val=np.nan, units="kJ")
-        self.add_input("mission:sizing_mission:forward:energy", val=np.nan, units="kJ")
+        self.add_input("mission:design_mission:hover:energy", val=np.nan, units="kJ")
+        self.add_input("mission:design_mission:climb:energy", val=np.nan, units="kJ")
+        self.add_input("mission:design_mission:forward:energy", val=np.nan, units="kJ")
         self.add_input("specifications:hover_duration", val=np.nan, units="min")
-        self.add_input("mission:sizing_mission:climb:duration", val=np.nan, units="min")
+        self.add_input("mission:design_mission:climb:duration", val=np.nan, units="min")
         self.add_input(
-            "mission:sizing_mission:forward:duration", val=np.nan, units="min"
+            "mission:design_mission:forward:duration", val=np.nan, units="min"
         )
-        self.add_output("mission:sizing_mission:energy", units="kJ")
-        self.add_output("mission:sizing_mission:duration", units="min")
+        self.add_output("mission:design_mission:energy", units="kJ")
+        self.add_output("mission:design_mission:duration", units="min")
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        E_hov = inputs["mission:sizing_mission:hover:energy"]
-        E_cl = inputs["mission:sizing_mission:climb:energy"]
-        E_ff = inputs["mission:sizing_mission:forward:energy"]
+        E_hov = inputs["mission:design_mission:hover:energy"]
+        E_cl = inputs["mission:design_mission:climb:energy"]
+        E_ff = inputs["mission:design_mission:forward:energy"]
         t_hov = inputs["specifications:hover_duration"]
-        t_cl = inputs["mission:sizing_mission:climb:duration"]
-        t_ff = inputs["mission:sizing_mission:forward:duration"]
+        t_cl = inputs["mission:design_mission:climb:duration"]
+        t_ff = inputs["mission:design_mission:forward:duration"]
 
         t_mission = t_hov + t_cl + t_ff
         E_mission = E_hov + E_cl + E_ff
 
-        outputs["mission:sizing_mission:energy"] = E_mission
-        outputs["mission:sizing_mission:duration"] = t_mission
+        outputs["mission:design_mission:energy"] = E_mission
+        outputs["mission:design_mission:duration"] = t_mission
 
 
 class MissionConstraints(om.ExplicitComponent):
@@ -219,38 +219,38 @@ class MissionConstraints(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("mission:sizing_mission:energy", val=np.nan, units="kJ")
+        self.add_input("mission:design_mission:energy", val=np.nan, units="kJ")
         self.add_input("data:battery:energy", val=np.nan, units="kJ")
         self.add_input("data:battery:DoD:max", val=0.8, units=None)
-        self.add_output("mission:sizing_mission:constraints:energy", units=None)
+        self.add_output("mission:design_mission:constraints:energy", units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        E_mission = inputs["mission:sizing_mission:energy"]
+        E_mission = inputs["mission:design_mission:energy"]
         E_bat = inputs["data:battery:energy"]
         C_ratio = inputs["data:battery:DoD:max"]
 
         energy_con = (E_bat * C_ratio - E_mission) / (E_bat * C_ratio)
 
-        outputs["mission:sizing_mission:constraints:energy"] = energy_con
+        outputs["mission:design_mission:constraints:energy"] = energy_con
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        E_mission = inputs["mission:sizing_mission:energy"]
+        E_mission = inputs["mission:design_mission:energy"]
         E_bat = inputs["data:battery:energy"]
         C_ratio = inputs["data:battery:DoD:max"]
 
         partials[
-            "mission:sizing_mission:constraints:energy",
-            "mission:sizing_mission:energy",
+            "mission:design_mission:constraints:energy",
+            "mission:design_mission:energy",
         ] = -1.0 / (E_bat * C_ratio)
         partials[
-            "mission:sizing_mission:constraints:energy",
+            "mission:design_mission:constraints:energy",
             "data:battery:energy",
         ] = E_mission / (E_bat**2 * C_ratio)
         partials[
-            "mission:sizing_mission:constraints:energy",
+            "mission:design_mission:constraints:energy",
             "data:battery:DoD:max",
         ] = E_mission / (E_bat * C_ratio**2)
