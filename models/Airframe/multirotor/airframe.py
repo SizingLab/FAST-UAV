@@ -7,7 +7,7 @@ from geometry import *
 
 
 @oad.RegisterOpenMDAOSystem("airframe.multirotor")
-class StructureMR(om.Group):
+class Airframe(om.Group):
     """
     Group containing the MDA of the multirotor airframe
     """
