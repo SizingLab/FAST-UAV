@@ -6,12 +6,12 @@ module_folders:
     - ../models/Missions
     - ../models/Scenarios
     - ../models/System
-    - ../models/Components/Energy/Battery
-    - ../models/Components/ESC
-    - ../models/Components/Motor
-    - ../models/Components/Propeller
-    - ../models/Components/Structure
-    - ../models/Components/Cables
+    - ../models/Propulsion/Energy/Battery
+    - ../models/Propulsion/ESC
+    - ../models/Propulsion/Motor
+    - ../models/Propulsion/Propeller
+    - ../models/Airframe/multirotor
+    - ../models/Propulsion/Cables
     
 # Input and output files
 input_file: ../workdir/model_inputs.xml
@@ -22,31 +22,31 @@ driver: om.ScipyOptimizeDriver(tol=1e-3, optimizer='SLSQP')
 
 # Definition of OpenMDAO model
 model:
-    Core:
-        scenarios:
-            id: multirotor.sizing_scenarios
+    scenarios:
+        id: sizing_scenarios.multirotor
+    propulsion:
         propeller:
-            id: propeller
+            id: propulsion.propeller
             use_catalogue: true
         motor:
-            id: motor
+            id: propulsion.motor
             use_catalogue: false
             use_gearbox: false
         battery:
-            id: energy.battery
+            id: propulsion.battery
             use_catalogue: false
         esc:
-            id: esc
+            id: propulsion.esc
             use_catalogue: false
-        structure:
-            id: multirotor.structure
-        cables:
-            id: cables
-        system:
-            id: multirotor.system
-        missions:
-            design_mission:
-                id: multirotor.design_mission
+    airframe:
+        id: airframe.multirotor
+    cables:
+        id: propulsion.cables
+    system:
+        id: system.multirotor
+    mission:
+        operational_mission:
+            id: mission.design
 
 
 optimization:

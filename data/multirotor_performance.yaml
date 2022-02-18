@@ -6,12 +6,12 @@ module_folders:
     - ../models/Missions
     - ../models/Scenarios
     - ../models/System
-    - ../models/Components/Energy/Battery
-    - ../models/Components/ESC
-    - ../models/Components/Motor
-    - ../models/Components/Propeller
-    - ../models/Components/Structure
-    - ../models/Components/Cables
+    - ../models/Propulsion/Energy/Battery
+    - ../models/Propulsion/ESC
+    - ../models/Propulsion/Motor
+    - ../models/Propulsion/Propeller
+    - ../models/Airframe/multirotor
+    - ../models/Propulsion/Cables
     
 # Input and output files
 input_file: ../workdir/problem_inputs_performance.xml
@@ -21,6 +21,6 @@ output_file: ../workdir/problem_outputs_performance.xml
 model:
     Performance:
         design_mission:
-            id: multirotor.design_mission
+            id: mission.design
         operational_mission:
-           id: multirotor.mission_concordia
+           id: mission.concordia

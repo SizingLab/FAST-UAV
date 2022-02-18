@@ -6,7 +6,7 @@ import openmdao.api as om
 import numpy as np
 
 
-@oad.RegisterOpenMDAOSystem("multirotor.design_mission")
+@oad.RegisterOpenMDAOSystem("mission.design")
 class Mission(om.Group):
     """
     Group containing the design mission parameters

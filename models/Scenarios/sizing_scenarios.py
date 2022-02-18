@@ -9,7 +9,7 @@ from scipy.constants import g
 from scipy.optimize import brentq
 
 
-@oad.RegisterOpenMDAOSystem("multirotor.sizing_scenarios")
+@oad.RegisterOpenMDAOSystem("sizing_scenarios.multirotor")
 class SizingScenarios(om.Group):
     """
     Sizing scenarios definition

@@ -7,12 +7,12 @@ import openmdao.api as om
 import numpy as np
 from scipy.constants import g
 from models.Scenarios.flight_model import FlightModel
-from models.Components.Propeller.performances import PropellerModel
-from models.Components.Motor.performances import MotorModel
-from models.Components.Propeller.estimation.models import PropellerAerodynamicsModel
+from models.Propulsion.Propeller.performances import PropellerModel
+from models.Propulsion.Motor.performances import MotorModel
+from models.Propulsion.Propeller.estimation.models import PropellerAerodynamicsModel
 
 
-@oad.RegisterOpenMDAOSystem("multirotor.mission_concordia")
+@oad.RegisterOpenMDAOSystem("mission.concordia")
 class Mission(om.Group):
     """
     Organ delivery mission definition

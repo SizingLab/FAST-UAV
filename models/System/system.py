@@ -6,7 +6,7 @@ import openmdao.api as om
 import numpy as np
 
 
-@oad.RegisterOpenMDAOSystem("multirotor.system")
+@oad.RegisterOpenMDAOSystem("system.multirotor")
 class System(om.Group):
     """
     Group containing the system parameters

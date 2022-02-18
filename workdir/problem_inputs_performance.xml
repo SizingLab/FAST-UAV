@@ -5,9 +5,9 @@
     <hover_duration units="min" is_input="True">18.0<!--Top-level requirement: hover phase duration--></hover_duration>
     <range units="m" is_input="True">0.0<!--Top-level requirement: range--></range>
     <payload>
-      <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
+      <power units="W" is_input="True">0.0<!--Design payload power consumption--></power>
       <mass>
-        <max units="kg" is_input="True">6.35<!--Payload mass--></max>
+        <max units="kg" is_input="True">6.35<!--Design payload mass--></max>
       </mass>
     </payload>
   </specifications>
@@ -25,11 +25,11 @@
     <battery>
       <energy units="kJ" is_input="True">2611.187440108554<!--Battery energy--></energy>
       <DoD>
-        <max is_input="True">0.8</max>
+        <max is_input="True">0.8<!--Battery depth of discharge--></max>
       </DoD>
     </battery>
     <gearbox>
-      <N_red is_input="True">1.0</N_red>
+      <N_red is_input="True">1.0<!--Gearbox reduction--></N_red>
     </gearbox>
     <motor>
       <resistance units="V/A" is_input="True">0.18426092688145526<!--Motor resistance--></resistance>
@@ -91,7 +91,7 @@
           <range units="m" is_input="True">5000.0</range>
         </forward>
         <hover>
-          <duration units="min" is_input="True">0.5</duration>
+          <duration units="min" is_input="True">1.0</duration>
         </hover>
         <payload>
           <mass units="kg" is_input="True">5.0</mass>
