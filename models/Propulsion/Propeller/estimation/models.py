@@ -54,6 +54,8 @@ class PropellerAerodynamicsModel:
     Aerodynamics model for the propeller
     """
 
+    # TODO: deal with different rotor types (conf file option?)
+
     # Model deviations (for uncertainty purpose only)
     init_uncertain_parameters = {
         "uncertainty:propeller:aerodynamics:CT:static:abs": 0.0,
