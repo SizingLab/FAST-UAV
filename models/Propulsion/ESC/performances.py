@@ -25,7 +25,7 @@ class ESCPerfos(om.Group):
         self.add_subsystem("takeoff", TakeOff(), promotes=["*"])
         self.add_subsystem("hover", Hover(), promotes=["*"])
         self.add_subsystem("climb", Climb(), promotes=["*"])
-        self.add_subsystem("forward", Forward(), promotes=["*"])
+        self.add_subsystem("cruise", Cruise(), promotes=["*"])
 
 
 class TakeOff(om.ExplicitComponent):
@@ -112,16 +112,16 @@ class Climb(om.ExplicitComponent):
         outputs["data:ESC:power:climb"] = P_esc_cl
 
 
-class Forward(om.ExplicitComponent):
+class Cruise(om.ExplicitComponent):
     """
-    Performances calculation of ESC for forward flight
+    Performances calculation of ESC for cruise
     """
 
     def setup(self):
         self.add_input("data:battery:voltage", val=np.nan, units="V")
-        self.add_input("data:motor:power:forward", val=np.nan, units="W")
-        self.add_input("data:motor:voltage:forward", val=np.nan, units="V")
-        self.add_output("data:ESC:power:forward", units="W")
+        self.add_input("data:motor:power:cruise", val=np.nan, units="W")
+        self.add_input("data:motor:voltage:cruise", val=np.nan, units="V")
+        self.add_output("data:ESC:power:cruise", units="W")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -129,12 +129,12 @@ class Forward(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         V_bat = inputs["data:battery:voltage"]
-        P_mot_ff = inputs["data:motor:power:forward"]
-        U_mot_ff = inputs["data:motor:voltage:forward"]
+        P_mot_cr = inputs["data:motor:power:cruise"]
+        U_mot_cr = inputs["data:motor:voltage:cruise"]
 
-        # P_esc_ff = P_el_ff * V_bat / Umot_ff # [W] electronic power max forward
-        P_esc_ff = ESCModel.power(
-            P_mot_ff, U_mot_ff, V_bat
-        )  # [W] electronic power max forward
+        # P_esc_cr = P_el_cr * V_bat / Umot_cr # [W] electronic power max cruise
+        P_esc_cr = ESCModel.power(
+            P_mot_cr, U_mot_cr, V_bat
+        )  # [W] electronic power max cruise
 
-        outputs["data:ESC:power:forward"] = P_esc_ff
+        outputs["data:ESC:power:cruise"] = P_esc_cr

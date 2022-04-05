@@ -25,7 +25,7 @@ class BatteryPerfos(om.Group):
         self.add_subsystem("takeoff", TakeOff(), promotes=["*"])
         self.add_subsystem("hover", Hover(), promotes=["*"])
         self.add_subsystem("climb", Climb(), promotes=["*"])
-        self.add_subsystem("forward", Forward(), promotes=["*"])
+        self.add_subsystem("cruise", Cruise(), promotes=["*"])
 
 
 class TakeOff(om.ExplicitComponent):
@@ -129,19 +129,19 @@ class Climb(om.ExplicitComponent):
         outputs["data:battery:current:climb"] = I_bat_cl
 
 
-class Forward(om.ExplicitComponent):
+class Cruise(om.ExplicitComponent):
     """
-    Computes performances of the battery for forward
+    Computes performances of the battery for cruise
     """
 
     def setup(self):
         self.add_input("data:propeller:number", val=np.nan, units=None)
-        self.add_input("data:motor:power:forward", val=np.nan, units="W")
+        self.add_input("data:motor:power:cruise", val=np.nan, units="W")
         self.add_input("data:ESC:efficiency:estimated", val=np.nan, units=None)
         self.add_input("data:battery:voltage", val=np.nan, units="V")
         self.add_input("specifications:payload:power", val=0.0, units="W")
         self.add_input("data:avionics:power", val=0.0, units="W")
-        self.add_output("data:battery:current:forward", units="A")
+        self.add_output("data:battery:current:cruise", units="A")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -149,14 +149,14 @@ class Forward(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Npro = inputs["data:propeller:number"]
-        P_el_ff = inputs["data:motor:power:forward"]
+        P_el_cr = inputs["data:motor:power:cruise"]
         eta_ESC = inputs["data:ESC:efficiency:estimated"]
         V_bat = inputs["data:battery:voltage"]
         P_payload = inputs["specifications:payload:power"]
         P_avionics = inputs["data:avionics:power"]
 
-        # I_bat_ff = (P_el_ff * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
-        P_req = P_el_ff * Npro + P_payload + P_avionics
-        I_bat_ff = BatteryModel.current(P_req, eta_ESC, V_bat)
+        # I_bat_cr = (P_el_cr * Npro + P_payload + P_avionics) / eta_ESC / V_bat  # [I] Current of the battery
+        P_req = P_el_cr * Npro + P_payload + P_avionics
+        I_bat_cr = BatteryModel.current(P_req, eta_ESC, V_bat)
 
-        outputs["data:battery:current:forward"] = I_bat_ff
+        outputs["data:battery:current:cruise"] = I_bat_cr

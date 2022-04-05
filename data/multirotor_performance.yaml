@@ -10,7 +10,7 @@ module_folders:
     - ../models/Propulsion/ESC
     - ../models/Propulsion/Motor
     - ../models/Propulsion/Propeller
-    - ../models/Airframe/multirotor
+    - ../models/Airframe
     - ../models/Propulsion/Cables
     
 # Input and output files

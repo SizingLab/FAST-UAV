@@ -7,16 +7,16 @@ data:ESC:voltage:estimated || ESC voltage (estimated value)
 data:ESC:voltage:catalogue || ESC voltage (catalogue value)
 data:ESC:constraints:voltage || Constraint on ESC voltage
 data:ESC:constraints:power:climb || Constraint on ESC power (climb)
-data:ESC:constraints:power:forward || Constraint on ESC power (forward flight)
+data:ESC:constraints:power:cruise || Constraint on ESC power (cruise)
 data:ESC:power:climb || ESC power in climb
-data:ESC:power:forward || ESC power in forward flight
+data:ESC:power:cruise || ESC power in cruise
 data:ESC:power:max || Maximum ESC power
 data:ESC:power:max:estimated || Maximum ESC power (estimated value)
 data:ESC:power:max:catalogue || Maximum ESC power (catalogue value)
 data:ESC:reference:mass || ESC mass reference for scaling law
 data:ESC:reference:power || ESC max. power reference for scaling law
 data:ESC:reference:voltage || ESC voltage reference for scaling law
-data:ESC:settings:power:k || Oversizing coefficient on ESC power
+data:ESC:power:k || Oversizing coefficient on ESC power
 data:avionics:power || Avionics power consumption
 data:battery:capacity || Battery capacity
 data:battery:capacity:estimated || Battery capacity (estimated value)
@@ -44,10 +44,10 @@ data:battery:cell:voltage:estimated || Voltage of one cell (estimated value)
 data:battery:cell:voltage:catalogue || Voltage of one cell (catalogue value)
 mission:design_mission:constraints:energy || Constraint on battery energy to meet mission requirements
 data:battery:constraints:power:climb || Constraint on battery power (climb)
-data:battery:constraints:power:forward || Constraint on battery power (forward flight)
+data:battery:constraints:power:cruise || Constraint on battery power (cruise)
 data:battery:constraints:power:takeoff || Constraint on battery power (takeoff)
 data:battery:constraints:voltage:climb || Constraint on battery voltage (climb)
-data:battery:constraints:voltage:forward || Constraint on battery voltage (forward flight)
+data:battery:constraints:voltage:cruise || Constraint on battery voltage (cruise)
 data:battery:constraints:voltage:takeoff || Constraint on battery voltage (takeoff)
 data:battery:current:max || Maximum battery current
 data:battery:current:max:estimated || Maximum battery current (estimated value)
@@ -57,24 +57,24 @@ data:battery:reference:mass || Battery mass reference for scaling law
 data:battery:reference:voltage || Battery voltage reference for scaling law
 data:battery:reference:volume || Battery volume reference for scaling law
 data:battery:reference:current:max || Battery max. current reference for scaling law
-data:battery:settings:mass:k || Oversizing coefficient on battery mass
-data:battery:settings:voltage:k || Oversizing coefficient on battery voltage
+data:battery:mass:k || Oversizing coefficient on battery mass
+data:battery:voltage:k || Oversizing coefficient on battery voltage
 data:gearbox || 0: no gearbox ; 1: gearbox
 data:gearbox:mass || Gearbox mass
 mission:design_mission:energy || Total energy consumption to accomplish the mission
 mission:design_mission:avionics:energy || Energy consumption of the avionics during the mission
 mission:design_mission:climb:energy || Climb segment energy consumption
-mission:design_mission:forward:energy || Forward flight segment energy consumption
+mission:design_mission:cruise:energy || Cruise segment energy consumption
 mission:design_mission:hover:energy || Hover segment energy consumption
 mission:design_mission:payload:energy || Energy consumption of the payload during the mission
 mission:design_mission:air_density|| Air density
 mission:design_mission:duration || Mission duration
 mission:design_mission:climb:duration || Climb segment duration
-mission:design_mission:forward:duration || Cruise segment duration
-mission:design_mission:forward:angle || Angle of attack of the drone during forward flight
-mission:design_mission:forward:speed || Forward flight velocity
+mission:design_mission:cruise:duration || Cruise segment duration
+mission:design_mission:cruise:AoA || Angle of attack of the drone during cruise
+mission:design_mission:cruise:speed || Cruise velocity
 mission:design_mission:takeoff:altitude || Takeoff altitude
-mission:design_mission:forward:altitude || Cruise altitude
+mission:design_mission:cruise:altitude || Cruise altitude
 mission:design_mission:dISA || Temperature variation w.r.t. ISA
 data:motor:mass || Motor mass
 data:motor:mass:estimated || Motor mass (estimated value)
@@ -86,12 +86,12 @@ data:motor:torque:coefficient || Motor torque coefficient
 data:motor:torque:coefficient:estimated || Motor torque coefficient (estimated value)
 data:motor:torque:coefficient:catalogue || Motor torque coefficient (catalogue value)
 data:motor:current:climb || Motor current (climb)
-data:motor:current:forward || Motor current (forward flight)
+data:motor:current:cruise || Motor current (cruise)
 data:motor:current:hover || Motor current (hover)
 data:motor:current:takeoff || Motor current (takeoff)
 data:motor:length:estimated || Motor length (estimated value)
 data:motor:power:climb || Motor power (climb)
-data:motor:power:forward || Motor power (forward flight)
+data:motor:power:cruise || Motor power (cruise)
 data:motor:power:hover || Motor power (hover)
 data:motor:power:takeoff || Motor power (takeoff)
 data:motor:reference:length || Motor length reference for scaling law
@@ -102,7 +102,7 @@ data:motor:reference:torque:friction || Motor friction torque reference for scal
 data:motor:reference:torque:max || Motor max. torque reference for scaling law
 data:motor:reference:torque:nominal || Motor nominal torque reference for scaling law
 data:motor:torque:climb || Motor torque (climb)
-data:motor:torque:forward || Motor torque (forward flight)
+data:motor:torque:cruise || Motor torque (cruise)
 data:motor:torque:friction || Motor friction torque
 data:motor:torque:friction:estimated || Motor friction torque (estimated value)
 data:motor:torque:friction:catalogue || Motor friction torque (catalogue value)
@@ -115,20 +115,20 @@ data:motor:torque:nominal:estimated || Nominal motor torque (estimated value)
 data:motor:torque:nominal:catalogue || Nominal motor torque (catalogue value)
 data:motor:torque:takeoff || Motor torque (takeoff)
 data:motor:voltage:climb || Motor voltage (climb)
-data:motor:voltage:forward || Motor voltage (forward flight)
+data:motor:voltage:cruise || Motor voltage (cruise)
 data:motor:voltage:hover || Motor voltage (hover)
 data:motor:voltage:takeoff || Motor voltage (takeoff)
 data:motor:constraints:torque:climb || Constraint on motor torque (climb)
-data:motor:constraints:torque:forward || Constraint on motor torque (forward flight)
+data:motor:constraints:torque:cruise || Constraint on motor torque (cruise)
 data:motor:constraints:torque:takeoff || Constraint on motor torque (takeoff)
-data:motor:settings:speed:k || Oversizing coefficient of motor speed
-data:motor:settings:torque:k || Oversizing coefficient on motor torque
-specifications:payload:mass:max || Design payload mass
+data:motor:speed:k || Oversizing coefficient of motor speed
+data:motor:torque:k || Oversizing coefficient on motor torque
+specifications:payload:mass || Design payload mass
 specifications:payload:power || Design payload power consumption
 data:propeller:mass || Propeller mass
 data:propeller:number || Number of propellers
 data:propeller:advance_ratio:climb || Advance ratio J (climb)
-data:propeller:advance_ratio:forward || Advance ratio J (forward flight)
+data:propeller:advance_ratio:cruise || Advance ratio J (cruise)
 data:propeller:geometry:beta || Angle pitch/diameter
 data:propeller:geometry:beta:estimated || Angle pitch/diameter (estimated value)
 data:propeller:geometry:beta:catalogue || Angle pitch/diameter (catalogue value)
@@ -136,22 +136,22 @@ data:propeller:geometry:diameter || Propeller diameter
 data:propeller:geometry:diameter:estimated || Propeller diameter (estimated value)
 data:propeller:geometry:diameter:catalogue || Propeller diameter (catalogue value)
 data:propeller:power:climb || Propeller power (climb)
-data:propeller:power:forward || Propeller power (forward flight)
+data:propeller:power:cruise || Propeller power (cruise)
 data:propeller:power:hover || Propeller power (hover)
 data:propeller:power:takeoff || Propeller power (takeoff)
 data:propeller:reference:diameter || Propeller diameter reference for scaling law
 data:propeller:reference:mass || Propeller mass reference for scaling law
 data:propeller:reference:ND:max || Max. rotational speed not to be exceeded
 data:propeller:speed:climb || Rotational speed (climb)
-data:propeller:speed:forward || Rotational speed (forward flight)
+data:propeller:speed:cruise || Rotational speed (cruise)
 data:propeller:speed:hover || Rotational speed (hover)
 data:propeller:speed:takeoff || Rotational speed (takeoff)
 data:propeller:thrust:climb || Propeller thrust (climb)
-data:propeller:thrust:forward || Propeller thrust (forward flight)
+data:propeller:thrust:cruise || Propeller thrust (cruise)
 data:propeller:thrust:hover || Propeller thrust (hover)
-data:propeller:thrust:max || Max. propeller thrust
+data:propeller:thrust:takeoff || Max. propeller thrust
 data:propeller:torque:climb || Propeller torque (climb)
-data:propeller:torque:forward || Propeller torque (forward flight)
+data:propeller:torque:cruise || Propeller torque (cruise)
 data:propeller:torque:hover || Propeller torque (hover)
 data:propeller:torque:takeoff || Propeller torque (takeoff)
 data:propeller:aerodynamics:CP:axial || Propeller power coefficient in axial flow conditions
@@ -173,20 +173,20 @@ data:propeller:aerodynamics:CT:static || Propeller thrust coefficient in static 
 data:propeller:aerodynamics:CT:static:estimated || Propeller thrust coefficient in static conditions (estimated value)
 data:propeller:aerodynamics:CT:static:catalogue || Propeller thrust coefficient in static conditions (catalogue value)
 data:propeller:constraints:speed:climb || Constraint on propeller rotational speed (climb)
-data:propeller:constraints:speed:forward || Constraint on propeller rotational speed (forward flight)
+data:propeller:constraints:speed:cruise || Constraint on propeller rotational speed (cruise)
 data:propeller:constraints:speed:max || Constraint on maximum propeller rotational speed
-data:propeller:settings:ND:k || Undersizing coefficient on propeller rotational speed
+data:propeller:ND:k || Undersizing coefficient on propeller rotational speed
 data:system:MTOW || Maximum Take Off Weight
 data:system:MTOW:guess || Initial guess of Maximum Take Off Weight for sizing scenarios
-mission:design_mission:hover:duration:max || Drone endurance in hover flight
-mission:design_mission:forward:distance:max || Max. Range at given flight speed
-mission:design_mission:forward:distance || Max. Range at given flight speed
+data:system:endurance:hover:max || Drone endurance in hover flight
+data:system:range:max || Max. Range at given flight speed
+mission:design_mission:cruise:distance || Max. Range at given flight speed
 data:system:reference:MTOW || Maximum Take Off Weight reference for scaling law
 data:system:constraints:mass:MTOW || Constraint on MTOW maximum allowable value
-data:system:constraints:mass:convergence || Constraint on MTOW convergence
-data:system:settings:MTOW:k || Oversizing coefficient on load mass
-data:aerodynamics:Cd || Fuselage Drag coefficient
-data:aerodynamics:Cl0 || Max. fuselage lift coefficient
+data:system:constraints:mass:consistency || Constraint on MTOW convergence
+data:system:MTOW:k || Oversizing coefficient on load mass
+data:airframe:aerodynamics:CD0 || Parasitic drag coefficient
+data:airframe:aerodynamics:CLmax || Max. lift coefficient
 data:airframe:arms:length || Arms length
 data:airframe:arms:mass || Total arms mass
 data:airframe:arms:number || Number of arms
@@ -195,7 +195,7 @@ data:airframe:arms:diameter:inner || Inner diameter of the beam
 data:airframe:arms:diameter:outer || Outer diameter of the beam
 data:airframe:arms:material:density || Arms material density
 data:airframe:arms:material:stress:max || Arms material maximum allowable stress
-data:airframe:arms:settings:diameter:k || Inner to outer beam diameter ratio
+data:airframe:arms:diameter:k || Inner to outer beam diameter ratio
 data:airframe:body:mass || Body mass
 data:airframe:body:surface:front || Front surface of the body
 data:airframe:body:surface:top || Top surface of the body
@@ -205,11 +205,11 @@ data:airframe:body:reference:surface:front || Front surface reference for scalin
 data:airframe:body:reference:surface:top || Top surface reference for scaling law
 specifications:MTOW || Top-level requirement: Maximum Take Off Weight
 specifications:dISA || Temperature variation w.r.t. ISA
-specifications:climb_height || Top-level requirement: climb height
-specifications:range || Top-level requirement: range
-specifications:maxthrust:k || Top-level requirement: maximum thrust-to-weight ratio
-specifications:climb_speed || Top-level requirement: climb speed
-specifications:hover_duration || Top-level requirement: hover phase duration
+mission:design_mission:climb:height || Top-level requirement: climb height
+mission:design_mission:cruise:distance || Top-level requirement: range
+specifications:maxthrust:k || Top-level requirement: max. acceleration ratio
+mission:design_mission:climb:speed || Top-level requirement: climb speed
+mission:design_mission:hover:duration || Top-level requirement: hover phase duration
 data:gearbox:N_red || Gearbox reduction
 data:ESC:efficiency:estimated || ESC efficiency (estimated value)
 data:ESC:constraints:power:takeoff || Constraint on ESC power (takeoff)
@@ -222,7 +222,7 @@ data:battery:cell:number:parallel:estimated || Cell number in parallel (estimate
 data:battery:cell:number:series || Cell number in series
 data:battery:cell:number:series:estimated || Cell number in series (estimated value)
 data:battery:current:climb || Battery current in climb
-data:battery:current:forward || Battery current in forward flight
+data:battery:current:cruise || Battery current in cruise
 data:battery:current:hover || Battery current in hover
 data:battery:current:takeoff || Battery current at takeoff
 data:battery:reference:DoD:max || Battery depth of discharge reference
@@ -237,14 +237,14 @@ data:motor:constraints:torque:hover || Constraint on motor torque (hover)
 data:propeller:mass:estimated || Propeller mass (estimated value)
 data:propeller:ND:takeoff || Propellers' tip speed at takeoff
 data:propeller:geometry:beta:guess || Angle pitch/diameter (initial guess)
-mission:constraints:speed:climb || Constraint on climb speed
-mission:constraints:speed:forward || Constraint on forward flight speed
+mission:design_mission:constraints:speed:climb || Constraint on climb speed
+mission:design_mission:constraints:speed:cruise || Constraint on cruise speed
 mission:design_mission:climb:energy:avionics || Climb segment energy consumption (avionics)
 mission:design_mission:climb:energy:payload || Climb segment energy consumption (payload)
 mission:design_mission:climb:energy:propulsion || Climb segment energy consumption (propulsion)
-mission:design_mission:forward:energy:avionics || Forward flight segment energy consumption (avionics)
-mission:design_mission:forward:energy:payload || Forward flight segment energy consumption (payload)
-mission:design_mission:forward:energy:propulsion || Forward flight segment energy consumption (propulsion)
+mission:design_mission:cruise:energy:avionics || Cruise segment energy consumption (avionics)
+mission:design_mission:cruise:energy:payload || Cruise segment energy consumption (payload)
+mission:design_mission:cruise:energy:propulsion || Cruise segment energy consumption (propulsion)
 mission:design_mission:hover:energy:avionics || Hover segment energy consumption (avionics)
 mission:design_mission:hover:energy:payload || Hover segment energy consumption (payload)
 mission:design_mission:hover:energy:propulsion || Hover segment energy consumption (propulsion)

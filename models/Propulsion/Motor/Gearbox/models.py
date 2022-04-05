@@ -12,7 +12,7 @@ class Gearbox(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:gearbox:N_red", val=1.0, units=None)
-        self.add_input("data:motor:torque:hover", val=np.nan, units="N*m")
+        self.add_input("data:motor:torque:nominal", val=np.nan, units="N*m")
         self.add_output("data:gearbox:mass", units="kg")
         self.add_output("data:gearbox:gear_diameter", units="m")
         self.add_output("data:gearbox:pinion_diameter", units="m")
@@ -25,7 +25,7 @@ class Gearbox(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Nred = inputs["data:gearbox:N_red"]
-        Tmot_hover = inputs["data:motor:torque:hover"]
+        Tmot_nom = inputs["data:motor:torque:nominal"]
 
         mg1 = (
             0.0309 * Nred**2 + 0.1944 * Nred + 0.6389
@@ -34,7 +34,7 @@ class Gearbox(om.ExplicitComponent):
             1 + 1 / mg1 + mg1 + mg1**2 + Nred**2 / mg1 + Nred**2
         )  # Weight Factor (ƩFd2/C) [-]
         k_sd = 1000  # Surface durability factor [lb/in]
-        C = 2 * 8.85 * Tmot_hover / k_sd  # Coefficient (C=2T/K) [in3]
+        C = 2 * 8.85 * Tmot_nom / k_sd  # Coefficient (C=2T/K) [in3]
         Fd2 = WF * C  # Solid rotor volume [in3]
         Mgear = (
             Fd2 * 0.3 * 0.4535

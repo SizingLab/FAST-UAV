@@ -10,7 +10,7 @@ module_folders:
     - ../models/Propulsion/ESC
     - ../models/Propulsion/Motor
     - ../models/Propulsion/Propeller
-    - ../models/Airframe/multirotor
+    - ../models/Airframe
     - ../models/Propulsion/Cables
     
 # Input and output files
@@ -41,7 +41,7 @@ model:
     airframe:
         id: airframe.multirotor
     cables:
-        id: propulsion.cables
+        id: propulsion.cables.multirotor
     system:
         id: system.multirotor
     mission:
@@ -51,16 +51,16 @@ model:
 
 optimization:
     design_variables:
-      - name: data:system:settings:MTOW:k # over estimation coefficient on the mass (to solve the mass consistency constraint)
+      - name: data:system:MTOW:k # over estimation coefficient on the mass (to solve the mass consistency constraint)
         upper: 40.0
         lower: 1.0
         
-      #- name: data:motor:settings:speed:k # over estimation coefficient on the motor speed (to solve the battery voltage consistency)
+      #- name: data:motor:speed:k # over estimation coefficient on the motor speed (to solve the battery voltage consistency)
       #  lower: 1.0
       #  upper: 10.0
 
     constraints:
-      - name: data:system:constraints:mass:convergence  # consistency constraint on the drone mass
+      - name: data:system:constraints:mass:consistency  # consistency constraint on the drone mass
         lower: 0.0
         
       #- name: data:battery:constraints:voltage:takeoff
@@ -77,9 +77,9 @@ optimization:
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      #- name: mission:design_mission:forward:distance:max
+      #- name: data:system:range:max
       #  scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION
-      #- name: mission:design_mission:hover:duration:max
+      #- name: data:system:endurance:hover:max
       #  scaler: -1e-1

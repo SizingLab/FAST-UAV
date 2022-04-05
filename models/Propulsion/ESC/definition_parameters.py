@@ -36,7 +36,7 @@ class Power(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:ESC:settings:power:k", val=np.nan, units=None)
+        self.add_input("data:ESC:power:k", val=np.nan, units=None)
         self.add_input("data:motor:power:takeoff", val=np.nan, units="W")
         self.add_input("data:motor:voltage:takeoff", val=np.nan, units="V")
         self.add_input("data:battery:voltage", val=np.nan, units="V")
@@ -46,7 +46,7 @@ class Power(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        k_ESC = inputs["data:ESC:settings:power:k"]
+        k_ESC = inputs["data:ESC:power:k"]
         P_el_to = inputs["data:motor:power:takeoff"]
         V_bat = inputs["data:battery:voltage"]
         Umot_to = inputs["data:motor:voltage:takeoff"]
@@ -58,12 +58,12 @@ class Power(om.ExplicitComponent):
         outputs["data:ESC:power:max:estimated"] = P_esc
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        k_ESC = inputs["data:ESC:settings:power:k"]
+        k_ESC = inputs["data:ESC:power:k"]
         P_el_to = inputs["data:motor:power:takeoff"]
         V_bat = inputs["data:battery:voltage"]
         Umot_to = inputs["data:motor:voltage:takeoff"]
 
-        partials["data:ESC:power:max:estimated", "data:ESC:settings:power:k"] = (
+        partials["data:ESC:power:max:estimated", "data:ESC:power:k"] = (
             P_el_to * V_bat / Umot_to
         )
 

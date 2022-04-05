@@ -22,17 +22,17 @@ class PropellerDefinitionParameters(om.Group):
             beta(),
             uncertain_outputs={"data:propeller:geometry:beta:estimated": None},
         )
-        self.add_subsystem("takeoff_speed", SpeedTO(), promotes=["*"])
+        self.add_subsystem("takeoff_speed", TakeOffSpeed(), promotes=["*"])
 
 
-class SpeedTO(om.ExplicitComponent):
+class TakeOffSpeed(om.ExplicitComponent):
     """
-    Computes the propeller rotational speed per diameter for take-off.
+    Returns the takeoff propeller rotational speed per diameter for sizing.
     """
 
     def setup(self):
         self.add_input("data:propeller:reference:ND:max", val=np.nan, units="m/s")
-        self.add_input("data:propeller:settings:ND:k", val=np.nan, units=None)
+        self.add_input("data:propeller:ND:k", val=np.nan, units=None)
         self.add_output("data:propeller:ND:takeoff", units="m/s")
 
     def setup_partials(self):
@@ -40,7 +40,7 @@ class SpeedTO(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         NDmax = inputs["data:propeller:reference:ND:max"]
-        k_ND = inputs["data:propeller:settings:ND:k"]
+        k_ND = inputs["data:propeller:ND:k"]
 
         ND = NDmax * k_ND  # [m] Propeller diameter
 
@@ -49,12 +49,13 @@ class SpeedTO(om.ExplicitComponent):
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         NDmax = inputs["data:propeller:reference:ND:max"]
 
-        partials["data:propeller:ND:takeoff", "data:propeller:settings:ND:k"] = NDmax
+        partials["data:propeller:ND:takeoff", "data:propeller:ND:k"] = NDmax
 
 
 class beta(om.ExplicitComponent):
     """
     Copy of the beta input.
+    Returns the pitch-to-diameter ratio for sizing.
     """
 
     def setup(self):

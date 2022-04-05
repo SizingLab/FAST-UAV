@@ -15,7 +15,7 @@ class Mission(om.Group):
     def setup(self):
         self.add_subsystem("climb_segment", ClimbSegment(), promotes=["*"])
         self.add_subsystem("hover_segment", HoverSegment(), promotes=["*"])
-        self.add_subsystem("forward_segment", ForwardSegment(), promotes=["*"])
+        self.add_subsystem("cruise_segment", CruiseSegment(), promotes=["*"])
         self.add_subsystem("mission", MissionComponent(), promotes=["*"])
         self.add_subsystem("constraints", MissionConstraints(), promotes=["*"])
 
@@ -26,8 +26,8 @@ class ClimbSegment(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("specifications:climb_height", val=np.nan, units="m")
-        self.add_input("specifications:climb_speed", val=np.nan, units="m/s")
+        self.add_input("mission:design_mission:climb:height", val=np.nan, units="m")
+        self.add_input("mission:design_mission:climb:speed", val=np.nan, units="m/s")
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_input("data:motor:power:climb", val=np.nan, units="W")
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
@@ -44,11 +44,11 @@ class ClimbSegment(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        D_cl = inputs["specifications:climb_height"]
+        D_cl = inputs["mission:design_mission:climb:height"]
         Npro = inputs["data:propeller:number"]
         P_el_cl = inputs["data:motor:power:climb"]
         eta_ESC = inputs["data:ESC:efficiency"]
-        V_cl = inputs["specifications:climb_speed"]
+        V_cl = inputs["mission:design_mission:climb:speed"]
         P_payload = inputs["specifications:payload:power"]
         P_avionics = inputs["data:avionics:power"]
 
@@ -80,7 +80,7 @@ class HoverSegment(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("specifications:hover_duration", val=np.nan, units="s")
+        self.add_input("mission:design_mission:hover:duration", val=np.nan, units="min")
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_input("data:motor:power:hover", val=np.nan, units="W")
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
@@ -96,7 +96,7 @@ class HoverSegment(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        t_hov = inputs["specifications:hover_duration"]
+        t_hov = inputs["mission:design_mission:hover:duration"] * 60  # [s]
         Npro = inputs["data:propeller:number"]
         P_el_hover = inputs["data:motor:power:hover"]
         eta_ESC = inputs["data:ESC:efficiency"]
@@ -123,57 +123,57 @@ class HoverSegment(om.ExplicitComponent):
         ) / 1000  # [kJ]
 
 
-class ForwardSegment(om.ExplicitComponent):
+class CruiseSegment(om.ExplicitComponent):
     """
-    Forward flight segment
+    Cruise segment
     """
 
     def setup(self):
-        self.add_input("specifications:range", val=np.nan, units="m")
-        self.add_input("mission:design_mission:forward:speed", val=np.nan, units="m/s")
+        self.add_input("mission:design_mission:cruise:distance", val=np.nan, units="m")
+        self.add_input("mission:design_mission:cruise:speed", val=np.nan, units="m/s")
         self.add_input("data:propeller:number", val=np.nan, units=None)
-        self.add_input("data:motor:power:forward", val=np.nan, units="W")
+        self.add_input("data:motor:power:cruise", val=np.nan, units="W")
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
         self.add_input("specifications:payload:power", val=0.0, units="W")
         self.add_input("data:avionics:power", val=0.0, units="W")
-        self.add_output("mission:design_mission:forward:duration", units="min")
-        self.add_output("mission:design_mission:forward:energy:propulsion", units="kJ")
-        self.add_output("mission:design_mission:forward:energy:payload", units="kJ")
-        self.add_output("mission:design_mission:forward:energy:avionics", units="kJ")
-        self.add_output("mission:design_mission:forward:energy", units="kJ")
+        self.add_output("mission:design_mission:cruise:duration", units="min")
+        self.add_output("mission:design_mission:cruise:energy:propulsion", units="kJ")
+        self.add_output("mission:design_mission:cruise:energy:payload", units="kJ")
+        self.add_output("mission:design_mission:cruise:energy:avionics", units="kJ")
+        self.add_output("mission:design_mission:cruise:energy", units="kJ")
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        D_ff = inputs["specifications:range"]
+        D_cr = inputs["mission:design_mission:cruise:distance"]
         Npro = inputs["data:propeller:number"]
-        P_el_ff = inputs["data:motor:power:forward"]
+        P_el_cr = inputs["data:motor:power:cruise"]
         eta_ESC = inputs["data:ESC:efficiency"]
-        V_ff = inputs["mission:design_mission:forward:speed"]
+        V_cr = inputs["mission:design_mission:cruise:speed"]
         P_payload = inputs["specifications:payload:power"]
         P_avionics = inputs["data:avionics:power"]
 
-        t_ff = D_ff / V_ff  # [s]
-        E_ff_pro = (
-            (P_el_ff * Npro) / eta_ESC * t_ff
+        t_cr = D_cr / V_cr  # [s]
+        E_cr_pro = (
+            (P_el_cr * Npro) / eta_ESC * t_cr
         )  # [J] consumed energy for propulsion
-        E_payload = P_payload / eta_ESC * t_ff  # [J] consumed energy for payload
-        E_avionics = P_avionics / eta_ESC * t_ff  # [J] consumed energy for avionics
+        E_payload = P_payload / eta_ESC * t_cr  # [J] consumed energy for payload
+        E_avionics = P_avionics / eta_ESC * t_cr  # [J] consumed energy for avionics
 
-        outputs["mission:design_mission:forward:duration"] = t_ff / 60  # [min]
-        outputs["mission:design_mission:forward:energy:propulsion"] = (
-            E_ff_pro / 1000
+        outputs["mission:design_mission:cruise:duration"] = t_cr / 60  # [min]
+        outputs["mission:design_mission:cruise:energy:propulsion"] = (
+            E_cr_pro / 1000
         )  # [kJ]
-        outputs["mission:design_mission:forward:energy:payload"] = (
+        outputs["mission:design_mission:cruise:energy:payload"] = (
             E_payload / 1000
         )  # [kJ]
-        outputs["mission:design_mission:forward:energy:avionics"] = (
+        outputs["mission:design_mission:cruise:energy:avionics"] = (
             E_avionics / 1000
         )  # [kJ]
-        outputs["mission:design_mission:forward:energy"] = (
-            E_ff_pro + E_payload + E_avionics
+        outputs["mission:design_mission:cruise:energy"] = (
+            E_cr_pro + E_payload + E_avionics
         ) / 1000  # [kJ]
 
 
@@ -185,11 +185,11 @@ class MissionComponent(om.ExplicitComponent):
     def setup(self):
         self.add_input("mission:design_mission:hover:energy", val=np.nan, units="kJ")
         self.add_input("mission:design_mission:climb:energy", val=np.nan, units="kJ")
-        self.add_input("mission:design_mission:forward:energy", val=np.nan, units="kJ")
-        self.add_input("specifications:hover_duration", val=np.nan, units="min")
+        self.add_input("mission:design_mission:cruise:energy", val=np.nan, units="kJ")
+        self.add_input("mission:design_mission:hover:duration", val=np.nan, units="min")
         self.add_input("mission:design_mission:climb:duration", val=np.nan, units="min")
         self.add_input(
-            "mission:design_mission:forward:duration", val=np.nan, units="min"
+            "mission:design_mission:cruise:duration", val=np.nan, units="min"
         )
         self.add_output("mission:design_mission:energy", units="kJ")
         self.add_output("mission:design_mission:duration", units="min")
@@ -201,13 +201,13 @@ class MissionComponent(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         E_hov = inputs["mission:design_mission:hover:energy"]
         E_cl = inputs["mission:design_mission:climb:energy"]
-        E_ff = inputs["mission:design_mission:forward:energy"]
-        t_hov = inputs["specifications:hover_duration"]
+        E_cr = inputs["mission:design_mission:cruise:energy"]
+        t_hov = inputs["mission:design_mission:hover:duration"]
         t_cl = inputs["mission:design_mission:climb:duration"]
-        t_ff = inputs["mission:design_mission:forward:duration"]
+        t_cr = inputs["mission:design_mission:cruise:duration"]
 
-        t_mission = t_hov + t_cl + t_ff
-        E_mission = E_hov + E_cl + E_ff
+        t_mission = t_hov + t_cl + t_cr
+        E_mission = E_hov + E_cl + E_cr
 
         outputs["mission:design_mission:energy"] = E_mission
         outputs["mission:design_mission:duration"] = t_mission

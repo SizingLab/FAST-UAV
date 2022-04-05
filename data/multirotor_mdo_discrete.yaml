@@ -10,7 +10,7 @@ module_folders:
     - ../models/Propulsion/ESC
     - ../models/Propulsion/Motor
     - ../models/Propulsion/Propeller
-    - ../models/Airframe/multirotor
+    - ../models/Airframe
     - ../models/Propulsion/Cables
     
 # Input and output files
@@ -43,7 +43,7 @@ model:
     airframe:
         id: airframe.multirotor
     cables:
-        id: propulsion.cables
+        id: propulsion.cables.multirotor
     system:
         id: system.multirotor
     mission:
@@ -53,19 +53,19 @@ model:
 optimization: # This section is needed only if optimization process is run
     
     design_variables:
-      - name: data:system:settings:MTOW:k # over estimation coefficient on the load mass
+      - name: data:system:MTOW:k # over estimation coefficient on the load mass
         lower: 1.0
         upper: 10.0
 
-      - name: data:battery:settings:mass:k # over estimation coefficient on the battery load mass
+      - name: data:battery:mass:k # over estimation coefficient on the battery load mass
         lower: 0.01
         upper: 10.0
         
-      - name: data:battery:settings:voltage:k # over estimation coefficient on the battery voltage
+      - name: data:battery:voltage:k # over estimation coefficient on the battery voltage
         lower: 1.0
         upper: 5.0
 
-      - name: data:airframe:arms:settings:diameter:k # aspect ratio D_out/D_in for the beam of the frame
+      - name: data:airframe:arms:diameter:k # aspect ratio D_out/D_in for the beam of the frame
         lower: 0.5
         upper: 0.99
 
@@ -77,27 +77,27 @@ optimization: # This section is needed only if optimization process is run
         lower: 0.01
         upper: 0.5
 
-      - name: data:propeller:advance_ratio:forward # forward flight advance ratio
+      - name: data:propeller:advance_ratio:cruise # cruise advance ratio
         lower: 0.01
         upper: 2.0
 
-      - name: data:motor:settings:torque:k # over estimation coefficient on the motor torque
+      - name: data:motor:torque:k # over estimation coefficient on the motor torque
         lower: 1.0
         upper: 10.0
 
-      - name: data:motor:settings:speed:k # over estimation coefficient on the motor speed
+      - name: data:motor:speed:k # over estimation coefficient on the motor speed
         lower: 0.1
         upper: 5.0
 
-      - name: data:propeller:settings:ND:k # slow down propeller coef : k_nD = ND / NDmax
+      - name: data:propeller:ND:k # slow down propeller coef : k_nD = ND / NDmax
         lower: 0.01
         upper: 1.0
 
-      - name: data:ESC:settings:power:k # over estimation coefficient on the ESC power
+      - name: data:ESC:power:k # over estimation coefficient on the ESC power
         lower: 1.0
         upper: 5.0
 
-      # - name: mission:design_mission:forward:speed
+      # - name: mission:design_mission:cruise:speed
       #   lower: 1.0
       #   upper: 40
 
@@ -113,7 +113,7 @@ optimization: # This section is needed only if optimization process is run
       - name: data:ESC:constraints:power:climb
         lower: 0.0
         
-      - name: data:ESC:constraints:power:forward
+      - name: data:ESC:constraints:power:cruise
         lower: 0.0
 
       - name: data:ESC:constraints:voltage
@@ -125,19 +125,19 @@ optimization: # This section is needed only if optimization process is run
       - name: data:battery:constraints:power:climb
         lower: 0.0
 
-      - name: data:battery:constraints:power:forward
+      - name: data:battery:constraints:power:cruise
         lower: 0.0
 
       - name: data:battery:constraints:voltage:climb
         lower: 0.0
 
-      - name: data:battery:constraints:voltage:forward
+      - name: data:battery:constraints:voltage:cruise
         lower: 0.0
 
       - name: data:motor:constraints:torque:climb
         lower: 0.0
         
-      - name: data:motor:constraints:torque:forward
+      - name: data:motor:constraints:torque:hover
         lower: 0.0
 
       - name: data:motor:constraints:torque:takeoff
@@ -146,21 +146,21 @@ optimization: # This section is needed only if optimization process is run
       - name: data:propeller:constraints:speed:climb
         lower: 0.0
         
-      - name: data:propeller:constraints:speed:forward
+      - name: data:propeller:constraints:speed:cruise
         lower: 0.0
 
-      - name: mission:constraints:speed:climb
+      - name: mission:design_mission:constraints:speed:climb
         lower: 0.0
         upper: 0.01
         
-      - name: mission:constraints:speed:forward
+      - name: mission:design_mission:constraints:speed:cruise
         lower: 0.0
         upper: 0.01
       
       - name: mission:design_mission:constraints:energy
         lower: 0.0
 
-      - name: data:system:constraints:mass:convergence
+      - name: data:system:constraints:mass:consistency
         lower: 0.0
 
       # New constraints required because of catalog selection :
@@ -185,11 +185,11 @@ optimization: # This section is needed only if optimization process is run
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      #- name: mission:design_mission:forward:distance:max
+      #- name: data:system:range:max
       #  scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION
-      #- name: mission:design_mission:hover:duration:max
+      #- name: data:system:endurance:hover:max
       #  scaler: -1e-1
         
         

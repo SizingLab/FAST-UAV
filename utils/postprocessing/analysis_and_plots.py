@@ -60,13 +60,17 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     cables = variables["data:cables:mass"].value[0]
     propulsion = propellers + motors + gearboxes + ESC + battery + cables
 
-    # STRUCTURE
-    body = variables["data:airframe:body:mass"].value[0]
-    arms = variables["data:airframe:arms:mass"].value[0]
-    structure = body + arms
+    # AIRFRAME
+    body = variables["data:airframe:body:mass"].value[0] if "data:airframe:body:mass" in variables.names() else 0.0
+    arms = variables["data:airframe:arms:mass"].value[0] if "data:airframe:arms:mass" in variables.names() else 0.0
+    wing = variables["data:airframe:wing:mass"].value[0] if "data:airframe:wing:mass" in variables.names() else 0.0
+    fuselage = variables["data:airframe:fuselage:mass"].value[0] if "data:airframe:fuselage:mass" in variables.names() else 0.0
+    htail = variables["data:airframe:tail:horizontal:mass"].value[0] if "data:airframe:tail:horizontal:mass" in variables.names() else 0.0
+    vtail = variables["data:airframe:tail:vertical:mass"].value[0] if "data:airframe:tail:vertical:mass" in variables.names() else 0.0
+    structure = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
-    payload = variables["specifications:payload:mass:max"].value[0]
+    payload = variables["specifications:payload:mass"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
@@ -135,6 +139,14 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "%)"
     )
 
+    body_str = (
+            "Body"
+            + "<br>"
+            + str("{0:.2f}".format(body))
+            + " [kg] ("
+            + str(round(body / structure * 100, 1))
+            + "%)"
+    )
     arms_str = (
         "Arms"
         + "<br>"
@@ -143,13 +155,37 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + str(round(arms / structure * 100, 1))
         + "%)"
     )
-    body_str = (
-        "Body"
-        + "<br>"
-        + str("{0:.2f}".format(body))
-        + " [kg] ("
-        + str(round(body / structure * 100, 1))
-        + "%)"
+    wing_str = (
+            "Wing"
+            + "<br>"
+            + str("{0:.2f}".format(wing))
+            + " [kg] ("
+            + str(round(wing / structure * 100, 1))
+            + "%)"
+    )
+    fuselage_str = (
+            "Fuselage"
+            + "<br>"
+            + str("{0:.2f}".format(fuselage))
+            + " [kg] ("
+            + str(round(fuselage / structure * 100, 1))
+            + "%)"
+    )
+    htail_str = (
+            "HTP"
+            + "<br>"
+            + str("{0:.2f}".format(htail))
+            + " [kg] ("
+            + str(round(htail / structure * 100, 1))
+            + "%)"
+    )
+    vtail_str = (
+            "VTP"
+            + "<br>"
+            + str("{0:.2f}".format(vtail))
+            + " [kg] ("
+            + str(round(vtail / structure * 100, 1))
+            + "%)"
     )
     structure_str = (
         "Structure"
@@ -197,6 +233,10 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
                 cables_str,
                 body_str,
                 arms_str,
+                wing_str,
+                fuselage_str,
+                htail_str,
+                vtail_str,
             ],
             parents=[
                 "",
@@ -210,6 +250,10 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
                 propulsion_str,
                 propulsion_str,
                 propulsion_str,
+                structure_str,
+                structure_str,
+                structure_str,
+                structure_str,
                 structure_str,
                 structure_str,
             ],
@@ -227,6 +271,10 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
                 cables,
                 body,
                 arms,
+                wing,
+                fuselage,
+                htail,
+                vtail,
             ],
             branchvalues="total",
         ),
@@ -286,7 +334,7 @@ def mass_breakdown_bar_plot_drone(
     structure = body + arms
 
     # PAYLOAD
-    payload = variables["specifications:payload:mass:max"].value[0]
+    payload = variables["specifications:payload:mass"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
@@ -360,7 +408,7 @@ def mass_breakdown_bar_plot_drone(
     return fig
 
 
-def drone_geometry_plot(
+def multirotor_geometry_plot(
     drone_file_path: str, name=None, fig=None, file_formatter=None
 ) -> go.FigureWidget:
     """
@@ -514,6 +562,122 @@ def drone_geometry_plot(
         yaxis_title="x",
     )
     fig.update_layout(yaxis=dict(scaleanchor="x", scaleratio=1))
+
+    return fig
+
+
+def fixedwing_geometry_plot(
+    aircraft_file_path: str, name=None, fig=None, file_formatter=None
+) -> go.FigureWidget:
+    """
+    Returns a figure plot of the top view of the wing.
+    Different designs can be superposed by providing an existing fig.
+    Each design can be provided a name.
+
+    :param aircraft_file_path: path of data file
+    :param name: name to give to the trace added to the figure
+    :param fig: existing figure to which add the plot
+    :param file_formatter: the formatter that defines the format of data file. If not provided,
+                           default format will be assumed.
+    :return: wing plot figure
+    """
+    variables = VariableIO(aircraft_file_path, file_formatter).read()
+
+    # Wing parameters
+    wing_tip_leading_edge_x = 0
+    wing_root_y = 0  # variables["data:airframe:fuselage:diameter:mid"].value[0] / 2.0
+    wing_tip_y = variables["data:airframe:wing:span"].value[0] / 2.0
+    wing_root_chord = variables["data:airframe:wing:root:chord"].value[0]
+    wing_tip_chord = variables["data:airframe:wing:tip:chord"].value[0]
+
+    y_wing = np.array(
+        [0, wing_root_y, wing_tip_y, wing_tip_y, wing_root_y, 0, 0]
+    )
+
+    x_wing = np.array(
+        [
+            0,
+            0,
+            wing_tip_leading_edge_x,
+            wing_tip_leading_edge_x + wing_tip_chord,
+            wing_root_chord,
+            wing_root_chord,
+            0,
+        ]
+    )
+
+    # Horizontal Tail parameters
+    ht_root_chord = variables["data:airframe:tail:horizontal:root:chord"].value[0]
+    ht_tip_chord = variables["data:airframe:tail:horizontal:tip:chord"].value[0]
+    ht_span = variables["data:airframe:tail:horizontal:span"].value[0]
+    ht_sweep_0 = 0  # variables["data:geometry:horizontal_tail:sweep_0"].value[0]
+
+    ht_tip_leading_edge_x = ht_span / 2.0 * np.tan(ht_sweep_0 * np.pi / 180.0)
+
+    y_ht = np.array([0, ht_span / 2.0, ht_span / 2.0, 0.0, 0.0])
+
+    x_ht = np.array(
+        [0, ht_tip_leading_edge_x, ht_tip_leading_edge_x + ht_tip_chord, ht_root_chord, 0]
+    )
+
+    # Fuselage parameters
+    fuselage_mid_width = variables["data:airframe:fuselage:diameter:mid"].value[0]
+    fuselage_tip_width = variables["data:airframe:fuselage:diameter:tip"].value[0]
+    fuselage_length = variables["data:airframe:fuselage:length"].value[0]
+    fuselage_nose_length = variables["data:airframe:fuselage:length:nose"].value[0]
+    fuselage_mid_length = variables["data:airframe:fuselage:length:mid"].value[0]
+    fuselage_rear_length = variables["data:airframe:fuselage:length:rear"].value[0]
+    fuselage_front_length = fuselage_nose_length + fuselage_mid_length
+
+    x_fuselage = np.array(
+        [
+            0.0,
+            fuselage_nose_length,
+            fuselage_front_length,
+            fuselage_length,
+            fuselage_length,
+        ]
+    )
+
+    y_fuselage = np.array(
+        [
+            0.0,
+            fuselage_mid_width / 2.0,
+            fuselage_mid_width / 2.0,
+            fuselage_tip_width / 2.0,
+            0.0,
+        ]
+    )
+
+    # Absolute positions
+    x_wing_root = variables["data:airframe:wing:root:LE:x"].value[0]
+    x_ht_root = variables["data:airframe:tail:horizontal:root:LE:x"].value[0]
+
+    x_wing = x_wing + x_wing_root
+    x_ht = x_ht + x_ht_root
+
+    # pylint: disable=invalid-name # that's a common naming
+    x = np.concatenate((x_fuselage, x_wing, x_ht))
+    # pylint: disable=invalid-name # that's a common naming
+    y = np.concatenate((y_fuselage, y_wing, y_ht))
+
+    # pylint: disable=invalid-name # that's a common naming
+    y = np.concatenate((-y, y))
+    # pylint: disable=invalid-name # that's a common naming
+    x = np.concatenate((x, x))
+
+    if fig is None:
+        fig = go.Figure()
+
+    scatter = go.Scatter(x=y, y=x, mode="lines+markers", name=name)
+
+    fig.add_trace(scatter)
+
+    fig.layout = go.Layout(yaxis=dict(scaleanchor="x", scaleratio=1))
+
+    fig = go.FigureWidget(fig)
+
+    fig.update_layout(title_text="Drone Geometry", title_x=0.5, xaxis_title="y", yaxis_title="x")
 
     return fig
 

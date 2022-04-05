@@ -124,7 +124,7 @@
     <propeller>
       <advance_ratio>
         <climb is_input="True">0.1340559897379786<!--Advance ratio J (climb)--></climb>
-        <forward is_input="True">0.5944229590073622<!--Advance ratio J (forward flight)--></forward>
+        <cruise is_input="True">0.5944229590073622<!--Advance ratio J (cruise)--></cruise>
       </advance_ratio>
       <reference>
         <diameter units="m" is_input="True">0.2794<!--Propeller diameter reference for scaling law--></diameter>
@@ -158,9 +158,9 @@
   <mission>
     <design_mission>
       <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
-      <forward>
-        <speed units="m/s" is_input="True">20.0<!--Forward flight velocity--></speed>
-      </forward>
+      <cruise>
+        <speed units="m/s" is_input="True">20.0<!--Cruise velocity--></speed>
+      </cruise>
       <takeoff>
         <altitude units="m" is_input="True">0.0<!--Takeoff altitude--></altitude>
       </takeoff>

@@ -5,7 +5,7 @@ import openmdao.api as om
 import numpy as np
 
 
-class MotorModel:
+class MotorPerfoModel:
     """
     Motor model for performances calculation
     """
@@ -29,7 +29,7 @@ class MotorPerfos(om.Group):
         self.add_subsystem("takeoff", TakeOff(), promotes=["*"])
         self.add_subsystem("hover", Hover(), promotes=["*"])
         self.add_subsystem("climb", Climb(), promotes=["*"])
-        self.add_subsystem("forward", Forward(), promotes=["*"])
+        self.add_subsystem("cruise", Cruise(), promotes=["*"])
 
 
 class TakeOff(om.ExplicitComponent):
@@ -67,7 +67,7 @@ class TakeOff(om.ExplicitComponent):
         # Umot_to = Rmot * Imot_to + W_to_motor * Ktmot  # [V] Voltage of the motor per propeller
         # P_el_to = Umot_to * Imot_to  # [W] Takeoff : output electrical power
 
-        Tmot_to, Wmot_to, Imot_to, Umot_to, P_el_to = MotorModel.performances(
+        Tmot_to, Wmot_to, Imot_to, Umot_to, P_el_to = MotorPerfoModel.performances(
             Qpro_to, Wpro_to, Nred, Tfmot, Ktmot, Rmot
         )
 
@@ -118,7 +118,7 @@ class Hover(om.ExplicitComponent):
             Imot_hover,
             Umot_hover,
             P_el_hover,
-        ) = MotorModel.performances(Qpro_hover, Wpro_hover, Nred, Tfmot, Ktmot, Rmot)
+        ) = MotorPerfoModel.performances(Qpro_hover, Wpro_hover, Nred, Tfmot, Ktmot, Rmot)
 
         outputs["data:motor:power:hover"] = P_el_hover
         outputs["data:motor:voltage:hover"] = Umot_hover
@@ -161,7 +161,7 @@ class Climb(om.ExplicitComponent):
         # Umot_cl = Rmot * Imot_cl + W_cl_motor * Ktmot  # [V] Voltage of the motor per propeller for climbing
         # P_el_cl = Umot_cl * Imot_cl  # [W] Power : output electrical power for climbing
 
-        Tmot_cl, Wmot_cl, Imot_cl, Umot_cl, P_el_cl = MotorModel.performances(
+        Tmot_cl, Wmot_cl, Imot_cl, Umot_cl, P_el_cl = MotorPerfoModel.performances(
             Qpro_cl, Wpro_cl, Nred, Tfmot, Ktmot, Rmot
         )
         outputs["data:motor:power:climb"] = P_el_cl
@@ -170,9 +170,9 @@ class Climb(om.ExplicitComponent):
         outputs["data:motor:torque:climb"] = Tmot_cl
 
 
-class Forward(om.ExplicitComponent):
+class Cruise(om.ExplicitComponent):
     """
-    Computes motor performances for forward flight
+    Computes motor performances for cruise
     """
 
     def setup(self):
@@ -180,12 +180,12 @@ class Forward(om.ExplicitComponent):
         self.add_input("data:motor:torque:friction", val=np.nan, units="N*m")
         self.add_input("data:motor:resistance", val=np.nan, units="V/A")
         self.add_input("data:motor:torque:coefficient", val=np.nan, units="N*m/A")
-        self.add_input("data:propeller:speed:forward", val=np.nan, units="rad/s")
-        self.add_input("data:propeller:torque:forward", val=np.nan, units="N*m")
-        self.add_output("data:motor:power:forward", units="W")
-        self.add_output("data:motor:voltage:forward", units="V")
-        self.add_output("data:motor:current:forward", units="A")
-        self.add_output("data:motor:torque:forward", units="N*m")
+        self.add_input("data:propeller:speed:cruise", val=np.nan, units="rad/s")
+        self.add_input("data:propeller:torque:cruise", val=np.nan, units="N*m")
+        self.add_output("data:motor:power:cruise", units="W")
+        self.add_output("data:motor:voltage:cruise", units="V")
+        self.add_output("data:motor:current:cruise", units="A")
+        self.add_output("data:motor:torque:cruise", units="N*m")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -196,20 +196,20 @@ class Forward(om.ExplicitComponent):
         Tfmot = inputs["data:motor:torque:friction"]
         Rmot = inputs["data:motor:resistance"]
         Ktmot = inputs["data:motor:torque:coefficient"]
-        Wpro_ff = inputs["data:propeller:speed:forward"]
-        Qpro_ff = inputs["data:propeller:torque:forward"]
+        Wpro_cr = inputs["data:propeller:speed:cruise"]
+        Qpro_cr = inputs["data:propeller:torque:cruise"]
 
-        # Tmot_ff = Qpro_ff / Nred  # [N.m] motor forward flight torque with reduction
-        # W_ff_motor = Wpro_ff * Nred  # [rad/s] Motor forward flight speed with reduction
-        # Imot_ff = (Tmot_ff + Tfmot) / Ktmot  # [I] Current of the motor per propeller for climbing
-        # Umot_ff = Rmot * Imot_ff + W_ff_motor * Ktmot  # [V] Voltage of the motor per propeller for climbing
-        # P_el_ff = Umot_ff * Imot_ff  # [W] Power : output electrical power for climbing
+        # Tmot_cr = Qpro_cr / Nred  # [N.m] motor cruise torque with reduction
+        # W_cr_motor = Wpro_cr * Nred  # [rad/s] Motor cruise speed with reduction
+        # Imot_cr = (Tmot_cr + Tfmot) / Ktmot  # [I] Current of the motor per propeller for climbing
+        # Umot_cr = Rmot * Imot_cr + W_cr_motor * Ktmot  # [V] Voltage of the motor per propeller for climbing
+        # P_el_cr = Umot_cr * Imot_cr  # [W] Power : output electrical power for climbing
 
-        Tmot_ff, Wmot_ff, Imot_ff, Umot_ff, P_el_ff = MotorModel.performances(
-            Qpro_ff, Wpro_ff, Nred, Tfmot, Ktmot, Rmot
+        Tmot_cr, Wmot_cr, Imot_cr, Umot_cr, P_el_cr = MotorPerfoModel.performances(
+            Qpro_cr, Wpro_cr, Nred, Tfmot, Ktmot, Rmot
         )
 
-        outputs["data:motor:power:forward"] = P_el_ff
-        outputs["data:motor:voltage:forward"] = Umot_ff
-        outputs["data:motor:current:forward"] = Imot_ff
-        outputs["data:motor:torque:forward"] = Tmot_ff
+        outputs["data:motor:power:cruise"] = P_el_cr
+        outputs["data:motor:voltage:cruise"] = Umot_cr
+        outputs["data:motor:current:cruise"] = Imot_cr
+        outputs["data:motor:torque:cruise"] = Tmot_cr

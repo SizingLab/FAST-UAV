@@ -1,45 +1,40 @@
 <FASTOAD_model>
   <specifications>
     <MTOW units="kg" is_input="True">100.0<!--Top-level requirement: Maximum Take Off Weight--></MTOW>
-    <climb_height units="m" is_input="True">0.0<!--Top-level requirement: climb height--></climb_height>
-    <climb_speed units="m/s" is_input="True">5.0<!--Top-level requirement: climb speed--></climb_speed>
-    <hover_duration units="min" is_input="True">18.0<!--Top-level requirement: hover phase duration--></hover_duration>
-    <range units="m" is_input="True">0.0<!--Top-level requirement: range--></range>
     <maxthrust>
       <k is_input="True">1.97<!--Top-level requirement: maximum thrust-to-weight ratio--></k>
     </maxthrust>
     <payload>
+      <mass units="kg" is_input="True">6.35<!--Design payload mass--></mass>
       <power units="W" is_input="True">0.0<!--Payload power consumption--></power>
-      <mass>
-        <max units="kg" is_input="True">6.35<!--Payload mass--></max>
-      </mass>
     </payload>
   </specifications>
   <data>
-    <aerodynamics>
-      <Cd is_input="True">0.5<!--Fuselage Drag coefficient--></Cd>
-      <Cl0 is_input="True">0.0<!--Max. fuselage lift coefficient--></Cl0>
-    </aerodynamics>
     <avionics>
       <power units="W" is_input="True">0.0<!--Avionics power consumption--></power>
     </avionics>
     <ESC>
+      <power>
+        <k is_input="True">1.0<!--Oversizing coefficient on ESC power--></k>
+      </power>
       <reference>
         <efficiency is_input="True">0.95<!--ESC efficiency reference--></efficiency>
         <mass units="kg" is_input="True">0.115<!--ESC mass reference for scaling law--></mass>
         <power units="W" is_input="True">3108.0<!--ESC max. power reference for scaling law--></power>
         <voltage units="V" is_input="True">44.4<!--ESC voltage reference for scaling law--></voltage>
       </reference>
-      <settings>
-        <power>
-          <k is_input="True">1.0<!--Oversizing coefficient on ESC power--></k>
-        </power>
-      </settings>
     </ESC>
     <airframe>
+      <aerodynamics>
+        <CD0 is_input="True">0.5<!--Parasitic drag coefficient--></CD0>
+        <CLmax is_input="True">0.0<!--Max. lift coefficient--></CLmax>
+      </aerodynamics>
       <arms>
         <number is_input="True">6.0<!--Number of arms--></number>
         <prop_per_arm is_input="True">1.0<!--Number of propellers per arm (single or coaxial configuration)--></prop_per_arm>
+        <diameter>
+          <k is_input="True">0.99<!--Inner to outer beam diameter ratio--></k>
+        </diameter>
         <material>
           <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
           <stress>
@@ -49,11 +44,6 @@
         <reference>
           <mass units="kg" is_input="True">1.338<!--Arms mass reference for scaling law--></mass>
         </reference>
-        <settings>
-          <diameter>
-            <k is_input="True">0.99<!--Inner to outer beam diameter ratio--></k>
-          </diameter>
-        </settings>
       </arms>
       <body>
         <reference>
@@ -66,6 +56,9 @@
       </body>
     </airframe>
     <battery>
+      <mass>
+        <k is_input="True">1.0<!--Oversizing coefficient on battery mass--></k>
+      </mass>
       <reference>
         <capacity units="A*s" is_input="True">20520.0<!--Battery capacity reference for scaling law--></capacity>
         <energy units="kJ" is_input="True">467.856<!--Battery energy reference for scaling law--></energy>
@@ -79,19 +72,14 @@
           <max units="A" is_input="True">200.0<!--Battery max. current reference for scaling law--></max>
         </current>
       </reference>
+      <voltage>
+        <k is_input="True">1.0<!--Oversizing coefficient on battery voltage--></k>
+      </voltage>
       <cell>
         <voltage>
           <estimated units="V" is_input="True">3.8<!--Voltage of one cell (estimated value)--></estimated>
         </voltage>
       </cell>
-      <settings>
-        <mass>
-          <k is_input="True">1.0<!--Oversizing coefficient on battery mass--></k>
-        </mass>
-        <voltage>
-          <k is_input="True">1.0<!--Oversizing coefficient on battery voltage--></k>
-        </voltage>
-      </settings>
     </battery>
     <cables>
       <reference>
@@ -112,19 +100,20 @@
           <nominal units="N*m" is_input="True">2.32<!--Motor nominal torque reference for scaling law--></nominal>
         </torque>
       </reference>
-      <settings>
-        <speed>
-          <k is_input="True">1.0<!--Oversizing coefficient of motor speed--></k>
-        </speed>
-        <torque>
-          <k is_input="True">1.0<!--Oversizing coefficient on motor torque--></k>
-        </torque>
-      </settings>
+      <speed>
+        <k is_input="True">1.0<!--Oversizing coefficient of motor speed--></k>
+      </speed>
+      <torque>
+        <k is_input="True">1.0<!--Oversizing coefficient on motor torque--></k>
+      </torque>
     </motor>
     <propeller>
+      <ND>
+        <k is_input="True">1.0<!--Undersizing coefficient on propeller rotational speed--></k>
+      </ND>
       <advance_ratio>
         <climb is_input="True">0.126<!--Advance ratio J (climb)--></climb>
-        <forward is_input="True">0.5527207621855417<!--Advance ratio J (forward flight)--></forward>
+        <cruise is_input="True">0.5527207621855417<!--Advance ratio J (cruise)--></cruise>
       </advance_ratio>
       <reference>
         <diameter units="m" is_input="True">0.2794<!--Propeller diameter reference for scaling law--></diameter>
@@ -138,31 +127,32 @@
           <guess is_input="True">0.3<!--Angle pitch/diameter (initial guess)--></guess>
         </beta>
       </geometry>
-      <settings>
-        <ND>
-          <k is_input="True">1.0<!--Undersizing coefficient on propeller rotational speed--></k>
-        </ND>
-      </settings>
     </propeller>
     <system>
+      <MTOW>
+        <k is_input="True">2.0<!--Oversizing coefficient on load mass--></k>
+      </MTOW>
       <reference>
         <MTOW units="kg" is_input="True">1.4<!--Maximum Take Off Weight reference for scaling law--></MTOW>
       </reference>
-      <settings>
-        <MTOW>
-          <k is_input="True">2.0<!--Oversizing coefficient on load mass--></k>
-        </MTOW>
-      </settings>
     </system>
   </data>
   <mission>
     <design_mission>
-      <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
-      <forward>
-        <speed units="m/s" is_input="True">20.0<!--Forward flight velocity--></speed>
-      </forward>
+      <dISA units="degK" is_input="True">0<!--Temperature variation w.r.t. ISA--></dISA>
+      <climb>
+        <height units="m" is_input="True">0<!--Top-level requirement: climb height--></height>
+        <speed units="m/s" is_input="True">5<!--Top-level requirement: climb speed--></speed>
+      </climb>
+      <cruise>
+        <distance units="m" is_input="True">0<!--Top-level requirement: range--></distance>
+        <speed units="m/s" is_input="True">20<!--Cruise velocity--></speed>
+      </cruise>
+      <hover>
+        <duration units="min" is_input="True">18<!--Top-level requirement: hover phase duration--></duration>
+      </hover>
       <takeoff>
-        <altitude units="m" is_input="True">0.0<!--Takeoff altitude--></altitude>
+        <altitude units="m" is_input="True">0<!--Takeoff altitude--></altitude>
       </takeoff>
     </design_mission>
   </mission>

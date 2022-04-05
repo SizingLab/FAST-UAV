@@ -1,29 +1,13 @@
 <FASTOAD_model>
-  <specifications>
-    <climb_height units="m" is_input="True">0.0<!--Top-level requirement: climb height--></climb_height>
-    <climb_speed units="m/s" is_input="True">5.0<!--Top-level requirement: climb speed--></climb_speed>
-    <hover_duration units="min" is_input="True">18.0<!--Top-level requirement: hover phase duration--></hover_duration>
-    <range units="m" is_input="True">0.0<!--Top-level requirement: range--></range>
-    <payload>
-      <power units="W" is_input="True">0.0<!--Design payload power consumption--></power>
-      <mass>
-        <max units="kg" is_input="True">6.35<!--Design payload mass--></max>
-      </mass>
-    </payload>
-  </specifications>
   <data>
     <ESC>
       <efficiency is_input="True">0.95<!--ESC efficiency--></efficiency>
     </ESC>
-    <aerodynamics>
-      <Cd is_input="True">0.5<!--Fuselage Drag coefficient--></Cd>
-      <Cl0 is_input="True">0.0<!--Max. fuselage lift coefficient--></Cl0>
-    </aerodynamics>
     <avionics>
       <power units="W" is_input="True">0.0<!--Avionics power consumption--></power>
     </avionics>
     <battery>
-      <energy units="kJ" is_input="True">2611.187440108554<!--Battery energy--></energy>
+      <energy units="kJ" is_input="True">2611.187440118263<!--Battery energy--></energy>
       <DoD>
         <max is_input="True">0.8<!--Battery depth of discharge--></max>
       </DoD>
@@ -32,45 +16,40 @@
       <N_red is_input="True">1.0<!--Gearbox reduction--></N_red>
     </gearbox>
     <motor>
-      <resistance units="V/A" is_input="True">0.18426092688145526<!--Motor resistance--></resistance>
+      <resistance units="V/A" is_input="True">0.18426092688288748<!--Motor resistance--></resistance>
       <power>
-        <climb units="W" is_input="True">426.1104637027645<!--Motor power (climb)--></climb>
-        <forward units="W" is_input="True">337.9468700649726<!--Motor power (forward flight)--></forward>
-        <hover units="W" is_input="True">306.2503787897911<!--Motor power (hover)--></hover>
+        <climb units="W" is_input="True">426.1104637034072<!--Motor power (climb)--></climb>
+        <cruise units="W" is_input="True">337.9468700654573<!--Motor power (cruise)--></cruise>
+        <hover units="W" is_input="True">306.2503787902625<!--Motor power (hover)--></hover>
       </power>
       <torque>
-        <coefficient units="N*m/A" is_input="True">0.04121192170935815<!--Motor torque coefficient--></coefficient>
-        <friction units="N*m" is_input="True">0.014778011165877503<!--Motor friction torque--></friction>
+        <coefficient units="N*m/A" is_input="True">0.04121192170959492<!--Motor torque coefficient--></coefficient>
+        <friction units="N*m" is_input="True">0.014778011165910468<!--Motor friction torque--></friction>
       </torque>
     </motor>
     <propeller>
       <number is_input="True">6.0<!--Number of propellers--></number>
       <advance_ratio>
-        <forward is_input="True">0.6178077290719869<!--Advance ratio J (forward flight)--></forward>
+        <climb is_input="True">0.1382019612857288<!--Advance ratio J (climb)--></climb>
+        <cruise is_input="True">0.6178077290720034<!--Advance ratio J (cruise)--></cruise>
       </advance_ratio>
       <geometry>
-        <beta is_input="True">0.3<!--Angle pitch/diameter--></beta>
-        <diameter units="m" is_input="True">0.4872255421826556<!--Propeller diameter--></diameter>
+        <beta is_input="True">0.3000000000000052<!--Angle pitch/diameter--></beta>
+        <diameter units="m" is_input="True">0.4872255421830389<!--Propeller diameter--></diameter>
       </geometry>
-      <aerodynamics>
-        <CP>
-          <axial is_input="True">0.02644288945469999<!--Propeller power coefficient in axial flow conditions--></axial>
-          <static is_input="True">0.02768<!--Propeller power coefficient in static conditions--></static>
-        </CP>
-        <CT>
-          <axial is_input="True">0.06791551053793528<!--Propeller thrust coefficient in axial flow conditions--></axial>
-          <static is_input="True">0.0859<!--Propeller thrust coefficient in static conditions--></static>
-        </CT>
-      </aerodynamics>
     </propeller>
     <system>
-      <MTOW units="kg" is_input="True">15.328299458777947<!--Maximum Take Off Weight--></MTOW>
+      <MTOW units="kg" is_input="True">15.32829945879226<!--Maximum Take Off Weight--></MTOW>
     </system>
     <airframe>
+      <aerodynamics>
+        <CD0 is_input="True">0.5<!--Parasitic drag coefficient--></CD0>
+        <CLmax is_input="True">0.0<!--Max. lift coefficient--></CLmax>
+      </aerodynamics>
       <body>
         <surface>
-          <front units="m**2" is_input="True">0.09861446496000378<!--Front surface of the body--></front>
-          <top units="m**2" is_input="True">0.2218825461600085<!--Top surface of the body--></top>
+          <front units="m**2" is_input="True">0.09861446496010916<!--Front surface of the body--></front>
+          <top units="m**2" is_input="True">0.22188254616024558<!--Top surface of the body--></top>
         </surface>
       </body>
     </airframe>
@@ -78,27 +57,33 @@
   <mission>
     <concordia_study>
       <duration units="min" is_input="False">12.0</duration>
-      <energy units="kJ" is_input="False">1165.4710736126453<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">1165.4710736126453</propulsion></energy>
+      <energy units="kJ" is_input="False">1098.7088542903975<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">1098.7088542903975</propulsion></energy>
+      <climb>
+        <speed units="m/s" is_input="True">5.0</speed>
+      </climb>
       <constraints>
-        <energy is_input="False">0.4420780294672212</energy>
+        <energy is_input="False">0.47403773212052713</energy>
       </constraints>
+      <cruise>
+        <speed units="m/s" is_input="True">20.0</speed>
+      </cruise>
       <route_1>
         <duration units="min" is_input="False">5.5</duration>
-        <energy units="kJ" is_input="False">617.9403672468992<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">617.9403672468992</propulsion></energy>
-        <tow units="kg" is_input="False">13.978299458777947</tow>
+        <energy units="kJ" is_input="False">617.9403672472968<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">617.9403672472968</propulsion></energy>
+        <tow units="kg" is_input="False">13.97829945879226</tow>
         <climb>
           <duration units="min" is_input="False">0.3333333333333333</duration>
-          <energy units="kJ" is_input="False">46.72186407565234<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">46.72186407565234</propulsion></energy>
+          <energy units="kJ" is_input="False">46.72186407568145<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">46.72186407568145</propulsion></energy>
           <height units="m" is_input="True">100.0</height>
         </climb>
-        <forward>
+        <cruise>
+          <distance units="m" is_input="True">5000.0</distance>
           <duration units="min" is_input="False">4.166666666666667</duration>
-          <energy units="kJ" is_input="False">470.561930306315<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">470.561930306315</propulsion></energy>
-          <range units="m" is_input="True">5000.0</range>
-        </forward>
+          <energy units="kJ" is_input="False">470.5619303066181<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">470.5619303066181</propulsion></energy>
+        </cruise>
         <hover>
           <duration units="min" is_input="True">1.0</duration>
-          <energy units="kJ" is_input="False">100.65657286493179<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">100.65657286493179</propulsion></energy>
+          <energy units="kJ" is_input="False">100.65657286499719<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">100.65657286499719</propulsion></energy>
         </hover>
         <payload>
           <mass units="kg" is_input="True">5.0</mass>
@@ -106,35 +91,35 @@
       </route_1>
       <route_2>
         <duration units="min" is_input="False">6.5</duration>
-        <energy units="kJ" is_input="False">547.5307063657461<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">547.5307063657461</propulsion></energy>
-        <tow units="kg" is_input="False">11.978299458777947</tow>
+        <energy units="kJ" is_input="False">480.76848704310083<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">480.76848704310083</propulsion></energy>
+        <tow units="kg" is_input="False">10.97829945879226</tow>
         <climb>
           <duration units="min" is_input="False">0.6666666666666666</duration>
-          <energy units="kJ" is_input="False">73.82429762882128<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">73.82429762882128</propulsion></energy>
+          <energy units="kJ" is_input="False">64.67714961902868<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">64.67714961902868</propulsion></energy>
           <height units="m" is_input="True">200.0</height>
         </climb>
-        <forward>
+        <cruise>
+          <distance units="m" is_input="True">1000.0</distance>
           <duration units="min" is_input="False">0.8333333333333334</duration>
-          <energy units="kJ" is_input="False">76.74819572592381<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">76.74819572592381</propulsion></energy>
-          <range units="m" is_input="True">1000.0</range>
-        </forward>
+          <energy units="kJ" is_input="False">68.70178654510961<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">68.70178654510961</propulsion></energy>
+        </cruise>
         <hover>
           <duration units="min" is_input="True">5.0</duration>
-          <energy units="kJ" is_input="False">396.958213011001<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">396.958213011001</propulsion></energy>
+          <energy units="kJ" is_input="False">347.38955087896255<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">347.38955087896255</propulsion></energy>
         </hover>
         <payload>
-          <mass units="kg" is_input="True">3.0</mass>
+          <mass units="kg" is_input="True">2.0</mass>
         </payload>
       </route_2>
       <route_diversion>
         <duration units="min" is_input="False">0.0</duration>
         <energy units="kJ" is_input="False">0.0<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">0.0</propulsion></energy>
-        <tow units="kg" is_input="False">8.978299458777947</tow>
-        <forward>
+        <tow units="kg" is_input="False">8.97829945879226</tow>
+        <cruise>
+          <distance units="m" is_input="True">0.0</distance>
           <duration units="min" is_input="False">0.0</duration>
           <energy units="kJ" is_input="False">0.0<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">0.0</propulsion></energy>
-          <range units="m" is_input="True">0.0</range>
-        </forward>
+        </cruise>
         <hover>
           <duration units="min" is_input="True">0.0</duration>
           <energy units="kJ" is_input="False">0.0<avionics units="kJ" is_input="False">0.0</avionics><payload units="kJ" is_input="False">0.0</payload><propulsion units="kJ" is_input="False">0.0</propulsion></energy>
@@ -145,24 +130,36 @@
       </route_diversion>
     </concordia_study>
     <design_mission>
-      <air_density units="kg/m**3" is_input="True">1.2249908312368587<!--Air density--></air_density>
       <duration units="min" is_input="False">18.0<!--Mission duration--></duration>
-      <energy units="kJ" is_input="False">2088.949952166154<!--Total energy consumption to accomplish the mission--></energy>
+      <energy units="kJ" is_input="False">2088.9499521693697<!--Total energy consumption to accomplish the mission--></energy>
       <climb>
         <duration units="min" is_input="False">0.0<!--Climb segment duration--></duration>
         <energy units="kJ" is_input="False">0.0<!--Climb segment energy consumption--><avionics units="kJ" is_input="False">0.0<!--Climb segment energy consumption (avionics)--></avionics><payload units="kJ" is_input="False">0.0<!--Climb segment energy consumption (payload)--></payload><propulsion units="kJ" is_input="False">0.0<!--Climb segment energy consumption (propulsion)--></propulsion></energy>
+        <height units="m" is_input="True">0.0<!--Top-level requirement: climb height--></height>
+        <speed units="m/s" is_input="True">5.0<!--Top-level requirement: climb speed--></speed>
       </climb>
       <constraints>
-        <energy is_input="False">-3.7966980083378456e-11<!--Constraint on battery energy to meet mission requirements--></energy>
+        <energy is_input="False">-3.578788480246756e-11<!--Constraint on battery energy to meet mission requirements--></energy>
       </constraints>
-      <forward>
+      <cruise>
+        <distance units="m" is_input="True">0.0<!--Top-level requirement: range--></distance>
         <duration units="min" is_input="False">0.0<!--Cruise segment duration--></duration>
-        <energy units="kJ" is_input="False">0.0<!--Forward flight segment energy consumption--><avionics units="kJ" is_input="False">0.0<!--Forward flight segment energy consumption (avionics)--></avionics><payload units="kJ" is_input="False">0.0<!--Forward flight segment energy consumption (payload)--></payload><propulsion units="kJ" is_input="False">0.0<!--Forward flight segment energy consumption (propulsion)--></propulsion></energy>
-        <speed units="m/s" is_input="True">20.0<!--Forward flight velocity--></speed>
-      </forward>
+        <energy units="kJ" is_input="False">0.0<!--Cruise segment energy consumption--><avionics units="kJ" is_input="False">0.0<!--Cruise segment energy consumption (avionics)--></avionics><payload units="kJ" is_input="False">0.0<!--Cruise segment energy consumption (payload)--></payload><propulsion units="kJ" is_input="False">0.0<!--Cruise segment energy consumption (propulsion)--></propulsion></energy>
+        <speed units="m/s" is_input="True">20.0<!--Cruise velocity--></speed>
+        <atmosphere>
+          <density units="kg/m**3" is_input="True">1.2249908312368587</density>
+        </atmosphere>
+      </cruise>
       <hover>
-        <energy units="kJ" is_input="False">2088.949952166154<!--Hover segment energy consumption--><avionics units="kJ" is_input="False">0.0<!--Hover segment energy consumption (avionics)--></avionics><payload units="kJ" is_input="False">0.0<!--Hover segment energy consumption (payload)--></payload><propulsion units="kJ" is_input="False">2088.949952166154<!--Hover segment energy consumption (propulsion)--></propulsion></energy>
+        <duration units="min" is_input="True">18.0<!--Top-level requirement: hover phase duration--></duration>
+        <energy units="kJ" is_input="False">2088.9499521693697<!--Hover segment energy consumption--><avionics units="kJ" is_input="False">0.0<!--Hover segment energy consumption (avionics)--></avionics><payload units="kJ" is_input="False">0.0<!--Hover segment energy consumption (payload)--></payload><propulsion units="kJ" is_input="False">2088.9499521693697<!--Hover segment energy consumption (propulsion)--></propulsion></energy>
       </hover>
     </design_mission>
   </mission>
+  <specifications>
+    <payload>
+      <mass units="kg" is_input="True">6.35<!--Design payload mass--></mass>
+      <power units="W" is_input="True">0.0<!--Design payload power consumption--></power>
+    </payload>
+  </specifications>
 </FASTOAD_model>

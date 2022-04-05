@@ -10,7 +10,7 @@ module_folders:
     - ../models/Propulsion/ESC
     - ../models/Propulsion/Motor
     - ../models/Propulsion/Propeller
-    - ../models/Airframe/multirotor
+    - ../models/Airframe
     - ../models/Propulsion/Cables
     
 # Input and output files
@@ -38,7 +38,7 @@ model:
     airframe:
         id: airframe.multirotor
     cables:
-        id: propulsion.cables
+        id: propulsion.cables.multirotor
     system:
         id: system.multirotor
     mission:

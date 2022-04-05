@@ -16,10 +16,10 @@ class ESCConstraints(om.ExplicitComponent):
         self.add_input("data:ESC:power:max", val=np.nan, units="W")
         self.add_input("data:ESC:power:takeoff", val=np.nan, units="W")
         self.add_input("data:ESC:power:climb", val=np.nan, units="W")
-        self.add_input("data:ESC:power:forward", val=np.nan, units="W")
+        self.add_input("data:ESC:power:cruise", val=np.nan, units="W")
         self.add_output("data:ESC:constraints:power:takeoff", units=None)
         self.add_output("data:ESC:constraints:power:climb", units=None)
-        self.add_output("data:ESC:constraints:power:forward", units=None)
+        self.add_output("data:ESC:constraints:power:cruise", units=None)
         self.add_output("data:ESC:constraints:voltage", units=None)
 
     def setup_partials(self):
@@ -31,16 +31,16 @@ class ESCConstraints(om.ExplicitComponent):
         V_bat = inputs["data:battery:voltage"]
         P_esc_to = inputs["data:ESC:power:takeoff"]
         P_esc_cl = inputs["data:ESC:power:climb"]
-        P_esc_ff = inputs["data:ESC:power:forward"]
+        P_esc_cr = inputs["data:ESC:power:cruise"]
 
         ESC_con0 = (P_esc - P_esc_to) / P_esc
         ESC_con1 = (P_esc - P_esc_cl) / P_esc
-        ESC_con2 = (P_esc - P_esc_ff) / P_esc
+        ESC_con2 = (P_esc - P_esc_cr) / P_esc
         ESC_con3 = (V_esc - V_bat) / V_esc
 
         outputs["data:ESC:constraints:power:takeoff"] = ESC_con0
         outputs["data:ESC:constraints:power:climb"] = ESC_con1
-        outputs["data:ESC:constraints:power:forward"] = ESC_con2
+        outputs["data:ESC:constraints:power:cruise"] = ESC_con2
         outputs["data:ESC:constraints:voltage"] = ESC_con3
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
@@ -48,7 +48,7 @@ class ESCConstraints(om.ExplicitComponent):
         V_esc = inputs["data:ESC:voltage"]
         V_bat = inputs["data:battery:voltage"]
         P_esc_cl = inputs["data:ESC:power:climb"]
-        P_esc_ff = inputs["data:ESC:power:forward"]
+        P_esc_cr = inputs["data:ESC:power:cruise"]
 
         partials["data:ESC:constraints:power:climb", "data:ESC:power:max",] = (
             P_esc_cl / P_esc**2
@@ -57,10 +57,10 @@ class ESCConstraints(om.ExplicitComponent):
             -1.0 / P_esc
         )
 
-        partials["data:ESC:constraints:power:forward", "data:ESC:power:max",] = (
-            P_esc_ff / P_esc**2
+        partials["data:ESC:constraints:power:cruise", "data:ESC:power:max",] = (
+            P_esc_cr / P_esc**2
         )
-        partials["data:ESC:constraints:power:forward", "data:ESC:power:forward",] = (
+        partials["data:ESC:constraints:power:cruise", "data:ESC:power:cruise",] = (
             -1.0 / P_esc
         )
 

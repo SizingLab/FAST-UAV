@@ -35,7 +35,7 @@ class CellNumber(om.ExplicitComponent):
     def setup(self):
         self.add_input('data:motor:voltage:takeoff', val=np.nan, units='V')
         # self.add_input('data:battery:voltage:guess', val=np.nan, units='V')
-        self.add_input('data:battery:settings:voltage:k', val=np.nan, units=None)
+        self.add_input('data:battery:voltage:k', val=np.nan, units=None)
         self.add_input('data:battery:cell:voltage:estimated', val=3.7, units='V')
         self.add_output('data:battery:cell:number:estimated', units=None)
         self.add_output('data:battery:cell:number:series:estimated', units=None)
@@ -47,7 +47,7 @@ class CellNumber(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         V_cell = inputs['data:battery:cell:voltage:estimated']
         U_mot_to = inputs['data:motor:voltage:takeoff']
-        k_vb = inputs['data:battery:settings:voltage:k']
+        k_vb = inputs['data:battery:voltage:k']
         # V_bat_guess = inputs['data:battery:voltage:guess']
 
         # N_series = np.ceil(V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
@@ -68,7 +68,7 @@ class CellNumber(om.ExplicitComponent):
     #
     #     V_cell = inputs['data:battery:cell:voltage:estimated']
     #     # V_bat_guess = inputs['data:battery:voltage:guess']
-    #     k_vb = inputs['data:battery:settings:voltage:k']
+    #     k_vb = inputs['data:battery:voltage:k']
     #     U_mot_to = inputs['data:motor:voltage:takeoff']
     #
     #     partials[
@@ -78,7 +78,7 @@ class CellNumber(om.ExplicitComponent):
     #
     #     partials[
     #         'data:battery:cell:number:series:estimated',
-    #         'data:battery:settings:voltage:k',
+    #         'data:battery:voltage:k',
     #     ] = (1 + np.cos(2 * np.pi * k_vb * U_mot_to / V_cell)) * U_mot_to / V_cell  # Smooth ceil function derivative
 
 
@@ -118,8 +118,8 @@ class Capacity(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input('specifications:payload:mass:max', val=np.nan, units='kg')
-        self.add_input('data:battery:settings:mass:k', val=np.nan, units=None)
+        self.add_input('specifications:payload:mass', val=np.nan, units='kg')
+        self.add_input('data:battery:mass:k', val=np.nan, units=None)
         self.add_input('data:battery:reference:mass', val=np.nan, units='kg')
         self.add_input('data:battery:reference:capacity', val=np.nan, units='A*s')
         self.add_output('data:battery:capacity:estimated', units='A*s')
@@ -128,8 +128,8 @@ class Capacity(om.ExplicitComponent):
         self.declare_partials('*', '*', method='exact')
 
     def compute(self, inputs, outputs):
-        k_Mb = inputs['data:battery:settings:mass:k']
-        M_load = inputs['specifications:payload:mass:max']
+        k_Mb = inputs['data:battery:mass:k']
+        M_load = inputs['specifications:payload:mass']
         Mbat_ref = inputs['data:battery:reference:mass']
         Cbat_ref = inputs['data:battery:reference:capacity']
 
@@ -138,12 +138,12 @@ class Capacity(om.ExplicitComponent):
         outputs['data:battery:capacity:estimated'] = C_bat
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        M_load = inputs['specifications:payload:mass:max']
+        M_load = inputs['specifications:payload:mass']
         Mbat_ref = inputs['data:battery:reference:mass']
         Cbat_ref = inputs['data:battery:reference:capacity']
 
         partials['data:battery:capacity:estimated',
-                 'data:battery:settings:mass:k'] = M_load * Cbat_ref / Mbat_ref
+                 'data:battery:mass:k'] = M_load * Cbat_ref / Mbat_ref
 
 
 class Energy(om.ExplicitComponent):

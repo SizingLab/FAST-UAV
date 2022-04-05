@@ -1,14 +1,15 @@
 """
-Organ delivery mission
+Organ delivery mission. For Multirotors only.
+A future version may include Fixed Wing drones capability.
 """
 
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 from scipy.constants import g
-from models.Scenarios.flight_model import FlightModel
-from models.Propulsion.Propeller.performances import PropellerModel
-from models.Propulsion.Motor.performances import MotorModel
+from models.Scenarios.multirotor.flight_model import MultirotorFlightModel
+from models.Propulsion.Propeller.performances import PropellerPerfoModel
+from models.Propulsion.Motor.performances import MotorPerfoModel
 from models.Propulsion.Propeller.estimation.models import PropellerAerodynamicsModel
 
 
@@ -22,36 +23,36 @@ class Mission(om.Group):
         route_1 = self.add_subsystem("route_1", om.Group(), promotes=["*"])
         route_1.add_subsystem("tow", ComputeTOW(route="_1"), promotes=["*"])
         route_1.add_subsystem("climb", ClimbSegment(route="_1"), promotes=["*"])
-        route_1.add_subsystem("forward", ForwardSegment(route="_1"), promotes=["*"])
+        route_1.add_subsystem("cruise", CruiseSegment(route="_1"), promotes=["*"])
         route_1.add_subsystem("hover", HoverSegment(route="_1"), promotes=["*"])
         route_1.add_subsystem(
             "route",
-            RouteComponent(route="_1", segments_list=["climb", "forward", "hover"]),
+            RouteComponent(route="_1", segments_list=["climb", "cruise", "hover"]),
             promotes=["*"],
         )
 
         route_2 = self.add_subsystem("route_2", om.Group(), promotes=["*"])
         route_2.add_subsystem("tow", ComputeTOW(route="_2"), promotes=["*"])
         route_2.add_subsystem("climb", ClimbSegment(route="_2"), promotes=["*"])
-        route_2.add_subsystem("forward", ForwardSegment(route="_2"), promotes=["*"])
+        route_2.add_subsystem("cruise", CruiseSegment(route="_2"), promotes=["*"])
         route_2.add_subsystem("hover", HoverSegment(route="_2"), promotes=["*"])
         route_2.add_subsystem(
             "route",
-            RouteComponent(route="_2", segments_list=["climb", "forward", "hover"]),
+            RouteComponent(route="_2", segments_list=["climb", "cruise", "hover"]),
             promotes=["*"],
         )
 
         diversion = self.add_subsystem("diversion", om.Group(), promotes=["*"])
         diversion.add_subsystem("tow", ComputeTOW(route="_diversion"), promotes=["*"])
         diversion.add_subsystem(
-            "forward", ForwardSegment(route="_diversion"), promotes=["*"]
+            "cruise", CruiseSegment(route="_diversion"), promotes=["*"]
         )
         diversion.add_subsystem(
             "hover", HoverSegment(route="_diversion"), promotes=["*"]
         )
         diversion.add_subsystem(
             "route",
-            RouteComponent(route="_diversion", segments_list=["forward", "hover"]),
+            RouteComponent(route="_diversion", segments_list=["cruise", "hover"]),
             promotes=["*"],
         )
 
@@ -75,7 +76,7 @@ class ComputeTOW(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:system:MTOW", val=np.nan, units="kg")
-        self.add_input("specifications:payload:mass:max", val=np.nan, units="kg")
+        self.add_input("specifications:payload:mass", val=np.nan, units="kg")
         self.add_input(
             "mission:concordia_study:route%s:payload:mass" % self.options["route"],
             val=np.nan,
@@ -91,7 +92,7 @@ class ComputeTOW(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         mtow = inputs["data:system:MTOW"]
-        m_pay_design = inputs["specifications:payload:mass:max"]
+        m_pay_design = inputs["specifications:payload:mass"]
         m_pay_mission = inputs[
             "mission:concordia_study:route%s:payload:mass" % self.options["route"]
         ]
@@ -117,15 +118,15 @@ class ClimbSegment(om.ExplicitComponent):
             units="kg",
         )
         self.add_input(
-            "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
+            "mission:design_mission:cruise:atmosphere:density", val=np.nan, units="kg/m**3"
         )
-        self.add_input("data:aerodynamics:Cd", val=np.nan, units=None)
+        self.add_input("data:airframe:aerodynamics:CD0", val=np.nan, units=None)
         self.add_input("data:airframe:body:surface:top", val=np.nan, units="m**2")
         # Propeller parameters
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
-        self.add_input("data:propeller:aerodynamics:CT:axial", val=np.nan, units=None)
-        self.add_input("data:propeller:aerodynamics:CP:axial", val=np.nan, units=None)
+        self.add_input("data:propeller:geometry:beta", val=np.nan, units=None)
+        self.add_input("data:propeller:advance_ratio:climb", val=np.nan, units=None)
         # Motor parameters
         self.add_input("data:gearbox:N_red", val=1.0, units=None)
         self.add_input("data:motor:torque:friction", val=np.nan, units="N*m")
@@ -137,7 +138,7 @@ class ClimbSegment(om.ExplicitComponent):
             val=np.nan,
             units="m",
         )
-        self.add_input("specifications:climb_speed", val=np.nan, units="m/s")
+        self.add_input("mission:concordia_study:climb:speed", val=np.nan, units="m/s")
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
         self.add_input("specifications:payload:power", val=0.0, units="W")
         self.add_input("data:avionics:power", val=0.0, units="W")
@@ -172,18 +173,14 @@ class ClimbSegment(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Mtotal = inputs["mission:concordia_study:route%s:tow" % self.options["route"]]
-        rho_air = inputs["mission:design_mission:air_density"]
+        rho_air = inputs["mission:design_mission:cruise:atmosphere:density"]
         S_top = inputs["data:airframe:body:surface:top"]
-        C_D = inputs["data:aerodynamics:Cd"]
+        C_D = inputs["data:airframe:aerodynamics:CD0"]
 
         Npro = inputs["data:propeller:number"]
         D_pro = inputs["data:propeller:geometry:diameter"]
-        C_t = inputs[
-            "data:propeller:aerodynamics:CT:axial"
-        ]  # TODO: compute new C_t based on climb speed and propeller diameter
-        C_p = inputs[
-            "data:propeller:aerodynamics:CP:axial"
-        ]  # TODO: compute new C_p based on climb speed and propeller diameter
+        beta = inputs["data:propeller:geometry:beta"]
+        J_cl = inputs["data:propeller:advance_ratio:climb"] # TODO: compute new J_cr based on cruise speed and propeller diameter (requires solver to get C_t, C_p as well)
 
         N_red = inputs["data:gearbox:N_red"]
         Tf_mot = inputs["data:motor:torque:friction"]
@@ -193,17 +190,18 @@ class ClimbSegment(om.ExplicitComponent):
         D_cl = inputs[
             "mission:concordia_study:route%s:climb:height" % self.options["route"]
         ]
-        V_cl = inputs["specifications:climb_speed"]
+        V_cl = inputs["mission:concordia_study:climb:speed"]
         eta_ESC = inputs["data:ESC:efficiency"]
         P_payload = inputs["specifications:payload:power"]
         P_avionics = inputs["data:avionics:power"]
 
         # Compute new flight parameters
+        C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_axial(beta, J_cl)
         F_pro = (Mtotal * g + 0.5 * rho_air * C_D * S_top * V_cl**2) / Npro
-        W_pro, P_pro, Q_pro = PropellerModel.performances(
+        W_pro, P_pro, Q_pro = PropellerPerfoModel.performances(
             F_pro, D_pro, C_t, C_p, rho_air
         )
-        T_mot, W_mot, I_mot, U_mot, P_el = MotorModel.performances(
+        T_mot, W_mot, I_mot, U_mot, P_el = MotorPerfoModel.performances(
             Q_pro, W_pro, N_red, Tf_mot, Kt_mot, R_mot
         )
 
@@ -259,13 +257,12 @@ class HoverSegment(om.ExplicitComponent):
             units="kg",
         )
         self.add_input(
-            "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
+            "mission:design_mission:cruise:atmosphere:density", val=np.nan, units="kg/m**3"
         )
         # Propeller parameters
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
-        self.add_input("data:propeller:aerodynamics:CT:static", val=np.nan, units=None)
-        self.add_input("data:propeller:aerodynamics:CP:static", val=np.nan, units=None)
+        self.add_input("data:propeller:geometry:beta", val=np.nan, units=None)
         # Motor parameters
         self.add_input("data:gearbox:N_red", val=1.0, units=None)
         self.add_input("data:motor:torque:friction", val=np.nan, units="N*m")
@@ -307,12 +304,11 @@ class HoverSegment(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Mtotal = inputs["mission:concordia_study:route%s:tow" % self.options["route"]]
-        rho_air = inputs["mission:design_mission:air_density"]
+        rho_air = inputs["mission:design_mission:cruise:atmosphere:density"]
 
         Npro = inputs["data:propeller:number"]
         D_pro = inputs["data:propeller:geometry:diameter"]
-        C_t = inputs["data:propeller:aerodynamics:CT:static"]
-        C_p = inputs["data:propeller:aerodynamics:CP:static"]
+        beta = inputs["data:propeller:geometry:beta"]
 
         N_red = inputs["data:gearbox:N_red"]
         Tf_mot = inputs["data:motor:torque:friction"]
@@ -330,11 +326,12 @@ class HoverSegment(om.ExplicitComponent):
         P_avionics = inputs["data:avionics:power"]
 
         # Compute new flight parameters
+        C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_static(beta)
         F_pro = Mtotal * g / Npro
-        W_pro, P_pro, Q_pro = PropellerModel.performances(
+        W_pro, P_pro, Q_pro = PropellerPerfoModel.performances(
             F_pro, D_pro, C_t, C_p, rho_air
         )
-        T_mot, W_mot, I_mot, U_mot, P_el = MotorModel.performances(
+        T_mot, W_mot, I_mot, U_mot, P_el = MotorPerfoModel.performances(
             Q_pro, W_pro, N_red, Tf_mot, Kt_mot, R_mot
         )
 
@@ -370,10 +367,10 @@ class HoverSegment(om.ExplicitComponent):
         ) / 1000  # [kJ]
 
 
-class ForwardSegment(om.ExplicitComponent):
+class CruiseSegment(om.ExplicitComponent):
     """
-    Forward flight segment
-    Assumption: forward velocity is unchanged from design scenario.
+    Cruise segment
+    Assumption: cruise velocity is unchanged from design scenario.
     """
 
     def initialize(self):
@@ -387,19 +384,17 @@ class ForwardSegment(om.ExplicitComponent):
             units="kg",
         )
         self.add_input(
-            "mission:design_mission:air_density", val=np.nan, units="kg/m**3"
+            "mission:design_mission:cruise:atmosphere:density", val=np.nan, units="kg/m**3"
         )
-        self.add_input("data:aerodynamics:Cd", val=np.nan, units=None)
-        self.add_input("data:aerodynamics:Cl0", val=np.nan, units=None)
+        self.add_input("data:airframe:aerodynamics:CD0", val=np.nan, units=None)
+        self.add_input("data:airframe:aerodynamics:CLmax", val=np.nan, units=None)
         self.add_input("data:airframe:body:surface:top", val=np.nan, units="m**2")
         self.add_input("data:airframe:body:surface:front", val=np.nan, units="m**2")
         # Propeller parameters
         self.add_input("data:propeller:number", val=np.nan, units=None)
         self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
         self.add_input("data:propeller:geometry:beta", val=np.nan, units=None)
-        self.add_input("data:propeller:advance_ratio:forward", val=np.nan, units=None)
-        # self.add_input('data:propeller:aerodynamics:CT:incidence', val=np.nan, units=None)
-        # self.add_input('data:propeller:aerodynamics:CP:incidence', val=np.nan, units=None)
+        self.add_input("data:propeller:advance_ratio:cruise", val=np.nan, units=None)
         # Motor parameters
         self.add_input("data:gearbox:N_red", val=1.0, units=None)
         self.add_input("data:motor:torque:friction", val=np.nan, units="N*m")
@@ -407,36 +402,36 @@ class ForwardSegment(om.ExplicitComponent):
         self.add_input("data:motor:torque:coefficient", val=np.nan, units="N*m/A")
         # Mission parameters
         self.add_input(
-            "mission:concordia_study:route%s:forward:range" % self.options["route"],
+            "mission:concordia_study:route%s:cruise:distance" % self.options["route"],
             val=np.nan,
             units="m",
         )
-        self.add_input("mission:design_mission:forward:speed", val=np.nan, units="m/s")
+        self.add_input("mission:concordia_study:cruise:speed", val=np.nan, units="m/s")
         self.add_input("data:ESC:efficiency", val=np.nan, units=None)
         self.add_input("specifications:payload:power", val=0.0, units="W")
         self.add_input("data:avionics:power", val=0.0, units="W")
         # Outputs: energy
         self.add_output(
-            "mission:concordia_study:route%s:forward:duration" % self.options["route"],
+            "mission:concordia_study:route%s:cruise:duration" % self.options["route"],
             units="min",
         )
         self.add_output(
-            "mission:concordia_study:route%s:forward:energy:propulsion"
+            "mission:concordia_study:route%s:cruise:energy:propulsion"
             % self.options["route"],
             units="kJ",
         )
         self.add_output(
-            "mission:concordia_study:route%s:forward:energy:payload"
+            "mission:concordia_study:route%s:cruise:energy:payload"
             % self.options["route"],
             units="kJ",
         )
         self.add_output(
-            "mission:concordia_study:route%s:forward:energy:avionics"
+            "mission:concordia_study:route%s:cruise:energy:avionics"
             % self.options["route"],
             units="kJ",
         )
         self.add_output(
-            "mission:concordia_study:route%s:forward:energy" % self.options["route"],
+            "mission:concordia_study:route%s:cruise:energy" % self.options["route"],
             units="kJ",
         )
 
@@ -446,82 +441,80 @@ class ForwardSegment(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Mtotal = inputs["mission:concordia_study:route%s:tow" % self.options["route"]]
-        rho_air = inputs["mission:design_mission:air_density"]
-        C_D = inputs["data:aerodynamics:Cd"]
-        C_L0 = inputs["data:aerodynamics:Cl0"]
+        rho_air = inputs["mission:design_mission:cruise:atmosphere:density"]
+        C_D = inputs["data:airframe:aerodynamics:CD0"]
+        C_L0 = inputs["data:airframe:aerodynamics:CLmax"]
         S_top = inputs["data:airframe:body:surface:top"]
         S_front = inputs["data:airframe:body:surface:front"]
 
         Npro = inputs["data:propeller:number"]
         D_pro = inputs["data:propeller:geometry:diameter"]
         beta = inputs["data:propeller:geometry:beta"]
-        J_ff = inputs[
-            "data:propeller:advance_ratio:forward"
-        ]  # TODO: compute new J_ff based on cruise speed and propeller diameter (requires solver to get C_t, C_p as well)
+        J_cr = inputs[
+            "data:propeller:advance_ratio:cruise"
+        ]  # TODO: compute new J_cr based on cruise speed and propeller diameter (requires solver to get C_t, C_p as well)
 
         N_red = inputs["data:gearbox:N_red"]
         Tf_mot = inputs["data:motor:torque:friction"]
         Kt_mot = inputs["data:motor:torque:coefficient"]
         R_mot = inputs["data:motor:resistance"]
 
-        D_ff = inputs[
-            "mission:concordia_study:route%s:forward:range" % self.options["route"]
+        D_cr = inputs[
+            "mission:concordia_study:route%s:cruise:distance" % self.options["route"]
         ]
-        V_ff = inputs[
-            "mission:design_mission:forward:speed"
-        ]  # TODO: compute optimal speed
-        t_ff = D_ff / V_ff  # [s]
+        V_cr = inputs[
+            "mission:concordia_study:cruise:speed"
+        ]  # TODO: compute optimal speed ? Can be achieved through optimizer at system level
+        t_cr = D_cr / V_cr  # [s]
         eta_ESC = inputs["data:ESC:efficiency"]
         P_payload = inputs["specifications:payload:power"]
         P_avionics = inputs["data:avionics:power"]
 
         # Compute new flight parameters
-        thrust, alpha = FlightModel.get_thrust(
-            Mtotal, V_ff, 0, S_front, S_top, C_D, C_L0, rho_air
+        thrust, alpha = MultirotorFlightModel.get_thrust(
+            Mtotal, V_cr, 0, S_front, S_top, C_D, C_L0, rho_air
         )  # flight parameters
-        C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_incidence(
-            beta, J_ff, alpha
-        )
+        C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_incidence(beta, J_cr, alpha)
         F_pro = thrust / Npro  # [N] thrust per propeller
-        W_pro, P_pro, Q_pro = PropellerModel.performances(
+        W_pro, P_pro, Q_pro = PropellerPerfoModel.performances(
             F_pro, D_pro, C_t, C_p, rho_air
         )  # propeller performances
-        T_mot, W_mot, I_mot, U_mot, P_el = MotorModel.performances(
+        T_mot, W_mot, I_mot, U_mot, P_el = MotorPerfoModel.performances(
             Q_pro, W_pro, N_red, Tf_mot, Kt_mot, R_mot
         )  # motor performances
 
         # Energy consumption
-        E_ff_pro = (P_el * Npro) / eta_ESC * t_ff  # [J] consumed energy for propulsion
-        E_payload = P_payload / eta_ESC * t_ff  # [J] consumed energy for payload
-        E_avionics = P_avionics / eta_ESC * t_ff  # [J] consumed energy for avionics
+        E_cr_pro = (P_el * Npro) / eta_ESC * t_cr  # [J] consumed energy for propulsion
+        E_payload = P_payload / eta_ESC * t_cr  # [J] consumed energy for payload
+        E_avionics = P_avionics / eta_ESC * t_cr  # [J] consumed energy for avionics
 
         outputs[
-            "mission:concordia_study:route%s:forward:duration" % self.options["route"]
+            "mission:concordia_study:route%s:cruise:duration" % self.options["route"]
         ] = (
-            t_ff / 60
+            t_cr / 60
         )  # [min]
         outputs[
-            "mission:concordia_study:route%s:forward:energy:propulsion"
+            "mission:concordia_study:route%s:cruise:energy:propulsion"
             % self.options["route"]
         ] = (
-            E_ff_pro / 1000
+            E_cr_pro / 1000
         )  # [kJ]
         outputs[
-            "mission:concordia_study:route%s:forward:energy:payload"
+            "mission:concordia_study:route%s:cruise:energy:payload"
             % self.options["route"]
         ] = (
             E_payload / 1000
         )  # [kJ]
         outputs[
-            "mission:concordia_study:route%s:forward:energy:avionics"
+            "mission:concordia_study:route%s:cruise:energy:avionics"
             % self.options["route"]
         ] = (
             E_avionics / 1000
         )  # [kJ]
         outputs[
-            "mission:concordia_study:route%s:forward:energy" % self.options["route"]
+            "mission:concordia_study:route%s:cruise:energy" % self.options["route"]
         ] = (
-            E_ff_pro + E_payload + E_avionics
+            E_cr_pro + E_payload + E_avionics
         ) / 1000  # [kJ]
 
 

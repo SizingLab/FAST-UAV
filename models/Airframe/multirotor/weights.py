@@ -6,14 +6,14 @@ import numpy as np
 
 
 
-class Weights(om.Group):
+class StructuresAndWeightsMR(om.Group):
     """
     Group containing the airframe weights calculation
     """
 
     def setup(self):
-        self.add_subsystem("weight_arms", WeightArms(), promotes=["*"])
-        self.add_subsystem("weight_body", WeightBody(), promotes=["*"])
+        self.add_subsystem("arms", WeightArms(), promotes=["*"])
+        self.add_subsystem("body", WeightBody(), promotes=["*"])
 
 
 class WeightArms(om.ExplicitComponent):
@@ -23,7 +23,7 @@ class WeightArms(om.ExplicitComponent):
 
     def setup(self):
         self.add_input(
-            "data:airframe:arms:settings:diameter:k", val=np.nan, units=None
+            "data:airframe:arms:diameter:k", val=np.nan, units=None
         )
         self.add_input("data:airframe:arms:number", val=np.nan, units=None)
         self.add_input("data:airframe:arms:length", val=np.nan, units="m")
@@ -38,7 +38,7 @@ class WeightArms(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        D_ratio = inputs["data:airframe:arms:settings:diameter:k"]
+        D_ratio = inputs["data:airframe:arms:diameter:k"]
         Narm = inputs["data:airframe:arms:number"]
         Larm = inputs["data:airframe:arms:length"]
         Dout = inputs["data:airframe:arms:diameter:outer"]

@@ -137,8 +137,8 @@ class Energy(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("specifications:payload:mass:max", val=np.nan, units="kg")
-        self.add_input("data:battery:settings:mass:k", val=np.nan, units=None)
+        self.add_input("specifications:payload:mass", val=np.nan, units="kg")
+        self.add_input("data:battery:mass:k", val=np.nan, units=None)
         self.add_input("data:battery:reference:mass", val=np.nan, units="kg")
         self.add_input("data:battery:reference:energy", val=np.nan, units="kJ")
         self.add_output("data:battery:energy:estimated", units="kJ")
@@ -147,8 +147,8 @@ class Energy(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        k_Mb = inputs["data:battery:settings:mass:k"]
-        M_load = inputs["specifications:payload:mass:max"]
+        k_Mb = inputs["data:battery:mass:k"]
+        M_load = inputs["specifications:payload:mass"]
         Mbat_ref = inputs["data:battery:reference:mass"]
         Ebat_ref = inputs["data:battery:reference:energy"]
 
@@ -157,11 +157,11 @@ class Energy(om.ExplicitComponent):
         outputs["data:battery:energy:estimated"] = E_bat
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        M_load = inputs["specifications:payload:mass:max"]
+        M_load = inputs["specifications:payload:mass"]
         Mbat_ref = inputs["data:battery:reference:mass"]
         Ebat_ref = inputs["data:battery:reference:energy"]
 
-        partials["data:battery:energy:estimated", "data:battery:settings:mass:k"] = (
+        partials["data:battery:energy:estimated", "data:battery:mass:k"] = (
             M_load * Ebat_ref / Mbat_ref
         )
 

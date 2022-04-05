@@ -5,7 +5,7 @@ import openmdao.api as om
 import numpy as np
 
 
-class Geometry(om.ExplicitComponent):
+class GeometryMR(om.ExplicitComponent):
     """
     Computes Multi-Rotor geometry
     """
@@ -15,12 +15,12 @@ class Geometry(om.ExplicitComponent):
             "data:airframe:arms:material:stress:max", val=np.nan, units="N/m**2"
         )
         self.add_input(
-            "data:airframe:arms:settings:diameter:k", val=np.nan, units=None
+            "data:airframe:arms:diameter:k", val=np.nan, units=None
         )
         self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
         self.add_input("data:airframe:arms:number", val=np.nan, units=None)
         self.add_input("data:airframe:arms:prop_per_arm", val=np.nan, units=None)
-        self.add_input("data:propeller:thrust:max", val=np.nan, units="N")
+        self.add_input("data:propeller:thrust:takeoff", val=np.nan, units="N")
         self.add_output("data:airframe:arms:length", units="m", lower=0.0)
         self.add_output("data:airframe:arms:diameter:outer", units="m", lower=0.0)
         self.add_output("data:airframe:arms:diameter:inner", units="m", lower=0.0)
@@ -32,10 +32,10 @@ class Geometry(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         # Frame sized from max thrust
         Sigma_max = inputs["data:airframe:arms:material:stress:max"]
-        D_ratio = inputs["data:airframe:arms:settings:diameter:k"]
+        D_ratio = inputs["data:airframe:arms:diameter:k"]
         Dpro = inputs["data:propeller:geometry:diameter"]
         Narm = inputs["data:airframe:arms:number"]
-        F_pro_to = inputs["data:propeller:thrust:max"]
+        F_pro_to = inputs["data:propeller:thrust:takeoff"]
         Npro_arm = inputs["data:airframe:arms:prop_per_arm"]
 
         Larm = Dpro / 2 / (np.sin(np.pi / Narm))  # [m] length of the arm

@@ -22,12 +22,6 @@ class Motor(om.Group):
         self.options.declare("use_gearbox", default=True, types=bool)
 
     def setup(self):
-        # Gearbox
-        if self.options["use_gearbox"]:
-            self.add_subsystem("gearbox", Gearbox(), promotes=["*"])
-        else:
-            self.add_subsystem("no_gearbox", NoGearbox(), promotes=["*"])
-
         # Motor
         self.add_subsystem(
             "definition_parameters", MotorDefinitionParameters(), promotes=["*"]
@@ -41,3 +35,9 @@ class Motor(om.Group):
         )
         self.add_subsystem("performances", MotorPerfos(), promotes=["*"])
         self.add_subsystem("constraints", MotorConstraints(), promotes=["*"])
+
+        # Gearbox
+        if self.options["use_gearbox"]:
+            self.add_subsystem("gearbox", Gearbox(), promotes=["*"])
+        else:
+            self.add_subsystem("no_gearbox", NoGearbox(), promotes=["*"])
