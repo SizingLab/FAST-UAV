@@ -3,16 +3,18 @@ title: Multirotor Drone Optimal Design
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders: 
     - ../models
-    - ../models/Missions
-    - ../models/Scenarios
-    - ../models/System
-    - ../models/Propulsion/Energy/Battery
-    - ../models/Propulsion/ESC
-    - ../models/Propulsion/Motor
-    - ../models/Propulsion/Propeller
-    - ../models/Airframe
-    - ../models/Propulsion/Cables
-    # - ../models/Add_ons/Safety
+    - ../models/scenarios
+    - ../models/propulsion/energy
+    - ../models/propulsion/esc
+    - ../models/propulsion/motor
+    - ../models/propulsion/propeller
+    - ../models/geometry
+    - ../models/structures
+    - ../models/aerodynamics
+    - ../models/propulsion/cables
+    - ../models/stability
+    - ../models/performance
+    - ../models/missions
     
 # Input and output files
 input_file: ../workdir/problem_inputs.xml
@@ -24,27 +26,25 @@ driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
 # Definition of OpenMDAO model
 model:
     scenarios:
-        id: sizing_scenarios.multirotor
+        id: scenarios.multirotor
     propulsion:
         propeller:
             id: propulsion.propeller
-            use_catalogue: false
         motor:
             id: propulsion.motor
-            use_catalogue: false
             use_gearbox: false
         battery:
             id: propulsion.battery
-            use_catalogue: false
         esc:
             id: propulsion.esc
-            use_catalogue: false
-    airframe:
-        id: airframe.multirotor
-    cables:
+    geometry:
+        id: geometry.multirotor
+    structures:
+        id: structures.multirotor
+    wires:
         id: propulsion.cables.multirotor
-    system:
-        id: system.multirotor
+    performance:
+        id: performance.multirotor
     mission:
         design_mission:
             id: mission.design
@@ -54,126 +54,128 @@ model:
 optimization: 
     
     design_variables:
-      - name: data:system:MTOW:k # over estimation coefficient on the load mass
+    
+        ## GLOBAL ##
+      - name: data:weights:MTOW:k # over estimation coefficient on the load mass
         upper: 40.0
         lower: 1.0
-
-      - name: data:battery:mass:k # over estimation coefficient on the battery load mass
-        lower: 0.01
-        upper: 60.0
         
-      - name: data:battery:voltage:k # over estimation coefficient on the battery voltage
-        lower: 1.0
-        upper: 10.0
-
-      - name: data:airframe:arms:diameter:k # aspect ratio D_out/D_in for the beam of the frame
-        lower: 0.05
-        upper: 0.99
-
-      - name: data:propeller:geometry:beta:guess # pitch/diameter ratio of the propeller
-        lower: 0.3
-        upper: 0.6
-
-      - name: data:propeller:advance_ratio:climb # climbing advance ratio
-        lower: 0.01
-        upper: 0.5
-
-      - name: data:propeller:advance_ratio:cruise # cruise advance ratio
-        lower: 0.01
-        upper: 2.0
-
-      - name: data:motor:torque:k # over estimation coefficient on the motor torque
-        lower: 1.0
-        upper: 20.0
-
-      - name: data:motor:speed:k # over estimation coefficient on the motor speed
-        lower: 0.1
-        upper: 10.0
-
-      - name: data:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
+        ## PROPULSION ##
+      - name: data:propulsion:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
         lower: 0.01
         upper: 1.0
 
-      - name: data:ESC:power:k # over estimation coefficient on the ESC power
+      - name: data:propulsion:propeller:beta:guess # pitch/diameter ratio of the propeller
+        lower: 0.3
+        upper: 0.6
+
+      - name: data:propulsion:propeller:advance_ratio:climb # climbing advance ratio
+        lower: 0.01
+        upper: 0.5
+
+      - name: data:propulsion:propeller:advance_ratio:cruise # cruise advance ratio
+        lower: 0.01
+        upper: 2.0
+
+      - name: data:propulsion:motor:torque:k # over estimation coefficient on the motor torque
+        lower: 1.0
+        upper: 20.0
+
+      - name: data:propulsion:motor:speed:k # over estimation coefficient on the motor speed
+        lower: 0.1
+        upper: 10.0
+
+      - name: data:weights:battery:mass:k # over estimation coefficient on the battery load mass
+        lower: 0.01
+        upper: 60.0
+        
+      - name: data:propulsion:battery:voltage:k # over estimation coefficient on the battery voltage
+        lower: 1.0
+        upper: 10.0
+
+      - name: data:propulsion:esc:power:k # over estimation coefficient on the ESC power
         lower: 1.0
         upper: 15.0
+        
+      # - name: data:propulsion:gearbox:N_red # gearbox reduction ratio (if 'use_gearbox' option for motor is true)
+      #   lower: 1.0
+      #   upper: 20.0
+        
+        ## STRUCTURE ##
+      - name: data:structures:arms:diameter:k # aspect ratio D_out/D_in for the beam of the frame
+        lower: 0.05
+        upper: 0.99
 
+        ## MISSION ##
       # - name: mission:design_mission:cruise:speed
       #   lower: 1.0
       #   upper: 40
 
-      # - name: data:gearbox:N_red # gearbox reduction ratio (if 'use_gearbox' is true)
-      #   lower: 1.0
-      #   upper: 20.0
-
-
     constraints:
-      - name: data:ESC:constraints:power:climb
+    
+        ## GLOBAL ##
+      - name: data:weights:MTOW:guess:constraint # Mass consistency
+        lower: 0.0
+
+      - name: data:weights:MTOW:constraint # MTOW specification
         lower: 0.0
         
-      - name: data:ESC:constraints:power:cruise
-        lower: 0.0
-
-      - name: data:ESC:constraints:voltage
-        lower: 0.0
-
-      - name: data:battery:constraints:power:takeoff
-        lower: 0.0
-
-      - name: data:battery:constraints:power:climb
-        lower: 0.0
-
-      - name: data:battery:constraints:power:cruise
+        ## PROPULSION ##
+      - name: data:propulsion:propeller:constraints:speed:climb  # propeller speed in climb
         lower: 0.0
         
-      #- name: data:battery:constraints:voltage:consistency
-      #  lower: 0.0
-
-      #- name: data:battery:constraints:voltage:takeoff
-      #  lower: 0.0
-
-      - name: data:battery:constraints:voltage:climb
-        lower: 0.0
-
-      - name: data:battery:constraints:voltage:cruise
-        lower: 0.0
-
-      - name: data:motor:constraints:torque:climb
-        lower: 0.0
-
-      - name: data:motor:constraints:torque:hover
-        lower: 0.0
-
-      - name: data:motor:constraints:torque:takeoff
+      - name: data:propulsion:propeller:constraints:speed:cruise  # propeller speed in cruise
         lower: 0.0
         
-      - name: data:propeller:constraints:speed:climb
+      - name: data:propulsion:motor:constraints:torque:takeoff  # motor torque at takeoff
         lower: 0.0
         
-      - name: data:propeller:constraints:speed:cruise
+      - name: data:propulsion:motor:constraints:torque:hover  # motor torque in hover
+        lower: 0.0
+        
+      - name: data:propulsion:motor:constraints:torque:climb  # motor torque in climb
+        lower: 0.0
+      
+      - name: data:propulsion:battery:constraints:power:takeoff  # battery power at takeoff
         lower: 0.0
 
-      - name: mission:design_mission:constraints:speed:climb
+      - name: data:propulsion:battery:constraints:power:climb  # battery power in climb
+        lower: 0.0
+
+      - name: data:propulsion:battery:constraints:power:cruise  # battery power in cruise
+        lower: 0.0
+
+      - name: data:propulsion:battery:constraints:voltage:climb  # battery voltage in climb
+        lower: 0.0
+
+      - name: data:propulsion:battery:constraints:voltage:cruise  # battery voltage in cruise
+        lower: 0.0
+      
+      - name: data:propulsion:esc:constraints:power:climb  # ESC power in climb
+        lower: 0.0
+        
+      - name: data:propulsion:esc:constraints:power:cruise  # ESC power in cruise
+        lower: 0.0
+
+      - name: data:propulsion:esc:constraints:voltage  # ESC voltage
+        lower: 0.0
+      
+        ## MISSION ##
+      - name: mission:design_mission:constraints:speed:climb  # climb speed requirement
         lower: 0.0
         upper: 0.01
         
-      - name: mission:design_mission:constraints:speed:cruise
+      - name: mission:design_mission:constraints:speed:cruise  # cruise speed requirement
         lower: 0.0
         upper: 0.01
       
-      - name: mission:design_mission:constraints:energy  # Energy constraint
+      - name: mission:design_mission:constraints:energy  # energy requirement to fulfill mission (e.g. for mass minimization objective)
         lower: 0.0
 
-      - name: data:system:constraints:mass:consistency # Mass consistency
-        lower: 0.0
-
-      - name: data:system:constraints:mass:MTOW # MTOW specification
-        lower: 0.0
       
-
     objective:
       # MASS MINIMIZATION
-      - name: data:system:MTOW
+      - name: data:weights:MTOW
         scaler: 1e-1
 
       # ENERGY MINIMIZATION
@@ -181,10 +183,10 @@ optimization:
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      #- name: data:system:range:max
+      #- name: data:performance:range:max
       #  scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION
-      #- name: data:system:endurance:hover:max
+      #- name: data:performance:endurance:hover:max
       #  scaler: -1e-1
         

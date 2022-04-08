@@ -3,16 +3,18 @@ title: Fixed-Wing Drone Optimal Design
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders: 
     - ../models
-    - ../models/Missions
-    - ../models/Scenarios
-    - ../models/System
-    - ../models/Propulsion/Energy/Battery
-    - ../models/Propulsion/ESC
-    - ../models/Propulsion/Motor
-    - ../models/Propulsion/Propeller
-    - ../models/Propulsion/Cables
-    - ../models/Airframe
-    - ../models/Stability
+    - ../models/scenarios
+    - ../models/propulsion/energy
+    - ../models/propulsion/esc
+    - ../models/propulsion/motor
+    - ../models/propulsion/propeller
+    - ../models/geometry
+    - ../models/structures
+    - ../models/aerodynamics
+    - ../models/propulsion/cables
+    - ../models/stability
+    - ../models/performance
+    - ../models/missions
    
 # Input and output files
 input_file: ../workdir/problem_inputs.xml
@@ -24,202 +26,206 @@ driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
 # Definition of OpenMDAO model
 model:
     scenarios:
-        id: sizing_scenarios.fixedwing
+        id: scenarios.fixedwing
     propulsion:
         propeller:
             id: propulsion.propeller
-            use_catalogue: false
         motor:
             id: propulsion.motor
-            use_catalogue: false
             use_gearbox: false
         battery:
             id: propulsion.battery
-            use_catalogue: false
         esc:
             id: propulsion.esc
-            use_catalogue: false
-    airframe:
-        id: airframe.fixedwing
+    geometry:
+        id: geometry.fixedwing
+    structures:
+        id: structures.fixedwing
         spar_model: "I_beam"  # "I_beam" or "pipe"
-    cables:
+    aerodynamics:
+        id: aerodynamics.fixedwing
+    wires:
         id: propulsion.cables.fixedwing
-    system:
-        id: system.fixedwing
     stability:
         id: stability.fixedwing
+    performance:
+        id: performance.fixedwing
     mission:
         design_mission:
             id: mission.design
 
 
+# This section is needed only if optimization process is run
 optimization: 
     
     design_variables:
     
-        ## SYSTEM ##
-      - name: data:system:MTOW:k # over estimation coefficient on the load mass
+        ## GLOBAL ##
+      - name: data:weights:MTOW:k # over estimation coefficient on the load mass
         lower: 1.0
         upper: 40.0
         
-      - name: data:airframe:wing:loading:k
+      - name: data:loads:wing_loading:k
         lower: 0.01
         upper: 2.0
         
-        ## AIRFRAME ##
-      - name: data:airframe:aerodynamics:CD0:guess
-        lower: 0.01
-        upper: 1.0
-      
-      - name: data:airframe:wing:AR
-        lower: 8.0
-        upper: 15.0
-        
-      - name: data:airframe:tail:horizontal:AR
-        lower: 3.0
-        upper: 6.0
-        
-      - name: data:airframe:tail:vertical:AR
-        lower: 0.9
-        upper: 4.0
-        
-      - name: data:airframe:wing:lambda
-        lower: 0.1
-        upper: 1.0
-        
-      - name: data:airframe:wing:MAC:LE:x:k
-        lower: 0.01
-        upper: 1.0
-        
-      - name: data:airframe:tail:horizontal:arm:k
-        lower: 0.01
-        upper: 1.0
-        
-      #- name: data:airframe:wing:spar:diameter:k # replaced by "internal" design variable in OpenMDAO ExplicitComponent
-      #  lower: 0.05
-      #  upper: 0.99
-
         ## PROPULSION ##
-      - name: data:battery:mass:k # over estimation coefficient on the battery load mass
+      - name: data:propulsion:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
         lower: 0.01
-        upper: 60.0
-        
-      - name: data:battery:voltage:k # over estimation coefficient on the battery voltage
-        lower: 1.0
-        upper: 10.0
+        upper: 1.0
 
-      - name: data:propeller:geometry:beta:guess # pitch/diameter ratio of the propeller
+      - name: data:propulsion:propeller:beta:guess # pitch/diameter ratio of the propeller
         lower: 0.48
         upper: 1.0
 
-      - name: data:propeller:advance_ratio:climb # climbing advance ratio
+      - name: data:propulsion:propeller:advance_ratio:climb # climbing advance ratio
         lower: 0.01
         upper: 1.2
 
-      - name: data:propeller:advance_ratio:cruise # cruise advance ratio
+      - name: data:propulsion:propeller:advance_ratio:cruise # cruise advance ratio
         lower: 0.01
         upper: 1.2
 
-      - name: data:motor:torque:k # over estimation coefficient on the motor torque
+      - name: data:propulsion:motor:torque:k # over estimation coefficient on the motor torque
         lower: 1.0
         upper: 20.0
 
-      - name: data:motor:speed:k # over estimation coefficient on the motor speed
+      - name: data:propulsion:motor:speed:k # over estimation coefficient on the motor speed
         lower: 0.1
         upper: 10.0
 
-      - name: data:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
+      - name: data:weights:battery:mass:k # over estimation coefficient on the battery load mass
         lower: 0.01
-        upper: 1.0
+        upper: 60.0
+        
+      - name: data:propulsion:battery:voltage:k # over estimation coefficient on the battery voltage
+        lower: 1.0
+        upper: 10.0
 
-      - name: data:ESC:power:k # over estimation coefficient on the ESC power
+      - name: data:propulsion:esc:power:k # over estimation coefficient on the ESC power
         lower: 1.0
         upper: 15.0
-      
+    
+        ## GEOMETRY ##
+      - name: data:geometry:wing:AR
+        lower: 8.0
+        upper: 20.0
+        
+      - name: data:geometry:wing:lambda
+        lower: 0.1
+        upper: 1.0
+        
+      - name: data:geometry:wing:MAC:LE:x:k
+        lower: 0.01
+        upper: 1.0
+        
+      - name: data:geometry:tail:horizontal:AR
+        lower: 3.0
+        upper: 6.0
+        
+      - name: data:geometry:tail:vertical:AR
+        lower: 0.9
+        upper: 4.0
+        
+      - name: data:geometry:tail:horizontal:arm:k
+        lower: 0.01
+        upper: 1.0
+        
+        ## STRUCTURES ##  
+      #- name: data:structures:wing:spar:diameter:k # replaced by "internal" design variable in OpenMDAO ExplicitComponent
+      #  lower: 0.05
+      #  upper: 0.99
+
+        ## AERODYNAMICS ##
+      - name: data:aerodynamics:CD0:guess
+        lower: 0.01
+        upper: 1.0
         
     constraints:
     
-        ## SYSTEM ##
-      - name: data:system:constraints:mass:consistency # Mass consistency
+        ## GLOBAL ##
+      - name: data:weights:MTOW:guess:constraint # Mass consistency
         lower: 0.0
 
-      #- name: data:system:constraints:mass:MTOW # MTOW specification
-      #  lower: 0.0
-        
-      - name: data:airframe:wing:constraints:loading:stall  # minimum wing loading required for stall speed
+      - name: data:weights:MTOW:constraint # MTOW specification
         lower: 0.0
         
+      - name: data:loads:wing_load:stall:constraint  # minimum wing loading required for stall speed
+        lower: 0.0
+        
+      ## PROPULSION ##
+      - name: data:propulsion:propeller:constraints:speed:climb  # propeller speed in climb
+        lower: 0.0
+        
+      - name: data:propulsion:propeller:constraints:speed:cruise  # propeller speed in cruise
+        lower: 0.0
+        
+      - name: data:propulsion:motor:constraints:torque:takeoff  # motor torque at takeoff
+        lower: 0.0
+        
+      - name: data:propulsion:motor:constraints:torque:climb  # motor torque in climb
+        lower: 0.0
+      
+      - name: data:propulsion:battery:constraints:power:takeoff  # battery power at takeoff
+        lower: 0.0
+
+      - name: data:propulsion:battery:constraints:power:climb  # battery power in climb
+        lower: 0.0
+
+      - name: data:propulsion:battery:constraints:power:cruise  # battery power in cruise
+        lower: 0.0
+
+      - name: data:propulsion:battery:constraints:voltage:climb  # battery voltage in climb
+        lower: 0.0
+
+      - name: data:propulsion:battery:constraints:voltage:cruise  # battery voltage in cruise
+        lower: 0.0
+      
+      - name: data:propulsion:esc:constraints:power:climb  # ESC power in climb
+        lower: 0.0
+        
+      - name: data:propulsion:esc:constraints:power:cruise  # ESC power in cruise
+        lower: 0.0
+
+      - name: data:propulsion:esc:constraints:voltage  # ESC voltage
+        lower: 0.0
+      
+        ## GEOMETRY ##  
+      - name: data:geometry:fuselage:volume:constraint  # fuselage volume requirement
+        lower: 0.0
+        
+        ## STRUCTURES ##
+      #- name: data:structures:wing:spar:diameter:constraint  # replaced by "internal" constraint in OpenMDAO component
+      #  lower: 0.0
+    
+        ## AERODYNAMICS ##
+      - name: data:aerodynamics:constraints:CD0:consistency # Drag consistency
+        lower: 0.0
+        upper: 0.01
+      
+        ## STABILITY ##
       - name: data:stability:static_margin  # static margin constraint
         lower: 0.05
         upper: 0.10
-        
-        ## AIRFRAME ##
-      - name: data:airframe:aerodynamics:constraints:CD0:consistency # Drag consistency
-        lower: 0.0
-        upper: 0.01
-        
-      - name: data:airframe:fuselage:constraints:volume  # fuselage volume requirement
-        lower: 0.0
-        
-      #- name: data:airframe:wing:constraints:spar:diameter  # replaced by "internal" constraint in OpenMDAO component
-      #  lower: 0.0
-      
-        ## PROPULSION ##
-      - name: data:ESC:constraints:power:climb
-        lower: 0.0
-        
-      - name: data:ESC:constraints:power:cruise
-        lower: 0.0
-
-      - name: data:ESC:constraints:voltage
-        lower: 0.0
-
-      - name: data:battery:constraints:power:takeoff
-        lower: 0.0
-
-      - name: data:battery:constraints:power:climb
-        lower: 0.0
-
-      - name: data:battery:constraints:power:cruise
-        lower: 0.0
-
-      - name: data:battery:constraints:voltage:climb
-        lower: 0.0
-
-      - name: data:battery:constraints:voltage:cruise
-        lower: 0.0
-
-      - name: data:motor:constraints:torque:climb
-        lower: 0.0
-
-      - name: data:motor:constraints:torque:takeoff
-        lower: 0.0
-        
-      - name: data:propeller:constraints:speed:climb
-        lower: 0.0
-        
-      - name: data:propeller:constraints:speed:cruise
-        lower: 0.0
       
         ## MISSION ##
-      - name: mission:design_mission:constraints:speed:climb
+      - name: mission:design_mission:constraints:speed:climb  # climb speed requirement
         lower: 0.0
         upper: 0.01
         
-      - name: mission:design_mission:constraints:speed:cruise
+      - name: mission:design_mission:constraints:speed:cruise  # cruise speed requirement
         lower: 0.0
         upper: 0.01
       
-      # For mass minimization only:
-      - name: mission:design_mission:constraints:energy  # Energy constraint
+      - name: mission:design_mission:constraints:energy  # energy requirement to fulfill mission (e.g. for mass minimization objective)
         lower: 0.0
       
 
     objective:
       # MASS MINIMIZATION
-      - name: data:system:MTOW
-        scaler: 1e-1
+      #- name: data:weights:MTOW
+      #  scaler: 1e-1
         
       # ENDURANCE MAXIMIZATION
-      #- name: data:system:endurance:cruise:max
-      #  scaler: -1e-3  # the use of a scaler is highly recommanded due to numerical precision affecting the final convergence.
+      - name: data:performance:endurance:cruise:max
+        scaler: -1e-3  # the use of a scaler is highly recommanded due to numerical precision affecting the final convergence.

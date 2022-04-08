@@ -6,9 +6,9 @@ DEPRECATED.
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from models.Propulsion.Propeller.performances import PropellerPerfoModel
-from models.Propulsion.Motor.performances import MotorPerfoModel
-from models.Propulsion.Propeller.estimation.models import PropellerAerodynamicsModel
+from models.propulsion.propeller.performances import PropellerPerfoModel
+from models.propulsion.motor.performances import MotorPerfoModel
+from models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
 
 
 @oad.RegisterOpenMDAOSystem("addons.safety")
@@ -43,25 +43,25 @@ class EmergencyMotorTorque_hover(om.ExplicitComponent):
         )  # TODO: define gearbox option in conf file?
 
     def setup(self):
-        # System parameters
-        self.add_input("data:propeller:thrust:hover", val=np.nan, units="N")
+        # Performance parameters
+        self.add_input("data:propulsion:propeller:thrust:hover", val=np.nan, units="N")
         self.add_input(
             "mission:design_mission:cruise:atmosphere:density", val=np.nan, units="kg/m**3"
         )
         self.add_input("addons:safety:k_thrust", val=np.nan, units=None)
         # Propeller parameters
-        self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
-        self.add_input("data:propeller:geometry:beta", val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:diameter", val=np.nan, units="m")
+        self.add_input("data:propulsion:propeller:beta", val=np.nan, units=None)
         # Motor parameters
         if self.options["use_gearbox"]:
-            self.add_input("data:gearbox:N_red", val=1.0, units=None)
-        self.add_input("data:motor:torque:friction", val=np.nan, units="N*m")
-        self.add_input("data:motor:resistance", val=np.nan, units="V/A")
-        self.add_input("data:motor:torque:coefficient", val=np.nan, units="N*m/A")
+            self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
+        self.add_input("data:propulsion:motor:torque:friction", val=np.nan, units="N*m")
+        self.add_input("data:propulsion:motor:resistance", val=np.nan, units="V/A")
+        self.add_input("data:propulsion:motor:torque:coefficient", val=np.nan, units="N*m/A")
 
         self.add_output("addons:safety:motor:torque:hover", units="N*m")
 
-        # self.add_input('data:motor:torque:nominal', val=np.nan, units='N*m')
+        # self.add_input('data:propulsion:motor:torque:nominal', val=np.nan, units='N*m')
         # self.add_output('addons:safety:constraints:torque:hover', units=None)
 
     def setup_partials(self):
@@ -69,20 +69,20 @@ class EmergencyMotorTorque_hover(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        F_pro_nom = inputs["data:propeller:thrust:hover"]
+        F_pro_nom = inputs["data:propulsion:propeller:thrust:hover"]
         k_thrust = inputs[
             "addons:safety:k_thrust"
         ]  # [-] thrust ratio of failure case to normal operation
         rho_air = inputs["mission:design_mission:cruise:atmosphere:density"]
 
-        D_pro = inputs["data:propeller:geometry:diameter"]
-        beta = inputs["data:propeller:geometry:beta"]
+        D_pro = inputs["data:propulsion:propeller:diameter"]
+        beta = inputs["data:propulsion:propeller:beta"]
 
-        N_red = inputs["data:gearbox:N_red"] if self.options["use_gearbox"] else 1.0
-        Tf_mot = inputs["data:motor:torque:friction"]
-        Kt_mot = inputs["data:motor:torque:coefficient"]
-        R_mot = inputs["data:motor:resistance"]
-        # Tmot_nom = inputs['data:motor:torque:nominal']
+        N_red = inputs["data:propulsion:gearbox:N_red"] if self.options["use_gearbox"] else 1.0
+        Tf_mot = inputs["data:propulsion:motor:torque:friction"]
+        Kt_mot = inputs["data:propulsion:motor:torque:coefficient"]
+        R_mot = inputs["data:propulsion:motor:resistance"]
+        # Tmot_nom = inputs['data:propulsion:motor:torque:nominal']
 
         # Hover
         C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_static(beta)
@@ -118,27 +118,27 @@ class EmergencyMotorTorque_cruise(om.ExplicitComponent):
         )  # TODO: define gearbox option in conf file?
 
     def setup(self):
-        # System parameters
-        self.add_input("data:propeller:thrust:cruise", val=np.nan, units="N")
+        # Performance parameters
+        self.add_input("data:propulsion:propeller:thrust:cruise", val=np.nan, units="N")
         self.add_input(
             "mission:design_mission:cruise:atmosphere:density", val=np.nan, units="kg/m**3"
         )
         self.add_input("addons:safety:k_thrust", val=np.nan, units=None)
         # Propeller parameters
-        self.add_input("data:propeller:geometry:diameter", val=np.nan, units="m")
-        self.add_input("data:propeller:geometry:beta", val=np.nan, units=None)
-        self.add_input("data:propeller:advance_ratio:cruise", val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:diameter", val=np.nan, units="m")
+        self.add_input("data:propulsion:propeller:beta", val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:advance_ratio:cruise", val=np.nan, units=None)
         self.add_input("mission:design_mission:cruise:AoA", val=np.nan, units="rad")
         # Motor parameters
         if self.options["use_gearbox"]:
-            self.add_input("data:gearbox:N_red", val=1.0, units=None)
-        self.add_input("data:motor:torque:friction", val=np.nan, units="N*m")
-        self.add_input("data:motor:resistance", val=np.nan, units="V/A")
-        self.add_input("data:motor:torque:coefficient", val=np.nan, units="N*m/A")
+            self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
+        self.add_input("data:propulsion:motor:torque:friction", val=np.nan, units="N*m")
+        self.add_input("data:propulsion:motor:resistance", val=np.nan, units="V/A")
+        self.add_input("data:propulsion:motor:torque:coefficient", val=np.nan, units="N*m/A")
 
         self.add_output("addons:safety:motor:torque:cruise", units="N*m")
 
-        # self.add_input('data:motor:torque:nominal', val=np.nan, units='N*m')
+        # self.add_input('data:propulsion:motor:torque:nominal', val=np.nan, units='N*m')
         # self.add_output('addons:safety:constraints:torque:cruise', units=None)
 
     def setup_partials(self):
@@ -146,22 +146,22 @@ class EmergencyMotorTorque_cruise(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        F_pro_nom = inputs["data:propeller:thrust:cruise"]
+        F_pro_nom = inputs["data:propulsion:propeller:thrust:cruise"]
         k_thrust = inputs[
             "addons:safety:k_thrust"
         ]  # [-] thrust ratio of failure case to normal operation
         rho_air = inputs["mission:design_mission:cruise:atmosphere:density"]
 
-        D_pro = inputs["data:propeller:geometry:diameter"]
-        beta = inputs["data:propeller:geometry:beta"]
-        J_cr = inputs["data:propeller:advance_ratio:cruise"]
+        D_pro = inputs["data:propulsion:propeller:diameter"]
+        beta = inputs["data:propulsion:propeller:beta"]
+        J_cr = inputs["data:propulsion:propeller:advance_ratio:cruise"]
         alpha = inputs["mission:design_mission:cruise:AoA"]
 
-        N_red = inputs["data:gearbox:N_red"] if self.options["use_gearbox"] else 1.0
-        Tf_mot = inputs["data:motor:torque:friction"]
-        Kt_mot = inputs["data:motor:torque:coefficient"]
-        R_mot = inputs["data:motor:resistance"]
-        # Tmot_nom = inputs['data:motor:torque:nominal']
+        N_red = inputs["data:propulsion:gearbox:N_red"] if self.options["use_gearbox"] else 1.0
+        Tf_mot = inputs["data:propulsion:motor:torque:friction"]
+        Kt_mot = inputs["data:propulsion:motor:torque:coefficient"]
+        R_mot = inputs["data:propulsion:motor:resistance"]
+        # Tmot_nom = inputs['data:propulsion:motor:torque:nominal']
 
         # Cruise
         C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_incidence(beta, J_cr, alpha)
@@ -185,7 +185,7 @@ class EmergencyMotorConstraints(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:motor:torque:nominal", val=np.nan, units="N*m")
+        self.add_input("data:propulsion:motor:torque:nominal", val=np.nan, units="N*m")
         self.add_input("addons:safety:motor:torque:hover", val=np.nan, units="N*m")
         self.add_input("addons:safety:motor:torque:cruise", val=np.nan, units="N*m")
         self.add_output("addons:safety:constraints:torque:hover", units=None)
@@ -195,7 +195,7 @@ class EmergencyMotorConstraints(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Tmot_nom = inputs["data:motor:torque:nominal"]
+        Tmot_nom = inputs["data:propulsion:motor:torque:nominal"]
         Tmot_hov = inputs["addons:safety:motor:torque:hover"]
         Tmot_cr = inputs["addons:safety:motor:torque:cruise"]
 
@@ -207,13 +207,13 @@ class EmergencyMotorConstraints(om.ExplicitComponent):
         outputs["addons:safety:constraints:torque:cruise"] = motor_con_cruise
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Tmot_nom = inputs["data:motor:torque:nominal"]
+        Tmot_nom = inputs["data:propulsion:motor:torque:nominal"]
         Tmot_hov = inputs["addons:safety:motor:torque:hover"]
         Tmot_cr = inputs["addons:safety:motor:torque:cruise"]
 
         partials[
             "addons:safety:constraints:torque:hover",
-            "data:motor:torque:nominal",
+            "data:propulsion:motor:torque:nominal",
         ] = (
             Tmot_hov / Tmot_nom**2
         )
@@ -230,7 +230,7 @@ class EmergencyMotorConstraints(om.ExplicitComponent):
 
         partials[
             "addons:safety:constraints:torque:cruise",
-            "data:motor:torque:nominal",
+            "data:propulsion:motor:torque:nominal",
         ] = (
             Tmot_cr / Tmot_nom**2
         )

@@ -1,1 +1,1 @@
-data:battery:voltage
+data:propulsion:battery:voltage

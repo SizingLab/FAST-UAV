@@ -38,35 +38,35 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
 
     # PROPULSION
     propellers = (
-        variables["data:propeller:mass"].value[0]
-        * variables["data:propeller:number"].value[0]
+        variables["data:weights:propeller:mass"].value[0]
+        * variables["data:propulsion:propeller:number"].value[0]
     )
     motors = (
-        variables["data:motor:mass"].value[0]
-        * variables["data:propeller:number"].value[0]
+        variables["data:weights:motor:mass"].value[0]
+        * variables["data:propulsion:propeller:number"].value[0]
     )
-    if "data:gearbox:mass" in variables.names():
+    if "data:weights:gearbox:mass" in variables.names():
         gearboxes = (
-            variables["data:gearbox:mass"].value[0]
-            * variables["data:propeller:number"].value[0]
+            variables["data:weights:gearbox:mass"].value[0]
+            * variables["data:propulsion:propeller:number"].value[0]
         )
     else:
         gearboxes = 0
     ESC = (
-        variables["data:ESC:mass"].value[0]
-        * variables["data:propeller:number"].value[0]
+        variables["data:weights:esc:mass"].value[0]
+        * variables["data:propulsion:propeller:number"].value[0]
     )
-    battery = variables["data:battery:mass"].value[0]
-    cables = variables["data:cables:mass"].value[0]
+    battery = variables["data:weights:battery:mass"].value[0]
+    cables = variables["data:weights:cables:mass"].value[0]
     propulsion = propellers + motors + gearboxes + ESC + battery + cables
 
     # AIRFRAME
-    body = variables["data:airframe:body:mass"].value[0] if "data:airframe:body:mass" in variables.names() else 0.0
-    arms = variables["data:airframe:arms:mass"].value[0] if "data:airframe:arms:mass" in variables.names() else 0.0
-    wing = variables["data:airframe:wing:mass"].value[0] if "data:airframe:wing:mass" in variables.names() else 0.0
-    fuselage = variables["data:airframe:fuselage:mass"].value[0] if "data:airframe:fuselage:mass" in variables.names() else 0.0
-    htail = variables["data:airframe:tail:horizontal:mass"].value[0] if "data:airframe:tail:horizontal:mass" in variables.names() else 0.0
-    vtail = variables["data:airframe:tail:vertical:mass"].value[0] if "data:airframe:tail:vertical:mass" in variables.names() else 0.0
+    body = variables["data:weights:body:mass"].value[0] if "data:weights:body:mass" in variables.names() else 0.0
+    arms = variables["data:weights:arms:mass"].value[0] if "data:weights:arms:mass" in variables.names() else 0.0
+    wing = variables["data:weights:wing:mass"].value[0] if "data:weights:wing:mass" in variables.names() else 0.0
+    fuselage = variables["data:weights:fuselage:mass"].value[0] if "data:weights:fuselage:mass" in variables.names() else 0.0
+    htail = variables["data:weights:tail:horizontal:mass"].value[0] if "data:weights:tail:horizontal:mass" in variables.names() else 0.0
+    vtail = variables["data:weights:tail:vertical:mass"].value[0] if "data:weights:tail:vertical:mass" in variables.names() else 0.0
     structure = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
@@ -76,7 +76,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     fuel_mission = 0
 
     # MTOW
-    MTOW = variables["data:system:MTOW"].value[0]
+    MTOW = variables["data:weights:MTOW"].value[0]
 
     if round(MTOW, 6) == round(propulsion + structure + payload + fuel_mission, 6):
         MTOW = propulsion + structure + payload + fuel_mission
@@ -306,31 +306,31 @@ def mass_breakdown_bar_plot_drone(
 
     # PROPULSION
     propellers = (
-        variables["data:propeller:mass"].value[0]
-        * variables["data:propeller:number"].value[0]
+        variables["data:weights:propeller:mass"].value[0]
+        * variables["data:propulsion:propeller:number"].value[0]
     )
     motors = (
-        variables["data:motor:mass"].value[0]
-        * variables["data:propeller:number"].value[0]
+        variables["data:weights:motor:mass"].value[0]
+        * variables["data:propulsion:propeller:number"].value[0]
     )
-    if "data:gearbox:mass" in variables.names():
+    if "data:weights:gearbox:mass" in variables.names():
         gearboxes = (
-            variables["data:gearbox:mass"].value[0]
-            * variables["data:propeller:number"].value[0]
+            variables["data:weights:gearbox:mass"].value[0]
+            * variables["data:propulsion:propeller:number"].value[0]
         )
     else:
         gearboxes = 0
     ESC = (
-        variables["data:ESC:mass"].value[0]
-        * variables["data:propeller:number"].value[0]
+        variables["data:weights:esc:mass"].value[0]
+        * variables["data:propulsion:propeller:number"].value[0]
     )
-    battery = variables["data:battery:mass"].value[0]
-    cables = variables["data:cables:mass"].value[0]
+    battery = variables["data:weights:battery:mass"].value[0]
+    cables = variables["data:weights:cables:mass"].value[0]
     propulsion = propellers + motors + gearboxes + ESC + battery + cables
 
     # STRUCTURE
-    body = variables["data:airframe:body:mass"].value[0]
-    arms = variables["data:airframe:arms:mass"].value[0]
+    body = variables["data:weights:body:mass"].value[0]
+    arms = variables["data:weights:arms:mass"].value[0]
     structure = body + arms
 
     # PAYLOAD
@@ -340,7 +340,7 @@ def mass_breakdown_bar_plot_drone(
     fuel_mission = 0
 
     # MTOW
-    MTOW = variables["data:system:MTOW"].value[0]
+    MTOW = variables["data:weights:MTOW"].value[0]
 
     if round(MTOW, 6) == round(propulsion + structure + payload + fuel_mission, 6):
         MTOW = propulsion + structure + payload + fuel_mission
@@ -429,14 +429,14 @@ def multirotor_geometry_plot(
         fig = go.Figure()
     k = len(fig.data)
 
-    A_body = variables["data:airframe:body:surface:top"].value[0]  # [m**2]
-    N_arms = variables["data:airframe:arms:number"].value[0]  # [-]
-    arm_length = variables["data:airframe:arms:length"].value[0]  # [m]
-    arm_diameter = variables["data:airframe:arms:diameter:outer"].value[0]  # [m]
-    N_pro_arm = variables["data:airframe:arms:prop_per_arm"].value[0]  # [-]
-    D_pro = variables["data:propeller:geometry:diameter"].value[0]  # [m]
-    Vol_bat = variables["data:battery:volume"].value[0] * 0.000001  # [m**3]
-    Lmot = variables["data:motor:length:estimated"].value[
+    A_body = variables["data:geometry:body:surface:top"].value[0]  # [m**2]
+    N_arms = variables["data:geometry:arms:number"].value[0]  # [-]
+    arm_length = variables["data:geometry:arms:length"].value[0]  # [m]
+    arm_diameter = variables["data:structures:arms:diameter:outer"].value[0]  # [m]
+    N_pro_arm = variables["data:geometry:arms:prop_per_arm"].value[0]  # [-]
+    D_pro = variables["data:propulsion:propeller:diameter"].value[0]  # [m]
+    Vol_bat = variables["data:propulsion:battery:volume"].value[0] * 0.000001  # [m**3]
+    Lmot = variables["data:propulsion:motor:length:estimated"].value[
         0
     ]  # [m] TODO: get length from catalogues too
 
@@ -585,10 +585,10 @@ def fixedwing_geometry_plot(
 
     # Wing parameters
     wing_tip_leading_edge_x = 0
-    wing_root_y = 0  # variables["data:airframe:fuselage:diameter:mid"].value[0] / 2.0
-    wing_tip_y = variables["data:airframe:wing:span"].value[0] / 2.0
-    wing_root_chord = variables["data:airframe:wing:root:chord"].value[0]
-    wing_tip_chord = variables["data:airframe:wing:tip:chord"].value[0]
+    wing_root_y = 0  # variables["data:geometry:fuselage:diameter:mid"].value[0] / 2.0
+    wing_tip_y = variables["data:geometry:wing:span"].value[0] / 2.0
+    wing_root_chord = variables["data:geometry:wing:root:chord"].value[0]
+    wing_tip_chord = variables["data:geometry:wing:tip:chord"].value[0]
 
     y_wing = np.array(
         [0, wing_root_y, wing_tip_y, wing_tip_y, wing_root_y, 0, 0]
@@ -607,9 +607,9 @@ def fixedwing_geometry_plot(
     )
 
     # Horizontal Tail parameters
-    ht_root_chord = variables["data:airframe:tail:horizontal:root:chord"].value[0]
-    ht_tip_chord = variables["data:airframe:tail:horizontal:tip:chord"].value[0]
-    ht_span = variables["data:airframe:tail:horizontal:span"].value[0]
+    ht_root_chord = variables["data:geometry:tail:horizontal:root:chord"].value[0]
+    ht_tip_chord = variables["data:geometry:tail:horizontal:tip:chord"].value[0]
+    ht_span = variables["data:geometry:tail:horizontal:span"].value[0]
     ht_sweep_0 = 0  # variables["data:geometry:horizontal_tail:sweep_0"].value[0]
 
     ht_tip_leading_edge_x = ht_span / 2.0 * np.tan(ht_sweep_0 * np.pi / 180.0)
@@ -621,12 +621,12 @@ def fixedwing_geometry_plot(
     )
 
     # Fuselage parameters
-    fuselage_mid_width = variables["data:airframe:fuselage:diameter:mid"].value[0]
-    fuselage_tip_width = variables["data:airframe:fuselage:diameter:tip"].value[0]
-    fuselage_length = variables["data:airframe:fuselage:length"].value[0]
-    fuselage_nose_length = variables["data:airframe:fuselage:length:nose"].value[0]
-    fuselage_mid_length = variables["data:airframe:fuselage:length:mid"].value[0]
-    fuselage_rear_length = variables["data:airframe:fuselage:length:rear"].value[0]
+    fuselage_mid_width = variables["data:geometry:fuselage:diameter:mid"].value[0]
+    fuselage_tip_width = variables["data:geometry:fuselage:diameter:tip"].value[0]
+    fuselage_length = variables["data:geometry:fuselage:length"].value[0]
+    fuselage_nose_length = variables["data:geometry:fuselage:length:nose"].value[0]
+    fuselage_mid_length = variables["data:geometry:fuselage:length:mid"].value[0]
+    fuselage_rear_length = variables["data:geometry:fuselage:length:rear"].value[0]
     fuselage_front_length = fuselage_nose_length + fuselage_mid_length
 
     x_fuselage = np.array(
@@ -650,8 +650,8 @@ def fixedwing_geometry_plot(
     )
 
     # Absolute positions
-    x_wing_root = variables["data:airframe:wing:root:LE:x"].value[0]
-    x_ht_root = variables["data:airframe:tail:horizontal:root:LE:x"].value[0]
+    x_wing_root = variables["data:geometry:wing:root:LE:x"].value[0]
+    x_ht_root = variables["data:geometry:tail:horizontal:root:LE:x"].value[0]
 
     x_wing = x_wing + x_wing_root
     x_ht = x_ht + x_ht_root
