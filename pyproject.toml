@@ -1,0 +1,74 @@
+[tool.poetry]
+name = "FASTUAV"
+version = "0.0.0"
+description = "FAST-UAV is a framework for performing rapid Overall Aircraft Design for Unmanned Aerial Vehicles"
+readme = "README.md"
+authors = [
+    "Félix POLLET <felix.pollet@isae-supaero.fr>",
+    "Scott DELBECQ <scott.delbecq@isae-supaero.fr>",
+    "Marc BUDINGER <marc.budinger@insa-toulouse.fr>"
+]
+
+homepage = "https://github.com/SizingLab/FAST-UAV"
+keywords = [
+    "aircraft",
+    "design",
+    "uav",
+    "multi-disciplinary"
+]
+license = "GPL-3.0-only"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Natural Language :: English",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Topic :: Scientific/Engineering :: Physics"
+]
+
+[tool.poetry.dependencies]
+# IMPORTANT: when modifying this list, docs/requirements.txt must be updated for
+# ReadTheDocs to be able to compile the documentation.
+# A pre-commit hook has been added to do this task. As a result, any modification
+# of poetry.lock file will modify docs/requirements.txt and make
+# the commit fail because "files were modified by this hook". In that case,
+# doing again the commit including changes in docs/requirements.txt will succeed.
+python = "^3.7"
+fast-oad-core = "~1.3.1"
+stdatm = "0.2.0"
+matplotlib = "^3.5"
+openmdao = "<=3.16.0"
+
+[tool.poetry.extras]
+jupyterlab = ["jupyterlab"]
+
+[tool.poetry.plugins."fastoad.plugins"]
+"uav" = "fastuav"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2"
+pytest-cov = "^3.0"
+coverage = { extras = ["toml"], version = "^5.5" }
+pre-commit = "^2.14.1"
+black = { version = "21.9b0", extras = ["jupyter"], allow-prereleases = true }
+pylint = "^2.10.2"
+nbval = "^0.9.6"
+sphinx = "^4.1.2"
+sphinx-rtd-theme = "^1.0"
+sphinxcontrib-bibtex = "^2.3.0"
+flake8 = "^4.0.1"
+matplotlib = "^3.1.2"
+nbstripout = "^0.5.0"
+
+[tool.black]
+line-length = 100
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
