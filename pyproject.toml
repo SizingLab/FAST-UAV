@@ -16,7 +16,7 @@ keywords = [
     "uav",
     "multi-disciplinary"
 ]
-license = "GPL-3.0-only"
+license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
