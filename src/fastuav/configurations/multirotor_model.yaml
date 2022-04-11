@@ -1,20 +1,7 @@
 title: Multirotor Drone model
 
 # List of folder paths where user added custom registered OpenMDAO components
-module_folders: 
-    - ../models
-    - ../models/scenarios
-    - ../models/propulsion/energy
-    - ../models/propulsion/esc
-    - ../models/propulsion/motor
-    - ../models/propulsion/propeller
-    - ../models/geometry
-    - ../models/structures
-    - ../models/aerodynamics
-    - ../models/propulsion/cables
-    - ../models/stability
-    - ../models/performance
-    - ../models/missions
+module_folders:
     
 # Input and output files
 input_file: ../workdir/problem_inputs.xml

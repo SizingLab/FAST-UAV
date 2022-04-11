@@ -2,19 +2,6 @@ title: Multirotor Drone Optimal Design with catalogue components selection
 
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders:
-    - ../models
-    - ../models/scenarios
-    - ../models/propulsion/energy
-    - ../models/propulsion/esc
-    - ../models/propulsion/motor
-    - ../models/propulsion/propeller
-    - ../models/geometry
-    - ../models/structures
-    - ../models/aerodynamics
-    - ../models/propulsion/cables
-    - ../models/stability
-    - ../models/performance
-    - ../models/missions
     
 # Input and output files
 input_file: ../workdir/problem_inputs_discrete.xml
