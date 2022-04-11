@@ -1,15 +1,16 @@
 """
 Off-the-shelf Battery selection.
 """
+import os.path as pth
 import openmdao.api as om
-from utils.catalogues.estimators import NearestNeighbor
+from fastuav.utils.catalogues.estimators import NearestNeighbor
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
 import pandas as pd
 import numpy as np
 
 # Database import
-path = './data/catalogues/Batteries/'
-DF = pd.read_csv(path + 'Non-Dominated-Augmented-Batteries.csv', sep=';')
+PATH = pth.join(pth.dirname(pth.abspath(__file__)),"..", "..", "..", "..", "..", "data", "catalogues", "Batteries", 'Non-Dominated-Augmented-Batteries.csv')
+DF = pd.read_csv(PATH, sep=';')
 
 
 @ValidityDomainChecker(

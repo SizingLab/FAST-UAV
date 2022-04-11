@@ -7,10 +7,10 @@ import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 from scipy.constants import g
-from models.scenarios.multirotor.flight_model import MultirotorFlightModel
-from models.propulsion.propeller.performances import PropellerPerfoModel
-from models.propulsion.motor.performances import MotorPerfoModel
-from models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
+from fastuav.models.scenarios.multirotor.flight_model import MultirotorFlightModel
+from fastuav.models.propulsion.propeller.performances import PropellerPerfoModel
+from fastuav.models.propulsion.motor.performances import MotorPerfoModel
+from fastuav.models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
 
 
 @oad.RegisterOpenMDAOSystem("mission.concordia")

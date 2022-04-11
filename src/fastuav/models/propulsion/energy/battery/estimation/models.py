@@ -3,7 +3,7 @@ Estimation models for the battery.
 """
 import openmdao.api as om
 import numpy as np
-from models.uncertainty.uncertainty import add_subsystem_with_deviation
+from fastuav.models.uncertainty.uncertainty import add_subsystem_with_deviation
 
 
 class BatteryEstimationModels(om.Group):

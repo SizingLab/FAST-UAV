@@ -6,9 +6,9 @@ DEPRECATED.
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from models.propulsion.propeller.performances import PropellerPerfoModel
-from models.propulsion.motor.performances import MotorPerfoModel
-from models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
+from fastuav.models.propulsion.propeller.performances import PropellerPerfoModel
+from fastuav.models.propulsion.motor.performances import MotorPerfoModel
+from fastuav.models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
 
 
 @oad.RegisterOpenMDAOSystem("addons.safety")

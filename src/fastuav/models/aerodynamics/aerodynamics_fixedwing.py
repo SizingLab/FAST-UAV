@@ -4,7 +4,7 @@ Fixed Wing Airframe Aerodynamics
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from models.uncertainty.uncertainty import (
+from fastuav.models.uncertainty.uncertainty import (
     add_subsystem_with_deviation,
     add_model_deviation,
 )

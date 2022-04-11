@@ -3,9 +3,9 @@ Sizing scenarios definition
 """
 import fastoad.api as oad
 import openmdao.api as om
-from models.scenarios.atmosphere import Atmosphere
-from models.scenarios.multirotor.preliminary import MTOWguess, NumberPropellersMR, BodySurfacesMR
-from models.scenarios.multirotor.thrust import ThrustClimbMR, ThrustCruiseMR, ThrustHoverMR, ThrustTakeOffMR
+from fastuav.models.scenarios.atmosphere import Atmosphere
+from fastuav.models.scenarios.multirotor.preliminary import MTOWguess, NumberPropellersMR, BodySurfacesMR
+from fastuav.models.scenarios.multirotor.thrust import ThrustClimbMR, ThrustCruiseMR, ThrustHoverMR, ThrustTakeOffMR
 
 
 @oad.RegisterOpenMDAOSystem("scenarios.multirotor")

@@ -1,15 +1,16 @@
 """
 Off-the-shelf propeller selection.
 """
+import os.path as pth
 import openmdao.api as om
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
-from utils.catalogues.estimators import NearestNeighbor
+from fastuav.utils.catalogues.estimators import NearestNeighbor
 import pandas as pd
 import numpy as np
 
 
-PATH = "./data/catalogues/Propeller/"
-DF = pd.read_csv(PATH + "APC_propellers_MR.csv", sep=";")
+PATH = pth.join(pth.dirname(pth.abspath(__file__)),"..", "..", "..", "..", "data", "catalogues", "Propeller", "APC_propellers_MR.csv")
+DF = pd.read_csv(PATH, sep=";")
 
 
 # @ValidityDomainChecker(
@@ -29,12 +30,12 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         self.options.declare("use_catalogue", default=False, types=bool)
         beta_selection = "average"
         Dpro_selection = "next"
-        self._clf = NearestNeighbor(
-            df=DF,
-            X_names=["Pitch (-)", "Diameter (METERS)"],
-            crits=[beta_selection, Dpro_selection],
-        )
-        self._clf.train()
+        # self._clf = NearestNeighbor(
+        #     df=DF,
+        #     X_names=["Pitch (-)", "Diameter (METERS)"],
+        #     crits=[beta_selection, Dpro_selection],
+        # )
+        # self._clf.train()
 
     def setup(self):
         # inputs: estimated values

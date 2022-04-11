@@ -4,7 +4,7 @@ Estimation models for the propeller
 import openmdao.api as om
 import numpy as np
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
-from models.uncertainty.uncertainty import (
+from fastuav.models.uncertainty.uncertainty import (
     add_subsystem_with_deviation,
     add_model_deviation,
 )

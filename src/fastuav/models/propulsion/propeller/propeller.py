@@ -3,11 +3,11 @@ Propeller component
 """
 import fastoad.api as oad
 import openmdao.api as om
-from models.propulsion.propeller.definition_parameters import PropellerDefinitionParameters
-from models.propulsion.propeller.estimation.models import PropellerEstimationModels
-from models.propulsion.propeller.estimation.catalogue import PropellerCatalogueSelection
-from models.propulsion.propeller.performances import PropellerPerfos
-from models.propulsion.propeller.constraints import PropellerConstraints
+from fastuav.models.propulsion.propeller.definition_parameters import PropellerDefinitionParameters
+from fastuav.models.propulsion.propeller.estimation.models import PropellerEstimationModels
+from fastuav.models.propulsion.propeller.estimation.catalogue import PropellerCatalogueSelection
+from fastuav.models.propulsion.propeller.performances import PropellerPerfos
+from fastuav.models.propulsion.propeller.constraints import PropellerConstraints
 
 
 @oad.RegisterOpenMDAOSystem("propulsion.propeller")

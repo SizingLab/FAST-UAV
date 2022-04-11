@@ -3,11 +3,11 @@ ESC component
 """
 import fastoad.api as oad
 import openmdao.api as om
-from models.propulsion.esc.definition_parameters import ESCDefinitionParameters
-from models.propulsion.esc.estimation.models import ESCEstimationModels
-from models.propulsion.esc.estimation.catalogue import ESCCatalogueSelection
-from models.propulsion.esc.performances import ESCPerfos
-from models.propulsion.esc.constraints import ESCConstraints
+from fastuav.models.propulsion.esc.definition_parameters import ESCDefinitionParameters
+from fastuav.models.propulsion.esc.estimation.models import ESCEstimationModels
+from fastuav.models.propulsion.esc.estimation.catalogue import ESCCatalogueSelection
+from fastuav.models.propulsion.esc.performances import ESCPerfos
+from fastuav.models.propulsion.esc.constraints import ESCConstraints
 
 
 @oad.RegisterOpenMDAOSystem("propulsion.esc")

@@ -3,11 +3,11 @@ Battery component
 """
 import fastoad.api as oad
 import openmdao.api as om
-from models.propulsion.energy.battery.definition_parameters import BatteryDefinitionParameters
-from models.propulsion.energy.battery.estimation.models import BatteryEstimationModels
-from models.propulsion.energy.battery.estimation.catalogue import BatteryCatalogueSelection
-from models.propulsion.energy.battery.performances import BatteryPerfos
-from models.propulsion.energy.battery.constraints import BatteryConstraints
+from fastuav.models.propulsion.energy.battery.definition_parameters import BatteryDefinitionParameters
+from fastuav.models.propulsion.energy.battery.estimation.models import BatteryEstimationModels
+from fastuav.models.propulsion.energy.battery.estimation.catalogue import BatteryCatalogueSelection
+from fastuav.models.propulsion.energy.battery.performances import BatteryPerfos
+from fastuav.models.propulsion.energy.battery.constraints import BatteryConstraints
 
 
 @oad.RegisterOpenMDAOSystem("propulsion.battery")

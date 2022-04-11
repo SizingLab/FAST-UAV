@@ -3,7 +3,7 @@ Propeller performances
 """
 import openmdao.api as om
 import numpy as np
-from models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
+from fastuav.models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
 
 
 class PropellerPerfoModel:

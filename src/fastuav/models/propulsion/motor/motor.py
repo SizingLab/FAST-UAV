@@ -3,12 +3,12 @@ Motor component
 """
 import fastoad.api as oad
 import openmdao.api as om
-from models.propulsion.motor.definition_parameters import MotorDefinitionParameters
-from models.propulsion.motor.estimation.models import MotorEstimationModels
-from models.propulsion.motor.estimation.catalogue import MotorCatalogueSelection
-from models.propulsion.motor.performances import MotorPerfos
-from models.propulsion.motor.constraints import MotorConstraints
-from models.propulsion.motor.gearbox.models import Gearbox, NoGearbox
+from fastuav.models.propulsion.motor.definition_parameters import MotorDefinitionParameters
+from fastuav.models.propulsion.motor.estimation.models import MotorEstimationModels
+from fastuav.models.propulsion.motor.estimation.catalogue import MotorCatalogueSelection
+from fastuav.models.propulsion.motor.performances import MotorPerfos
+from fastuav.models.propulsion.motor.constraints import MotorConstraints
+from fastuav.models.propulsion.motor.gearbox.models import Gearbox, NoGearbox
 
 
 @oad.RegisterOpenMDAOSystem("propulsion.motor")
