@@ -44,6 +44,11 @@ fast-oad-core = "~1.3.1"
 stdatm = "0.2.0"
 matplotlib = "^3.5"
 openmdao = "<=3.16.0"
+cma = "^3.1.0"
+scikit-learn = "^1.0.2"
+psutil = "*"
+kaleido = "0.2.1"
+pysizing = "*"
 
 [tool.poetry.extras]
 jupyterlab = ["jupyterlab"]
