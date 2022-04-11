@@ -13,9 +13,7 @@ import plotly.graph_objects as go
 from SALib.analyze import sobol, morris
 
 
-def doe_morris(
-    des_vars_dict: dict, obj_var: str, conf_file: str, nt: int = 1024
-) -> pd.DataFrame:
+def doe_morris(des_vars_dict: dict, obj_var: str, conf_file: str, nt: int = 1024) -> pd.DataFrame:
     """
     DoE for Morris Method
 
@@ -80,9 +78,7 @@ def morris_analysis(conf_file, output_file):
     # Get variables data from output file
     variables = DataFile(output_file)
     variables.sort(key=lambda var: var.name)
-    table = variables.to_dataframe()[
-        ["name", "val", "units", "is_input", "desc"]
-    ].rename(
+    table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
 
@@ -94,9 +90,7 @@ def morris_analysis(conf_file, output_file):
             value=None,
         )
         # Values boxes
-        value_box = widgets.Text(
-            value="", description="", continuous_update=False, disabled=True
-        )
+        value_box = widgets.Text(value="", description="", continuous_update=False, disabled=True)
         var_box = widgets.FloatSlider(
             value=0.1,
             min=0.01,
@@ -137,13 +131,9 @@ def morris_analysis(conf_file, output_file):
     # Assign empty figures
     # Bar plot
     fig1 = go.FigureWidget(
-        layout=go.Layout(
-            title=dict(text="Morris results"), yaxis=dict(title=r"$\mu^*$")
-        )
+        layout=go.Layout(title=dict(text="Morris results"), yaxis=dict(title=r"$\mu^*$"))
     )
-    fig1.add_trace(
-        go.Bar(name="mu_star", x=[], y=[], error_y=dict(type="data", array=[]))
-    )
+    fig1.add_trace(go.Bar(name="mu_star", x=[], y=[], error_y=dict(type="data", array=[])))
 
     # Scatter plot
     fig2 = go.FigureWidget(
@@ -195,9 +185,7 @@ def morris_analysis(conf_file, output_file):
         n_input = len(inputs_array) - 1  # input row indice
 
         def variable_data(change):
-            inputbox = inputs_array[n_input].children[
-                0
-            ]  # variable selected from dropdown
+            inputbox = inputs_array[n_input].children[0]  # variable selected from dropdown
             x_data = table.loc[
                 table["Name"] == inputbox.value
             ]  # corresponding data from output file
@@ -208,12 +196,8 @@ def morris_analysis(conf_file, output_file):
                 # print("Please select value in dropwdown menu")
                 return False
             value_box = inputs_array[n_input].children[1]  # value of the variable
-            var_box = inputs_array[n_input].children[
-                2
-            ]  # variation to apply for the DoE
-            value_box.value = "{:10.3f} ".format(x_value) + (
-                x_unit if x_unit is not None else ""
-            )
+            var_box = inputs_array[n_input].children[2]  # variation to apply for the DoE
+            value_box.value = "{:10.3f} ".format(x_value) + (x_unit if x_unit is not None else "")
             var_box.value = 0.1
 
         # add an observe event to update value according to selected variable
@@ -255,9 +239,7 @@ def morris_analysis(conf_file, output_file):
         }
         X_morris = df[list(x_dict.keys())].to_numpy()
         Y_morris = df[y].to_numpy()
-        Si = morris.analyze(
-            problem_morris, X_morris, Y_morris, conf_level=0.95, num_resamples=100
-        )
+        Si = morris.analyze(problem_morris, X_morris, Y_morris, conf_level=0.95, num_resamples=100)
 
         # Update figures
         y_data = table.loc[table["Name"] == y]  # corresponding data from output file
@@ -270,9 +252,7 @@ def morris_analysis(conf_file, output_file):
             fig1.data[0].error_y = dict(type="data", array=Si["mu_star_conf"])
             fig1.update_layout(
                 yaxis=dict(
-                    title="$\\mu^* \\text{ ("
-                    + (y_unit if y_unit is not None else "")
-                    + ")}$"
+                    title="$\\mu^* \\text{ (" + (y_unit if y_unit is not None else "") + ")}$"
                 ),
                 xaxis={"categoryorder": "total descending"},
             )
@@ -291,9 +271,7 @@ def morris_analysis(conf_file, output_file):
 
             fig2.update_layout(
                 xaxis=dict(
-                    title="$\\mu^* \\text{ ("
-                    + (y_unit if y_unit is not None else "")
-                    + ")}$"
+                    title="$\\mu^* \\text{ (" + (y_unit if y_unit is not None else "") + ")}$"
                 ),
                 xaxis_range=[0, max(Si["mu_star"])],
                 yaxis_range=[-0.05, max(0.1 * max(Si["mu_star"]), max(Si["sigma"]))],

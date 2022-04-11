@@ -9,6 +9,7 @@ from fastuav.models.uncertainty.uncertainty import (
     add_model_deviation,
 )
 import logging
+
 _LOGGER = logging.getLogger(__name__)  # Logger for this module
 
 
@@ -75,8 +76,12 @@ class PropellerAerodynamicsModel:
 
     @staticmethod
     def aero_coefficients_static(beta):
-        C_t_sta = 4.27e-02 + 1.44e-01 * beta  # Thrust coef with T=C_T.rho.n^2.D^4 (APC multi-rotor props)
-        C_p_sta = -1.48e-03 + 9.72e-02 * beta  # Power coef with P=C_p.rho.n^3.D^5 (APC multi-rotor props)
+        C_t_sta = (
+            4.27e-02 + 1.44e-01 * beta
+        )  # Thrust coef with T=C_T.rho.n^2.D^4 (APC multi-rotor props)
+        C_p_sta = (
+            -1.48e-03 + 9.72e-02 * beta
+        )  # Power coef with P=C_p.rho.n^3.D^5 (APC multi-rotor props)
         # Deviations (for uncertainty purpose)
         delta = PropellerAerodynamicsModel.uncertain_parameters[
             "uncertainty:propeller:aerodynamics:CT:static:abs"
@@ -141,8 +146,15 @@ class PropellerAerodynamicsModel:
         # )  # power coef in dynamics (R2=0.975)
 
         # Thin Electric propellers (APC pareto filtered for high thrust, high efficiency)
-        C_t_axial = 0.09613 - 0.26688 * J + 0.37102 * J * beta - 0.15240 * beta * J ** 2
-        C_p_axial = 0.00440 - 0.03854 * beta ** 2 - 0.08185 * J ** 3 + 0.12568 * beta ** 2 * J - 0.03864 * J + 0.08432 * beta
+        C_t_axial = 0.09613 - 0.26688 * J + 0.37102 * J * beta - 0.15240 * beta * J**2
+        C_p_axial = (
+            0.00440
+            - 0.03854 * beta**2
+            - 0.08185 * J**3
+            + 0.12568 * beta**2 * J
+            - 0.03864 * J
+            + 0.08432 * beta
+        )
 
         # Deviations (for uncertainty purpose)
         delta = PropellerAerodynamicsModel.uncertain_parameters[
@@ -168,9 +180,7 @@ class PropellerAerodynamicsModel:
         return max(1e-10, C_t_axial), max(1e-10, C_p_axial)
 
     @staticmethod
-    def aero_coefficients_incidence(
-        beta, J, alpha, N_blades=2, chord_to_radius=0.15, r_norm=0.75
-    ):
+    def aero_coefficients_incidence(beta, J, alpha, N_blades=2, chord_to_radius=0.15, r_norm=0.75):
         """
         Incidence power coefficient (Y. Leng et al. model)
         Parameter alpha is the rotor disk angle of attack (equals pi/2 if fully axial flow).
@@ -178,9 +188,7 @@ class PropellerAerodynamicsModel:
 
         # Parameters at zero incidence propeller angle (axial flight)
         J_axial = J * np.sin(alpha)
-        C_t_axial, C_p_axial = PropellerAerodynamicsModel.aero_coefficients_axial(
-            beta, J_axial
-        )
+        C_t_axial, C_p_axial = PropellerAerodynamicsModel.aero_coefficients_axial(beta, J_axial)
         # Multi-rotor propellers (APC)
         # J_0t_axial = 0.197 + 1.094 * beta  # zero-thrust advance ratio
         # J_0p_axial = 0.286 + 0.993 * beta  # zero-power advance ratio
@@ -242,7 +250,9 @@ class PropellerAerodynamicsModel:
         ]
         C_p_inc = C_p_inc * (1 + eps) + delta
 
-        return max(1e-10, C_t_inc), max(1e-10, C_p_inc)  # set minimum value to avoid negative thrust or power
+        return max(1e-10, C_t_inc), max(
+            1e-10, C_p_inc
+        )  # set minimum value to avoid negative thrust or power
 
 
 class Diameter(om.ExplicitComponent):
@@ -252,7 +262,9 @@ class Diameter(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:propeller:thrust:takeoff", val=np.nan, units="N")
-        self.add_input("mission:design_mission:takeoff:atmosphere:density", val=np.nan, units="kg/m**3")
+        self.add_input(
+            "mission:design_mission:takeoff:atmosphere:density", val=np.nan, units="kg/m**3"
+        )
         self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:ND:takeoff", val=np.nan, units="m/s")
         self.add_output("data:propulsion:propeller:diameter:estimated", units="m")
@@ -269,9 +281,7 @@ class Diameter(om.ExplicitComponent):
 
         C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_static(beta)
 
-        Dpro = (
-            F_pro_to / (C_t * rho_air * ND_to**2)
-        ) ** 0.5  # [m] Propeller diameter
+        Dpro = (F_pro_to / (C_t * rho_air * ND_to**2)) ** 0.5  # [m] Propeller diameter
 
         outputs["data:propulsion:propeller:diameter:estimated"] = Dpro
 
@@ -282,9 +292,7 @@ class Weight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:propeller:diameter:estimated", val=np.nan, units="m"
-        )
+        self.add_input("data:propulsion:propeller:diameter:estimated", val=np.nan, units="m")
         self.add_input("data:propulsion:propeller:diameter:reference", val=np.nan, units="m")
         self.add_input("data:weights:propeller:mass:reference", val=np.nan, units="kg")
         self.add_output("data:weights:propeller:mass:estimated", units="kg")

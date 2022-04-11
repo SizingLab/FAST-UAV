@@ -95,7 +95,10 @@ class PropellerConstraints(om.ExplicitComponent):
             -W_pro_cr / NDmax / 2 / np.pi
         )
 
-        partials["mission:design_mission:constraints:speed:climb", "mission:design_mission:climb:speed",] = (
+        partials[
+            "mission:design_mission:constraints:speed:climb",
+            "mission:design_mission:climb:speed",
+        ] = (
             J_climb * W_pro_cl * Dpro / V_cl**2 / 2 / np.pi
         )
         partials[
@@ -104,7 +107,10 @@ class PropellerConstraints(om.ExplicitComponent):
         ] = (
             -W_pro_cl * Dpro / V_cl / 2 / np.pi
         )
-        partials["mission:design_mission:constraints:speed:climb", "data:propulsion:propeller:speed:climb",] = (
+        partials[
+            "mission:design_mission:constraints:speed:climb",
+            "data:propulsion:propeller:speed:climb",
+        ] = (
             -J_climb * Dpro / V_cl / 2 / np.pi
         )
         partials[

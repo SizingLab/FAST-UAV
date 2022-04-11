@@ -53,22 +53,14 @@ class ClimbSegment(om.ExplicitComponent):
         P_avionics = inputs["data:avionics:power"]
 
         t_cl = D_cl / V_cl  # [s]
-        E_cl_pro = (
-            (P_el_cl * Npro) / eta_ESC * t_cl
-        )  # [J] consumed energy for propulsion
+        E_cl_pro = (P_el_cl * Npro) / eta_ESC * t_cl  # [J] consumed energy for propulsion
         E_payload = P_payload / eta_ESC * t_cl  # [J] consumed energy for payload
         E_avionics = P_avionics / eta_ESC * t_cl  # [J] consumed energy for avionics
 
         outputs["mission:design_mission:climb:duration"] = t_cl / 60  # [min]
-        outputs["mission:design_mission:climb:energy:propulsion"] = (
-            E_cl_pro / 1000
-        )  # [kJ]
-        outputs["mission:design_mission:climb:energy:payload"] = (
-            E_payload / 1000
-        )  # [kJ]
-        outputs["mission:design_mission:climb:energy:avionics"] = (
-            E_avionics / 1000
-        )  # [kJ]
+        outputs["mission:design_mission:climb:energy:propulsion"] = E_cl_pro / 1000  # [kJ]
+        outputs["mission:design_mission:climb:energy:payload"] = E_payload / 1000  # [kJ]
+        outputs["mission:design_mission:climb:energy:avionics"] = E_avionics / 1000  # [kJ]
         outputs["mission:design_mission:climb:energy"] = (
             E_cl_pro + E_payload + E_avionics
         ) / 1000  # [kJ]
@@ -103,21 +95,13 @@ class HoverSegment(om.ExplicitComponent):
         P_payload = inputs["specifications:payload:power"]
         P_avionics = inputs["data:avionics:power"]
 
-        E_hover_pro = (
-            (P_el_hover * Npro) / eta_ESC * t_hov
-        )  # [J] consumed energy for propulsion
+        E_hover_pro = (P_el_hover * Npro) / eta_ESC * t_hov  # [J] consumed energy for propulsion
         E_payload = P_payload / eta_ESC * t_hov  # [J] consumed energy for payload
         E_avionics = P_avionics / eta_ESC * t_hov  # [J] consumed energy for avionics
 
-        outputs["mission:design_mission:hover:energy:propulsion"] = (
-            E_hover_pro / 1000
-        )  # [kJ]
-        outputs["mission:design_mission:hover:energy:payload"] = (
-            E_payload / 1000
-        )  # [kJ]
-        outputs["mission:design_mission:hover:energy:avionics"] = (
-            E_avionics / 1000
-        )  # [kJ]
+        outputs["mission:design_mission:hover:energy:propulsion"] = E_hover_pro / 1000  # [kJ]
+        outputs["mission:design_mission:hover:energy:payload"] = E_payload / 1000  # [kJ]
+        outputs["mission:design_mission:hover:energy:avionics"] = E_avionics / 1000  # [kJ]
         outputs["mission:design_mission:hover:energy"] = (
             E_hover_pro + E_payload + E_avionics
         ) / 1000  # [kJ]
@@ -156,22 +140,14 @@ class CruiseSegment(om.ExplicitComponent):
         P_avionics = inputs["data:avionics:power"]
 
         t_cr = D_cr / V_cr  # [s]
-        E_cr_pro = (
-            (P_el_cr * Npro) / eta_ESC * t_cr
-        )  # [J] consumed energy for propulsion
+        E_cr_pro = (P_el_cr * Npro) / eta_ESC * t_cr  # [J] consumed energy for propulsion
         E_payload = P_payload / eta_ESC * t_cr  # [J] consumed energy for payload
         E_avionics = P_avionics / eta_ESC * t_cr  # [J] consumed energy for avionics
 
         outputs["mission:design_mission:cruise:duration"] = t_cr / 60  # [min]
-        outputs["mission:design_mission:cruise:energy:propulsion"] = (
-            E_cr_pro / 1000
-        )  # [kJ]
-        outputs["mission:design_mission:cruise:energy:payload"] = (
-            E_payload / 1000
-        )  # [kJ]
-        outputs["mission:design_mission:cruise:energy:avionics"] = (
-            E_avionics / 1000
-        )  # [kJ]
+        outputs["mission:design_mission:cruise:energy:propulsion"] = E_cr_pro / 1000  # [kJ]
+        outputs["mission:design_mission:cruise:energy:payload"] = E_payload / 1000  # [kJ]
+        outputs["mission:design_mission:cruise:energy:avionics"] = E_avionics / 1000  # [kJ]
         outputs["mission:design_mission:cruise:energy"] = (
             E_cr_pro + E_payload + E_avionics
         ) / 1000  # [kJ]
@@ -188,9 +164,7 @@ class MissionComponent(om.ExplicitComponent):
         self.add_input("mission:design_mission:cruise:energy", val=np.nan, units="kJ")
         self.add_input("mission:design_mission:hover:duration", val=np.nan, units="min")
         self.add_input("mission:design_mission:climb:duration", val=np.nan, units="min")
-        self.add_input(
-            "mission:design_mission:cruise:duration", val=np.nan, units="min"
-        )
+        self.add_input("mission:design_mission:cruise:duration", val=np.nan, units="min")
         self.add_output("mission:design_mission:energy", units="kJ")
         self.add_output("mission:design_mission:duration", units="min")
 

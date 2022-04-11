@@ -55,7 +55,9 @@ class CoG_fuselage(om.ExplicitComponent):
 
         x_cg_nose = l_nose / 2  # [m]
         x_cg_mid = l_nose + l_mid / 2  # [m]
-        x_cg_rear = l_nose + l_mid + l_rear / 3 * (d_fus_mid + 2 * d_fus_tip) / (d_fus_mid + d_fus_tip)  # [m]
+        x_cg_rear = (
+            l_nose + l_mid + l_rear / 3 * (d_fus_mid + 2 * d_fus_tip) / (d_fus_mid + d_fus_tip)
+        )  # [m]
         x_cg_fus = (m_nose * x_cg_nose + m_mid * x_cg_mid + m_rear * x_cg_rear) / m_fus  # [m]
 
         outputs["data:stability:CoG:fuselage"] = x_cg_fus
@@ -139,7 +141,7 @@ class CoG_propeller(om.ExplicitComponent):
         self.add_output("data:stability:CoG:propeller", units="m")
 
     # def setup_partials(self):
-        # Finite difference all partials.
+    # Finite difference all partials.
     #     self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
@@ -240,12 +242,14 @@ class CoG_UAV(om.ExplicitComponent):
         m_bat = inputs["data:weights:battery:mass"]
         # m_total = inputs["data:weights:MTOW"]
 
-        x_cg = (x_cg_fus * m_fus
-                + x_cg_w * m_wing
-                + x_cg_ht * m_ht
-                + x_cg_vt * m_vt
-                + x_cg_prop * m_prop
-                + x_cg_mot * m_mot
-                + x_cg_bat * m_bat) / (m_fus + m_wing + m_ht + m_vt + m_prop + m_mot + m_bat)
+        x_cg = (
+            x_cg_fus * m_fus
+            + x_cg_w * m_wing
+            + x_cg_ht * m_ht
+            + x_cg_vt * m_vt
+            + x_cg_prop * m_prop
+            + x_cg_mot * m_mot
+            + x_cg_bat * m_bat
+        ) / (m_fus + m_wing + m_ht + m_vt + m_prop + m_mot + m_bat)
 
         outputs["data:stability:CoG"] = x_cg

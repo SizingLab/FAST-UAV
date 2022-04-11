@@ -58,19 +58,21 @@ class WingGeometry(om.ExplicitComponent):
         # design variables
         AR_w = inputs["data:geometry:wing:AR"]
         lmbda_w = inputs["data:geometry:wing:lambda"]
-        k_xw = inputs['data:geometry:wing:MAC:LE:x:k']
+        k_xw = inputs["data:geometry:wing:MAC:LE:x:k"]
 
         # Wing sizing
         S_w = Mtotal_guess * g / WS  # wing surface [m2]
         b_w = np.sqrt(AR_w * S_w)  # wing span [m]
         c_root = 2 * S_w / b_w / (1 + lmbda_w)  # chord at root [m]
         c_tip = lmbda_w * c_root  # chord at tip [m]
-        c_MAC = (2 / 3) * c_root * (1 + lmbda_w + lmbda_w ** 2) / (1 + lmbda_w)  # MAC = MGC [m]
+        c_MAC = (2 / 3) * c_root * (1 + lmbda_w + lmbda_w**2) / (1 + lmbda_w)  # MAC = MGC [m]
         t_root = c_root * tc_ratio  # wing thickness at root [m]
         t_tip = c_tip * tc_ratio  # wing thickness at tip [m]
 
         # Wing location
-        y_MAC = (b_w / 6) * (1 + 2 * lmbda_w) / (1 + lmbda_w)  # y-location of MAC (from the root) [m]
+        y_MAC = (
+            (b_w / 6) * (1 + 2 * lmbda_w) / (1 + lmbda_w)
+        )  # y-location of MAC (from the root) [m]
         x_MAC_LE_loc = 0  # x-location of MAC leading edge (from the leading edge of the root) [m] # TODO: add sweep
         x_MAC_LE = k_xw * b_w  # x-location of MAC leading edge (from nose tip) [m]
         x_MAC_c4 = x_MAC_LE + 0.25 * c_MAC  # x-location of MAC quarter chord (from nose tip) [m]
@@ -144,22 +146,34 @@ class HorizontalTailGeometry(om.ExplicitComponent):
         k_ht = inputs["data:geometry:tail:horizontal:arm:k"]
 
         # Tail sizing
-        l_ht = k_ht * b_w  # horizontal tail arm: distance between wing MAC quarter chord and HT MAC quarter chord [m]
+        l_ht = (
+            k_ht * b_w
+        )  # horizontal tail arm: distance between wing MAC quarter chord and HT MAC quarter chord [m]
         S_ht = V_ht * S_w * c_MAC_w / l_ht  # horizontal tail surface [m2]
         b_ht = np.sqrt(AR_ht * S_ht)  # HT span [m]
         c_root_ht = 2 * S_ht / b_ht / (1 + lmbda_ht)  # chord at root [m]
         c_tip_ht = lmbda_ht * c_root_ht  # chord at tip [m]
-        c_MAC_ht = (2 / 3) * c_root_ht * (1 + lmbda_ht + lmbda_ht ** 2) / (1 + lmbda_ht)  # MAC = MGC [m]
+        c_MAC_ht = (
+            (2 / 3) * c_root_ht * (1 + lmbda_ht + lmbda_ht**2) / (1 + lmbda_ht)
+        )  # MAC = MGC [m]
         t_root_ht = c_root_ht * tc_ratio  # wing thickness at root [m]
         t_tip_ht = c_tip_ht * tc_ratio  # wing thickness at tip [m]
 
         # Tail location
-        y_MAC_ht = (b_ht / 6) * (1 + 2 * lmbda_ht) / (1 + lmbda_ht)  # y-location of MAC (from the root) [m]
+        y_MAC_ht = (
+            (b_ht / 6) * (1 + 2 * lmbda_ht) / (1 + lmbda_ht)
+        )  # y-location of MAC (from the root) [m]
         x_MAC_LE_loc_ht = 0  # x-location of MAC leading edge (from the leading edge of the root) [m] TODO: add sweep
         x_MAC_c4_ht = x_MAC_c4_w + l_ht  # x-location of MAC quarter chord (from nose tip) [m]
-        x_MAC_LE_ht = x_MAC_c4_ht - 0.25 * c_MAC_ht  # x-location of MAC leading edge (from nose tip) [m]
-        x_root_LE_ht = x_MAC_LE_ht - x_MAC_LE_loc_ht  # x-location of root leading edge (from nose tip) [m]
-        x_root_TE_ht = x_root_LE_ht + c_root_ht  # x-location of root trailing edge (from nose tip) [m]
+        x_MAC_LE_ht = (
+            x_MAC_c4_ht - 0.25 * c_MAC_ht
+        )  # x-location of MAC leading edge (from nose tip) [m]
+        x_root_LE_ht = (
+            x_MAC_LE_ht - x_MAC_LE_loc_ht
+        )  # x-location of root leading edge (from nose tip) [m]
+        x_root_TE_ht = (
+            x_root_LE_ht + c_root_ht
+        )  # x-location of root trailing edge (from nose tip) [m]
 
         outputs["data:geometry:tail:horizontal:arm"] = l_ht
         outputs["data:geometry:tail:horizontal:surface"] = S_ht
@@ -231,17 +245,27 @@ class VerticalTailGeometry(om.ExplicitComponent):
         b_vt = np.sqrt(AR_vt * S_vt)  # VT span [m]
         c_root_vt = 2 * S_vt / b_vt / (1 + lmbda_vt)  # chord at root [m]
         c_tip_vt = lmbda_vt * c_root_vt  # chord at tip [m]
-        c_MAC_vt = (2 / 3) * c_root_vt * (1 + lmbda_vt + lmbda_vt ** 2) / (1 + lmbda_vt)  # MAC = MGC [m]
+        c_MAC_vt = (
+            (2 / 3) * c_root_vt * (1 + lmbda_vt + lmbda_vt**2) / (1 + lmbda_vt)
+        )  # MAC = MGC [m]
         t_root_vt = c_root_vt * tc_ratio  # wing thickness at root [m]
         t_tip_vt = c_tip_vt * tc_ratio  # wing thickness at tip [m]
 
         # Tail location
-        z_MAC_vt = (b_vt / 6) * (1 + 2 * lmbda_vt) / (1 + lmbda_vt)  # z-location of MAC (from the root) [m]
+        z_MAC_vt = (
+            (b_vt / 6) * (1 + 2 * lmbda_vt) / (1 + lmbda_vt)
+        )  # z-location of MAC (from the root) [m]
         x_MAC_LE_loc_vt = 0  # x-location of MAC leading edge (from the leading edge of the root) [m] TODO: add sweep
         x_MAC_c4_vt = x_MAC_c4_w + l_vt  # x-location of MAC quarter chord (from nose tip) [m]
-        x_MAC_LE_vt = x_MAC_c4_vt - 0.25 * c_MAC_vt  # x-location of MAC leading edge (from nose tip) [m]
-        x_root_LE_vt = x_MAC_LE_vt - x_MAC_LE_loc_vt  # x-location of root leading edge (from nose tip) [m]
-        x_root_TE_vt = x_root_LE_vt + c_root_vt  # x-location of root trailing edge (from nose tip) [m]
+        x_MAC_LE_vt = (
+            x_MAC_c4_vt - 0.25 * c_MAC_vt
+        )  # x-location of MAC leading edge (from nose tip) [m]
+        x_root_LE_vt = (
+            x_MAC_LE_vt - x_MAC_LE_loc_vt
+        )  # x-location of root leading edge (from nose tip) [m]
+        x_root_TE_vt = (
+            x_root_LE_vt + c_root_vt
+        )  # x-location of root trailing edge (from nose tip) [m]
 
         outputs["data:geometry:tail:vertical:arm"] = l_vt
         outputs["data:geometry:tail:vertical:surface"] = S_vt
@@ -296,11 +320,14 @@ class FuselageGeometry(om.ExplicitComponent):
         d_fus_tip = k_df * d_fus_mid  # min. fuselage diameter (tail tip) [m]
 
         l_nose = d_fus_mid / 2  # nose length (half spherical) [m]
-        l_rear = x_root_TE_ht - x_root_TE_w  # [m] rear fuselage length: from wing trailing edge to HT trailing edge
+        l_rear = (
+            x_root_TE_ht - x_root_TE_w
+        )  # [m] rear fuselage length: from wing trailing edge to HT trailing edge
         l_mid = l_fus - l_rear - l_nose  # [m] mid fuselage length (cylindrical part)
 
-        S_rear = np.pi * (d_fus_mid + d_fus_tip) / 2 * l_rear + np.pi * (
-                    d_fus_tip / 2) ** 2  # rear part of fuselage (conical) [m2]
+        S_rear = (
+            np.pi * (d_fus_mid + d_fus_tip) / 2 * l_rear + np.pi * (d_fus_tip / 2) ** 2
+        )  # rear part of fuselage (conical) [m2]
         S_mid = np.pi * d_fus_mid * l_mid  # mid part of fuselage (cylindrical) [m2]
         S_nose = 2 * np.pi * (d_fus_mid / 2) ** 2  # nose part of fuselage (half spherical) [m2]
         S_fus = S_rear + S_mid + S_nose  # total fuselage area [m2]
@@ -353,9 +380,12 @@ class GeometryConstraints(om.ExplicitComponent):
         V_bat = inputs["data:propulsion:battery:volume"]
         V_req = V_pay + V_bat
 
-        partials["data:geometry:fuselage:volume:constraint",
-                 "data:geometry:fuselage:volume:mid"] = 1 / V_req
-        partials["data:geometry:fuselage:volume:constraint",
-                 "specifications:payload:volume"] = - V_fus / V_req ** 2
-        partials["data:geometry:fuselage:volume:constraint",
-                 "data:propulsion:battery:volume"] = - V_fus / V_req ** 2
+        partials[
+            "data:geometry:fuselage:volume:constraint", "data:geometry:fuselage:volume:mid"
+        ] = (1 / V_req)
+        partials["data:geometry:fuselage:volume:constraint", "specifications:payload:volume"] = (
+            -V_fus / V_req**2
+        )
+        partials["data:geometry:fuselage:volume:constraint", "data:propulsion:battery:volume"] = (
+            -V_fus / V_req**2
+        )

@@ -39,9 +39,7 @@ def doe_montecarlo(
     prob.model.add_objective(obj_var)  # add objective
 
     # Setup driver
-    prob.driver = OpenturnsDOEDriver(
-        n_samples=ns, distribution=ot.ComposedDistribution(dists)
-    )
+    prob.driver = OpenturnsDOEDriver(n_samples=ns, distribution=ot.ComposedDistribution(dists))
 
     # Run problem
     prob.driver.add_recorder(om.SqliteRecorder("cases.sql"))
@@ -76,9 +74,7 @@ def montecarlo_siso(conf_file, output_file):
     # Get variables names
     variables = DataFile(output_file)
     variables.sort(key=lambda var: var.name)
-    table = variables.to_dataframe()[
-        ["name", "val", "units", "is_input", "desc"]
-    ].rename(
+    table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
 
@@ -90,9 +86,7 @@ def montecarlo_siso(conf_file, output_file):
     )
 
     # Values boxes
-    value_box = widgets.Text(
-        value="", description="", continuous_update=False, disabled=True
-    )
+    value_box = widgets.Text(value="", description="", continuous_update=False, disabled=True)
     var_box = widgets.FloatSlider(
         value=0.1,
         min=0.01,
@@ -171,9 +165,7 @@ def montecarlo_siso(conf_file, output_file):
         else:
             # print("Please select value in dropwdown menu")
             return False
-        value_box.value = "{:10.3f} ".format(x_value) + (
-            x_unit if x_unit is not None else ""
-        )
+        value_box.value = "{:10.3f} ".format(x_value) + (x_unit if x_unit is not None else "")
         var_box.value = 0.1
         if law_buttons.value == "Normal":
             var_box.description = "std"
@@ -200,10 +192,7 @@ def montecarlo_siso(conf_file, output_file):
         #    widg.children[0].children[0].children[3].value = x_value
 
     def validate():
-        if (
-            outputbox.value in table["Name"].unique()
-            and inputbox.value in table["Name"].unique()
-        ):
+        if outputbox.value in table["Name"].unique() and inputbox.value in table["Name"].unique():
             return True
         else:
             return False
@@ -248,43 +237,31 @@ def montecarlo_siso(conf_file, output_file):
             with fig1.batch_update():  # Input Distribution
                 fig1.data[0].x = df[inputbox.value]
                 fig1.layout.xaxis.title = inputbox.value + " [%s]" % (
-                    x_data["Unit"].unique()[0]
-                    if x_data["Unit"].unique()[0] is not None
-                    else "-"
+                    x_data["Unit"].unique()[0] if x_data["Unit"].unique()[0] is not None else "-"
                 )
             with fig2.batch_update():  # Output Distribution
                 fig2.data[0].x = df[outputbox.value]
                 fig2.layout.xaxis.title = outputbox.value + " [%s]" % (
-                    y_data["Unit"].unique()[0]
-                    if y_data["Unit"].unique()[0] is not None
-                    else "-"
+                    y_data["Unit"].unique()[0] if y_data["Unit"].unique()[0] is not None else "-"
                 )
             with fig3.batch_update():  # Scatter plot
                 fig3.data[0].x = df[inputbox.value]
                 fig3.data[0].y = df[y]
                 fig3.layout.xaxis.title = inputbox.value + " [%s]" % (
-                    x_data["Unit"].unique()[0]
-                    if x_data["Unit"].unique()[0] is not None
-                    else "-"
+                    x_data["Unit"].unique()[0] if x_data["Unit"].unique()[0] is not None else "-"
                 )
                 fig3.layout.yaxis.title = outputbox.value + " [%s]" % (
-                    y_data["Unit"].unique()[0]
-                    if y_data["Unit"].unique()[0] is not None
-                    else "-"
+                    y_data["Unit"].unique()[0] if y_data["Unit"].unique()[0] is not None else "-"
                 )
             with fig4.batch_update():  # Parallel coordinate plot
                 fig4.data[0].dimensions = [
                     dict(label=inputbox.value, values=df[inputbox.value]),
                     dict(label=outputbox.value, values=df[outputbox.value]),
                 ]
-                fig4.data[0].line = dict(
-                    color=df[outputbox.value], colorscale="Viridis"
-                )
+                fig4.data[0].line = dict(color=df[outputbox.value], colorscale="Viridis")
 
     # Events
-    law_buttons.observe(
-        variable_data, names="value"
-    )  # update data when the user changes law
+    law_buttons.observe(variable_data, names="value")  # update data when the user changes law
     inputbox.observe(
         variable_data, names="value"
     )  # update data when the user changes input variable
@@ -319,9 +296,7 @@ def montecarlo_miso(conf_file, output_file):
     # Get variables data from output file
     variables = DataFile(output_file)
     variables.sort(key=lambda var: var.name)
-    table = variables.to_dataframe()[
-        ["name", "val", "units", "is_input", "desc"]
-    ].rename(
+    table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
 
@@ -334,9 +309,7 @@ def montecarlo_miso(conf_file, output_file):
         )
 
         # Values boxes
-        value_box = widgets.Text(
-            value="", description="", continuous_update=False, disabled=True
-        )
+        value_box = widgets.Text(value="", description="", continuous_update=False, disabled=True)
         var_box = widgets.FloatSlider(
             value=0.1,
             min=0.01,
@@ -412,9 +385,7 @@ def montecarlo_miso(conf_file, output_file):
         n_input = len(inputs_array) - 1  # input row indice
 
         def variable_data(change):
-            inputbox = inputs_array[n_input].children[
-                0
-            ]  # variable selected from dropdown
+            inputbox = inputs_array[n_input].children[0]  # variable selected from dropdown
             x_data = table.loc[
                 table["Name"] == inputbox.value
             ]  # corresponding data from output file
@@ -426,12 +397,8 @@ def montecarlo_miso(conf_file, output_file):
                 return False
             value_box = inputs_array[n_input].children[1]  # value of the variable
             law_buttons = inputs_array[n_input].children[2]  # distribution law
-            var_box = inputs_array[n_input].children[
-                3
-            ]  # variation to apply for the DoE
-            value_box.value = "{:10.3f} ".format(x_value) + (
-                x_unit if x_unit is not None else ""
-            )
+            var_box = inputs_array[n_input].children[3]  # variation to apply for the DoE
+            value_box.value = "{:10.3f} ".format(x_value) + (x_unit if x_unit is not None else "")
             var_box.value = 0.1
 
             if law_buttons.value == "Normal":

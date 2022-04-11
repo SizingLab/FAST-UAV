@@ -20,9 +20,7 @@ class ESC(om.Group):
         self.options.declare("use_catalogue", default=False, types=bool)
 
     def setup(self):
-        self.add_subsystem(
-            "definition_parameters", ESCDefinitionParameters(), promotes=["*"]
-        )
+        self.add_subsystem("definition_parameters", ESCDefinitionParameters(), promotes=["*"])
         estimation = self.add_subsystem("estimation", om.Group(), promotes=["*"])
         estimation.add_subsystem("models", ESCEstimationModels(), promotes=["*"])
         estimation.add_subsystem(

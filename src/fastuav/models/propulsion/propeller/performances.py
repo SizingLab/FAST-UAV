@@ -13,17 +13,15 @@ class PropellerPerfoModel:
 
     @staticmethod
     def speed(F_pro, D_pro, C_t, rho_air):
-        n_pro = (F_pro / (C_t * rho_air * D_pro**4)) ** 0.5 \
-            if (C_t and rho_air and D_pro) \
-            else 0  # [Hz] Propeller speed
+        n_pro = (
+            (F_pro / (C_t * rho_air * D_pro**4)) ** 0.5 if (C_t and rho_air and D_pro) else 0
+        )  # [Hz] Propeller speed
         W_pro = n_pro * 2 * np.pi  # [rad/s] Propeller speed
         return W_pro
 
     @staticmethod
     def power(W_pro, D_pro, C_p, rho_air):
-        P_pro = (
-            C_p * rho_air * (W_pro / (2 * np.pi)) ** 3 * D_pro**5
-        )  # [W] Propeller power
+        P_pro = C_p * rho_air * (W_pro / (2 * np.pi)) ** 3 * D_pro**5  # [W] Propeller power
         return P_pro
 
     @staticmethod
@@ -33,9 +31,7 @@ class PropellerPerfoModel:
 
     @staticmethod
     def performances(F_pro, D_pro, C_t, C_p, rho_air):
-        W_pro = PropellerPerfoModel.speed(
-            F_pro, D_pro, C_t, rho_air
-        )  # [rad/s] Propeller speed
+        W_pro = PropellerPerfoModel.speed(F_pro, D_pro, C_t, rho_air)  # [rad/s] Propeller speed
         P_pro = PropellerPerfoModel.power(W_pro, D_pro, C_p, rho_air)  # [W] Propeller power
         Q_pro = PropellerPerfoModel.torque(P_pro, W_pro)  # [N.m] Propeller torque
         return W_pro, P_pro, Q_pro
@@ -64,7 +60,9 @@ class TakeOff(om.ExplicitComponent):
         # self.add_input("data:propulsion:propeller:aerodynamics:CT:static", val=np.nan, units=None)
         # self.add_input("data:propulsion:propeller:aerodynamics:CP:static", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:thrust:takeoff", val=np.nan, units="N")
-        self.add_input("mission:design_mission:takeoff:atmosphere:density", val=np.nan, units="kg/m**3")
+        self.add_input(
+            "mission:design_mission:takeoff:atmosphere:density", val=np.nan, units="kg/m**3"
+        )
         self.add_output("data:propulsion:propeller:speed:takeoff", units="rad/s")
         self.add_output("data:propulsion:propeller:torque:takeoff", units="N*m")
         self.add_output("data:propulsion:propeller:power:takeoff", units="W")
@@ -103,7 +101,9 @@ class Hover(om.ExplicitComponent):
         # self.add_input("data:propulsion:propeller:aerodynamics:CT:static", val=np.nan, units=None)
         # self.add_input("data:propulsion:propeller:aerodynamics:CP:static", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:thrust:hover", val=0.0, units="N")
-        self.add_input("mission:design_mission:hover:atmosphere:density", val=np.nan, units="kg/m**3")
+        self.add_input(
+            "mission:design_mission:hover:atmosphere:density", val=np.nan, units="kg/m**3"
+        )
         self.add_output("data:propulsion:propeller:speed:hover", units="rad/s")
         self.add_output("data:propulsion:propeller:torque:hover", units="N*m")
         self.add_output("data:propulsion:propeller:power:hover", units="W")
@@ -144,7 +144,9 @@ class Climb(om.ExplicitComponent):
         # self.add_input("data:propulsion:propeller:aerodynamics:CT:axial", val=np.nan, units=None)
         # self.add_input("data:propulsion:propeller:aerodynamics:CP:axial", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:thrust:climb", val=np.nan, units="N")
-        self.add_input("mission:design_mission:climb:atmosphere:density", val=np.nan, units="kg/m**3")
+        self.add_input(
+            "mission:design_mission:climb:atmosphere:density", val=np.nan, units="kg/m**3"
+        )
         self.add_output("data:propulsion:propeller:speed:climb", units="rad/s")
         self.add_output("data:propulsion:propeller:torque:climb", units="N*m")
         self.add_output("data:propulsion:propeller:power:climb", units="W")
@@ -187,7 +189,9 @@ class Cruise(om.ExplicitComponent):
         # self.add_input("data:propulsion:propeller:aerodynamics:CT:incidence", val=np.nan, units=None)
         # self.add_input("data:propulsion:propeller:aerodynamics:CP:incidence", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:thrust:cruise", val=np.nan, units="N")
-        self.add_input("mission:design_mission:cruise:atmosphere:density", val=np.nan, units="kg/m**3")
+        self.add_input(
+            "mission:design_mission:cruise:atmosphere:density", val=np.nan, units="kg/m**3"
+        )
         self.add_output("data:propulsion:propeller:speed:cruise", units="rad/s")
         self.add_output("data:propulsion:propeller:torque:cruise", units="N*m")
         self.add_output("data:propulsion:propeller:power:cruise", units="W")

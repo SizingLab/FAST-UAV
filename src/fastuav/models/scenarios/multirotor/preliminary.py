@@ -23,7 +23,9 @@ class MTOWguess(om.ExplicitComponent):
         k_M = inputs["data:weights:MTOW:k"]
         M_load = inputs["specifications:payload:mass"]
 
-        Mtotal_guess = k_M * M_load  # [kg] Estimate of the total mass (or equivalent weight of dynamic scenario)
+        Mtotal_guess = (
+            k_M * M_load
+        )  # [kg] Estimate of the total mass (or equivalent weight of dynamic scenario)
 
         outputs["data:weights:MTOW:guess"] = Mtotal_guess
 
@@ -78,8 +80,12 @@ class BodySurfacesMR(om.ExplicitComponent):
         S_front_ref = inputs["data:geometry:body:surface:front:reference"]
         MTOW_ref = inputs["data:weights:MTOW:reference"]
 
-        S_top_estimated = S_top_ref * (Mtotal_guess / MTOW_ref) ** (2 / 3)  # [m2] top surface estimation
-        S_front_estimated = S_front_ref * (Mtotal_guess / MTOW_ref) ** (2 / 3)  # [m2] front surface estimation
+        S_top_estimated = S_top_ref * (Mtotal_guess / MTOW_ref) ** (
+            2 / 3
+        )  # [m2] top surface estimation
+        S_front_estimated = S_front_ref * (Mtotal_guess / MTOW_ref) ** (
+            2 / 3
+        )  # [m2] front surface estimation
 
         outputs["data:geometry:body:surface:top"] = S_top_estimated
         outputs["data:geometry:body:surface:front"] = S_front_estimated

@@ -9,7 +9,17 @@ import pandas as pd
 import numpy as np
 
 
-PATH = pth.join(pth.dirname(pth.abspath(__file__)),"..", "..", "..", "..", "data", "catalogues", "ESC", "Non-Dominated-ESC.csv")
+PATH = pth.join(
+    pth.dirname(pth.abspath(__file__)),
+    "..",
+    "..",
+    "..",
+    "..",
+    "data",
+    "catalogues",
+    "ESC",
+    "Non-Dominated-ESC.csv",
+)
 DF = pd.read_csv(PATH, sep=";")
 
 
@@ -55,16 +65,24 @@ class ESCCatalogueSelection(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials(
-            "data:propulsion:esc:voltage", "data:propulsion:esc:voltage:estimated", val=1.0,
+            "data:propulsion:esc:voltage",
+            "data:propulsion:esc:voltage:estimated",
+            val=1.0,
         )
         self.declare_partials(
-            "data:propulsion:esc:power:max", "data:propulsion:esc:power:max:estimated", val=1.0,
+            "data:propulsion:esc:power:max",
+            "data:propulsion:esc:power:max:estimated",
+            val=1.0,
         )
         self.declare_partials(
-            "data:weights:esc:mass", "data:weights:esc:mass:estimated", val=1.0,
+            "data:weights:esc:mass",
+            "data:weights:esc:mass:estimated",
+            val=1.0,
         )
         self.declare_partials(
-            "data:propulsion:esc:efficiency", "data:propulsion:esc:efficiency:estimated", val=1.0,
+            "data:propulsion:esc:efficiency",
+            "data:propulsion:esc:efficiency:estimated",
+            val=1.0,
         )
 
     def compute(self, inputs, outputs):
@@ -88,13 +106,21 @@ class ESCCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:esc:power:max"] = outputs[
                 "data:propulsion:esc:power:max:catalogue"
             ] = P_esc
-            outputs["data:propulsion:esc:voltage"] = outputs["data:propulsion:esc:voltage:catalogue"] = V_esc
+            outputs["data:propulsion:esc:voltage"] = outputs[
+                "data:propulsion:esc:voltage:catalogue"
+            ] = V_esc
             outputs["data:weights:esc:mass"] = outputs["data:weights:esc:mass:catalogue"] = M_esc
-            outputs["data:propulsion:esc:efficiency"] = inputs["data:propulsion:esc:efficiency:estimated"]
+            outputs["data:propulsion:esc:efficiency"] = inputs[
+                "data:propulsion:esc:efficiency:estimated"
+            ]
 
         # CUSTOM COMPONENTS (no change)
         else:
-            outputs["data:propulsion:esc:power:max"] = inputs["data:propulsion:esc:power:max:estimated"]
+            outputs["data:propulsion:esc:power:max"] = inputs[
+                "data:propulsion:esc:power:max:estimated"
+            ]
             outputs["data:propulsion:esc:voltage"] = inputs["data:propulsion:esc:voltage:estimated"]
             outputs["data:weights:esc:mass"] = inputs["data:weights:esc:mass:estimated"]
-            outputs["data:propulsion:esc:efficiency"] = inputs["data:propulsion:esc:efficiency:estimated"]
+            outputs["data:propulsion:esc:efficiency"] = inputs[
+                "data:propulsion:esc:efficiency:estimated"
+            ]

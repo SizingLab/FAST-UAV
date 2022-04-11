@@ -13,12 +13,8 @@ class Geometry(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:structures:arms:stress:max", val=np.nan, units="N/m**2"
-        )
-        self.add_input(
-            "data:structures:arms:diameter:k", val=np.nan, units=None
-        )
+        self.add_input("data:structures:arms:stress:max", val=np.nan, units="N/m**2")
+        self.add_input("data:structures:arms:diameter:k", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:diameter", val=np.nan, units="m")
         self.add_input("data:geometry:arms:number", val=np.nan, units=None)
         self.add_input("data:geometry:arms:prop_per_arm", val=np.nan, units=None)
@@ -41,9 +37,7 @@ class Geometry(om.ExplicitComponent):
         Npro_arm = inputs["data:geometry:arms:prop_per_arm"]
 
         Larm = Dpro / 2 / (np.sin(np.pi / Narm))  # [m] length of the arm
-        Dout = (
-            F_pro_to * Npro_arm * Larm * 32 / (np.pi * Sigma_max * (1 - D_ratio**4))
-        ) ** (
+        Dout = (F_pro_to * Npro_arm * Larm * 32 / (np.pi * Sigma_max * (1 - D_ratio**4))) ** (
             1 / 3
         )  # [m] outer diameter of the beam
         Din = D_ratio * Dout  # [m] inner diameter of the beam

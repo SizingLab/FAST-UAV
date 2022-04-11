@@ -42,17 +42,30 @@ class Atmosphere(om.ExplicitComponent):
         V_climb = inputs["mission:design_mission:climb:speed"]
 
         altitude_cruise = altitude_TO + D_cl  # [m] Cruise altitude
-        rho_air_stall = AtmosphereSI(altitude_cruise, dISA).density  # [kg/m3] Air density at stall conditions (min.)
-        rho_air_takeoff = AtmosphereSI(altitude_TO, dISA).density  # [kg/m3] Air density at takeoff level
-        rho_air_hover = AtmosphereSI(altitude_cruise, dISA).density  # [kg/m3] Air density at hovering level
-        rho_air_climb = AtmosphereSI(altitude_cruise, dISA).density  # [kg/m3] Air density at climb conditions (min.)
-        rho_air_cruise = AtmosphereSI(altitude_cruise, dISA).density  # [kg/m3] Air density at cruise conditions
-        nu_air_cruise = AtmosphereSI(altitude_cruise,
-                                     dISA).kinematic_viscosity  # [m2/s] kinematic viscosity at cruise level
-        a_air_cruise = AtmosphereSI(altitude_cruise, dISA).speed_of_sound  # [m/s] speed of sound at cruise level
-        q_stall = 0.5 * rho_air_stall * V_stall ** 2  # dynamic pressure at stall speed [Pa]
-        q_cruise = 0.5 * rho_air_cruise * V_cruise ** 2  # dynamic pressure at cruise speed [Pa]
-        q_climb = 0.5 * rho_air_climb * V_climb ** 2  # dynamic pressure at climb speed [Pa]
+        rho_air_stall = AtmosphereSI(
+            altitude_cruise, dISA
+        ).density  # [kg/m3] Air density at stall conditions (min.)
+        rho_air_takeoff = AtmosphereSI(
+            altitude_TO, dISA
+        ).density  # [kg/m3] Air density at takeoff level
+        rho_air_hover = AtmosphereSI(
+            altitude_cruise, dISA
+        ).density  # [kg/m3] Air density at hovering level
+        rho_air_climb = AtmosphereSI(
+            altitude_cruise, dISA
+        ).density  # [kg/m3] Air density at climb conditions (min.)
+        rho_air_cruise = AtmosphereSI(
+            altitude_cruise, dISA
+        ).density  # [kg/m3] Air density at cruise conditions
+        nu_air_cruise = AtmosphereSI(
+            altitude_cruise, dISA
+        ).kinematic_viscosity  # [m2/s] kinematic viscosity at cruise level
+        a_air_cruise = AtmosphereSI(
+            altitude_cruise, dISA
+        ).speed_of_sound  # [m/s] speed of sound at cruise level
+        q_stall = 0.5 * rho_air_stall * V_stall**2  # dynamic pressure at stall speed [Pa]
+        q_cruise = 0.5 * rho_air_cruise * V_cruise**2  # dynamic pressure at cruise speed [Pa]
+        q_climb = 0.5 * rho_air_climb * V_climb**2  # dynamic pressure at climb speed [Pa]
 
         outputs["mission:design_mission:cruise:altitude"] = altitude_cruise
         outputs["mission:design_mission:cruise:atmosphere:density"] = rho_air_cruise
@@ -64,4 +77,3 @@ class Atmosphere(om.ExplicitComponent):
         outputs["mission:design_mission:cruise:q"] = q_cruise
         outputs["mission:design_mission:climb:q"] = q_climb
         outputs["mission:design_mission:stall:q"] = q_stall
-

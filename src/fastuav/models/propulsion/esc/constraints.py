@@ -50,17 +50,29 @@ class ESCConstraints(om.ExplicitComponent):
         P_esc_cl = inputs["data:propulsion:esc:power:climb"]
         P_esc_cr = inputs["data:propulsion:esc:power:cruise"]
 
-        partials["data:propulsion:esc:constraints:power:climb", "data:propulsion:esc:power:max",] = (
+        partials[
+            "data:propulsion:esc:constraints:power:climb",
+            "data:propulsion:esc:power:max",
+        ] = (
             P_esc_cl / P_esc**2
         )
-        partials["data:propulsion:esc:constraints:power:climb", "data:propulsion:esc:power:climb",] = (
+        partials[
+            "data:propulsion:esc:constraints:power:climb",
+            "data:propulsion:esc:power:climb",
+        ] = (
             -1.0 / P_esc
         )
 
-        partials["data:propulsion:esc:constraints:power:cruise", "data:propulsion:esc:power:max",] = (
+        partials[
+            "data:propulsion:esc:constraints:power:cruise",
+            "data:propulsion:esc:power:max",
+        ] = (
             P_esc_cr / P_esc**2
         )
-        partials["data:propulsion:esc:constraints:power:cruise", "data:propulsion:esc:power:cruise",] = (
+        partials[
+            "data:propulsion:esc:constraints:power:cruise",
+            "data:propulsion:esc:power:cruise",
+        ] = (
             -1.0 / P_esc
         )
 

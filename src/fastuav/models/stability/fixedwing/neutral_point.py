@@ -32,10 +32,13 @@ class NeutralPoint(om.ExplicitComponent):
         V_ht = inputs["data:geometry:tail:horizontal:coefficient"]
         AR_ht = inputs["data:geometry:tail:horizontal:AR"]
         e = inputs["data:aerodynamics:CDi:e"]
-        x_ac_w = inputs["data:geometry:wing:MAC:C4:x"]  # wing aerodynamic center (located at quarter chord of the wing)
+        x_ac_w = inputs[
+            "data:geometry:wing:MAC:C4:x"
+        ]  # wing aerodynamic center (located at quarter chord of the wing)
 
-        l_np = c_MAC * V_ht * (1 - 4 / (2 + e * AR_w)) * (1 + 2 / e / AR_w) / (
-                    1 + 2 / AR_ht)  # distance from neutral point to wing aerodynamic center [m]
+        l_np = (
+            c_MAC * V_ht * (1 - 4 / (2 + e * AR_w)) * (1 + 2 / e / AR_w) / (1 + 2 / AR_ht)
+        )  # distance from neutral point to wing aerodynamic center [m]
         x_np = x_ac_w + l_np  # distance from neutral point to nose tip [m]
 
         outputs["data:stability:neutral_point"] = x_np

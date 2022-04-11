@@ -17,7 +17,9 @@ class Structures(om.Group):
         self.options.declare("spar_model", default="pipe", values=["pipe", "I_beam"])
 
     def setup(self):
-        self.add_subsystem("wing", WingWeight(spar_model=self.options["spar_model"]), promotes=["*"])
+        self.add_subsystem(
+            "wing", WingWeight(spar_model=self.options["spar_model"]), promotes=["*"]
+        )
         self.add_subsystem("horizontal_tail", HorizontalTailWeight(), promotes=["*"])
         self.add_subsystem("vertical_tail", VerticalTailWeight(), promotes=["*"])
         self.add_subsystem("fuselage", FuselageWeight(), promotes=["*"])
@@ -50,11 +52,15 @@ class WingWeightModel:
         k_web = 30  # depth-to-thickness ratio for the web : t_web = h_web / k_web
         k_flange = 0.1  # depth-to-thickness ratio for the flange : b_flange = a_flange / k_flange
         M_root = F_max * y  # maximum bending moment at root [N.m]
-        h_web = (M_root * (1 + k_a) / (sig_max * k_a ** 2 * (1 + k_a ** 2 / 3) / k_flange)) ** (1/3)  # web depth [m]
+        h_web = (M_root * (1 + k_a) / (sig_max * k_a**2 * (1 + k_a**2 / 3) / k_flange)) ** (
+            1 / 3
+        )  # web depth [m]
         t_web = h_web / k_web  # web thickness [m]
         a_flange = k_a * h_web  # flange depth [m]
         b_flange = a_flange / k_flange  # flange thickness [m]
-        m_spar = rho_spar * L * (2 * a_flange * b_flange + (h_web - a_flange) * t_web)  # mass of spar [kg]
+        m_spar = (
+            rho_spar * L * (2 * a_flange * b_flange + (h_web - a_flange) * t_web)
+        )  # mass of spar [kg]
         return m_spar, h_web, t_web, a_flange, b_flange
 
     @staticmethod
@@ -103,9 +109,11 @@ class WingWeightModel:
         :return d_out: Outer diameter of the spar [m]
         """
         M_root = F_max * y  # maximum bending moment at root [N.m]
-        d_out = ((32 * M_root) / (np.pi * (1 - k_d ** 4) * sig_max)) ** (1 / 3)  # outer diameter of the spar [m]
+        d_out = ((32 * M_root) / (np.pi * (1 - k_d**4) * sig_max)) ** (
+            1 / 3
+        )  # outer diameter of the spar [m]
         d_in = k_d * d_out  # inner diameter of the spar [m]
-        A_spar = np.pi / 4 * (d_out ** 2 - d_in ** 2)  # sectional area of the spar [m2]
+        A_spar = np.pi / 4 * (d_out**2 - d_in**2)  # sectional area of the spar [m2]
         m_spar = rho_spar * L * A_spar  # mass of spar [kg]
         return m_spar, d_in, d_out
 
@@ -128,9 +136,9 @@ class WingWeightModel:
         """
         M_root = F_max * y  # maximum bending moment at root [N.m]
         A_spar = 4 * M_root / sig_max / d_RMS  # sectional area of the spar [m]
-        d_out = np.sqrt(2 * A_spar / np.pi + d_RMS ** 2)
-        d_in = np.sqrt(2 * d_RMS ** 2 - d_out ** 2)
-        m_spar = rho_spar * L * np.pi / 4 * (d_out ** 2 - d_in ** 2)  # mass of spar [kg]
+        d_out = np.sqrt(2 * A_spar / np.pi + d_RMS**2)
+        d_in = np.sqrt(2 * d_RMS**2 - d_out**2)
+        m_spar = rho_spar * L * np.pi / 4 * (d_out**2 - d_in**2)  # mass of spar [kg]
         return m_spar, d_in, d_out
 
     @staticmethod
@@ -201,7 +209,9 @@ class WingWeight(om.ExplicitComponent):
 
         if self.options["spar_model"] == "pipe":
             self.add_input("data:structures:wing:spar:diameter:k", val=0.9, units=None)
-            self.add_design_var("data:structures:wing:spar:diameter:k", lower=0.01, upper=0.99, ref=0.9, units=None)
+            self.add_design_var(
+                "data:structures:wing:spar:diameter:k", lower=0.01, upper=0.99, ref=0.9, units=None
+            )
             self.add_output("data:structures:wing:spar:diameter:inner", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:diameter:outer", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:diameter:constraint", units=None)
@@ -209,7 +219,9 @@ class WingWeight(om.ExplicitComponent):
 
         elif self.options["spar_model"] == "I_beam":
             self.add_input("data:structures:wing:spar:depth:k", val=0.1, units=None)
-            self.add_design_var("data:structures:wing:spar:depth:k", lower=0.01, upper=0.99, ref=0.1, units=None)
+            self.add_design_var(
+                "data:structures:wing:spar:depth:k", lower=0.01, upper=0.99, ref=0.1, units=None
+            )
             self.add_output("data:structures:wing:spar:web:depth", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:web:thickness", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:flange:depth", units="m", lower=0.0)
@@ -238,27 +250,37 @@ class WingWeight(om.ExplicitComponent):
         rho_rib = inputs["data:weights:wing:ribs:density"]
         rho_skin = inputs["data:weights:wing:skin:density"]
 
-        F_max = n_ult * Mtotal_guess * g / 2  # ultimate aerodynamic load to be supported by (half) wing [N]
-        m_ribs, N_ribs = WingWeightModel.ribs(b_w / 2, c_MAC, c_root, c_tip, t_root, t_tip, t_rib, rho_rib)  # ribs
+        F_max = (
+            n_ult * Mtotal_guess * g / 2
+        )  # ultimate aerodynamic load to be supported by (half) wing [N]
+        m_ribs, N_ribs = WingWeightModel.ribs(
+            b_w / 2, c_MAC, c_root, c_tip, t_root, t_tip, t_rib, rho_rib
+        )  # ribs
         m_skin = WingWeightModel.skin(S_w / 2, rho_skin)  # skin
 
         m_spar = 0
         if self.options["spar_model"] == "pipe":
             k_d = inputs["data:structures:wing:spar:diameter:k"]
-            m_spar, d_in, d_out = WingWeightModel.spar_pipe_detailed(F_max, y_MAC, b_w / 2, k_d, sig_max, rho_spar)
+            m_spar, d_in, d_out = WingWeightModel.spar_pipe_detailed(
+                F_max, y_MAC, b_w / 2, k_d, sig_max, rho_spar
+            )
             # d_RMS = k_d * t_tip
             # m_spar, d_in, d_out = WingWeightModel.spar_pipe_simplified(F_max, y_MAC, b_w / 2, d_RMS, sig_max, rho_spar)
-            spar_cnstr = (t_tip - d_out) / d_out  # constraint on spar diameter and wing thickness [-]
+            spar_cnstr = (
+                t_tip - d_out
+            ) / d_out  # constraint on spar diameter and wing thickness [-]
             outputs["data:structures:wing:spar:diameter:constraint"] = spar_cnstr
             outputs["data:structures:wing:spar:diameter:inner"] = d_in
             outputs["data:structures:wing:spar:diameter:outer"] = d_out
 
         elif self.options["spar_model"] == "I_beam":
             k_a = inputs["data:structures:wing:spar:depth:k"]
-            m_spar, h_web, t_web, a_flange, b_flange = WingWeightModel.spar_I_detailed(F_max, y_MAC, b_w / 2, k_a,
-                                                                                       sig_max, rho_spar)
+            m_spar, h_web, t_web, a_flange, b_flange = WingWeightModel.spar_I_detailed(
+                F_max, y_MAC, b_w / 2, k_a, sig_max, rho_spar
+            )
             spar_cnstr = (t_tip - (h_web + a_flange)) / (
-                        h_web + a_flange)  # constraint on spar depth and wing thickness [-]
+                h_web + a_flange
+            )  # constraint on spar depth and wing thickness [-]
             outputs["data:structures:wing:spar:web:depth"] = h_web
             outputs["data:structures:wing:spar:web:thickness"] = t_web
             outputs["data:structures:wing:spar:flange:depth"] = a_flange
@@ -491,7 +513,9 @@ class Constraints(om.ExplicitComponent):
         elif self.options["spar_model"] == "I_beam":
             d_spar_w = inputs["data:structures:wing:spar:web:depth"]
 
-        spar_cnstr_wing = (t_tip_w - d_spar_w) / d_spar_w  # constraint on spar diameter for the wing [-]
+        spar_cnstr_wing = (
+            t_tip_w - d_spar_w
+        ) / d_spar_w  # constraint on spar diameter for the wing [-]
         # spar_cnstr_ht = (t_tip_ht - d_spar_ht) / d_spar_ht  # constraint on spar diameter for the HT [-]
         # spar_cnstr_vt = (t_tip_vt - d_spar_vt) / d_spar_vt  # constraint on spar diameter for the VT [-]
 

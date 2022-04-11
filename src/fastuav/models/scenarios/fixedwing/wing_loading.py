@@ -30,7 +30,7 @@ class WingLoadingStall(om.ExplicitComponent):
 
         WS_stall = q_stall * CL_max  # wing loading required to meet stall speed requirement [N/m2]
 
-        #if WS_stall < WS_MIN:
+        # if WS_stall < WS_MIN:
         #    _LOGGER.warning(
         #        "Very low wing loading for stall speed requirement. Consider increasing CLmax or relaxing the stall speed requirement."
         #    )
@@ -41,11 +41,9 @@ class WingLoadingStall(om.ExplicitComponent):
         q_stall = inputs["mission:design_mission:stall:q"]
         CL_max = inputs["data:aerodynamics:CLmax"]
 
-        partials["data:loads:wing_loading:stall",
-                 "mission:design_mission:stall:q"] = CL_max
+        partials["data:loads:wing_loading:stall", "mission:design_mission:stall:q"] = CL_max
 
-        partials["data:loads:wing_loading:stall",
-                 "data:aerodynamics:CLmax"] = q_stall
+        partials["data:loads:wing_loading:stall", "data:aerodynamics:CLmax"] = q_stall
 
 
 class WingLoadingCruise(om.ExplicitComponent):
@@ -67,9 +65,11 @@ class WingLoadingCruise(om.ExplicitComponent):
         CD_0_guess = inputs["data:aerodynamics:CD0:guess"]
         K = inputs["data:aerodynamics:CDi:K"]
 
-        WS_cruise = q_cruise * np.sqrt(CD_0_guess / K)  # wing loading that maximizes range during cruise [N/m2] (simplified drag model CD = CD_0 + K * CL^2)
+        WS_cruise = q_cruise * np.sqrt(
+            CD_0_guess / K
+        )  # wing loading that maximizes range during cruise [N/m2] (simplified drag model CD = CD_0 + K * CL^2)
 
-        #if WS_cruise < WS_MIN:
+        # if WS_cruise < WS_MIN:
         #    _LOGGER.warning(
         #        "Very low wing loading for optimal range. Consider increasing the cruise speed requirement."
         #    )
@@ -81,12 +81,15 @@ class WingLoadingCruise(om.ExplicitComponent):
         CD_0_guess = inputs["data:aerodynamics:CD0:guess"]
         K = inputs["data:aerodynamics:CDi:K"]
 
-        partials["data:loads:wing_loading:cruise",
-                 "mission:design_mission:cruise:q"] = np.sqrt(CD_0_guess / K)
-        partials["data:loads:wing_loading:cruise",
-                 "data:aerodynamics:CD0:guess"] = 0.5 * q_cruise / np.sqrt(K) / np.sqrt(CD_0_guess)
-        partials["data:loads:wing_loading:cruise",
-                 "data:aerodynamics:CDi:K"] = - 0.5 * q_cruise * np.sqrt(CD_0_guess) * (1/K) ** (3/2)
+        partials["data:loads:wing_loading:cruise", "mission:design_mission:cruise:q"] = np.sqrt(
+            CD_0_guess / K
+        )
+        partials["data:loads:wing_loading:cruise", "data:aerodynamics:CD0:guess"] = (
+            0.5 * q_cruise / np.sqrt(K) / np.sqrt(CD_0_guess)
+        )
+        partials["data:loads:wing_loading:cruise", "data:aerodynamics:CDi:K"] = (
+            -0.5 * q_cruise * np.sqrt(CD_0_guess) * (1 / K) ** (3 / 2)
+        )
 
 
 @ValidityDomainChecker(
@@ -118,8 +121,12 @@ class WingLoadingSelection(om.ExplicitComponent):
         WS_stall = inputs["data:loads:wing_loading:stall"]
         k_WS = inputs["data:loads:wing_loading:k"]
 
-        WS = k_WS * WS_cruise  # [N/m**2] wing loading selection from cruise requirement with undersizing variable
-        WS_stall_cnstr = (WS_stall - WS) / WS  # constraint on stall WS (selected WS should be lower than stall WS)
+        WS = (
+            k_WS * WS_cruise
+        )  # [N/m**2] wing loading selection from cruise requirement with undersizing variable
+        WS_stall_cnstr = (
+            WS_stall - WS
+        ) / WS  # constraint on stall WS (selected WS should be lower than stall WS)
 
         outputs["data:loads:wing_loading"] = WS
         outputs["data:loads:wing_load:stall:constraint"] = WS_stall_cnstr
@@ -132,9 +139,10 @@ class WingLoadingSelection(om.ExplicitComponent):
 
         partials["data:loads:wing_loading", "data:loads:wing_loading:k"] = WS_cruise
         partials["data:loads:wing_loading", "data:loads:wing_loading:cruise"] = k_WS
-        partials["data:loads:wing_load:stall:constraint",
-                 "data:loads:wing_loading:stall"] = 1 / WS
-        partials["data:loads:wing_load:stall:constraint",
-                 "data:loads:wing_loading:cruise"] = - WS_stall / (k_WS * WS_cruise ** 2)
-        partials["data:loads:wing_load:stall:constraint",
-                 "data:loads:wing_loading:k"] = - WS_stall / (k_WS ** 2 * WS_cruise)
+        partials["data:loads:wing_load:stall:constraint", "data:loads:wing_loading:stall"] = 1 / WS
+        partials[
+            "data:loads:wing_load:stall:constraint", "data:loads:wing_loading:cruise"
+        ] = -WS_stall / (k_WS * WS_cruise**2)
+        partials[
+            "data:loads:wing_load:stall:constraint", "data:loads:wing_loading:k"
+        ] = -WS_stall / (k_WS**2 * WS_cruise)

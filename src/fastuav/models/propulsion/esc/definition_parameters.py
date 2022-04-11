@@ -51,9 +51,7 @@ class Power(om.ExplicitComponent):
         V_bat = inputs["data:propulsion:battery:voltage"]
         Umot_to = inputs["data:propulsion:motor:voltage:takeoff"]
 
-        P_esc = (
-            k_ESC * (P_el_to / Umot_to) * V_bat
-        )  # [W] power electronic power max thrust
+        P_esc = k_ESC * (P_el_to / Umot_to) * V_bat  # [W] power electronic power max thrust
 
         outputs["data:propulsion:esc:power:max:estimated"] = P_esc
 
@@ -67,17 +65,17 @@ class Power(om.ExplicitComponent):
             P_el_to * V_bat / Umot_to
         )
 
-        partials["data:propulsion:esc:power:max:estimated", "data:propulsion:motor:power:takeoff"] = (
-            k_ESC * V_bat / Umot_to
-        )
+        partials[
+            "data:propulsion:esc:power:max:estimated", "data:propulsion:motor:power:takeoff"
+        ] = (k_ESC * V_bat / Umot_to)
 
         partials["data:propulsion:esc:power:max:estimated", "data:propulsion:battery:voltage"] = (
             k_ESC * P_el_to / Umot_to
         )
 
-        partials["data:propulsion:esc:power:max:estimated", "data:propulsion:motor:voltage:takeoff"] = (
-            -k_ESC * P_el_to * V_bat / Umot_to**2
-        )
+        partials[
+            "data:propulsion:esc:power:max:estimated", "data:propulsion:motor:voltage:takeoff"
+        ] = (-k_ESC * P_el_to * V_bat / Umot_to**2)
 
 
 class Voltage(om.ExplicitComponent):
@@ -109,9 +107,9 @@ class Voltage(om.ExplicitComponent):
         Vesc_ref = inputs["data:propulsion:esc:voltage:reference"]
         P_esc = inputs["data:propulsion:esc:power:max:estimated"]
 
-        partials["data:propulsion:esc:voltage:estimated", "data:propulsion:esc:power:max:estimated"] = (
-            (1 / 3) * Vesc_ref / Pesc_ref ** (1 / 3) / P_esc ** (2 / 3)
-        )
+        partials[
+            "data:propulsion:esc:voltage:estimated", "data:propulsion:esc:power:max:estimated"
+        ] = ((1 / 3) * Vesc_ref / Pesc_ref ** (1 / 3) / P_esc ** (2 / 3))
 
 
 # class Voltage(om.ExplicitComponent):

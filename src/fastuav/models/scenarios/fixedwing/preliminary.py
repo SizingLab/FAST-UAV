@@ -23,7 +23,9 @@ class MTOWguess(om.ExplicitComponent):
         k_M = inputs["data:weights:MTOW:k"]
         M_load = inputs["specifications:payload:mass"]
 
-        Mtotal_guess = k_M * M_load  # [kg] Estimate of the total mass (or equivalent weight of dynamic scenario)
+        Mtotal_guess = (
+            k_M * M_load
+        )  # [kg] Estimate of the total mass (or equivalent weight of dynamic scenario)
 
         outputs["data:weights:MTOW:guess"] = Mtotal_guess
 
@@ -49,17 +51,18 @@ class SpanEfficiency(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         AR_w = inputs["data:geometry:wing:AR"]
 
-        e = 1.78 * (
-                    1 - 0.045 * AR_w ** 0.68) \
-            - 0.64  # span efficiency factor (empirical estimation for straight wings, Raymer)
+        e = (
+            1.78 * (1 - 0.045 * AR_w**0.68) - 0.64
+        )  # span efficiency factor (empirical estimation for straight wings, Raymer)
 
         outputs["data:aerodynamics:CDi:e"] = e
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         AR_w = inputs["data:geometry:wing:AR"]
 
-        partials["data:aerodynamics:CDi:e",
-                 "data:geometry:wing:AR"] = - 1.78 * 0.045 * 0.68 * AR_w ** (0.68 - 1)
+        partials["data:aerodynamics:CDi:e", "data:geometry:wing:AR"] = (
+            -1.78 * 0.045 * 0.68 * AR_w ** (0.68 - 1)
+        )
 
 
 class InducedDragConstant(om.ExplicitComponent):
@@ -79,7 +82,9 @@ class InducedDragConstant(om.ExplicitComponent):
         AR_w = inputs["data:geometry:wing:AR"]
         e = inputs["data:aerodynamics:CDi:e"]
 
-        K = 1 / (np.pi * e * AR_w)  # induced drag constant (correction term for non-elliptical lift distribution)
+        K = 1 / (
+            np.pi * e * AR_w
+        )  # induced drag constant (correction term for non-elliptical lift distribution)
 
         outputs["data:aerodynamics:CDi:K"] = K
 
@@ -87,7 +92,7 @@ class InducedDragConstant(om.ExplicitComponent):
         AR_w = inputs["data:geometry:wing:AR"]
         e = inputs["data:aerodynamics:CDi:e"]
 
-        partials["data:aerodynamics:CDi:K",
-                 "data:geometry:wing:AR"] = - 1 / (np.pi * e * AR_w ** 2)
-        partials["data:aerodynamics:CDi:K",
-                 "data:aerodynamics:CDi:e"] = - 1 / (np.pi * e ** 2 * AR_w)
+        partials["data:aerodynamics:CDi:K", "data:geometry:wing:AR"] = -1 / (np.pi * e * AR_w**2)
+        partials["data:aerodynamics:CDi:K", "data:aerodynamics:CDi:e"] = -1 / (
+            np.pi * e**2 * AR_w
+        )

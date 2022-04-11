@@ -9,7 +9,17 @@ import pandas as pd
 import numpy as np
 
 
-PATH = pth.join(pth.dirname(pth.abspath(__file__)),"..", "..", "..", "..", "data", "catalogues", "Motors", "Non-Dominated-Motors.csv")
+PATH = pth.join(
+    pth.dirname(pth.abspath(__file__)),
+    "..",
+    "..",
+    "..",
+    "..",
+    "data",
+    "catalogues",
+    "Motors",
+    "Non-Dominated-Motors.csv",
+)
 DF = pd.read_csv(PATH, sep=";")
 
 
@@ -94,7 +104,9 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:weights:motor:mass", "data:weights:motor:mass:estimated", val=1.0,
+            "data:weights:motor:mass",
+            "data:weights:motor:mass:estimated",
+            val=1.0,
         )
 
     def compute(self, inputs, outputs):
@@ -139,7 +151,9 @@ class MotorCatalogueSelection(om.ExplicitComponent):
 
         # CUSTOM COMPONENTS (no change)
         else:
-            outputs["data:propulsion:motor:torque:max"] = inputs["data:propulsion:motor:torque:max:estimated"]
+            outputs["data:propulsion:motor:torque:max"] = inputs[
+                "data:propulsion:motor:torque:max:estimated"
+            ]
             outputs["data:propulsion:motor:torque:coefficient"] = inputs[
                 "data:propulsion:motor:torque:coefficient:estimated"
             ]
@@ -149,5 +163,7 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:motor:torque:friction"] = inputs[
                 "data:propulsion:motor:torque:friction:estimated"
             ]
-            outputs["data:propulsion:motor:resistance"] = inputs["data:propulsion:motor:resistance:estimated"]
+            outputs["data:propulsion:motor:resistance"] = inputs[
+                "data:propulsion:motor:resistance:estimated"
+            ]
             outputs["data:weights:motor:mass"] = inputs["data:weights:motor:mass:estimated"]

@@ -7,6 +7,7 @@ The greater this distance and the narrower the wing, the more stable the aircraf
 import openmdao.api as om
 import numpy as np
 
+
 class StaticMargin(om.ExplicitComponent):
     """
     Computes the static margin of a fixed wing UAV

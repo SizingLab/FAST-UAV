@@ -86,9 +86,7 @@ def sobol_analysis(conf_file, output_file):
     # Get variables data from output file
     variables = DataFile(output_file)
     variables.sort(key=lambda var: var.name)
-    table = variables.to_dataframe()[
-        ["name", "val", "units", "is_input", "desc"]
-    ].rename(
+    table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
 
@@ -100,9 +98,7 @@ def sobol_analysis(conf_file, output_file):
             value=None,
         )
         # Values boxes
-        value_box = widgets.Text(
-            value="", description="", continuous_update=False, disabled=True
-        )
+        value_box = widgets.Text(value="", description="", continuous_update=False, disabled=True)
         var_box = widgets.FloatSlider(
             value=0.1,
             min=0.01,
@@ -226,17 +222,13 @@ def sobol_analysis(conf_file, output_file):
         n_input = len(inputs_array) - 1  # input row indice
 
         def variable_data(change):
-            inputbox = inputs_array[n_input].children[
-                0
-            ]  # variable selected from dropdown
+            inputbox = inputs_array[n_input].children[0]  # variable selected from dropdown
             x_data = table.loc[
                 table["Name"] == inputbox.value
             ]  # corresponding data from output file
             value_box = inputs_array[n_input].children[1]  # value of the variable
             law_buttons = inputs_array[n_input].children[2]  # distribution law
-            var_box = inputs_array[n_input].children[
-                3
-            ]  # variation to apply for the DoE
+            var_box = inputs_array[n_input].children[3]  # variation to apply for the DoE
             var_box.value = 0.1
 
             if law_buttons.value == "Normal":
@@ -301,9 +293,7 @@ def sobol_analysis(conf_file, output_file):
         # Design of experiments with Saltelli's sampling
         ns = int(samples.value)  # number of samples for MC simulation
         y = outputbox.value
-        second_order = (
-            second_order_box.value
-        )  # boolean for second order Sobol' indices calculation
+        second_order = second_order_box.value  # boolean for second order Sobol' indices calculation
         df = doe_sobol(x_dict, y, conf_file, ns, second_order)
 
         # Additional data on the output variable of interest for plots
@@ -326,14 +316,10 @@ def sobol_analysis(conf_file, output_file):
         with fig1.batch_update():
             fig1.data[0].x = list(x_dict.keys())
             fig1.data[0].y = np.sqrt(Si["ST"] * y_var)
-            fig1.data[0].error_y = dict(
-                type="data", array=np.sqrt(Si["ST_conf"] * y_var)
-            )
+            fig1.data[0].error_y = dict(type="data", array=np.sqrt(Si["ST_conf"] * y_var))
             fig1.data[1].x = list(x_dict.keys())
             fig1.data[1].y = np.sqrt(Si["S1"] * y_var)
-            fig1.data[1].error_y = dict(
-                type="data", array=np.sqrt(Si["S1_conf"] * y_var)
-            )
+            fig1.data[1].error_y = dict(type="data", array=np.sqrt(Si["S1_conf"] * y_var))
             # if second_order == True:
             #    fig1.data[2].x = list(x_dict.keys())
             #    fig1.data[2].y = np.sqrt(S2 * y_var)
@@ -386,9 +372,7 @@ def sobol_analysis(conf_file, output_file):
         with fig4.batch_update():  # Output Distribution
             fig4.data[0].x = df[y]
             fig4.layout.xaxis.title = y + " [%s]" % (
-                y_data["Unit"].unique()[0]
-                if y_data["Unit"].unique()[0] is not None
-                else "-"
+                y_data["Unit"].unique()[0] if y_data["Unit"].unique()[0] is not None else "-"
             )
 
         with fig5.batch_update():  # Parallel coordinate plot

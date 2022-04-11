@@ -100,12 +100,8 @@ class ComponentWithDeviation(om.ExplicitComponent):
                 short_name = short_names[i]
                 unit = units[i]
                 self.add_input("uncertainty:" + short_name + ":mean", units=unit)
-                self.add_input(
-                    "uncertainty:" + short_name + ":rel", val=0.0, units=None
-                )
-                self.add_input(
-                    "uncertainty:" + short_name + ":abs", val=0.0, units=unit
-                )
+                self.add_input("uncertainty:" + short_name + ":rel", val=0.0, units=None)
+                self.add_input("uncertainty:" + short_name + ":abs", val=0.0, units=unit)
                 self.add_output(long_name, units=unit)
                 self._long_names.append(long_name)
                 self._short_names.append(short_name)
@@ -208,13 +204,9 @@ class ModelDeviation(om.ExplicitComponent):
         if (
             "uncertain_parameters" in model_attrs.keys()
         ):  # and 'init_uncertain_parameters' in model_attrs.keys():
-            v = model_attrs[
-                "uncertain_parameters"
-            ]  # get the dictionary of uncertain parameters
+            v = model_attrs["uncertain_parameters"]  # get the dictionary of uncertain parameters
             # v_init = model_attrs['init_uncertain_parameters']  # get the dictionary of initial uncertain parameters
-            for i, name in enumerate(
-                self._names
-            ):  # loop through parameters to be modified
+            for i, name in enumerate(self._names):  # loop through parameters to be modified
                 name_rel = "uncertainty:" + name + ":rel"
                 name_abs = "uncertainty:" + name + ":abs"
                 if name_rel in v.keys():

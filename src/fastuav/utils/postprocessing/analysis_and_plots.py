@@ -61,12 +61,36 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     propulsion = propellers + motors + gearboxes + ESC + battery + cables
 
     # AIRFRAME
-    body = variables["data:weights:body:mass"].value[0] if "data:weights:body:mass" in variables.names() else 0.0
-    arms = variables["data:weights:arms:mass"].value[0] if "data:weights:arms:mass" in variables.names() else 0.0
-    wing = variables["data:weights:wing:mass"].value[0] if "data:weights:wing:mass" in variables.names() else 0.0
-    fuselage = variables["data:weights:fuselage:mass"].value[0] if "data:weights:fuselage:mass" in variables.names() else 0.0
-    htail = variables["data:weights:tail:horizontal:mass"].value[0] if "data:weights:tail:horizontal:mass" in variables.names() else 0.0
-    vtail = variables["data:weights:tail:vertical:mass"].value[0] if "data:weights:tail:vertical:mass" in variables.names() else 0.0
+    body = (
+        variables["data:weights:body:mass"].value[0]
+        if "data:weights:body:mass" in variables.names()
+        else 0.0
+    )
+    arms = (
+        variables["data:weights:arms:mass"].value[0]
+        if "data:weights:arms:mass" in variables.names()
+        else 0.0
+    )
+    wing = (
+        variables["data:weights:wing:mass"].value[0]
+        if "data:weights:wing:mass" in variables.names()
+        else 0.0
+    )
+    fuselage = (
+        variables["data:weights:fuselage:mass"].value[0]
+        if "data:weights:fuselage:mass" in variables.names()
+        else 0.0
+    )
+    htail = (
+        variables["data:weights:tail:horizontal:mass"].value[0]
+        if "data:weights:tail:horizontal:mass" in variables.names()
+        else 0.0
+    )
+    vtail = (
+        variables["data:weights:tail:vertical:mass"].value[0]
+        if "data:weights:tail:vertical:mass" in variables.names()
+        else 0.0
+    )
     structure = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
@@ -140,12 +164,12 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     )
 
     body_str = (
-            "Body"
-            + "<br>"
-            + str("{0:.2f}".format(body))
-            + " [kg] ("
-            + str(round(body / structure * 100, 1))
-            + "%)"
+        "Body"
+        + "<br>"
+        + str("{0:.2f}".format(body))
+        + " [kg] ("
+        + str(round(body / structure * 100, 1))
+        + "%)"
     )
     arms_str = (
         "Arms"
@@ -156,36 +180,36 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "%)"
     )
     wing_str = (
-            "Wing"
-            + "<br>"
-            + str("{0:.2f}".format(wing))
-            + " [kg] ("
-            + str(round(wing / structure * 100, 1))
-            + "%)"
+        "Wing"
+        + "<br>"
+        + str("{0:.2f}".format(wing))
+        + " [kg] ("
+        + str(round(wing / structure * 100, 1))
+        + "%)"
     )
     fuselage_str = (
-            "Fuselage"
-            + "<br>"
-            + str("{0:.2f}".format(fuselage))
-            + " [kg] ("
-            + str(round(fuselage / structure * 100, 1))
-            + "%)"
+        "Fuselage"
+        + "<br>"
+        + str("{0:.2f}".format(fuselage))
+        + " [kg] ("
+        + str(round(fuselage / structure * 100, 1))
+        + "%)"
     )
     htail_str = (
-            "HTP"
-            + "<br>"
-            + str("{0:.2f}".format(htail))
-            + " [kg] ("
-            + str(round(htail / structure * 100, 1))
-            + "%)"
+        "HTP"
+        + "<br>"
+        + str("{0:.2f}".format(htail))
+        + " [kg] ("
+        + str(round(htail / structure * 100, 1))
+        + "%)"
     )
     vtail_str = (
-            "VTP"
-            + "<br>"
-            + str("{0:.2f}".format(vtail))
-            + " [kg] ("
-            + str(round(vtail / structure * 100, 1))
-            + "%)"
+        "VTP"
+        + "<br>"
+        + str("{0:.2f}".format(vtail))
+        + " [kg] ("
+        + str(round(vtail / structure * 100, 1))
+        + "%)"
     )
     structure_str = (
         "Structure"
@@ -280,9 +304,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         ),
     )
 
-    fig.update_layout(
-        margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5
-    )
+    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
 
     return fig
 
@@ -400,9 +422,7 @@ def mass_breakdown_bar_plot_drone(
         go.Bar(name=name, x=weight_labels, y=weight_values, marker_color=COLS[i]),
     )
 
-    fig.update_layout(
-        margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5
-    )
+    fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
     fig.update_layout(yaxis_title="Mass [kg]")
 
     return fig
@@ -457,9 +477,7 @@ def multirotor_geometry_plot(
     )
 
     # BODY - ARMS - PROPELLERS - MOTORS
-    R_offset = (
-        A_body / (N_arms * np.cos(np.pi / N_arms) * np.sin(np.pi / N_arms))
-    ) ** (
+    R_offset = (A_body / (N_arms * np.cos(np.pi / N_arms) * np.sin(np.pi / N_arms))) ** (
         1 / 2
     )  # body radius offset
     x_arms = []
@@ -505,9 +523,7 @@ def multirotor_geometry_plot(
 
         # Propellers
         for j in range(int(N_pro_arm)):
-            prop_offset = (
-                j * D_pro / 15
-            )  # slightly shift the second propeller to make it visible
+            prop_offset = j * D_pro / 15  # slightly shift the second propeller to make it visible
             fig.add_shape(
                 dict(
                     type="circle",
@@ -523,9 +539,7 @@ def multirotor_geometry_plot(
     # Arms
     x_arms = np.concatenate((x_arms, [x_arms[0]]))  # to close the trace
     y_arms = np.concatenate((y_arms, [y_arms[0]]))  # to close the trace
-    scatter = go.Scatter(
-        x=y_arms, y=x_arms, mode="lines", line_color=COLS[k], name=name
-    )
+    scatter = go.Scatter(x=y_arms, y=x_arms, mode="lines", line_color=COLS[k], name=name)
     fig.add_trace(scatter)
 
     # Push-pull configuration annotation
@@ -590,9 +604,7 @@ def fixedwing_geometry_plot(
     wing_root_chord = variables["data:geometry:wing:root:chord"].value[0]
     wing_tip_chord = variables["data:geometry:wing:tip:chord"].value[0]
 
-    y_wing = np.array(
-        [0, wing_root_y, wing_tip_y, wing_tip_y, wing_root_y, 0, 0]
-    )
+    y_wing = np.array([0, wing_root_y, wing_tip_y, wing_tip_y, wing_root_y, 0, 0])
 
     x_wing = np.array(
         [
@@ -704,9 +716,7 @@ def energy_breakdown_sun_plot_drone(
         "mission:%s:energy" % mission_name: "W*h",
     }
 
-    total_energy = _get_variable_values_with_new_units(
-        variables, var_names_and_new_units
-    )[0]
+    total_energy = _get_variable_values_with_new_units(variables, var_names_and_new_units)[0]
 
     (
         categories_values,
@@ -725,20 +735,13 @@ def energy_breakdown_sun_plot_drone(
                 variable_name = name_split[3]
                 # variable_name = "_".join(name_split[3:-1])
                 sub_categories_values.append(
-                    convert_units(
-                        variables[variable].value[0], variables[variable].units, "W*h"
-                    )
+                    convert_units(variables[variable].value[0], variables[variable].units, "W*h")
                 )
-                sub_categories_parent.append(
-                    categories_labels[categories_names.index(parent_name)]
-                )
+                sub_categories_parent.append(categories_labels[categories_names.index(parent_name)])
                 # sub_categories_labels.append(variable_name)
 
                 sub_categories_labels.append(
-                    variable_name
-                    + "<br>"
-                    + str(int(sub_categories_values[-1]))
-                    + " [Wh] "
+                    variable_name + "<br>" + str(int(sub_categories_values[-1])) + " [Wh] "
                 )
 
     # Define figure data
@@ -777,9 +780,7 @@ def energy_breakdown_sun_plot_drone(
     return fig
 
 
-def _data_mission_decomposition(
-    variables: VariableList, mission_name: str = "design_mission"
-):
+def _data_mission_decomposition(variables: VariableList, mission_name: str = "design_mission"):
     """
     Returns the routes decomposition of mission.
 
@@ -789,9 +790,7 @@ def _data_mission_decomposition(
     var_names_and_new_units = {
         "mission:%s:energy" % mission_name: "W*h",
     }
-    total_energy = _get_variable_values_with_new_units(
-        variables, var_names_and_new_units
-    )[0]
+    total_energy = _get_variable_values_with_new_units(variables, var_names_and_new_units)[0]
 
     category_values = []
     category_names = []
@@ -806,9 +805,7 @@ def _data_mission_decomposition(
                 and "constraints" not in name_split[2]
             ):
                 category_values.append(
-                    convert_units(
-                        variables[variable].value[0], variables[variable].units, "W*h"
-                    )
+                    convert_units(variables[variable].value[0], variables[variable].units, "W*h")
                 )
                 category_names.append(name_split[2])
                 categories_labels.append(
@@ -838,9 +835,7 @@ def _get_variable_values_with_new_units(
     new_values = []
     for variable_name, unit in var_names_and_new_units.items():
         new_values.append(
-            convert_units(
-                variables[variable_name].value[0], variables[variable_name].units, unit
-            )
+            convert_units(variables[variable_name].value[0], variables[variable_name].units, unit)
         )
 
     return new_values

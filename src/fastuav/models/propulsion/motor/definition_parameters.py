@@ -15,9 +15,7 @@ class MotorDefinitionParameters(om.Group):
     """
 
     def setup(self):
-        self.add_subsystem(
-            "battery_voltage_guess", BatteryVoltageEstimation(), promotes=["*"]
-        )
+        self.add_subsystem("battery_voltage_guess", BatteryVoltageEstimation(), promotes=["*"])
 
         add_subsystem_with_deviation(
             self,
@@ -63,13 +61,16 @@ class NominalTorque(om.ExplicitComponent):
         Qpro_cruise = inputs["data:propulsion:propeller:torque:cruise"]
         k_mot = inputs["data:propulsion:motor:torque:k"]
 
-        partials["data:propulsion:motor:torque:nominal:estimated", "data:propulsion:gearbox:N_red"] = (
-            -k_mot * Qpro_cruise / Nred**2
-        )
+        partials[
+            "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:gearbox:N_red"
+        ] = (-k_mot * Qpro_cruise / Nred**2)
 
         partials[
-            "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:propeller:torque:cruise"
-        ] = (k_mot / Nred)
+            "data:propulsion:motor:torque:nominal:estimated",
+            "data:propulsion:propeller:torque:cruise",
+        ] = (
+            k_mot / Nred
+        )
 
         partials[
             "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:motor:torque:k"
@@ -113,7 +114,8 @@ class TorqueCoefficient(om.ExplicitComponent):
         ] = -V_bat_guess / (Wpro_to * k_speed_mot * Nred**2)
 
         partials[
-            "data:propulsion:motor:torque:coefficient:estimated", "data:propulsion:propeller:speed:takeoff"
+            "data:propulsion:motor:torque:coefficient:estimated",
+            "data:propulsion:propeller:speed:takeoff",
         ] = -V_bat_guess / (Wpro_to**2 * k_speed_mot * Nred)
 
         partials[
@@ -121,7 +123,8 @@ class TorqueCoefficient(om.ExplicitComponent):
         ] = -V_bat_guess / (Wpro_to * k_speed_mot**2 * Nred)
 
         partials[
-            "data:propulsion:motor:torque:coefficient:estimated", "data:propulsion:battery:voltage:guess"
+            "data:propulsion:motor:torque:coefficient:estimated",
+            "data:propulsion:battery:voltage:guess",
         ] = 1 / (Wpro_to * k_speed_mot * Nred)
 
 
@@ -142,7 +145,7 @@ class BatteryVoltageEstimation(om.ExplicitComponent):
         Ppro_to = inputs["data:propulsion:propeller:power:takeoff"]
         k_vb_guess = 1  # inputs["data:propulsion:battery:settings:voltage:guess:k"]
 
-        V_bat_guess = k_vb_guess * 1.84 * Ppro_to ** 0.36  # [V] battery voltage estimation
+        V_bat_guess = k_vb_guess * 1.84 * Ppro_to**0.36  # [V] battery voltage estimation
 
         outputs["data:propulsion:battery:voltage:guess"] = V_bat_guess
 
@@ -150,9 +153,9 @@ class BatteryVoltageEstimation(om.ExplicitComponent):
         Ppro_to = inputs["data:propulsion:propeller:power:takeoff"]
         k_vb_guess = 1  # inputs["data:propulsion:battery:settings:voltage:guess:k"]
 
-        partials["data:propulsion:battery:voltage:guess", "data:propulsion:propeller:power:takeoff"] = (
-            k_vb_guess * 0.6624 * Ppro_to ** (-0.64)
-        )
+        partials[
+            "data:propulsion:battery:voltage:guess", "data:propulsion:propeller:power:takeoff"
+        ] = (k_vb_guess * 0.6624 * Ppro_to ** (-0.64))
 
         # partials["data:propulsion:battery:voltage:guess", "data:propulsion:battery:settings:voltage:guess:k"] = (
         #     1.84 * Ppro_to**0.36

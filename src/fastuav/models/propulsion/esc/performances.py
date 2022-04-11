@@ -49,9 +49,7 @@ class TakeOff(om.ExplicitComponent):
         V_bat = inputs["data:propulsion:battery:voltage"]
 
         # P_esc_to = P_mot_to * V_bat / U_mot_to  # [W] electronic power takeoff
-        P_esc_to = ESCModel.power(
-            P_mot_to, U_mot_to, V_bat
-        )  # [W] electronic power takeoff
+        P_esc_to = ESCModel.power(P_mot_to, U_mot_to, V_bat)  # [W] electronic power takeoff
 
         outputs["data:propulsion:esc:power:takeoff"] = P_esc_to
 
@@ -77,9 +75,7 @@ class Hover(om.ExplicitComponent):
         V_bat = inputs["data:propulsion:battery:voltage"]
 
         # P_esc_hover = P_el_hover * V_bat / Umot_hover  # [W] electronic power hover
-        P_esc_hover = ESCModel.power(
-            P_mot_hover, U_mot_hover, V_bat
-        )  # [W] electronic power hover
+        P_esc_hover = ESCModel.power(P_mot_hover, U_mot_hover, V_bat)  # [W] electronic power hover
 
         outputs["data:propulsion:esc:power:hover"] = P_esc_hover
 
@@ -105,9 +101,7 @@ class Climb(om.ExplicitComponent):
         V_bat = inputs["data:propulsion:battery:voltage"]
 
         # P_esc_cl = P_el_cl * V_bat / Umot_cl  # [W] electronic power max climb
-        P_esc_cl = ESCModel.power(
-            P_mot_cl, U_mot_cl, V_bat
-        )  # [W] electronic power max climb
+        P_esc_cl = ESCModel.power(P_mot_cl, U_mot_cl, V_bat)  # [W] electronic power max climb
 
         outputs["data:propulsion:esc:power:climb"] = P_esc_cl
 
@@ -133,8 +127,6 @@ class Cruise(om.ExplicitComponent):
         U_mot_cr = inputs["data:propulsion:motor:voltage:cruise"]
 
         # P_esc_cr = P_el_cr * V_bat / Umot_cr # [W] electronic power max cruise
-        P_esc_cr = ESCModel.power(
-            P_mot_cr, U_mot_cr, V_bat
-        )  # [W] electronic power max cruise
+        P_esc_cr = ESCModel.power(P_mot_cr, U_mot_cr, V_bat)  # [W] electronic power max cruise
 
         outputs["data:propulsion:esc:power:cruise"] = P_esc_cr

@@ -111,7 +111,14 @@ class MTOW_FW(om.ExplicitComponent):
         M_VT = inputs["data:weights:tail:vertical:mass"]
 
         Mtotal = (
-            (Mesc + Mpro + Mmot + Mgear) * Npro + M_load + Mbat + Mwing + Mfus + M_HT + M_VT + Mcables
+            (Mesc + Mpro + Mmot + Mgear) * Npro
+            + M_load
+            + Mbat
+            + Mwing
+            + Mfus
+            + M_HT
+            + M_VT
+            + Mcables
         )  # total mass
 
         outputs["data:weights:MTOW"] = Mtotal
@@ -179,14 +186,26 @@ class MaxRange(om.ExplicitComponent):
         I_bat_cr = inputs["data:propulsion:battery:current:cruise"]
         t_cr_max = C_ratio * C_bat / I_bat_cr
 
-        partials["data:performance:endurance:cruise:max", "data:propulsion:battery:DoD:max"] = C_bat / I_bat_cr / 60.0
-        partials["data:performance:endurance:cruise:max", "data:propulsion:battery:capacity"] = C_ratio / I_bat_cr / 60.0
-        partials["data:performance:endurance:cruise:max", "data:propulsion:battery:current:cruise"] = - C_ratio * C_bat / I_bat_cr**2 / 60.0
+        partials["data:performance:endurance:cruise:max", "data:propulsion:battery:DoD:max"] = (
+            C_bat / I_bat_cr / 60.0
+        )
+        partials["data:performance:endurance:cruise:max", "data:propulsion:battery:capacity"] = (
+            C_ratio / I_bat_cr / 60.0
+        )
+        partials[
+            "data:performance:endurance:cruise:max", "data:propulsion:battery:current:cruise"
+        ] = (-C_ratio * C_bat / I_bat_cr**2 / 60.0)
 
         partials["data:performance:range:max", "mission:design_mission:cruise:speed"] = t_cr_max
-        partials["data:performance:range:max", "data:propulsion:battery:DoD:max"] = C_bat / I_bat_cr * V_cr
-        partials["data:performance:range:max", "data:propulsion:battery:capacity"] = C_ratio / I_bat_cr * V_cr
-        partials["data:performance:range:max", "data:propulsion:battery:current:cruise"] = - V_cr * C_ratio * C_bat / I_bat_cr**2
+        partials["data:performance:range:max", "data:propulsion:battery:DoD:max"] = (
+            C_bat / I_bat_cr * V_cr
+        )
+        partials["data:performance:range:max", "data:propulsion:battery:capacity"] = (
+            C_ratio / I_bat_cr * V_cr
+        )
+        partials["data:performance:range:max", "data:propulsion:battery:current:cruise"] = (
+            -V_cr * C_ratio * C_bat / I_bat_cr**2
+        )
 
 
 class SystemConstraints(om.ExplicitComponent):
@@ -210,7 +229,9 @@ class SystemConstraints(om.ExplicitComponent):
         Mtotal_guess = inputs["data:weights:MTOW:guess"]
 
         mass_con = (Mtotal_guess - Mtotal) / Mtotal  # mass convergence
-        MTOW_con = (MTOW - Mtotal) / Mtotal  # Max. takeoff weight specification, e.g. for endurance maximization
+        MTOW_con = (
+            MTOW - Mtotal
+        ) / Mtotal  # Max. takeoff weight specification, e.g. for endurance maximization
 
         outputs["data:weights:MTOW:guess:constraint"] = mass_con
         outputs["data:weights:MTOW:constraint"] = MTOW_con
@@ -220,19 +241,12 @@ class SystemConstraints(om.ExplicitComponent):
         Mtotal = inputs["data:weights:MTOW"]
         Mtotal_guess = inputs["data:weights:MTOW:guess"]
 
-        partials[
-            "data:weights:MTOW:guess:constraint",
-            "data:weights:MTOW:guess",
-        ] = (
+        partials["data:weights:MTOW:guess:constraint", "data:weights:MTOW:guess",] = (
             1.0 / Mtotal
         )
         partials["data:weights:MTOW:guess:constraint", "data:weights:MTOW"] = (
-            - Mtotal_guess / Mtotal**2
+            -Mtotal_guess / Mtotal**2
         )
 
-        partials["data:weights:MTOW:constraint", "specifications:MTOW"] = (
-            1.0 / Mtotal
-        )
-        partials["data:weights:MTOW:constraint", "data:weights:MTOW"] = (
-            - MTOW / Mtotal**2
-        )
+        partials["data:weights:MTOW:constraint", "specifications:MTOW"] = 1.0 / Mtotal
+        partials["data:weights:MTOW:constraint", "data:weights:MTOW"] = -MTOW / Mtotal**2

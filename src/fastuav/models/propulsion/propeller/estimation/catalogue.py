@@ -9,7 +9,17 @@ import pandas as pd
 import numpy as np
 
 
-PATH = pth.join(pth.dirname(pth.abspath(__file__)),"..", "..", "..", "..", "data", "catalogues", "Propeller", "APC_propellers_MR.csv")
+PATH = pth.join(
+    pth.dirname(pth.abspath(__file__)),
+    "..",
+    "..",
+    "..",
+    "..",
+    "data",
+    "catalogues",
+    "Propeller",
+    "APC_propellers_MR.csv",
+)
 DF = pd.read_csv(PATH, sep=";")
 
 
@@ -66,7 +76,10 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:weights:propeller:mass", "data:weights:propeller:mass:estimated", val=1.0, method="fd"
+            "data:weights:propeller:mass",
+            "data:weights:propeller:mass:estimated",
+            val=1.0,
+            method="fd",
         )
 
     def compute(self, inputs, outputs):

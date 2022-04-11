@@ -98,9 +98,7 @@ class SalibDOEGenerator(DOEGenerator):
 
     def get_salib_problem(self):
         if not self.called:
-            raise RuntimeError(
-                "Have to run the driver before getting the SALib problem"
-            )
+            raise RuntimeError("Have to run the driver before getting the SALib problem")
         return self._pb
 
 
@@ -170,9 +168,7 @@ class SalibDOEDriver(DOEDriver):
                 default=2,
                 desc="number of trajectories to apply morris method",
             )
-            self.sa_settings.declare(
-                "n_levels", types=int, default=4, desc="number of grid levels"
-            )
+            self.sa_settings.declare("n_levels", types=int, default=4, desc="number of grid levels")
             self.sa_settings.update(self.options["sa_doe_options"])
             n_trajs = self.sa_settings["n_trajs"]
             n_levels = self.sa_settings["n_levels"]
@@ -195,14 +191,10 @@ class SalibDOEDriver(DOEDriver):
             n_samples = self.sa_settings["n_samples"]
             calc_snd = self.sa_settings["calc_second_order"]
             dist = self.options["distributions"]
-            self.options["generator"] = SalibSobolDOEGenerator(
-                n_samples, calc_snd, dist
-            )
+            self.options["generator"] = SalibSobolDOEGenerator(n_samples, calc_snd, dist)
         else:
             raise RuntimeError(
-                "Bad sensitivity analysis method name '{}'".format(
-                    self.options["sa_method_name"]
-                )
+                "Bad sensitivity analysis method name '{}'".format(self.options["sa_method_name"])
             )
 
     def _set_name(self):

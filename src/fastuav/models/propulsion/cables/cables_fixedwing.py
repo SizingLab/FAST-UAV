@@ -70,9 +70,9 @@ class Weight(om.ExplicitComponent):
         mu = mu_ref * (I / I_ref) ** (2 / 1.5)
 
         partials["data:weights:cables:density", "data:propulsion:motor:current:hover"] = (
-                mu_ref / I_ref ** (2 / 1.5) * (2 / 1.5) * I ** (1 / 3)
+            mu_ref / I_ref ** (2 / 1.5) * (2 / 1.5) * I ** (1 / 3)
         )
         partials["data:weights:cables:mass", "data:propulsion:motor:current:hover"] = (
-                mu_ref / I_ref ** (2 / 1.5) * (2 / 1.5) * I ** (1 / 3) * (Lfus / 2) * Npro * 3
+            mu_ref / I_ref ** (2 / 1.5) * (2 / 1.5) * I ** (1 / 3) * (Lfus / 2) * Npro * 3
         )
         partials["data:weights:cables:mass", "data:geometry:fuselage:length"] = mu / 2 * Npro * 3

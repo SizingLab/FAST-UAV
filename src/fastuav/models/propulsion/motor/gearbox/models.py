@@ -27,9 +27,7 @@ class Gearbox(om.ExplicitComponent):
         Nred = inputs["data:propulsion:gearbox:N_red"]
         Tmot_nom = inputs["data:propulsion:motor:torque:nominal"]
 
-        mg1 = (
-            0.0309 * Nred**2 + 0.1944 * Nred + 0.6389
-        )  # Ratio input pinion to mating gear
+        mg1 = 0.0309 * Nred**2 + 0.1944 * Nred + 0.6389  # Ratio input pinion to mating gear
         WF = (
             1 + 1 / mg1 + mg1 + mg1**2 + Nred**2 / mg1 + Nred**2
         )  # Weight Factor (ƩFd2/C) [-]
@@ -40,9 +38,7 @@ class Gearbox(om.ExplicitComponent):
             Fd2 * 0.3 * 0.4535
         )  # Mass reducer [kg] (0.3 is a coefficient evaluated for aircraft application and 0.4535 to pass from lb to kg)
         Fdp2 = C * (Nred + 1) / Nred  # Solid rotor pinion volume [in3]
-        dp = (Fdp2 / 0.7) ** (
-            1 / 3
-        ) * 0.0254  # Pinion diameter [m] (0.0254 to pass from in to m)
+        dp = (Fdp2 / 0.7) ** (1 / 3) * 0.0254  # Pinion diameter [m] (0.0254 to pass from in to m)
         dg = Nred * dp  # Gear diameter [m]
         di = mg1 * dp  # Inner diameter [m]
 

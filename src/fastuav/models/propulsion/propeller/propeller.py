@@ -20,9 +20,7 @@ class Propeller(om.Group):
         self.options.declare("use_catalogue", default=False, types=bool)
 
     def setup(self):
-        self.add_subsystem(
-            "definition_parameters", PropellerDefinitionParameters(), promotes=["*"]
-        )
+        self.add_subsystem("definition_parameters", PropellerDefinitionParameters(), promotes=["*"])
         estimation = self.add_subsystem("estimation", om.Group(), promotes=["*"])
         estimation.add_subsystem("models", PropellerEstimationModels(), promotes=["*"])
         estimation.add_subsystem(

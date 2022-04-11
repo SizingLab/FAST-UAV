@@ -16,9 +16,7 @@ from plotly.validators.scatter.marker import SymbolValidator
 import numpy as np
 
 
-def doe_morris(
-    x_dict: dict, y_list: List[str], conf_file: str, nt: int = 1024
-) -> pd.DataFrame:
+def doe_morris(x_dict: dict, y_list: List[str], conf_file: str, nt: int = 1024) -> pd.DataFrame:
     """
     DoE for Morris Method
 
@@ -167,9 +165,7 @@ def morris_analysis(conf_file, data_file):
     # Get variables data from file
     variables = DataFile(data_file)
     variables.sort(key=lambda var: var.name)
-    table = variables.to_dataframe()[
-        ["name", "val", "units", "is_input", "desc"]
-    ].rename(
+    table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
     # Uncertain variables table
@@ -192,9 +188,7 @@ def morris_analysis(conf_file, data_file):
             style={"description_width": "initial"},
         )
         # Values boxes
-        value_box = widgets.Text(
-            value="", description="", continuous_update=False, disabled=True
-        )
+        value_box = widgets.Text(value="", description="", continuous_update=False, disabled=True)
         var_box = widgets.FloatRangeSlider(
             value=[-0.1, 0.1],
             min=-0.5,
@@ -237,13 +231,9 @@ def morris_analysis(conf_file, data_file):
     # Assign empty figures
     # Bar plot
     fig1 = go.FigureWidget(
-        layout=go.Layout(
-            title=dict(text="Morris results"), yaxis=dict(title=r"$\mu^*$")
-        )
+        layout=go.Layout(title=dict(text="Morris results"), yaxis=dict(title=r"$\mu^*$"))
     )
-    fig1.add_trace(
-        go.Bar(name="mu_star", x=[], y=[], error_y=dict(type="data", array=[]))
-    )
+    fig1.add_trace(go.Bar(name="mu_star", x=[], y=[], error_y=dict(type="data", array=[])))
 
     # Scatter plot
     fig2 = go.FigureWidget(
@@ -295,13 +285,9 @@ def morris_analysis(conf_file, data_file):
         n_input = len(inputs_array) - 1  # input row indice
 
         def variable_data(change):
-            inputbox = inputs_array[n_input].children[
-                0
-            ]  # variable selected from dropdown
+            inputbox = inputs_array[n_input].children[0]  # variable selected from dropdown
             value_box = inputs_array[n_input].children[1]  # value of the variable
-            var_box = inputs_array[n_input].children[
-                2
-            ]  # variation to apply for the DoE
+            var_box = inputs_array[n_input].children[2]  # variation to apply for the DoE
             x_data = table.loc[
                 table["Name"] == get_long_name(inputbox.value)[0]
             ]  # corresponding data from file
@@ -340,9 +326,7 @@ def morris_analysis(conf_file, data_file):
         }
         X_morris = df[list(x_dict.keys())].to_numpy()
         Y_morris = df[y].to_numpy()
-        Si = morris.analyze(
-            problem_morris, X_morris, Y_morris, conf_level=0.95, num_resamples=100
-        )
+        Si = morris.analyze(problem_morris, X_morris, Y_morris, conf_level=0.95, num_resamples=100)
 
         return Si
 
@@ -366,9 +350,7 @@ def morris_analysis(conf_file, data_file):
             fig1.data[0].error_y = dict(type="data", array=Si["mu_star_conf"])
             fig1.update_layout(
                 yaxis=dict(
-                    title="$\\mu^* \\text{ ("
-                    + (y_unit if y_unit is not None else "")
-                    + ")}$"
+                    title="$\\mu^* \\text{ (" + (y_unit if y_unit is not None else "") + ")}$"
                 ),
                 xaxis={"categoryorder": "total descending"},
             )
@@ -396,9 +378,7 @@ def morris_analysis(conf_file, data_file):
             # scale
             fig2.update_layout(
                 xaxis=dict(
-                    title="$\\mu^* \\text{ ("
-                    + (y_unit if y_unit is not None else "")
-                    + ")}$"
+                    title="$\\mu^* \\text{ (" + (y_unit if y_unit is not None else "") + ")}$"
                 ),
                 xaxis_range=[-0.05, 1.2 * max(Si["mu_star"])],
                 yaxis_range=[
@@ -441,9 +421,7 @@ def morris_analysis(conf_file, data_file):
         df = doe_morris(x_dict, y_list, conf_file, nt)
 
         # Perform Morris analysis and update charts
-        outputbox.observe(
-            update_morris, names="value"
-        )  # enable to change the output to visualize
+        outputbox.observe(update_morris, names="value")  # enable to change the output to visualize
         update_morris(0)
 
     # Set up Figure

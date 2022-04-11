@@ -44,9 +44,7 @@ class MultirotorFlightModel:
             drag = MultirotorFlightModel.get_drag(V, x, S_front, S_top, C_D, rho_air)  # [N] drag
             lift = MultirotorFlightModel.get_lift(V, x, S_top, C_L0, rho_air)  # [N] lift
             weight = Mtotal * g  # [N] weight
-            res = np.tan(abs(x - theta)) - (
-                drag * np.cos(theta) + lift * np.sin(theta)
-            ) / (
+            res = np.tan(abs(x - theta)) - (drag * np.cos(theta) + lift * np.sin(theta)) / (
                 weight + drag * np.sin(theta) - lift * np.cos(theta)
             )  # [-] equilibrium residual
             return res

@@ -52,15 +52,9 @@ class BatteryConstraints(om.ExplicitComponent):
         battery_con1 = (V_bat - Umot_to) / V_bat
         battery_con2 = (V_bat - Umot_cl) / V_bat
         battery_con3 = (V_bat - Umot_cr) / V_bat
-        battery_con4 = (V_bat * Imax - Umot_to * Imot_to * Npro / eta_ESC) / (
-            V_bat * Imax
-        )
-        battery_con5 = (V_bat * Imax - Umot_cl * Imot_cl * Npro / eta_ESC) / (
-            V_bat * Imax
-        )
-        battery_con6 = (V_bat * Imax - Umot_cr * Imot_cr * Npro / eta_ESC) / (
-            V_bat * Imax
-        )
+        battery_con4 = (V_bat * Imax - Umot_to * Imot_to * Npro / eta_ESC) / (V_bat * Imax)
+        battery_con5 = (V_bat * Imax - Umot_cl * Imot_cl * Npro / eta_ESC) / (V_bat * Imax)
+        battery_con6 = (V_bat * Imax - Umot_cr * Imot_cr * Npro / eta_ESC) / (V_bat * Imax)
 
         outputs["data:propulsion:battery:constraints:voltage:consistency"] = battery_con0
         outputs["data:propulsion:battery:constraints:voltage:takeoff"] = battery_con1
@@ -83,99 +77,125 @@ class BatteryConstraints(om.ExplicitComponent):
         Imot_cl = inputs["data:propulsion:motor:current:climb"]
         Imot_cr = inputs["data:propulsion:motor:current:cruise"]
 
-        J["data:propulsion:battery:constraints:voltage:consistency", "data:propulsion:battery:voltage"] = (
+        J[
+            "data:propulsion:battery:constraints:voltage:consistency",
+            "data:propulsion:battery:voltage",
+        ] = (
             V_bat_guess / V_bat**2
         )
         J[
-            "data:propulsion:battery:constraints:voltage:consistency", "data:propulsion:battery:voltage:guess"
-        ] = (-1 / V_bat)
-
-        J["data:propulsion:battery:constraints:voltage:takeoff", "data:propulsion:battery:voltage"] = (
-            Umot_to / V_bat**2
-        )
-        J["data:propulsion:battery:constraints:voltage:takeoff", "data:propulsion:motor:voltage:takeoff"] = (
+            "data:propulsion:battery:constraints:voltage:consistency",
+            "data:propulsion:battery:voltage:guess",
+        ] = (
             -1 / V_bat
         )
 
-        J["data:propulsion:battery:constraints:voltage:climb", "data:propulsion:battery:voltage"] = (
-            1 / V_bat - (-Umot_cl + V_bat) / V_bat**2
-        )
-        J["data:propulsion:battery:constraints:voltage:climb", "data:propulsion:motor:voltage:climb"] = (
+        J[
+            "data:propulsion:battery:constraints:voltage:takeoff", "data:propulsion:battery:voltage"
+        ] = (Umot_to / V_bat**2)
+        J[
+            "data:propulsion:battery:constraints:voltage:takeoff",
+            "data:propulsion:motor:voltage:takeoff",
+        ] = (
             -1 / V_bat
         )
 
-        J["data:propulsion:battery:constraints:voltage:cruise", "data:propulsion:battery:voltage"] = (
-            1 / V_bat - (-Umot_cr + V_bat) / V_bat**2
+        J[
+            "data:propulsion:battery:constraints:voltage:climb", "data:propulsion:battery:voltage"
+        ] = (1 / V_bat - (-Umot_cl + V_bat) / V_bat**2)
+        J[
+            "data:propulsion:battery:constraints:voltage:climb",
+            "data:propulsion:motor:voltage:climb",
+        ] = (
+            -1 / V_bat
         )
-        J["data:propulsion:battery:constraints:voltage:cruise", "data:propulsion:motor:voltage:cruise"] = (
+
+        J[
+            "data:propulsion:battery:constraints:voltage:cruise", "data:propulsion:battery:voltage"
+        ] = (1 / V_bat - (-Umot_cr + V_bat) / V_bat**2)
+        J[
+            "data:propulsion:battery:constraints:voltage:cruise",
+            "data:propulsion:motor:voltage:cruise",
+        ] = (
             -1 / V_bat
         )
 
         J[
             "data:propulsion:battery:constraints:power:takeoff", "data:propulsion:battery:voltage"
-        ] = 1 / V_bat - (Imax * V_bat - Imot_to * Npro * Umot_to / eta_ESC) / (
-            Imax * V_bat**2
-        )
+        ] = 1 / V_bat - (Imax * V_bat - Imot_to * Npro * Umot_to / eta_ESC) / (Imax * V_bat**2)
         J[
-            "data:propulsion:battery:constraints:power:takeoff", "data:propulsion:battery:current:max"
-        ] = 1 / Imax - (Imax * V_bat - Imot_to * Npro * Umot_to / eta_ESC) / (
-            Imax**2 * V_bat
-        )
-        J["data:propulsion:battery:constraints:power:takeoff", "data:propulsion:motor:voltage:takeoff"] = (
+            "data:propulsion:battery:constraints:power:takeoff",
+            "data:propulsion:battery:current:max",
+        ] = 1 / Imax - (Imax * V_bat - Imot_to * Npro * Umot_to / eta_ESC) / (Imax**2 * V_bat)
+        J[
+            "data:propulsion:battery:constraints:power:takeoff",
+            "data:propulsion:motor:voltage:takeoff",
+        ] = (
             -Imot_to * Npro / (Imax * V_bat * eta_ESC)
         )
-        J["data:propulsion:battery:constraints:power:takeoff", "data:propulsion:motor:current:takeoff"] = (
+        J[
+            "data:propulsion:battery:constraints:power:takeoff",
+            "data:propulsion:motor:current:takeoff",
+        ] = (
             -Npro * Umot_to / (Imax * V_bat * eta_ESC)
         )
-        J["data:propulsion:battery:constraints:power:takeoff", "data:propulsion:propeller:number"] = (
-            -Imot_to * Umot_to / (Imax * V_bat * eta_ESC)
-        )
-        J["data:propulsion:battery:constraints:power:takeoff", "data:propulsion:esc:efficiency:estimated"] = (
+        J[
+            "data:propulsion:battery:constraints:power:takeoff", "data:propulsion:propeller:number"
+        ] = (-Imot_to * Umot_to / (Imax * V_bat * eta_ESC))
+        J[
+            "data:propulsion:battery:constraints:power:takeoff",
+            "data:propulsion:esc:efficiency:estimated",
+        ] = (
             Imot_to * Npro * Umot_to / (Imax * V_bat * eta_ESC**2)
         )
 
         J[
             "data:propulsion:battery:constraints:power:climb", "data:propulsion:battery:voltage"
-        ] = 1 / V_bat - (Imax * V_bat - Imot_cl * Npro * Umot_cl / eta_ESC) / (
-            Imax * V_bat**2
-        )
+        ] = 1 / V_bat - (Imax * V_bat - Imot_cl * Npro * Umot_cl / eta_ESC) / (Imax * V_bat**2)
         J[
             "data:propulsion:battery:constraints:power:climb", "data:propulsion:battery:current:max"
-        ] = 1 / Imax - (Imax * V_bat - Imot_cl * Npro * Umot_cl / eta_ESC) / (
-            Imax**2 * V_bat
-        )
-        J["data:propulsion:battery:constraints:power:climb", "data:propulsion:motor:voltage:climb"] = (
-            -Imot_cl * Npro / (Imax * V_bat * eta_ESC)
-        )
-        J["data:propulsion:battery:constraints:power:climb", "data:propulsion:motor:current:climb"] = (
-            -Npro * Umot_cl / (Imax * V_bat * eta_ESC)
-        )
+        ] = 1 / Imax - (Imax * V_bat - Imot_cl * Npro * Umot_cl / eta_ESC) / (Imax**2 * V_bat)
+        J[
+            "data:propulsion:battery:constraints:power:climb", "data:propulsion:motor:voltage:climb"
+        ] = (-Imot_cl * Npro / (Imax * V_bat * eta_ESC))
+        J[
+            "data:propulsion:battery:constraints:power:climb", "data:propulsion:motor:current:climb"
+        ] = (-Npro * Umot_cl / (Imax * V_bat * eta_ESC))
         J["data:propulsion:battery:constraints:power:climb", "data:propulsion:propeller:number"] = (
             -Imot_cl * Umot_cl / (Imax * V_bat * eta_ESC)
         )
-        J["data:propulsion:battery:constraints:power:climb", "data:propulsion:esc:efficiency:estimated"] = (
+        J[
+            "data:propulsion:battery:constraints:power:climb",
+            "data:propulsion:esc:efficiency:estimated",
+        ] = (
             Imot_cl * Npro * Umot_cl / (Imax * V_bat * eta_ESC**2)
         )
 
         J[
             "data:propulsion:battery:constraints:power:cruise", "data:propulsion:battery:voltage"
-        ] = 1 / V_bat - (Imax * V_bat - Imot_cr * Npro * Umot_cr / eta_ESC) / (
-            Imax * V_bat**2
-        )
+        ] = 1 / V_bat - (Imax * V_bat - Imot_cr * Npro * Umot_cr / eta_ESC) / (Imax * V_bat**2)
         J[
-            "data:propulsion:battery:constraints:power:cruise", "data:propulsion:battery:current:max"
-        ] = 1 / Imax - (Imax * V_bat - Imot_cr * Npro * Umot_cr / eta_ESC) / (
-            Imax**2 * V_bat
-        )
-        J["data:propulsion:battery:constraints:power:cruise", "data:propulsion:motor:voltage:cruise"] = (
+            "data:propulsion:battery:constraints:power:cruise",
+            "data:propulsion:battery:current:max",
+        ] = 1 / Imax - (Imax * V_bat - Imot_cr * Npro * Umot_cr / eta_ESC) / (Imax**2 * V_bat)
+        J[
+            "data:propulsion:battery:constraints:power:cruise",
+            "data:propulsion:motor:voltage:cruise",
+        ] = (
             -Imot_cr * Npro / (Imax * V_bat * eta_ESC)
         )
-        J["data:propulsion:battery:constraints:power:cruise", "data:propulsion:motor:current:cruise"] = (
+        J[
+            "data:propulsion:battery:constraints:power:cruise",
+            "data:propulsion:motor:current:cruise",
+        ] = (
             -Npro * Umot_cr / (Imax * V_bat * eta_ESC)
         )
-        J["data:propulsion:battery:constraints:power:cruise", "data:propulsion:propeller:number"] = (
-            -Imot_cr * Umot_cr / (Imax * V_bat * eta_ESC)
-        )
-        J["data:propulsion:battery:constraints:power:cruise", "data:propulsion:esc:efficiency:estimated"] = (
+        J[
+            "data:propulsion:battery:constraints:power:cruise", "data:propulsion:propeller:number"
+        ] = (-Imot_cr * Umot_cr / (Imax * V_bat * eta_ESC))
+        J[
+            "data:propulsion:battery:constraints:power:cruise",
+            "data:propulsion:esc:efficiency:estimated",
+        ] = (
             Imot_cr * Npro * Umot_cr / (Imax * V_bat * eta_ESC**2)
         )

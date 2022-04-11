@@ -19,9 +19,7 @@ class Safety(om.Group):
 
     def setup(self):
         self.add_subsystem("hover_torque", EmergencyMotorTorque_hover(), promotes=["*"])
-        self.add_subsystem(
-            "cruise_torque", EmergencyMotorTorque_cruise(), promotes=["*"]
-        )
+        self.add_subsystem("cruise_torque", EmergencyMotorTorque_cruise(), promotes=["*"])
         self.add_subsystem("constraints", EmergencyMotorConstraints(), promotes=["*"])
         # self.add_subsystem("degraded_autonomy", degradedRange(), promotes=['*'])
         # self.add_subsystem("degraded_range", degradedRange(), promotes=['*'])
@@ -87,9 +85,7 @@ class EmergencyMotorTorque_hover(om.ExplicitComponent):
         # Hover
         C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_static(beta)
         F_pro = k_thrust * F_pro_nom  # [N] emergency thrust per propeller
-        W_pro, P_pro, Q_pro = PropellerPerfoModel.performances(
-            F_pro, D_pro, C_t, C_p, rho_air
-        )
+        W_pro, P_pro, Q_pro = PropellerPerfoModel.performances(F_pro, D_pro, C_t, C_p, rho_air)
         T_mot, W_mot, I_mot, U_mot, P_el = MotorPerfoModel.performances(
             Q_pro, W_pro, N_red, Tf_mot, Kt_mot, R_mot
         )
@@ -166,9 +162,7 @@ class EmergencyMotorTorque_cruise(om.ExplicitComponent):
         # Cruise
         C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_incidence(beta, J_cr, alpha)
         F_pro = k_thrust * F_pro_nom  # [N] emergency thrust per propeller
-        W_pro, P_pro, Q_pro = PropellerPerfoModel.performances(
-            F_pro, D_pro, C_t, C_p, rho_air
-        )
+        W_pro, P_pro, Q_pro = PropellerPerfoModel.performances(F_pro, D_pro, C_t, C_p, rho_air)
         T_mot, W_mot, I_mot, U_mot, P_el = MotorPerfoModel.performances(
             Q_pro, W_pro, N_red, Tf_mot, Kt_mot, R_mot
         )
@@ -217,10 +211,7 @@ class EmergencyMotorConstraints(om.ExplicitComponent):
         ] = (
             Tmot_hov / Tmot_nom**2
         )
-        partials[
-            "addons:safety:constraints:torque:hover",
-            "addons:safety:motor:torque:hover",
-        ] = (
+        partials["addons:safety:constraints:torque:hover", "addons:safety:motor:torque:hover",] = (
             -1.0 / Tmot_nom
         )
         partials[

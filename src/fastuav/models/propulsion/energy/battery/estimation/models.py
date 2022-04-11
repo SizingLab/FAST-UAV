@@ -96,9 +96,9 @@ class Weight(om.ExplicitComponent):
         Mbat_ref = inputs["data:weights:battery:mass:reference"]
         Ebat_ref = inputs["data:propulsion:battery:energy:reference"]
 
-        partials["data:weights:battery:mass:estimated", "data:propulsion:battery:energy:estimated"] = (
-            Mbat_ref / Ebat_ref
-        )
+        partials[
+            "data:weights:battery:mass:estimated", "data:propulsion:battery:energy:estimated"
+        ] = (Mbat_ref / Ebat_ref)
 
 
 class Geometry(om.ExplicitComponent):

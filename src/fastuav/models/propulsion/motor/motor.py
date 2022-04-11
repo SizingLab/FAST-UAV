@@ -23,9 +23,7 @@ class Motor(om.Group):
 
     def setup(self):
         # Motor
-        self.add_subsystem(
-            "definition_parameters", MotorDefinitionParameters(), promotes=["*"]
-        )
+        self.add_subsystem("definition_parameters", MotorDefinitionParameters(), promotes=["*"])
         estimation = self.add_subsystem("estimation", om.Group(), promotes=["*"])
         estimation.add_subsystem("models", MotorEstimationModels(), promotes=["*"])
         estimation.add_subsystem(

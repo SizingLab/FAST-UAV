@@ -23,15 +23,11 @@ class ArmsWeight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:structures:arms:diameter:k", val=np.nan, units=None
-        )
+        self.add_input("data:structures:arms:diameter:k", val=np.nan, units=None)
         self.add_input("data:structures:arms:diameter:outer", val=np.nan, units="m")
         self.add_input("data:geometry:arms:number", val=np.nan, units=None)
         self.add_input("data:geometry:arms:length", val=np.nan, units="m")
-        self.add_input(
-            "data:weights:arms:density", val=np.nan, units="kg/m**3"
-        )
+        self.add_input("data:weights:arms:density", val=np.nan, units="kg/m**3")
         self.add_output("data:weights:arms:mass", units="kg")
 
     def setup_partials(self):

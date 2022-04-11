@@ -108,12 +108,7 @@ def horizontal_bar_plot(ax, Si, opts=None, sortby="mu_star", unit="", legend=Non
     plot_names = names_sorted
 
     out = ax.barh(
-        y_pos,
-        mu_star_sorted,
-        xerr=mu_star_conf_sorted,
-        align="center",
-        ecolor="black",
-        **opts
+        y_pos, mu_star_sorted, xerr=mu_star_conf_sorted, align="center", ecolor="black", **opts
     )
 
     ax.set_yticks(y_pos)

@@ -51,7 +51,10 @@ class MotorConstraints(om.ExplicitComponent):
         Tmot_cl = inputs["data:propulsion:motor:torque:climb"]
         Tmot_cr = inputs["data:propulsion:motor:torque:cruise"]
 
-        partials["data:propulsion:motor:constraints:torque:takeoff", "data:propulsion:motor:torque:max",] = (
+        partials[
+            "data:propulsion:motor:constraints:torque:takeoff",
+            "data:propulsion:motor:torque:max",
+        ] = (
             Tmot_to / Tmot_max**2
         )
         partials[
@@ -61,10 +64,16 @@ class MotorConstraints(om.ExplicitComponent):
             -1.0 / Tmot_max
         )
 
-        partials["data:propulsion:motor:constraints:torque:climb", "data:propulsion:motor:torque:max",] = (
+        partials[
+            "data:propulsion:motor:constraints:torque:climb",
+            "data:propulsion:motor:torque:max",
+        ] = (
             Tmot_cl / Tmot_max**2
         )
-        partials["data:propulsion:motor:constraints:torque:climb", "data:propulsion:motor:torque:climb",] = (
+        partials[
+            "data:propulsion:motor:constraints:torque:climb",
+            "data:propulsion:motor:torque:climb",
+        ] = (
             -1.0 / Tmot_max
         )
 

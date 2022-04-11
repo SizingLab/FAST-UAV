@@ -79,9 +79,7 @@ class ThrustClimbMR(om.ExplicitComponent):
         S_top_estimated = inputs["data:geometry:body:surface:top"]
         q_climb = inputs["mission:design_mission:climb:q"]
 
-        F_pro_cl = (
-            Mtotal_guess * g + q_climb * C_D0 * S_top_estimated
-        ) / Npro
+        F_pro_cl = (Mtotal_guess * g + q_climb * C_D0 * S_top_estimated) / Npro
 
         alpha_cl = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight)
 
@@ -127,20 +125,16 @@ class ThrustCruiseMR(om.ExplicitComponent):
             S_top_estimated * np.sin(x) + S_front_estimated * np.cos(x)
         ) / (
             Mtotal_guess * g
-            + q_cruise
-            * C_L0
-            * (S_top_estimated * np.sin(x) + S_front_estimated * np.cos(x))
+            + q_cruise * C_L0 * (S_top_estimated * np.sin(x) + S_front_estimated * np.cos(x))
         )
         alpha_cr = brentq(func, 0, np.pi / 2)  # [rad] angle of attack
         S_ref = S_top_estimated * np.sin(alpha_cr) + S_front_estimated * np.cos(
             alpha_cr
         )  # [m2] reference surface for drag and lift calculation
         drag = q_cruise * C_D * S_ref  # [N] drag
-        lift = - q_cruise * C_L0 * S_ref # [N] lift (downwards force)
+        lift = -q_cruise * C_L0 * S_ref  # [N] lift (downwards force)
         weight = Mtotal_guess * g  # [N] weight
-        F_pro_cr = ((weight - lift) ** 2 + drag**2) ** (
-            1 / 2
-        ) / Npro  # [N] thrust per propeller
+        F_pro_cr = ((weight - lift) ** 2 + drag**2) ** (1 / 2) / Npro  # [N] thrust per propeller
 
         # lift = - 0.5 * rho_air * C_L0 * np.sin(2*alpha) * S_top_estimated * np.sin(alpha) * V_cr ** 2  # [N] downwards force (flat plate model)
         # F_pro_cr = ((weight - lift) ** 2 + drag ** 2) ** (1 / 2) / Npro  # [N] thrust per propeller
