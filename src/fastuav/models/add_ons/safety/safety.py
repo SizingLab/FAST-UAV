@@ -1,5 +1,5 @@
 """
-Safety module. For Multirotors Only.
+safety module. For Multirotors Only.
 DEPRECATED.
 """
 
