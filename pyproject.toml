@@ -48,7 +48,6 @@ cma = "^3.1.0"
 scikit-learn = "^1.0.2"
 psutil = "*"
 kaleido = "0.2.1"
-pysizing = "*"
 
 [tool.poetry.extras]
 jupyterlab = ["jupyterlab"]
@@ -61,7 +60,7 @@ pytest = "^6.2"
 pytest-cov = "^3.0"
 coverage = { extras = ["toml"], version = "^5.5" }
 pre-commit = "^2.14.1"
-black = { version = "21.9b0", extras = ["jupyter"], allow-prereleases = true }
+black = { version = "22.3.0", extras = ["jupyter"], allow-prereleases = true }
 pylint = "^2.10.2"
 nbval = "^0.9.6"
 sphinx = "^4.1.2"
