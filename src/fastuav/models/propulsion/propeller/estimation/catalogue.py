@@ -40,12 +40,12 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         self.options.declare("use_catalogue", default=False, types=bool)
         beta_selection = "average"
         Dpro_selection = "next"
-        # self._clf = NearestNeighbor(
-        #     df=DF,
-        #     X_names=["Pitch (-)", "Diameter (METERS)"],
-        #     crits=[beta_selection, Dpro_selection],
-        # )
-        # self._clf.train()
+        self._clf = NearestNeighbor(
+            df=DF,
+            X_names=["Pitch (-)", "Diameter (METERS)"],
+            crits=[beta_selection, Dpro_selection],
+        )
+        self._clf.train()
 
     def setup(self):
         # inputs: estimated values
