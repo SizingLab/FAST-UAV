@@ -57,9 +57,9 @@ class NoGearbox(om.ExplicitComponent):
     def setup(self):
         self.add_output("data:propulsion:gearbox", units=None)
         self.add_output("data:weights:gearbox:mass", units="kg")
-        self.add_output("data:propulsion:gearbox:N_red", units=None)
+        # self.add_output("data:propulsion:gearbox:N_red", units=None)
 
     def compute(self, inputs, outputs):
         outputs["data:propulsion:gearbox"] = False
         outputs["data:weights:gearbox:mass"] = 0.0
-        outputs["data:propulsion:gearbox:N_red"] = 1.0
+        # outputs["data:propulsion:gearbox:N_red"] = 1.0
