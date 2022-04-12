@@ -4,8 +4,8 @@ title: Multirotor Drone model with consistency constraints solving
 module_folders:
     
 # Input and output files
-input_file: ../workdir/model_inputs.xml
-output_file: ../workdir/model_outputs.xml
+input_file: ../workdir/problem_inputs.xml
+output_file: ../workdir/problem_outputs.xml
 
 # Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
 driver: om.ScipyOptimizeDriver(tol=1e-3, optimizer='SLSQP')
