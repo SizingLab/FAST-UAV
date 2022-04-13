@@ -13,28 +13,28 @@ driver: om.ScipyOptimizeDriver(tol=1e-3, optimizer='SLSQP')
 # Definition of OpenMDAO model
 model:
     scenarios:
-        id: scenarios.multirotor
+        id: fastuav.scenarios.multirotor
     propulsion:
         propeller:
-            id: propulsion.propeller
+            id: fastuav.propulsion.propeller
         motor:
-            id: propulsion.motor
+            id: fastuav.propulsion.motor
             use_gearbox: false
         battery:
-            id: propulsion.battery
+            id: fastuav.propulsion.battery
         esc:
-            id: propulsion.esc
+            id: fastuav.propulsion.esc
     geometry:
-        id: geometry.multirotor
+        id: fastuav.geometry.multirotor
     structures:
-        id: structures.multirotor
+        id: fastuav.structures.multirotor
     wires:
-        id: propulsion.cables.multirotor
+        id: fastuav.propulsion.cables.multirotor
     performance:
-        id: performance.multirotor
+        id: fastuav.performance.multirotor
     mission:
         design_mission:
-            id: mission.design
+            id: fastuav.mission.design
 
 
 optimization:

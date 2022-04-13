@@ -9,7 +9,7 @@ from fastuav.models.stability.fixedwing.neutral_point import NeutralPoint
 from fastuav.models.stability.fixedwing.center_of_gravity import CenterOfGravity
 
 
-@oad.RegisterOpenMDAOSystem("stability.fixedwing")
+@oad.RegisterOpenMDAOSystem("fastuav.stability.fixedwing")
 class StabilityFixedWing(om.Group):
     """
     Group containing the fixed wing stability calculations

@@ -10,7 +10,7 @@ from fastuav.models.uncertainty.uncertainty import (
 )
 
 
-@oad.RegisterOpenMDAOSystem("aerodynamics.fixedwing")
+@oad.RegisterOpenMDAOSystem("fastuav.aerodynamics.fixedwing")
 class Aerodynamics(om.Group):
     """
     Group containing the airframe aerodynamics calculation

@@ -10,7 +10,7 @@ from fastuav.models.propulsion.propeller.performances import PropellerPerfos
 from fastuav.models.propulsion.propeller.constraints import PropellerConstraints
 
 
-@oad.RegisterOpenMDAOSystem("propulsion.propeller")
+@oad.RegisterOpenMDAOSystem("fastuav.propulsion.propeller")
 class Propeller(om.Group):
     """
     Group containing the Propeller MDA.

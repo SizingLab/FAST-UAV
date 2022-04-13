@@ -17,7 +17,7 @@ from fastuav.models.scenarios.fixedwing.wing_loading import (
 )
 
 
-@oad.RegisterOpenMDAOSystem("scenarios.fixedwing")
+@oad.RegisterOpenMDAOSystem("fastuav.scenarios.fixedwing")
 class SizingScenariosFixedWing(om.Group):
     """
     Sizing scenarios definition for fixed wing configurations

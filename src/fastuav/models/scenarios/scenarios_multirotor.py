@@ -17,7 +17,7 @@ from fastuav.models.scenarios.multirotor.thrust import (
 )
 
 
-@oad.RegisterOpenMDAOSystem("scenarios.multirotor")
+@oad.RegisterOpenMDAOSystem("fastuav.scenarios.multirotor")
 class SizingScenariosMultirotor(om.Group):
     """
     Sizing scenarios definition for multirotor configurations

@@ -6,7 +6,7 @@ import openmdao.api as om
 import numpy as np
 
 
-@oad.RegisterOpenMDAOSystem("geometry.multirotor")
+@oad.RegisterOpenMDAOSystem("fastuav.geometry.multirotor")
 class Geometry(om.ExplicitComponent):
     """
     Computes Multi-Rotor geometry

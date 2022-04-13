@@ -12,7 +12,7 @@ from fastuav.models.propulsion.energy.battery.performances import BatteryPerfos
 from fastuav.models.propulsion.energy.battery.constraints import BatteryConstraints
 
 
-@oad.RegisterOpenMDAOSystem("propulsion.battery")
+@oad.RegisterOpenMDAOSystem("fastuav.propulsion.battery")
 class Battery(om.Group):
     """
     Group containing the Battery MDA.

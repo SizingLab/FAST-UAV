@@ -13,33 +13,33 @@ driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
 # Definition of OpenMDAO model
 model:
     scenarios:
-        id: scenarios.fixedwing
+        id: fastuav.scenarios.fixedwing
     propulsion:
         propeller:
-            id: propulsion.propeller
+            id: fastuav.propulsion.propeller
         motor:
-            id: propulsion.motor
+            id: fastuav.propulsion.motor
             use_gearbox: false
         battery:
-            id: propulsion.battery
+            id: fastuav.propulsion.battery
         esc:
-            id: propulsion.esc
+            id: fastuav.propulsion.esc
     geometry:
-        id: geometry.fixedwing
+        id: fastuav.geometry.fixedwing
     structures:
-        id: structures.fixedwing
+        id: fastuav.structures.fixedwing
         spar_model: "I_beam"  # "I_beam" or "pipe"
     aerodynamics:
-        id: aerodynamics.fixedwing
+        id: fastuav.aerodynamics.fixedwing
     wires:
-        id: propulsion.cables.fixedwing
+        id: fastuav.propulsion.cables.fixedwing
     stability:
-        id: stability.fixedwing
+        id: fastuav.stability.fixedwing
     performance:
-        id: performance.fixedwing
+        id: fastuav.performance.fixedwing
     mission:
         design_mission:
-            id: mission.design
+            id: fastuav.mission.design
 
 
 # This section is needed only if optimization process is run

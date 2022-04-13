@@ -13,7 +13,7 @@ from fastuav.models.propulsion.motor.performances import MotorPerfoModel
 from fastuav.models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
 
 
-@oad.RegisterOpenMDAOSystem("mission.concordia")
+@oad.RegisterOpenMDAOSystem("fastuav.mission.medical")
 class Mission(om.Group):
     """
     Organ delivery mission definition

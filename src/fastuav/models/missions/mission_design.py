@@ -6,7 +6,7 @@ import openmdao.api as om
 import numpy as np
 
 
-@oad.RegisterOpenMDAOSystem("mission.design")
+@oad.RegisterOpenMDAOSystem("fastuav.mission.design")
 class Mission(om.Group):
     """
     Group containing the design mission parameters

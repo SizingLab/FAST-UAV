@@ -7,7 +7,7 @@ import numpy as np
 from fastuav.models.propulsion.cables.radius import Radius
 
 
-@oad.RegisterOpenMDAOSystem("propulsion.cables.multirotor")
+@oad.RegisterOpenMDAOSystem("fastuav.propulsion.cables.multirotor")
 class Cables(om.Group):
     """
     Group containing the Cables MDA, for multirotor configurations.

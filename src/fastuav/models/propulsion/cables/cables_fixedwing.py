@@ -7,7 +7,7 @@ import numpy as np
 from fastuav.models.propulsion.cables.radius import Radius
 
 
-@oad.RegisterOpenMDAOSystem("propulsion.cables.fixedwing")
+@oad.RegisterOpenMDAOSystem("fastuav.propulsion.cables.fixedwing")
 class Cables(om.Group):
     """
     Group containing the Cables MDA, for fixed wing configurations.

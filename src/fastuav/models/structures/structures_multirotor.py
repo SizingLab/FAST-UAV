@@ -6,7 +6,7 @@ import openmdao.api as om
 import numpy as np
 
 
-@oad.RegisterOpenMDAOSystem("structures.multirotor")
+@oad.RegisterOpenMDAOSystem("fastuav.structures.multirotor")
 class Structures(om.Group):
     """
     Group containing the airframe structural analysis and weights calculation

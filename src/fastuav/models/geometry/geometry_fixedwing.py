@@ -7,7 +7,7 @@ import numpy as np
 from scipy.constants import g
 
 
-@oad.RegisterOpenMDAOSystem("geometry.fixedwing")
+@oad.RegisterOpenMDAOSystem("fastuav.geometry.fixedwing")
 class Geometry(om.Group):
     """
     Group containing the airframe geometries calculation

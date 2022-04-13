@@ -11,7 +11,7 @@ from fastuav.models.propulsion.motor.constraints import MotorConstraints
 from fastuav.models.propulsion.motor.gearbox.models import Gearbox, NoGearbox
 
 
-@oad.RegisterOpenMDAOSystem("propulsion.motor")
+@oad.RegisterOpenMDAOSystem("fastuav.propulsion.motor")
 class Motor(om.Group):
     """
     Group containing the Motor MDA.

@@ -10,7 +10,7 @@ from fastuav.models.propulsion.esc.performances import ESCPerfos
 from fastuav.models.propulsion.esc.constraints import ESCConstraints
 
 
-@oad.RegisterOpenMDAOSystem("propulsion.esc")
+@oad.RegisterOpenMDAOSystem("fastuav.propulsion.esc")
 class ESC(om.Group):
     """
     Group containing the Electronic Speed Controller analysis.

@@ -11,7 +11,7 @@ from fastuav.models.propulsion.motor.performances import MotorPerfoModel
 from fastuav.models.propulsion.propeller.estimation.models import PropellerAerodynamicsModel
 
 
-@oad.RegisterOpenMDAOSystem("addons.safety")
+@oad.RegisterOpenMDAOSystem("fastuav.plugin.safety")
 class Safety(om.Group):
     """
     Group containing the performances and requirements in case of rotor failure.

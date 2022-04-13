@@ -7,7 +7,7 @@ import numpy as np
 from scipy.constants import g
 
 
-@oad.RegisterOpenMDAOSystem("structures.fixedwing")
+@oad.RegisterOpenMDAOSystem("fastuav.structures.fixedwing")
 class Structures(om.Group):
     """
     Group containing the airframe structural analysis and weights calculation

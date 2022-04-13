@@ -6,7 +6,7 @@ import openmdao.api as om
 import numpy as np
 
 
-@oad.RegisterOpenMDAOSystem("performance.multirotor")
+@oad.RegisterOpenMDAOSystem("fastuav.performance.multirotor")
 class PerformanceMultirotor(om.Group):
     """
     Group containing the global performance parameters for Multirotors
@@ -19,7 +19,7 @@ class PerformanceMultirotor(om.Group):
         self.add_subsystem("constraints", SystemConstraints(), promotes=["*"])
 
 
-@oad.RegisterOpenMDAOSystem("performance.fixedwing")
+@oad.RegisterOpenMDAOSystem("fastuav.performance.fixedwing")
 class PerformanceFixedWing(om.Group):
     """
     Group containing the global performance parameters for Fixed Wings
