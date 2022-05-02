@@ -1,0 +1,19 @@
+routes:
+  main_route:
+    takeoff_part:
+      phase_id: vertical_takeoff
+    climb_part:
+      phase_id: vertical_climb
+    cruise_part:
+      phase_id: fixedwing_cruise
+  diversion:
+    climb_part:
+      phase_id: fixedwing_climb
+    cruise_part:
+      phase_id: fixedwing_cruise
+
+missions:
+  sizing:
+    parts:
+      - route: main_route
+      - route: diversion

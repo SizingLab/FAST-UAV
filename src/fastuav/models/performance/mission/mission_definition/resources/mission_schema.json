@@ -1,0 +1,267 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/product.schema.json",
+  "title": "FAST-UAV mission files",
+  "description": "Schema for FAST-UAV mission files",
+  "type": "object",
+  "definitions": {
+    "inline_string_value": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "inline_number_value": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/inline_string_value"
+        },
+        {
+          "type": "number"
+        }
+      ]
+    },
+    "inline_boolean_value": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/inline_string_value"
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "string_parameter_value": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/inline_string_value"
+        },
+        {
+          "type": [
+            "object"
+          ],
+          "properties": {
+            "value": {
+              "$ref": "#/definitions/inline_string_value"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "boolean_parameter_value": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/inline_boolean_value"
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/definitions/string_parameter_value"
+            },
+            {
+              "type": [
+                "object"
+              ],
+              "properties": {
+                "value": {
+                  "$ref": "#/definitions/inline_boolean_value"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "parameter_value_without_unit": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/inline_number_value"
+            },
+            {
+              "type": [
+                "object"
+              ],
+              "properties": {
+                "value": {
+                  "$ref": "#/definitions/inline_number_value"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "parameter_value_with_unit": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/inline_number_value"
+            },
+            {
+              "type": [
+                "object"
+              ],
+              "properties": {
+                "value": {
+                  "$ref": "#/definitions/inline_number_value"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/parameter_value_with_unit"
+      }
+    },
+    "route_parts": {
+      "type": "object",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phase_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+            "phase_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "route": {
+      "type": "object",
+      "properties": {
+        "takeoff_part": {
+          "description": "Takeoff phase",
+          "$ref": "#/definitions/route_parts"
+        },
+        "climb_part": {
+          "description": "Climb phase",
+          "$ref": "#/definitions/route_parts"
+        },
+        "cruise_part": {
+          "description": "Cruise phase",
+          "$ref": "#/definitions/route_parts"
+        },
+        "descent_part": {
+          "description": "Descent phase",
+          "$ref": "#/definitions/route_parts"
+        },
+        "hover_part": {
+          "description": "Hover phase",
+          "$ref": "#/definitions/route_parts"
+        }
+      },
+      "additionalProperties": false
+    },
+    "mission_phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phase": {
+          "type": "string"
+        }
+      }
+    },
+    "mission_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "route": {
+          "type": "string"
+        }
+      }
+    },
+    "mission_reserve": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reserve": {
+          "type": "object",
+          "properties": {
+            "ref": {
+              "type": "string"
+            },
+            "multiplier": {
+              "type": [
+                "number",
+                "string"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "mission": {
+      "type": "object",
+      "properties": {
+        "parts": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/mission_phase"
+              },
+              {
+                "$ref": "#/definitions/mission_route"
+              },
+              {
+                "$ref": "#/definitions/mission_reserve"
+              }
+            ]
+          }
+        }
+      },
+      "required": [
+        "parts"
+      ]
+    }
+  },
+  "properties": {
+    "missions": {
+      "description": "Section where missions are defined.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/mission"
+      }
+    },
+    "routes": {
+      "description": "Section where flight routes are defined.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/route"
+      }
+    }
+  },
+  "required": [
+    "missions",
+    "routes"
+  ],
+  "additionalProperties": false
+}
