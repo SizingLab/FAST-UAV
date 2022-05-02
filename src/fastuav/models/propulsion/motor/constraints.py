@@ -85,7 +85,7 @@ class MotorConstraints(om.ExplicitComponent):
         )
         partials[
             "data:propulsion:motor:constraints:torque:hover",
-            "data:propulsion:motor:torque:cruise",
+            "data:propulsion:motor:torque:hover",
         ] = (
             -1.0 / Tmot_nom
         )
