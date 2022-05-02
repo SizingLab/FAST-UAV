@@ -4,3 +4,8 @@
 /.ipynb_checkpoints/
 /src/fastuav/models/performance/.pytest_cache/
 /src/fastuav/notebooks/outcmaes/
+/src/fastuav/missions/.ipynb_checkpoints/
+/src/fastuav/data/.ipynb_checkpoints/
+/src/fastuav/data/problem_outputs_discrete_DJI_M600_mdo.xml
+/src/fastuav/data/problem_outputs_DJI_M600_mdo.xml
+/.pytest_cache/
