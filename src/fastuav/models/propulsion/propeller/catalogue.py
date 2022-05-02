@@ -11,7 +11,7 @@ import numpy as np
 
 PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
-    "..",
+    "",
     "..",
     "..",
     "..",
@@ -33,11 +33,11 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
     def initialize(self):
         """
         Propeller selection and component's parameters assignment:
-            - If use_catalogue is True, a propeller is selected from the provided catalogue, according to the definition
+            - If off_the_shelf is True, a propeller is selected from the provided catalogue, according to the definition
                parameters. The component is then fully described by the manufacturer's data.
             - Otherwise, the previously estimated parameters are kept to describe the component.
         """
-        self.options.declare("use_catalogue", default=False, types=bool)
+        self.options.declare("off_the_shelf", default=False, types=bool)
         beta_selection = "average"
         Dpro_selection = "next"
         self._clf = NearestNeighbor(
@@ -51,18 +51,18 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         # inputs: estimated values
         self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:diameter:estimated", val=np.nan, units="m")
-        self.add_input("data:weights:propeller:mass:estimated", val=np.nan, units="kg")
+        self.add_input("data:weights:propulsion:propeller:mass:estimated", val=np.nan, units="kg")
 
-        # outputs: catalogue values if use_catalogues is True
-        if self.options["use_catalogue"]:
+        # outputs: catalogue values if off_the_shelfs is True
+        if self.options["off_the_shelf"]:
             self.add_output("data:propulsion:propeller:beta:catalogue", units=None)
             self.add_output("data:propulsion:propeller:diameter:catalogue", units="m")
-            self.add_output("data:weights:propeller:mass:catalogue", units="kg")
+            self.add_output("data:weights:propulsion:propeller:mass:catalogue", units="kg")
 
-        # outputs: 'real' values (= estimated values if use_catalogue is False, catalogue values else)
+        # outputs: 'real' values (= estimated values if off_the_shelf is False, catalogue values else)
         self.add_output("data:propulsion:propeller:beta", units=None)
         self.add_output("data:propulsion:propeller:diameter", units="m")
-        self.add_output("data:weights:propeller:mass", units="kg")
+        self.add_output("data:weights:propulsion:propeller:mass", units="kg")
 
     def setup_partials(self):
         self.declare_partials(
@@ -76,8 +76,8 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:weights:propeller:mass",
-            "data:weights:propeller:mass:estimated",
+            "data:weights:propulsion:propeller:mass",
+            "data:weights:propulsion:propeller:mass:estimated",
             val=1.0,
             method="fd",
         )
@@ -88,7 +88,7 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         """
 
         # OFF-THE-SHELF COMPONENTS SELECTION
-        if self.options["use_catalogue"]:
+        if self.options["off_the_shelf"]:
             # Definition parameters for propeller selection
             beta_opt = inputs["data:propulsion:propeller:beta:estimated"]
             Dpro_opt = inputs["data:propulsion:propeller:diameter:estimated"]
@@ -106,8 +106,8 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:propeller:diameter"] = outputs[
                 "data:propulsion:propeller:diameter:catalogue"
             ] = Dpro
-            outputs["data:weights:propeller:mass"] = outputs[
-                "data:weights:propeller:mass:catalogue"
+            outputs["data:weights:propulsion:propeller:mass"] = outputs[
+                "data:weights:propulsion:propeller:mass:catalogue"
             ] = Mpro
 
         # CUSTOM COMPONENTS (no change)
@@ -118,4 +118,4 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:propeller:diameter"] = inputs[
                 "data:propulsion:propeller:diameter:estimated"
             ]
-            outputs["data:weights:propeller:mass"] = inputs["data:weights:propeller:mass:estimated"]
+            outputs["data:weights:propulsion:propeller:mass"] = inputs["data:weights:propulsion:propeller:mass:estimated"]

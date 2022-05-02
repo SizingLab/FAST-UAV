@@ -11,7 +11,7 @@ import numpy as np
 
 PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
-    "..",
+    "",
     "..",
     "..",
     "..",
@@ -33,11 +33,11 @@ class ESCCatalogueSelection(om.ExplicitComponent):
     def initialize(self):
         """
         ESC selection and component's parameters assignment:
-            - If use_catalogue is True, an ESC is selected from the provided catalogue, according to the definition
+            - If off_the_shelf is True, an ESC is selected from the provided catalogue, according to the definition
                parameters. The component is then fully described by the manufacturer's data.
             - Otherwise, the previously estimated parameters are kept to describe the component.
         """
-        self.options.declare("use_catalogue", default=False, types=bool)
+        self.options.declare("off_the_shelf", default=False, types=bool)
         Pmax_selection = "average"
         Vmax_selection = "average"
         self._clf = NearestNeighbor(
@@ -49,18 +49,18 @@ class ESCCatalogueSelection(om.ExplicitComponent):
         # inputs: estimated values
         self.add_input("data:propulsion:esc:power:max:estimated", val=np.nan, units="W")
         self.add_input("data:propulsion:esc:voltage:estimated", val=np.nan, units="V")
-        self.add_input("data:weights:esc:mass:estimated", val=np.nan, units="kg")
+        self.add_input("data:weights:propulsion:esc:mass:estimated", val=np.nan, units="kg")
         self.add_input("data:propulsion:esc:efficiency:estimated", val=np.nan, units=None)
-        # outputs: catalogue values if use_catalogues is True
-        if self.options["use_catalogue"]:
+        # outputs: catalogue values if off_the_shelfs is True
+        if self.options["off_the_shelf"]:
             self.add_output("data:propulsion:esc:voltage:catalogue", units="V")
             self.add_output("data:propulsion:esc:power:max:catalogue", units="W")
-            self.add_output("data:weights:esc:mass:catalogue", units="kg")
+            self.add_output("data:weights:propulsion:esc:mass:catalogue", units="kg")
             # self.add_output('data:propulsion:esc:efficiency:catalogue', units=None)
-        # outputs: 'real' values (= estimated values if use_catalogue is False, catalogue values else)
+        # outputs: 'real' values (= estimated values if off_the_shelf is False, catalogue values else)
         self.add_output("data:propulsion:esc:voltage", units="V")
         self.add_output("data:propulsion:esc:power:max", units="W")
-        self.add_output("data:weights:esc:mass", units="kg")
+        self.add_output("data:weights:propulsion:esc:mass", units="kg")
         self.add_output("data:propulsion:esc:efficiency", units=None)
 
     def setup_partials(self):
@@ -75,8 +75,8 @@ class ESCCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:weights:esc:mass",
-            "data:weights:esc:mass:estimated",
+            "data:weights:propulsion:esc:mass",
+            "data:weights:propulsion:esc:mass:estimated",
             val=1.0,
         )
         self.declare_partials(
@@ -91,7 +91,7 @@ class ESCCatalogueSelection(om.ExplicitComponent):
         """
 
         # OFF-THE-SHELF COMPONENTS SELECTION
-        if self.options["use_catalogue"]:
+        if self.options["off_the_shelf"]:
             # Definition parameters for ESC selection
             P_esc_opt = inputs["data:propulsion:esc:power:max:estimated"]
             V_esc_opt = inputs["data:propulsion:esc:voltage:estimated"]
@@ -109,7 +109,7 @@ class ESCCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:esc:voltage"] = outputs[
                 "data:propulsion:esc:voltage:catalogue"
             ] = V_esc
-            outputs["data:weights:esc:mass"] = outputs["data:weights:esc:mass:catalogue"] = M_esc
+            outputs["data:weights:propulsion:esc:mass"] = outputs["data:weights:propulsion:esc:mass:catalogue"] = M_esc
             outputs["data:propulsion:esc:efficiency"] = inputs[
                 "data:propulsion:esc:efficiency:estimated"
             ]
@@ -120,7 +120,7 @@ class ESCCatalogueSelection(om.ExplicitComponent):
                 "data:propulsion:esc:power:max:estimated"
             ]
             outputs["data:propulsion:esc:voltage"] = inputs["data:propulsion:esc:voltage:estimated"]
-            outputs["data:weights:esc:mass"] = inputs["data:weights:esc:mass:estimated"]
+            outputs["data:weights:propulsion:esc:mass"] = inputs["data:weights:propulsion:esc:mass:estimated"]
             outputs["data:propulsion:esc:efficiency"] = inputs[
                 "data:propulsion:esc:efficiency:estimated"
             ]

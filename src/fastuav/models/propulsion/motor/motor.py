@@ -4,11 +4,10 @@ Motor component
 import fastoad.api as oad
 import openmdao.api as om
 from fastuav.models.propulsion.motor.definition_parameters import MotorDefinitionParameters
-from fastuav.models.propulsion.motor.estimation.models import MotorEstimationModels
-from fastuav.models.propulsion.motor.estimation.catalogue import MotorCatalogueSelection
-from fastuav.models.propulsion.motor.performances import MotorPerfos
+from fastuav.models.propulsion.motor.estimation_models import MotorEstimationModels
+from fastuav.models.propulsion.motor.catalogue import MotorCatalogueSelection
+from fastuav.models.propulsion.motor.performance_analysis import MotorPerformanceGroup
 from fastuav.models.propulsion.motor.constraints import MotorConstraints
-from fastuav.models.propulsion.motor.gearbox.models import Gearbox, NoGearbox
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.propulsion.motor")
@@ -18,24 +17,14 @@ class Motor(om.Group):
     """
 
     def initialize(self):
-        self.options.declare("use_catalogue", default=False, types=bool)
-        self.options.declare("use_gearbox", default=True, types=bool)
+        self.options.declare("off_the_shelf", default=False, types=bool)
 
     def setup(self):
-        # Motor
         self.add_subsystem("definition_parameters", MotorDefinitionParameters(), promotes=["*"])
-        estimation = self.add_subsystem("estimation", om.Group(), promotes=["*"])
-        estimation.add_subsystem("models", MotorEstimationModels(), promotes=["*"])
-        estimation.add_subsystem(
-            "catalogue" if self.options["use_catalogue"] else "no_catalogue",
-            MotorCatalogueSelection(use_catalogue=self.options["use_catalogue"]),
-            promotes=["*"],
+        self.add_subsystem("estimation_models", MotorEstimationModels(), promotes=["*"])
+        self.add_subsystem("catalogue_selection" if self.options["off_the_shelf"] else "skip_catalogue_selection",
+                           MotorCatalogueSelection(off_the_shelf=self.options["off_the_shelf"]),
+                           promotes=["*"],
         )
-        self.add_subsystem("performances", MotorPerfos(), promotes=["*"])
+        self.add_subsystem("performance_analysis", MotorPerformanceGroup(), promotes=["*"])
         self.add_subsystem("constraints", MotorConstraints(), promotes=["*"])
-
-        # Gearbox
-        if self.options["use_gearbox"]:
-            self.add_subsystem("gearbox", Gearbox(), promotes=["*"])
-        else:
-            self.add_subsystem("no_gearbox", NoGearbox(), promotes=["*"])

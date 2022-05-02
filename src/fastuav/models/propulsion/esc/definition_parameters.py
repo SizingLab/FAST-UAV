@@ -3,7 +3,7 @@ Definition parameters for the Electronic Speed Controller (ESC).
 """
 import openmdao.api as om
 import numpy as np
-from fastuav.models.uncertainty.uncertainty import add_subsystem_with_deviation
+from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
 class ESCDefinitionParameters(om.Group):
@@ -36,7 +36,7 @@ class Power(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:propulsion:esc:power:k", val=np.nan, units=None)
+        self.add_input("data:propulsion:esc:power:k", val=1.0, units=None)
         self.add_input("data:propulsion:motor:power:takeoff", val=np.nan, units="W")
         self.add_input("data:propulsion:motor:voltage:takeoff", val=np.nan, units="V")
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
@@ -109,29 +109,11 @@ class Voltage(om.ExplicitComponent):
 
         partials[
             "data:propulsion:esc:voltage:estimated", "data:propulsion:esc:power:max:estimated"
-        ] = ((1 / 3) * Vesc_ref / Pesc_ref ** (1 / 3) / P_esc ** (2 / 3))
+        ] = (1 / 3) * Vesc_ref / Pesc_ref ** (1 / 3) / P_esc ** (2 / 3)
+        partials[
+            "data:propulsion:esc:voltage:estimated", "data:propulsion:esc:power:reference"
+        ] = - (1 / 3) * Vesc_ref * P_esc ** (1 / 3) / Pesc_ref ** (4 / 3)
+        partials[
+            "data:propulsion:esc:voltage:estimated", "data:propulsion:esc:voltage:reference"
+        ] = (P_esc / Pesc_ref) ** (1 / 3)
 
-
-# class Voltage(om.ExplicitComponent):
-#     """
-#     Computes ESC voltage
-#     """
-#
-#     def setup(self):
-#         self.add_input('data:propulsion:battery:voltage', val=np.nan, units='V')
-#         self.add_output('data:propulsion:esc:voltage:estimated', units='V')
-#
-#     def setup_partials(self):
-#         self.declare_partials('*', '*', method='exact')
-#
-#     def compute(self, inputs, outputs):
-#         Vbat = inputs['data:propulsion:battery:voltage']
-#
-#         V_esc = Vbat  # [V] ESC voltage
-#         #V_esc = 1.84 * P_esc ** 0.36  # [V] ESC voltage
-#
-#         outputs['data:propulsion:esc:voltage:estimated'] = V_esc
-#
-#     def compute_partials(self, inputs, partials, discrete_inputs=None):
-#         partials['data:propulsion:esc:voltage:estimated',
-#                  'data:propulsion:battery:voltage'] = 1

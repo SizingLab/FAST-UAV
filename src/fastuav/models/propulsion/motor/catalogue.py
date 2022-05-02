@@ -11,7 +11,7 @@ import numpy as np
 
 PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
-    "..",
+    "",
     "..",
     "..",
     "..",
@@ -39,11 +39,11 @@ class MotorCatalogueSelection(om.ExplicitComponent):
     def initialize(self):
         """
         Motor selection and component's parameters assignment:
-            - If use_catalogue is True, a motor is selected from the provided catalogue, according to the definition
+            - If off_the_shelf is True, a motor is selected from the provided catalogue, according to the definition
                parameters. The component is then fully described by the manufacturer's data.
             - Otherwise, the previously estimated parameters are kept to describe the component.
         """
-        self.options.declare("use_catalogue", default=False, types=bool)
+        self.options.declare("off_the_shelf", default=False, types=bool)
         T_selection = "next"
         Kt_selection = "average"
         self._clf = NearestNeighbor(
@@ -60,22 +60,22 @@ class MotorCatalogueSelection(om.ExplicitComponent):
         self.add_input("data:propulsion:motor:torque:nominal:estimated", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:friction:estimated", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:resistance:estimated", val=np.nan, units="V/A")
-        self.add_input("data:weights:motor:mass:estimated", val=np.nan, units="kg")
-        # outputs: catalogue values if use_catalogues is True
-        if self.options["use_catalogue"]:
+        self.add_input("data:weights:propulsion:motor:mass:estimated", val=np.nan, units="kg")
+        # outputs: catalogue values if off_the_shelfs is True
+        if self.options["off_the_shelf"]:
             self.add_output("data:propulsion:motor:torque:max:catalogue", units="N*m")
             self.add_output("data:propulsion:motor:torque:coefficient:catalogue", units="N*m/A")
             self.add_output("data:propulsion:motor:torque:nominal:catalogue", units="N*m")
             self.add_output("data:propulsion:motor:torque:friction:catalogue", units="N*m")
             self.add_output("data:propulsion:motor:resistance:catalogue", units="V/A")
-            self.add_output("data:weights:motor:mass:catalogue", units="kg")
-        # outputs: 'real' values (= estimated values if use_catalogue is False, catalogue values else)
+            self.add_output("data:weights:propulsion:motor:mass:catalogue", units="kg")
+        # outputs: 'real' values (= estimated values if off_the_shelf is False, catalogue values else)
         self.add_output("data:propulsion:motor:torque:max", units="N*m")
         self.add_output("data:propulsion:motor:torque:coefficient", units="N*m/A")
         self.add_output("data:propulsion:motor:torque:nominal", units="N*m")
         self.add_output("data:propulsion:motor:torque:friction", units="N*m")
         self.add_output("data:propulsion:motor:resistance", units="V/A")
-        self.add_output("data:weights:motor:mass", units="kg")
+        self.add_output("data:weights:propulsion:motor:mass", units="kg")
 
     def setup_partials(self):
         self.declare_partials(
@@ -104,8 +104,8 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:weights:motor:mass",
-            "data:weights:motor:mass:estimated",
+            "data:weights:propulsion:motor:mass",
+            "data:weights:propulsion:motor:mass:estimated",
             val=1.0,
         )
 
@@ -115,7 +115,7 @@ class MotorCatalogueSelection(om.ExplicitComponent):
         """
 
         # OFF-THE-SHELF COMPONENTS SELECTION
-        if self.options["use_catalogue"]:
+        if self.options["off_the_shelf"]:
 
             # Definition parameters for motor selection
             Tmax_opt = inputs["data:propulsion:motor:torque:max:estimated"]
@@ -147,7 +147,7 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:motor:resistance"] = outputs[
                 "data:propulsion:motor:resistance:catalogue"
             ] = Rmot
-            outputs["data:weights:motor:mass"] = outputs["data:weights:motor:mass:catalogue"] = Mmot
+            outputs["data:weights:propulsion:motor:mass"] = outputs["data:weights:propulsion:motor:mass:catalogue"] = Mmot
 
         # CUSTOM COMPONENTS (no change)
         else:
@@ -166,4 +166,4 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:motor:resistance"] = inputs[
                 "data:propulsion:motor:resistance:estimated"
             ]
-            outputs["data:weights:motor:mass"] = inputs["data:weights:motor:mass:estimated"]
+            outputs["data:weights:propulsion:motor:mass"] = inputs["data:weights:propulsion:motor:mass:estimated"]

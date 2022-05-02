@@ -13,11 +13,10 @@ class Gearbox(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
         self.add_input("data:propulsion:motor:torque:nominal", val=np.nan, units="N*m")
-        self.add_output("data:weights:gearbox:mass", units="kg")
+        self.add_output("data:weights:propulsion:gearbox:mass", units="kg")
         self.add_output("data:propulsion:gearbox:gear_diameter", units="m")
         self.add_output("data:propulsion:gearbox:pinion_diameter", units="m")
         self.add_output("data:propulsion:gearbox:inner_diameter", units="m")
-        self.add_output("data:propulsion:gearbox", units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -42,24 +41,21 @@ class Gearbox(om.ExplicitComponent):
         dg = Nred * dp  # Gear diameter [m]
         di = mg1 * dp  # Inner diameter [m]
 
-        outputs["data:weights:gearbox:mass"] = Mgear
+        outputs["data:weights:propulsion:gearbox:mass"] = Mgear
         outputs["data:propulsion:gearbox:gear_diameter"] = dg
         outputs["data:propulsion:gearbox:pinion_diameter"] = dp
         outputs["data:propulsion:gearbox:inner_diameter"] = di
-        outputs["data:propulsion:gearbox"] = True
 
 
 class NoGearbox(om.ExplicitComponent):
     """
-    No gearbox: sets the value off 'data:propulsion:gearbox' to False and 'data:weights:gearbox:mass' to 0.0
+    No gearbox: sets the value 'data:weights:propulsion:gearbox:mass' to 0.0 and reduction ratio to 1.0
     """
 
     def setup(self):
-        self.add_output("data:propulsion:gearbox", units=None)
-        self.add_output("data:weights:gearbox:mass", units="kg")
-        # self.add_output("data:propulsion:gearbox:N_red", units=None)
+        self.add_output("data:weights:propulsion:gearbox:mass", units="kg")
+        self.add_output("data:propulsion:gearbox:N_red", units=None)
 
     def compute(self, inputs, outputs):
-        outputs["data:propulsion:gearbox"] = False
-        outputs["data:weights:gearbox:mass"] = 0.0
-        # outputs["data:propulsion:gearbox:N_red"] = 1.0
+        outputs["data:weights:propulsion:gearbox:mass"] = 0.0
+        outputs["data:propulsion:gearbox:N_red"] = 1.0

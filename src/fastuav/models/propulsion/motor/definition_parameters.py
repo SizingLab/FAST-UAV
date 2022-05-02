@@ -3,7 +3,7 @@ Definition parameters for the motor.
 """
 import openmdao.api as om
 import numpy as np
-from fastuav.models.uncertainty.uncertainty import add_subsystem_with_deviation
+from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
 class MotorDefinitionParameters(om.Group):

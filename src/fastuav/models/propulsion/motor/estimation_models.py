@@ -3,7 +3,7 @@ Estimation models for the motor
 """
 import openmdao.api as om
 import numpy as np
-from fastuav.models.uncertainty.uncertainty import add_subsystem_with_deviation
+from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
 class MotorEstimationModels(om.Group):
@@ -38,7 +38,7 @@ class MotorEstimationModels(om.Group):
             self,
             "weight",
             Weight(),
-            uncertain_outputs={"data:weights:motor:mass:estimated": "kg"},
+            uncertain_outputs={"data:weights:propulsion:motor:mass:estimated": "kg"},
         )
 
         self.add_subsystem("geometry", Geometry(), promotes=["*"])
@@ -137,8 +137,8 @@ class Weight(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:propulsion:motor:torque:nominal:estimated", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:nominal:reference", val=np.nan, units="N*m")
-        self.add_input("data:weights:motor:mass:reference", val=np.nan, units="kg")
-        self.add_output("data:weights:motor:mass:estimated", units="kg")
+        self.add_input("data:weights:propulsion:motor:mass:reference", val=np.nan, units="kg")
+        self.add_output("data:weights:propulsion:motor:mass:estimated", units="kg")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -147,11 +147,11 @@ class Weight(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         Tmot = inputs["data:propulsion:motor:torque:nominal:estimated"]
         Tmot_ref = inputs["data:propulsion:motor:torque:nominal:reference"]
-        Mmot_ref = inputs["data:weights:motor:mass:reference"]
+        Mmot_ref = inputs["data:weights:propulsion:motor:mass:reference"]
 
         Mmot = Mmot_ref * (Tmot / Tmot_ref) ** (3 / 3.5)  # [kg] Motor mass (estimated)
 
-        outputs["data:weights:motor:mass:estimated"] = Mmot
+        outputs["data:weights:propulsion:motor:mass:estimated"] = Mmot
 
 
 class Geometry(om.ExplicitComponent):
@@ -161,8 +161,8 @@ class Geometry(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:motor:length:reference", val=np.nan, units="m")
-        self.add_input("data:weights:motor:mass:reference", val=np.nan, units="kg")
-        self.add_input("data:weights:motor:mass:estimated", val=np.nan, units="kg")
+        self.add_input("data:weights:propulsion:motor:mass:reference", val=np.nan, units="kg")
+        self.add_input("data:weights:propulsion:motor:mass:estimated", val=np.nan, units="kg")
         self.add_output("data:propulsion:motor:length:estimated", units="m")
 
     def setup_partials(self):
@@ -171,8 +171,8 @@ class Geometry(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Lmot_ref = inputs["data:propulsion:motor:length:reference"]
-        Mmot_ref = inputs["data:weights:motor:mass:reference"]
-        Mmot = inputs["data:weights:motor:mass:estimated"]
+        Mmot_ref = inputs["data:weights:propulsion:motor:mass:reference"]
+        Mmot = inputs["data:weights:propulsion:motor:mass:estimated"]
 
         Lmot = Lmot_ref * (Mmot / Mmot_ref) ** (1 / 3)  # [m] Motor length (estimated)
 

@@ -3,7 +3,7 @@ Estimation models for the battery.
 """
 import openmdao.api as om
 import numpy as np
-from fastuav.models.uncertainty.uncertainty import add_subsystem_with_deviation
+from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
 class BatteryEstimationModels(om.Group):
@@ -24,7 +24,7 @@ class BatteryEstimationModels(om.Group):
             self,
             "weight",
             Weight(),
-            uncertain_outputs={"data:weights:battery:mass:estimated": "kg"},
+            uncertain_outputs={"data:weights:propulsion:battery:mass:estimated": "kg"},
         )
 
         self.add_subsystem("geometry", Geometry(), promotes=["*"])
@@ -76,29 +76,39 @@ class Weight(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
-        self.add_input("data:weights:battery:mass:reference", val=np.nan, units="kg")
+        self.add_input("data:weights:propulsion:battery:mass:reference", val=np.nan, units="kg")
         self.add_input("data:propulsion:battery:energy:reference", val=np.nan, units="kJ")
-        self.add_output("data:weights:battery:mass:estimated", units="kg")
+        self.add_output("data:weights:propulsion:battery:mass:estimated", units="kg")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         Ebat = inputs["data:propulsion:battery:energy:estimated"]
-        Mbat_ref = inputs["data:weights:battery:mass:reference"]
+        Mbat_ref = inputs["data:weights:propulsion:battery:mass:reference"]
         Ebat_ref = inputs["data:propulsion:battery:energy:reference"]
 
         Mbat = Mbat_ref * Ebat / Ebat_ref  # [kg] estimated battery mass
 
-        outputs["data:weights:battery:mass:estimated"] = Mbat
+        outputs["data:weights:propulsion:battery:mass:estimated"] = Mbat
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Mbat_ref = inputs["data:weights:battery:mass:reference"]
+        Ebat = inputs["data:propulsion:battery:energy:estimated"]
+        Mbat_ref = inputs["data:weights:propulsion:battery:mass:reference"]
         Ebat_ref = inputs["data:propulsion:battery:energy:reference"]
 
         partials[
-            "data:weights:battery:mass:estimated", "data:propulsion:battery:energy:estimated"
-        ] = (Mbat_ref / Ebat_ref)
+            "data:weights:propulsion:battery:mass:estimated",
+            "data:propulsion:battery:energy:estimated"
+        ] = Mbat_ref / Ebat_ref
+        partials[
+            "data:weights:propulsion:battery:mass:estimated",
+            "data:weights:propulsion:battery:mass:reference"
+        ] = Ebat / Ebat_ref
+        partials[
+            "data:weights:propulsion:battery:mass:estimated",
+            "data:propulsion:battery:energy:reference"
+        ] = - Mbat_ref * Ebat / Ebat_ref ** 2
 
 
 class Geometry(om.ExplicitComponent):
