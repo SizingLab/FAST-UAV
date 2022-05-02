@@ -2,3 +2,5 @@
 /src/fastuav/notebooks/workdir/
 /src/fastuav/notebooks/.ipynb_checkpoints/
 /.ipynb_checkpoints/
+/src/fastuav/models/performance/.pytest_cache/
+/src/fastuav/notebooks/outcmaes/
