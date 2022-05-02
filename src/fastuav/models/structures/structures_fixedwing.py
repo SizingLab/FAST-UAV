@@ -187,7 +187,7 @@ class WingWeight(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:loads:vertical:factor", val=4.5, units=None)
-        self.add_input("data:weights:MTOW:guess", val=np.nan, units="kg")
+        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:y", val=np.nan, units="m")
@@ -197,14 +197,14 @@ class WingWeight(om.ExplicitComponent):
         self.add_input("data:geometry:wing:root:thickness", val=np.nan, units="m")
         self.add_input("data:geometry:wing:tip:thickness", val=np.nan, units="m")
         self.add_input("data:structures:wing:spar:stress:max", val=np.nan, units="N/m**2")
-        self.add_input("data:weights:wing:spar:density", val=np.nan, units="kg/m**3")
+        self.add_input("data:weights:airframe:wing:spar:density", val=np.nan, units="kg/m**3")
         self.add_input("data:structures:wing:ribs:thickness", val=np.nan, units="m")
-        self.add_input("data:weights:wing:ribs:density", val=np.nan, units="kg/m**3")
-        self.add_input("data:weights:wing:skin:density", val=np.nan, units="kg/m**2")
-        self.add_output("data:weights:wing:mass", units="kg", lower=0.0)
-        self.add_output("data:weights:wing:spar:mass", units="kg", lower=0.0)
-        self.add_output("data:weights:wing:skin:mass", units="kg", lower=0.0)
-        self.add_output("data:weights:wing:ribs:mass", units="kg", lower=0.0)
+        self.add_input("data:weights:airframe:wing:ribs:density", val=np.nan, units="kg/m**3")
+        self.add_input("data:weights:airframe:wing:skin:density", val=np.nan, units="kg/m**2")
+        self.add_output("data:weights:airframe:wing:mass", units="kg", lower=0.0)
+        self.add_output("data:weights:airframe:wing:spar:mass", units="kg", lower=0.0)
+        self.add_output("data:weights:airframe:wing:skin:mass", units="kg", lower=0.0)
+        self.add_output("data:weights:airframe:wing:ribs:mass", units="kg", lower=0.0)
         self.add_output("data:structures:wing:ribs:number", units=None, lower=0.0)
 
         if self.options["spar_model"] == "pipe":
@@ -235,7 +235,7 @@ class WingWeight(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         n_ult = inputs["data:loads:vertical:factor"]
-        Mtotal_guess = inputs["data:weights:MTOW:guess"]
+        Mtotal_guess = inputs["data:weights:mtow:guess"]
         S_w = inputs["data:geometry:wing:surface"]
         b_w = inputs["data:geometry:wing:span"]
         y_MAC = inputs["data:geometry:wing:MAC:y"]
@@ -245,10 +245,10 @@ class WingWeight(om.ExplicitComponent):
         t_root = inputs["data:geometry:wing:root:thickness"]
         t_tip = inputs["data:geometry:wing:tip:thickness"]
         sig_max = inputs["data:structures:wing:spar:stress:max"]
-        rho_spar = inputs["data:weights:wing:spar:density"]
+        rho_spar = inputs["data:weights:airframe:wing:spar:density"]
         t_rib = inputs["data:structures:wing:ribs:thickness"]
-        rho_rib = inputs["data:weights:wing:ribs:density"]
-        rho_skin = inputs["data:weights:wing:skin:density"]
+        rho_rib = inputs["data:weights:airframe:wing:ribs:density"]
+        rho_skin = inputs["data:weights:airframe:wing:skin:density"]
 
         F_max = (
             n_ult * Mtotal_guess * g / 2
@@ -289,10 +289,10 @@ class WingWeight(om.ExplicitComponent):
 
         m_wing = 2 * (m_spar + m_ribs + m_skin)  # total mass (both sides) [kg]
 
-        outputs["data:weights:wing:mass"] = m_wing
-        outputs["data:weights:wing:spar:mass"] = 2 * m_spar
-        outputs["data:weights:wing:skin:mass"] = 2 * m_skin
-        outputs["data:weights:wing:ribs:mass"] = 2 * m_ribs
+        outputs["data:weights:airframe:wing:mass"] = m_wing
+        outputs["data:weights:airframe:wing:spar:mass"] = 2 * m_spar
+        outputs["data:weights:airframe:wing:skin:mass"] = 2 * m_skin
+        outputs["data:weights:airframe:wing:ribs:mass"] = 2 * m_ribs
         outputs["data:structures:wing:ribs:number"] = N_ribs
 
 
@@ -303,16 +303,16 @@ class HorizontalTailWeight(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:tail:horizontal:surface", val=np.nan, units="m**2")
-        self.add_input("data:weights:tail:density", val=np.nan, units="kg/m**2")
-        self.add_output("data:weights:tail:horizontal:mass", units="kg", lower=0.0)
-        # self.add_output("data:weights:tail:horizontal:skin:mass", units="kg", lower=0.0)
+        self.add_input("data:weights:airframe:tail:density", val=np.nan, units="kg/m**2")
+        self.add_output("data:weights:airframe:tail:horizontal:mass", units="kg", lower=0.0)
+        # self.add_output("data:weights:airframe:tail:horizontal:skin:mass", units="kg", lower=0.0)
         # self.add_input("data:loads:vertical:factor", val=4.5, units=None)
-        # self.add_input("data:weights:MTOW:guess", val=np.nan, units="kg")
+        # self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
         # self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         # self.add_input("data:geometry:tail:horizontal:MAC:y:local", val=np.nan, units="m")
         # self.add_input("data:structures:wing:spar:diameter:k", val=np.nan, units=None)
         # self.add_input("data:structures:wing:spar:stress:max", val=np.nan, units="N/m**2")
-        # self.add_input("data:weights:wing:spar:density", val=np.nan, units="kg/m**3")
+        # self.add_input("data:weights:airframe:wing:spar:density", val=np.nan, units="kg/m**3")
         # self.add_input("data:geometry:tail:horizontal:span", val=np.nan, units="m")
         # self.add_input("data:geometry:tail:horizontal:MAC:length", val=np.nan, units="m")
         # self.add_input("data:geometry:tail:horizontal:root:chord", val=np.nan, units="m")
@@ -320,10 +320,10 @@ class HorizontalTailWeight(om.ExplicitComponent):
         # self.add_input("data:geometry:tail:horizontal:root:thickness", val=np.nan, units="m")
         # self.add_input("data:geometry:tail:horizontal:tip:thickness", val=np.nan, units="m")
         # self.add_input("data:structures:wing:ribs:thickness", val=np.nan, units="m")
-        # self.add_input("data:weights:wing:ribs:density", val=np.nan, units="kg/m**3")
-        # self.add_output("data:weights:tail:horizontal:ribs:mass", units="kg", lower=0.0)
+        # self.add_input("data:weights:airframe:wing:ribs:density", val=np.nan, units="kg/m**3")
+        # self.add_output("data:weights:airframe:tail:horizontal:ribs:mass", units="kg", lower=0.0)
         # self.add_output("data:structures:tail:horizontal:ribs:number", units=None, lower=0.0)
-        # self.add_output("data:weights:tail:horizontal:spar:mass", units="kg", lower=0.0)
+        # self.add_output("data:weights:airframe:tail:horizontal:spar:mass", units="kg", lower=0.0)
         # self.add_output("data:structures:tail:horizontal:spar:diameter:inner", units="m", lower=0.0)
         # self.add_output("data:structures:tail:horizontal:spar:diameter:outer", units="m", lower=0.0)
 
@@ -333,14 +333,14 @@ class HorizontalTailWeight(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         S_ht = inputs["data:geometry:tail:horizontal:surface"]
-        rho_skin = inputs["data:weights:tail:density"]
+        rho_skin = inputs["data:weights:airframe:tail:density"]
         # n_ult = inputs["data:loads:vertical:factor"]
-        # Mtotal_guess = inputs["data:weights:MTOW:guess"]
+        # Mtotal_guess = inputs["data:weights:mtow:guess"]
         # S_w = inputs["data:geometry:wing:surface"]
         # y_MAC = inputs["data:geometry:tail:horizontal:MAC:y:local"]
         # k_spar = inputs["data:structures:wing:spar:diameter:k"]
         # sig_max = inputs["data:structures:wing:spar:stress:max"]
-        # rho_spar = inputs["data:weights:wing:spar:density"]
+        # rho_spar = inputs["data:weights:airframe:wing:spar:density"]
         # b_ht = inputs["data:geometry:tail:horizontal:span"]
         # c_MAC = inputs["data:geometry:tail:horizontal:MAC:length"]
         # c_root = inputs["data:geometry:tail:horizontal:root:chord"]
@@ -348,7 +348,7 @@ class HorizontalTailWeight(om.ExplicitComponent):
         # t_root = inputs["data:geometry:tail:horizontal:root:thickness"]
         # t_tip = inputs["data:geometry:tail:horizontal:tip:thickness"]
         # t_rib = inputs["data:structures:wing:ribs:thickness"]
-        # rho_rib = inputs["data:weights:wing:ribs:density"]
+        # rho_rib = inputs["data:weights:airframe:wing:ribs:density"]
 
         # F_max = S_ht / S_w * n_ult * Mtotal_guess * g / 2  # ultimate load to be supported by (half) HT [N]
         # m_spar, D_in, D_out = WingWeightModel.spar(F_max, y_MAC, b_ht / 2, k_spar, sig_max, rho_spar)  # spar
@@ -356,11 +356,11 @@ class HorizontalTailWeight(om.ExplicitComponent):
         m_skin = WingWeightModel.skin(S_ht / 2, rho_skin)  # skin
         m_wing = 2 * m_skin  # total mass (both sides) [kg]
 
-        outputs["data:weights:tail:horizontal:mass"] = m_wing
-        # outputs["data:weights:tail:horizontal:skin:mass"] = 2 * m_skin
-        # outputs["data:weights:tail:horizontal:ribs:mass"] = 2 * m_ribs
+        outputs["data:weights:airframe:tail:horizontal:mass"] = m_wing
+        # outputs["data:weights:airframe:tail:horizontal:skin:mass"] = 2 * m_skin
+        # outputs["data:weights:airframe:tail:horizontal:ribs:mass"] = 2 * m_ribs
         # outputs["data:structures:tail:horizontal:ribs:number"] = N_ribs
-        # outputs["data:weights:tail:horizontal:spar:mass"] = 2 * m_spar
+        # outputs["data:weights:airframe:tail:horizontal:spar:mass"] = 2 * m_spar
         # outputs["data:structures:tail:horizontal:spar:diameter:inner"] = D_in
         # outputs["data:structures:tail:horizontal:spar:diameter:outer"] = D_out
 
@@ -372,19 +372,19 @@ class VerticalTailWeight(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:tail:vertical:surface", val=np.nan, units="m**2")
-        self.add_input("data:weights:tail:density", val=np.nan, units="kg/m**2")
-        self.add_output("data:weights:tail:vertical:mass", units="kg", lower=0.0)
-        # self.add_output("data:weights:tail:vertical:skin:mass", units="kg", lower=0.0)
-        # self.add_output("data:weights:tail:vertical:ribs:mass", units="kg", lower=0.0)
+        self.add_input("data:weights:airframe:tail:density", val=np.nan, units="kg/m**2")
+        self.add_output("data:weights:airframe:tail:vertical:mass", units="kg", lower=0.0)
+        # self.add_output("data:weights:airframe:tail:vertical:skin:mass", units="kg", lower=0.0)
+        # self.add_output("data:weights:airframe:tail:vertical:ribs:mass", units="kg", lower=0.0)
         # self.add_output("data:structures:tail:vertical:ribs:number", units=None, lower=0.0)
-        # self.add_input("mission:design_mission:cruise:speed", val=np.nan, units="m/s")
-        # self.add_input("mission:design_mission:cruise:atmosphere:density", val=np.nan, units="kg/m**3")
+        # self.add_input("data:scenarios:cruise:speed", val=np.nan, units="m/s")
+        # self.add_input("data:scenarios:cruise:atmosphere:density", val=np.nan, units="kg/m**3")
         # self.add_input("data:loads:lateral:sideslip", val=np.radians(20), units="rad")
         # self.add_input("data:aerodynamics:Cn_beta", val=0.3, units=None)
         # self.add_input("data:geometry:tail:vertical:MAC:y:local", val=np.nan, units="m")
         # self.add_input("data:structures:wing:spar:diameter:k", val=np.nan, units=None)
         # self.add_input("data:structures:wing:spar:stress:max", val=np.nan, units="N/m**2")
-        # self.add_input("data:weights:wing:spar:density", val=np.nan, units="kg/m**3")
+        # self.add_input("data:weights:airframe:wing:spar:density", val=np.nan, units="kg/m**3")
         # self.add_input("data:geometry:tail:vertical:span", val=np.nan, units="m")
         # self.add_input("data:geometry:tail:vertical:MAC:length", val=np.nan, units="m")
         # self.add_input("data:geometry:tail:vertical:root:chord", val=np.nan, units="m")
@@ -392,10 +392,10 @@ class VerticalTailWeight(om.ExplicitComponent):
         # self.add_input("data:geometry:tail:vertical:root:thickness", val=np.nan, units="m")
         # self.add_input("data:geometry:tail:vertical:tip:thickness", val=np.nan, units="m")
         # self.add_input("data:structures:wing:ribs:thickness", val=np.nan, units="m")
-        # self.add_input("data:weights:wing:ribs:density", val=np.nan, units="kg/m**3")
+        # self.add_input("data:weights:airframe:wing:ribs:density", val=np.nan, units="kg/m**3")
         # self.add_output("data:structures:tail:vertical:spar:diameter:inner", units="m", lower=0.0)
         # self.add_output("data:structures:tail:vertical:spar:diameter:outer", units="m", lower=0.0)
-        # self.add_output("data:weights:tail:vertical:spar:mass", units="kg", lower=0.0)
+        # self.add_output("data:weights:airframe:tail:vertical:spar:mass", units="kg", lower=0.0)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -403,14 +403,14 @@ class VerticalTailWeight(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         S_vt = inputs["data:geometry:tail:vertical:surface"]
-        rho_skin = inputs["data:weights:tail:density"]
+        rho_skin = inputs["data:weights:airframe:tail:density"]
         # Cn_beta = inputs["data:aerodynamics:Cn_beta"]
         # beta = inputs["data:loads:lateral:sideslip"]
         # k_spar = inputs["data:structures:wing:spar:diameter:k"]
         # sig_max = inputs["data:structures:wing:spar:stress:max"]
-        # rho_spar = inputs["data:weights:wing:spar:density"]
-        # V_cruise = inputs["mission:design_mission:cruise:speed"]
-        # rho_air = inputs["mission:design_mission:cruise:atmosphere:density"]
+        # rho_spar = inputs["data:weights:airframe:wing:spar:density"]
+        # V_cruise = inputs["data:scenarios:cruise:speed"]
+        # rho_air = inputs["data:scenarios:cruise:atmosphere:density"]
         # y_MAC = inputs["data:geometry:tail:vertical:MAC:y:local"]
         # q_cruise = 0.5 * rho_air * V_cruise ** 2
         # b_vt = inputs["data:geometry:tail:vertical:span"]
@@ -420,7 +420,7 @@ class VerticalTailWeight(om.ExplicitComponent):
         # t_root = inputs["data:geometry:tail:vertical:root:thickness"]
         # t_tip = inputs["data:geometry:tail:vertical:tip:thickness"]
         # _rib = inputs["data:structures:wing:ribs:thickness"]
-        # rho_rib = inputs["data:weights:wing:ribs:density"]
+        # rho_rib = inputs["data:weights:airframe:wing:ribs:density"]
 
         # F_max = q_cruise * S_vt * Cn_beta * beta  # ultimate aerodynamic load to be supported by vertical tail [N]
         # m_spar, d_spar_in, d_spar_out = WingWeightModel.spar(F_max, y_MAC, b_vt, k_spar, sig_max, rho_spar)  # spar
@@ -428,11 +428,11 @@ class VerticalTailWeight(om.ExplicitComponent):
         m_skin = WingWeightModel.skin(S_vt, rho_skin)  # skin
         m_wing = m_skin  # total mass (both sides) [kg]
 
-        outputs["data:weights:tail:vertical:mass"] = m_wing
-        # outputs["data:weights:tail:vertical:skin:mass"] = m_skin
-        # outputs["data:weights:tail:vertical:ribs:mass"] = m_ribs
+        outputs["data:weights:airframe:tail:vertical:mass"] = m_wing
+        # outputs["data:weights:airframe:tail:vertical:skin:mass"] = m_skin
+        # outputs["data:weights:airframe:tail:vertical:ribs:mass"] = m_ribs
         # outputs["data:structures:tail:vertical:ribs:number"] = N_ribs
-        # outputs["data:weights:tail:vertical:spar:mass"] = m_spar
+        # outputs["data:weights:airframe:tail:vertical:spar:mass"] = m_spar
         # outputs["data:structures:tail:vertical:spar:diameter:inner"] = d_spar_in
         # outputs["data:structures:tail:vertical:spar:diameter:outer"] = d_spar_out
 
@@ -447,11 +447,11 @@ class FuselageWeight(om.ExplicitComponent):
         self.add_input("data:geometry:fuselage:surface:nose", val=np.nan, units="m**2")
         self.add_input("data:geometry:fuselage:surface:mid", val=np.nan, units="m**2")
         self.add_input("data:geometry:fuselage:surface:rear", val=np.nan, units="m**2")
-        self.add_input("data:weights:fuselage:mass:density", val=np.nan, units="kg/m**2")
-        self.add_output("data:weights:fuselage:mass", units="kg", lower=0.0)
-        self.add_output("data:weights:fuselage:mass:nose", units="kg", lower=0.0)
-        self.add_output("data:weights:fuselage:mass:mid", units="kg", lower=0.0)
-        self.add_output("data:weights:fuselage:mass:rear", units="kg", lower=0.0)
+        self.add_input("data:weights:airframe:fuselage:mass:density", val=np.nan, units="kg/m**2")
+        self.add_output("data:weights:airframe:fuselage:mass", units="kg", lower=0.0)
+        self.add_output("data:weights:airframe:fuselage:mass:nose", units="kg", lower=0.0)
+        self.add_output("data:weights:airframe:fuselage:mass:mid", units="kg", lower=0.0)
+        self.add_output("data:weights:airframe:fuselage:mass:rear", units="kg", lower=0.0)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -462,17 +462,17 @@ class FuselageWeight(om.ExplicitComponent):
         S_nose = inputs["data:geometry:fuselage:surface:nose"]
         S_mid = inputs["data:geometry:fuselage:surface:mid"]
         S_rear = inputs["data:geometry:fuselage:surface:rear"]
-        rho_fus = inputs["data:weights:fuselage:mass:density"]
+        rho_fus = inputs["data:weights:airframe:fuselage:mass:density"]
 
         m_nose = S_nose * rho_fus
         m_mid = S_mid * rho_fus
         m_rear = S_rear * rho_fus
         m_fus = S_fus * rho_fus  # mass of fuselage [kg]
 
-        outputs["data:weights:fuselage:mass"] = m_fus
-        outputs["data:weights:fuselage:mass:nose"] = m_nose
-        outputs["data:weights:fuselage:mass:mid"] = m_mid
-        outputs["data:weights:fuselage:mass:rear"] = m_rear
+        outputs["data:weights:airframe:fuselage:mass"] = m_fus
+        outputs["data:weights:airframe:fuselage:mass:nose"] = m_nose
+        outputs["data:weights:airframe:fuselage:mass:mid"] = m_mid
+        outputs["data:weights:airframe:fuselage:mass:rear"] = m_rear
 
 
 class Constraints(om.ExplicitComponent):
