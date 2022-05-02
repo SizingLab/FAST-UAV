@@ -15,15 +15,8 @@ model:
     scenarios:
         id: fastuav.scenarios.fixedwing
     propulsion:
-        propeller:
-            id: fastuav.propulsion.propeller
-        motor:
-            id: fastuav.propulsion.motor
-            use_gearbox: false
-        battery:
-            id: fastuav.propulsion.battery
-        esc:
-            id: fastuav.propulsion.esc
+        id: fastuav.propulsion.fixedwing
+        gearbox: False
     geometry:
         id: fastuav.geometry.fixedwing
     structures:
@@ -32,14 +25,17 @@ model:
     aerodynamics:
         id: fastuav.aerodynamics.fixedwing
     wires:
-        id: fastuav.propulsion.cables.fixedwing
+        id: fastuav.propulsion.wires.fixedwing
+    mtow:
+        id: fastuav.mtow.fixedwing
     stability:
         id: fastuav.stability.fixedwing
     performance:
-        id: fastuav.performance.fixedwing
-    mission:
-        design_mission:
-            id: fastuav.mission.design
+        cruise_range:
+            id: fastuav.performance.endurance.fixedwing
+        missions:
+            id: fastuav.performance.mission
+            file_path: ../../missions/missions_fixedwing.yaml
 
 
 # This section is needed only if optimization process is run
@@ -48,48 +44,48 @@ optimization:
     design_variables:
     
         ## GLOBAL ##
-      - name: data:weights:MTOW:k # over estimation coefficient on the load mass
+      - name: data:weights:mtow:k # over estimation coefficient on the load mass
         lower: 1.0
         upper: 40.0
         
-      - name: data:loads:wing_loading:k
+      - name: data:scenarios:wing_loading:k
         lower: 0.01
         upper: 2.0
         
         ## PROPULSION ##
-      - name: data:propulsion:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
+      - name: data:propulsion:fixedwing:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
         lower: 0.01
         upper: 1.0
 
-      - name: data:propulsion:propeller:beta:guess # pitch/diameter ratio of the propeller
+      - name: data:propulsion:fixedwing:propeller:beta:guess # pitch/diameter ratio of the propeller
         lower: 0.48
         upper: 1.0
 
-      - name: data:propulsion:propeller:advance_ratio:climb # climbing advance ratio
+      - name: data:propulsion:fixedwing:propeller:advance_ratio:climb # climbing advance ratio
         lower: 0.01
         upper: 1.2
 
-      - name: data:propulsion:propeller:advance_ratio:cruise # cruise advance ratio
+      - name: data:propulsion:fixedwing:propeller:advance_ratio:cruise # cruise advance ratio
         lower: 0.01
         upper: 1.2
 
-      - name: data:propulsion:motor:torque:k # over estimation coefficient on the motor torque
+      - name: data:propulsion:fixedwing:motor:torque:k # over estimation coefficient on the motor torque
         lower: 1.0
         upper: 20.0
 
-      - name: data:propulsion:motor:speed:k # over estimation coefficient on the motor speed
+      - name: data:propulsion:fixedwing:motor:speed:k # over estimation coefficient on the motor speed
         lower: 0.1
         upper: 10.0
 
-      - name: data:weights:battery:mass:k # over estimation coefficient on the battery load mass
+      - name: data:propulsion:fixedwing:battery:capacity:k # over estimation coefficient on the battery load mass
         lower: 0.01
         upper: 60.0
         
-      - name: data:propulsion:battery:voltage:k # over estimation coefficient on the battery voltage
+      - name: data:propulsion:fixedwing:battery:voltage:k # over estimation coefficient on the battery voltage
         lower: 1.0
         upper: 10.0
 
-      - name: data:propulsion:esc:power:k # over estimation coefficient on the ESC power
+      - name: data:propulsion:fixedwing:esc:power:k # over estimation coefficient on the ESC power
         lower: 1.0
         upper: 15.0
     
@@ -131,50 +127,58 @@ optimization:
     constraints:
     
         ## GLOBAL ##
-      - name: data:weights:MTOW:guess:constraint # Mass consistency
+      - name: data:weights:mtow:guess:constraint # Mass consistency
         lower: 0.0
 
-      - name: data:weights:MTOW:constraint # MTOW specification
+      - name: data:weights:mtow:requirement:constraint # MTOW requirement
         lower: 0.0
         
-      - name: data:loads:wing_load:stall:constraint  # minimum wing loading required for stall speed
+      - name: data:scenarios:wing_loading:stall:constraint  # minimum wing loading required for stall speed
         lower: 0.0
         
       ## PROPULSION ##
-      - name: data:propulsion:propeller:constraints:speed:climb  # propeller speed in climb
+      - name: data:propulsion:fixedwing:propeller:constraints:airspeed:climb  # climb speed requirement
+        lower: 0.0
+        upper: 0.01
+        
+      - name: data:propulsion:fixedwing:propeller:constraints:airspeed:cruise  # cruise speed requirement
+        lower: 0.0
+        upper: 0.01
+        
+      - name: data:propulsion:fixedwing:propeller:constraints:rpm:climb  # propeller rpm in climb
         lower: 0.0
         
-      - name: data:propulsion:propeller:constraints:speed:cruise  # propeller speed in cruise
+      - name: data:propulsion:fixedwing:propeller:constraints:rpm:cruise  # propeller rpm in cruise
         lower: 0.0
         
-      - name: data:propulsion:motor:constraints:torque:takeoff  # motor torque at takeoff
+      - name: data:propulsion:fixedwing:motor:constraints:torque:takeoff  # motor torque at takeoff
         lower: 0.0
         
-      - name: data:propulsion:motor:constraints:torque:climb  # motor torque in climb
+      - name: data:propulsion:fixedwing:motor:constraints:torque:climb  # motor torque in climb
         lower: 0.0
       
-      - name: data:propulsion:battery:constraints:power:takeoff  # battery power at takeoff
+      - name: data:propulsion:fixedwing:battery:constraints:power:takeoff  # battery power at takeoff
         lower: 0.0
 
-      - name: data:propulsion:battery:constraints:power:climb  # battery power in climb
+      - name: data:propulsion:fixedwing:battery:constraints:power:climb  # battery power in climb
         lower: 0.0
 
-      - name: data:propulsion:battery:constraints:power:cruise  # battery power in cruise
+      - name: data:propulsion:fixedwing:battery:constraints:power:cruise  # battery power in cruise
         lower: 0.0
 
-      - name: data:propulsion:battery:constraints:voltage:climb  # battery voltage in climb
+      - name: data:propulsion:fixedwing:battery:constraints:voltage:climb  # battery voltage in climb
         lower: 0.0
 
-      - name: data:propulsion:battery:constraints:voltage:cruise  # battery voltage in cruise
+      - name: data:propulsion:fixedwing:battery:constraints:voltage:cruise  # battery voltage in cruise
         lower: 0.0
       
-      - name: data:propulsion:esc:constraints:power:climb  # ESC power in climb
+      - name: data:propulsion:fixedwing:esc:constraints:power:climb  # ESC power in climb
         lower: 0.0
         
-      - name: data:propulsion:esc:constraints:power:cruise  # ESC power in cruise
+      - name: data:propulsion:fixedwing:esc:constraints:power:cruise  # ESC power in cruise
         lower: 0.0
 
-      - name: data:propulsion:esc:constraints:voltage  # ESC voltage
+      - name: data:propulsion:fixedwing:esc:constraints:voltage  # ESC voltage
         lower: 0.0
       
         ## GEOMETRY ##  
@@ -196,23 +200,15 @@ optimization:
         upper: 0.10
       
         ## MISSION ##
-      - name: mission:design_mission:constraints:speed:climb  # climb speed requirement
-        lower: 0.0
-        upper: 0.01
-        
-      - name: mission:design_mission:constraints:speed:cruise  # cruise speed requirement
-        lower: 0.0
-        upper: 0.01
-      
-      - name: mission:design_mission:constraints:energy  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+      - name: mission:sizing:energy:fixedwing:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
         lower: 0.0
       
 
     objective:
       # MASS MINIMIZATION
-      #- name: data:weights:MTOW
-      #  scaler: 1e-1
+      - name: data:weights:mtow
+        scaler: 1e-1
         
       # ENDURANCE MAXIMIZATION
-      - name: data:performance:endurance:cruise:max
-        scaler: -1e-3  # the use of a scaler is highly recommanded due to numerical precision affecting the final convergence.
+      #- name: data:performance:endurance:cruise
+      #  scaler: -1e-3  # the use of a scaler is highly recommanded due to numerical precision affecting the final convergence.

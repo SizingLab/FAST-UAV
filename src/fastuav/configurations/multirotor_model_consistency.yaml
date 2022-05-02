@@ -15,31 +15,26 @@ model:
     scenarios:
         id: fastuav.scenarios.multirotor
     propulsion:
-        propeller:
-            id: fastuav.propulsion.propeller
-        motor:
-            id: fastuav.propulsion.motor
-            use_gearbox: false
-        battery:
-            id: fastuav.propulsion.battery
-        esc:
-            id: fastuav.propulsion.esc
+        id: fastuav.propulsion.multirotor
+        gearbox: False
     geometry:
         id: fastuav.geometry.multirotor
     structures:
         id: fastuav.structures.multirotor
     wires:
-        id: fastuav.propulsion.cables.multirotor
+        id: fastuav.propulsion.wires.multirotor
+    mtow:
+        id: fastuav.mtow.multirotor
     performance:
-        id: fastuav.performance.multirotor
-    mission:
-        design_mission:
-            id: fastuav.mission.design
-
+        endurance:
+            id: fastuav.performance.endurance.multirotor
+        missions:
+            id: fastuav.performance.mission
+            file_path: ../../missions/missions_multirotor.yaml
 
 optimization:
     design_variables:
-      - name: data:weights:MTOW:k # over estimation coefficient on the mass (to solve the mass consistency constraint)
+      - name: data:weights:mtow:k # over estimation coefficient on the mass (to solve the mass consistency constraint)
         upper: 40.0
         lower: 1.0
         
@@ -48,7 +43,7 @@ optimization:
       #  upper: 10.0
 
     constraints:
-      - name: data:weights:MTOW:guess:constraint  # consistency constraint on the drone mass
+      - name: data:weights:mtow:guess:constraint  # consistency constraint on the drone mass
         lower: 0.0
         
       #- name: data:propulsion:battery:constraints:voltage:takeoff
@@ -57,15 +52,15 @@ optimization:
       
     objective:
       # MASS MINIMIZATION
-      - name: data:weights:MTOW
+      - name: data:weights:mtow
         scaler: 1e-1
 
       # ENERGY MINIMIZATION
-      #- name: mission:design_mission:energy
+      #- name: mission:sizing:energy
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      #- name: data:performance:range:max
+      #- name: data:performance:range:cruise
       #  scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION

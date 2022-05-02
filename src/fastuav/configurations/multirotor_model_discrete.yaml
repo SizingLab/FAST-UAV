@@ -17,27 +17,20 @@ model:
     scenarios:
         id: fastuav.scenarios.multirotor
     propulsion:
-        propeller:
-            id: fastuav.propulsion.propeller
-            use_catalogue: true
-        motor:
-            id: fastuav.propulsion.motor
-            use_gearbox: false
-            use_catalogue: false
-        battery:
-            id: fastuav.propulsion.battery
-            use_catalogue: false
-        esc:
-            id: fastuav.propulsion.esc
-            use_catalogue: false
+        id: fastuav.propulsion.multirotor
+        gearbox: False
+        off_the_shelf_propeller: True
     geometry:
         id: fastuav.geometry.multirotor
     structures:
         id: fastuav.structures.multirotor
     wires:
-        id: fastuav.propulsion.cables.multirotor
+        id: fastuav.propulsion.wires.multirotor
+    mtow:
+        id: fastuav.mtow.multirotor
     performance:
-        id: fastuav.performance.multirotor
-    mission:
-        design_mission:
-            id: fastuav.mission.design
+        endurance:
+            id: fastuav.performance.endurance.multirotor
+        missions:
+            id: fastuav.performance.mission
+            file_path: ../../missions/missions_multirotor.yaml
