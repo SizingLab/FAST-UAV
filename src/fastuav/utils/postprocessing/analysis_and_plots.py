@@ -21,6 +21,7 @@ import plotly.graph_objects as go
 from fastoad.io import VariableIO
 from fastoad.openmdao.variables import VariableList
 from openmdao.utils.units import convert_units
+from fastuav.utils.constants import PROPULSION_ID_LIST, MR_PROPULSION
 
 COLS = plotly.colors.DEFAULT_PLOTLY_COLORS
 
@@ -37,130 +38,159 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     # PROPULSION
-    propellers = (
-        variables["data:weights:propeller:mass"].value[0]
-        * variables["data:propulsion:propeller:number"].value[0]
-    )
-    motors = (
-        variables["data:weights:motor:mass"].value[0]
-        * variables["data:propulsion:propeller:number"].value[0]
-    )
-    if "data:weights:gearbox:mass" in variables.names():
-        gearboxes = (
-            variables["data:weights:gearbox:mass"].value[0]
-            * variables["data:propulsion:propeller:number"].value[0]
-        )
-    else:
-        gearboxes = 0
-    ESC = (
-        variables["data:weights:esc:mass"].value[0]
-        * variables["data:propulsion:propeller:number"].value[0]
-    )
-    battery = variables["data:weights:battery:mass"].value[0]
-    cables = variables["data:weights:cables:mass"].value[0]
-    propulsion = propellers + motors + gearboxes + ESC + battery + cables
+    propellers = np.empty(len(PROPULSION_ID_LIST))
+    motors = np.empty(len(PROPULSION_ID_LIST))
+    gearboxes = np.empty(len(PROPULSION_ID_LIST))
+    esc = np.empty(len(PROPULSION_ID_LIST))
+    batteries = np.empty(len(PROPULSION_ID_LIST))
+    wires = np.empty(len(PROPULSION_ID_LIST))
+    propulsion = np.empty(len(PROPULSION_ID_LIST))
+    propulsions = 0.0
+    for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
+        propellers[i] = (
+            variables["data:weights:propulsion:%s:propeller:mass" % propulsion_id].value[0]
+            * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:propeller:mass" % propulsion_id in variables.names() else 0.0
+        motors[i] = (
+            variables["data:weights:propulsion:%s:motor:mass" % propulsion_id].value[0]
+            * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:motor:mass" % propulsion_id in variables.names() else 0.0
+        gearboxes[i] = (
+                variables["data:weights:propulsion:%s:gearbox:mass" % propulsion_id].value[0]
+                * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
+            ) if "data:weights:propulsion:%s:gearbox:mass" % propulsion_id in variables.names() else 0.0
+        esc[i] = (
+            variables["data:weights:propulsion:%s:esc:mass" % propulsion_id].value[0]
+            * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:esc:mass" % propulsion_id in variables.names() else 0.0
+        batteries[i] = (
+            variables["data:weights:propulsion:%s:battery:mass" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:battery:mass" % propulsion_id in variables.names() else 0.0
+        wires[i] = (
+            variables["data:weights:propulsion:%s:wires:mass" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:wires:mass" % propulsion_id in variables.names() else 0.0
+
+        propulsion[i] = propellers[i] + motors[i] + gearboxes[i] + esc[i] + batteries[i] + wires[i]
+        propulsions += propulsion[i]
 
     # AIRFRAME
     body = (
-        variables["data:weights:body:mass"].value[0]
-        if "data:weights:body:mass" in variables.names()
+        variables["data:weights:airframe:body:mass"].value[0]
+        if "data:weights:airframe:body:mass" in variables.names()
         else 0.0
     )
     arms = (
-        variables["data:weights:arms:mass"].value[0]
-        if "data:weights:arms:mass" in variables.names()
+        variables["data:weights:airframe:arms:mass"].value[0]
+        if "data:weights:airframe:arms:mass" in variables.names()
         else 0.0
     )
     wing = (
-        variables["data:weights:wing:mass"].value[0]
-        if "data:weights:wing:mass" in variables.names()
+        variables["data:weights:airframe:wing:mass"].value[0]
+        if "data:weights:airframe:wing:mass" in variables.names()
         else 0.0
     )
     fuselage = (
-        variables["data:weights:fuselage:mass"].value[0]
-        if "data:weights:fuselage:mass" in variables.names()
+        variables["data:weights:airframe:fuselage:mass"].value[0]
+        if "data:weights:airframe:fuselage:mass" in variables.names()
         else 0.0
     )
     htail = (
-        variables["data:weights:tail:horizontal:mass"].value[0]
-        if "data:weights:tail:horizontal:mass" in variables.names()
+        variables["data:weights:airframe:tail:horizontal:mass"].value[0]
+        if "data:weights:airframe:tail:horizontal:mass" in variables.names()
         else 0.0
     )
     vtail = (
-        variables["data:weights:tail:vertical:mass"].value[0]
-        if "data:weights:tail:vertical:mass" in variables.names()
+        variables["data:weights:airframe:tail:vertical:mass"].value[0]
+        if "data:weights:airframe:tail:vertical:mass" in variables.names()
         else 0.0
     )
-    structure = body + arms + wing + fuselage + htail + vtail
+    airframe = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
-    payload = variables["specifications:payload:mass"].value[0]
+    payload = variables["data:scenarios:payload:mass"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
 
     # MTOW
-    MTOW = variables["data:weights:MTOW"].value[0]
+    MTOW = variables["data:weights:mtow"].value[0]
 
-    if round(MTOW, 6) == round(propulsion + structure + payload + fuel_mission, 6):
-        MTOW = propulsion + structure + payload + fuel_mission
+    if round(MTOW, 6) == round(propulsions + airframe + payload + fuel_mission, 6):
+        MTOW = propulsions + airframe + payload + fuel_mission
 
     # DISPLAYED NAMES AND VALUES
-    propellers_str = (
-        "Propellers"
-        + "<br>"
-        + str("{0:.2f}".format(propellers))
-        + " [kg] ("
-        + str(round(propellers / propulsion * 100, 1))
-        + "%)"
-    )
-    motors_str = (
-        "Motors"
-        + "<br>"
-        + str("{0:.2f}".format(motors))
-        + " [kg] ("
-        + str(round(motors / propulsion * 100, 1))
-        + "%)"
-    )
-    gearboxes_str = (
-        "Gearboxes"
-        + "<br>"
-        + str("{0:.2f}".format(gearboxes))
-        + " [kg] ("
-        + str(round(gearboxes / propulsion * 100, 1))
-        + "%)"
-    )
-    ESC_str = (
-        "ESC"
-        + "<br>"
-        + str("{0:.2f}".format(ESC))
-        + " [kg] ("
-        + str(round(ESC / propulsion * 100, 1))
-        + "%)"
-    )
-    battery_str = (
-        "Battery"
-        + "<br>"
-        + str("{0:.2f}".format(battery))
-        + " [kg] ("
-        + str(round(battery / propulsion * 100, 1))
-        + "%)"
-    )
-    cables_str = (
-        "Cables"
-        + "<br>"
-        + str("{0:.2f}".format(cables))
-        + " [kg] ("
-        + str(round(cables / propulsion * 100, 1))
-        + "%)"
-    )
-    propulsion_str = (
-        "Propulsion"
-        + "<br>"
-        + str("{0:.2f}".format(propulsion))
-        + " [kg] ("
-        + str(round(propulsion / MTOW * 100, 1))
-        + "%)"
+    propellers_str = []
+    motors_str = []
+    gearboxes_str = []
+    esc_str = []
+    batteries_str = []
+    wires_str = []
+    propulsion_str = []
+    for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
+        propellers_str.append(
+            "Propellers"
+            + "<br>"
+            + str("{0:.2f}".format(propellers[i]))
+            + " [kg] ("
+            + str(round(propellers[i] / propulsion[i] * 100, 1) if propulsion[i] > 0 else 0.0)
+            + "%)"
+        )
+        motors_str.append(
+            "Motors"
+            + "<br>"
+            + str("{0:.2f}".format(motors[i]))
+            + " [kg] ("
+            + str(round(motors[i] / propulsion[i] * 100, 1) if propulsion[i] > 0 else 0.0)
+            + "%)"
+        )
+        gearboxes_str.append(
+            "Gearboxes"
+            + "<br>"
+            + str("{0:.2f}".format(gearboxes[i]))
+            + " [kg] ("
+            + str(round(gearboxes[i] / propulsion[i] * 100, 1) if propulsion[i] > 0 else 0.0)
+            + "%)"
+        )
+        esc_str.append(
+            "esc"
+            + "<br>"
+            + str("{0:.2f}".format(esc[i]))
+            + " [kg] ("
+            + str(round(esc[i] / propulsion[i] * 100, 1) if propulsion[i] > 0 else 0.0)
+            + "%)"
+        )
+        batteries_str.append(
+            "Battery"
+            + "<br>"
+            + str("{0:.2f}".format(batteries[i]))
+            + " [kg] ("
+            + str(round(batteries[i] / propulsion[i] * 100, 1) if propulsion[i] > 0 else 0.0)
+            + "%)"
+        )
+        wires_str.append(
+            "Wires"
+            + "<br>"
+            + str("{0:.2f}".format(wires[i]))
+            + " [kg] ("
+            + str(round(wires[i] / propulsion[i] * 100, 1) if propulsion[i] > 0 else 0.0)
+            + "%)"
+        )
+        propulsion_str.append(
+            propulsion_id
+            + "<br>"
+            + str("{0:.2f}".format(propulsion[i]))
+            + " [kg] ("
+            + str(round(propulsion[i] / propulsions * 100, 1))
+            + "%)"
+        )
+
+    propulsions_str = (
+            "Propulsion"
+            + "<br>"
+            + str("{0:.2f}".format(propulsions))
+            + " [kg] ("
+            + str(round(propulsions / MTOW * 100, 1))
+            + "%)"
     )
 
     body_str = (
@@ -168,7 +198,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "<br>"
         + str("{0:.2f}".format(body))
         + " [kg] ("
-        + str(round(body / structure * 100, 1))
+        + str(round(body / airframe * 100, 1))
         + "%)"
     )
     arms_str = (
@@ -176,7 +206,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "<br>"
         + str("{0:.2f}".format(arms))
         + " [kg] ("
-        + str(round(arms / structure * 100, 1))
+        + str(round(arms / airframe * 100, 1))
         + "%)"
     )
     wing_str = (
@@ -184,7 +214,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "<br>"
         + str("{0:.2f}".format(wing))
         + " [kg] ("
-        + str(round(wing / structure * 100, 1))
+        + str(round(wing / airframe * 100, 1))
         + "%)"
     )
     fuselage_str = (
@@ -192,7 +222,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "<br>"
         + str("{0:.2f}".format(fuselage))
         + " [kg] ("
-        + str(round(fuselage / structure * 100, 1))
+        + str(round(fuselage / airframe * 100, 1))
         + "%)"
     )
     htail_str = (
@@ -200,7 +230,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "<br>"
         + str("{0:.2f}".format(htail))
         + " [kg] ("
-        + str(round(htail / structure * 100, 1))
+        + str(round(htail / airframe * 100, 1))
         + "%)"
     )
     vtail_str = (
@@ -208,15 +238,15 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "<br>"
         + str("{0:.2f}".format(vtail))
         + " [kg] ("
-        + str(round(vtail / structure * 100, 1))
+        + str(round(vtail / airframe * 100, 1))
         + "%)"
     )
-    structure_str = (
-        "Structure"
+    airframe_str = (
+        "Airframe"
         + "<br>"
-        + str("{0:.2f}".format(structure))
+        + str("{0:.2f}".format(airframe))
         + " [kg] ("
-        + str(round(structure / MTOW * 100, 1))
+        + str(round(airframe / MTOW * 100, 1))
         + "%)"
     )
 
@@ -241,65 +271,88 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     MTOW_str = "MTOW" + "<br>" + str("{0:.2f}".format(MTOW)) + " [kg]"
 
     # CREATE SUNBURST FIGURE
+    labels = [MTOW_str,
+              payload_str,
+              fuel_mission_str,
+              propulsions_str,
+              airframe_str,
+              ]
+    for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
+        labels.extend(
+            [propulsion_str[i],
+             propellers_str[i],
+             motors_str[i],
+             gearboxes_str[i],
+             esc_str[i],
+             batteries_str[i],
+             wires_str[i]]
+        )
+    labels.extend(
+        [body_str,
+         arms_str,
+         wing_str,
+         fuselage_str,
+         htail_str,
+         vtail_str]
+    )
+
+    parents = ["",
+               MTOW_str,
+               MTOW_str,
+               MTOW_str,
+               MTOW_str,
+               ]
+    for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
+        parents.extend(
+            [propulsions_str,
+             propulsion_str[i],
+             propulsion_str[i],
+             propulsion_str[i],
+             propulsion_str[i],
+             propulsion_str[i],
+             propulsion_str[i],
+             ]
+        )
+    parents.extend(
+        [airframe_str,
+         airframe_str,
+         airframe_str,
+         airframe_str,
+         airframe_str,
+         airframe_str,
+         ]
+    )
+
+    values = [MTOW,
+              payload,
+              fuel_mission,
+              propulsions,
+              airframe,
+              ]
+    for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
+        values.extend([
+            propulsion[i],
+            propellers[i],
+            motors[i],
+            gearboxes[i],
+            esc[i],
+            batteries[i],
+            wires[i],
+        ])
+    values.extend([
+        body,
+        arms,
+        wing,
+        fuselage,
+        htail,
+        vtail,
+    ])
+
     fig = go.Figure(
         go.Sunburst(
-            labels=[
-                MTOW_str,
-                payload_str,
-                fuel_mission_str,
-                propulsion_str,
-                structure_str,
-                propellers_str,
-                motors_str,
-                gearboxes_str,
-                ESC_str,
-                battery_str,
-                cables_str,
-                body_str,
-                arms_str,
-                wing_str,
-                fuselage_str,
-                htail_str,
-                vtail_str,
-            ],
-            parents=[
-                "",
-                MTOW_str,
-                MTOW_str,
-                MTOW_str,
-                MTOW_str,
-                propulsion_str,
-                propulsion_str,
-                propulsion_str,
-                propulsion_str,
-                propulsion_str,
-                propulsion_str,
-                structure_str,
-                structure_str,
-                structure_str,
-                structure_str,
-                structure_str,
-                structure_str,
-            ],
-            values=[
-                MTOW,
-                payload,
-                fuel_mission,
-                propulsion,
-                structure,
-                propellers,
-                motors,
-                gearboxes,
-                ESC,
-                battery,
-                cables,
-                body,
-                arms,
-                wing,
-                fuselage,
-                htail,
-                vtail,
-            ],
+            labels=labels,
+            parents=parents,
+            values=values,
             branchvalues="total",
         ),
     )
@@ -327,45 +380,85 @@ def mass_breakdown_bar_plot_drone(
     variables = VariableIO(drone_file_path, file_formatter).read()
 
     # PROPULSION
-    propellers = (
-        variables["data:weights:propeller:mass"].value[0]
-        * variables["data:propulsion:propeller:number"].value[0]
-    )
-    motors = (
-        variables["data:weights:motor:mass"].value[0]
-        * variables["data:propulsion:propeller:number"].value[0]
-    )
-    if "data:weights:gearbox:mass" in variables.names():
-        gearboxes = (
-            variables["data:weights:gearbox:mass"].value[0]
-            * variables["data:propulsion:propeller:number"].value[0]
-        )
-    else:
-        gearboxes = 0
-    ESC = (
-        variables["data:weights:esc:mass"].value[0]
-        * variables["data:propulsion:propeller:number"].value[0]
-    )
-    battery = variables["data:weights:battery:mass"].value[0]
-    cables = variables["data:weights:cables:mass"].value[0]
-    propulsion = propellers + motors + gearboxes + ESC + battery + cables
+    propellers = np.empty(len(PROPULSION_ID_LIST))
+    motors = np.empty(len(PROPULSION_ID_LIST))
+    gearboxes = np.empty(len(PROPULSION_ID_LIST))
+    esc = np.empty(len(PROPULSION_ID_LIST))
+    batteries = np.empty(len(PROPULSION_ID_LIST))
+    wires = np.empty(len(PROPULSION_ID_LIST))
+    propulsion = np.empty(len(PROPULSION_ID_LIST))
+    propulsions = 0.0
+    for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
+        propellers[i] = (
+                variables["data:weights:propulsion:%s:propeller:mass" % propulsion_id].value[0]
+                * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:propeller:mass" % propulsion_id in variables.names() else 0.0
+        motors[i] = (
+                variables["data:weights:propulsion:%s:motor:mass" % propulsion_id].value[0]
+                * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:motor:mass" % propulsion_id in variables.names() else 0.0
+        gearboxes[i] = (
+                variables["data:weights:propulsion:%s:gearbox:mass" % propulsion_id].value[0]
+                * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:gearbox:mass" % propulsion_id in variables.names() else 0.0
+        esc[i] = (
+                variables["data:weights:propulsion:%s:esc:mass" % propulsion_id].value[0]
+                * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:esc:mass" % propulsion_id in variables.names() else 0.0
+        batteries[i] = (
+            variables["data:weights:propulsion:%s:battery:mass" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:battery:mass" % propulsion_id in variables.names() else 0.0
+        wires[i] = (
+            variables["data:weights:propulsion:%s:wires:mass" % propulsion_id].value[0]
+        ) if "data:weights:propulsion:%s:wires:mass" % propulsion_id in variables.names() else 0.0
 
-    # STRUCTURE
-    body = variables["data:weights:body:mass"].value[0]
-    arms = variables["data:weights:arms:mass"].value[0]
-    structure = body + arms
+        propulsion[i] = propellers[i] + motors[i] + gearboxes[i] + esc[i] + batteries[i] + wires[i]
+        propulsions += propulsion[i]
+
+    # AIRFRAME
+    body = (
+        variables["data:weights:airframe:body:mass"].value[0]
+        if "data:weights:airframe:body:mass" in variables.names()
+        else 0.0
+    )
+    arms = (
+        variables["data:weights:airframe:arms:mass"].value[0]
+        if "data:weights:airframe:arms:mass" in variables.names()
+        else 0.0
+    )
+    wing = (
+        variables["data:weights:airframe:wing:mass"].value[0]
+        if "data:weights:airframe:wing:mass" in variables.names()
+        else 0.0
+    )
+    fuselage = (
+        variables["data:weights:airframe:fuselage:mass"].value[0]
+        if "data:weights:airframe:fuselage:mass" in variables.names()
+        else 0.0
+    )
+    htail = (
+        variables["data:weights:airframe:tail:horizontal:mass"].value[0]
+        if "data:weights:airframe:tail:horizontal:mass" in variables.names()
+        else 0.0
+    )
+    vtail = (
+        variables["data:weights:airframe:tail:vertical:mass"].value[0]
+        if "data:weights:airframe:tail:vertical:mass" in variables.names()
+        else 0.0
+    )
+    airframe = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
-    payload = variables["specifications:payload:mass"].value[0]
+    payload = variables["data:scenarios:payload:mass"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
 
     # MTOW
-    MTOW = variables["data:weights:MTOW"].value[0]
+    MTOW = variables["data:weights:mtow"].value[0]
 
-    if round(MTOW, 6) == round(propulsion + structure + payload + fuel_mission, 6):
-        MTOW = propulsion + structure + payload + fuel_mission
+    if round(MTOW, 6) == round(propulsions + airframe + payload + fuel_mission, 6):
+        MTOW = propulsions + airframe + payload + fuel_mission
 
     # DISPLAYED NAMES AND VALUES
     if gearboxes == 0:
@@ -373,7 +466,7 @@ def mass_breakdown_bar_plot_drone(
             "MTOW",
             "Payload",
             "Battery",
-            "ESC",
+            "esc",
             "Motors",
             "Propellers",
             "Cables",
@@ -383,10 +476,10 @@ def mass_breakdown_bar_plot_drone(
             MTOW,
             payload,
             battery,
-            ESC,
+            esc,
             motors,
             propellers,
-            cables,
+            wires,
             structure,
         ]
     else:
@@ -394,7 +487,7 @@ def mass_breakdown_bar_plot_drone(
             "MTOW",
             "Payload",
             "Battery",
-            "ESC",
+            "esc",
             "Motors",
             "Gearboxes",
             "Propellers",
@@ -405,11 +498,11 @@ def mass_breakdown_bar_plot_drone(
             MTOW,
             payload,
             battery,
-            ESC,
+            esc,
             motors,
             gearboxes,
             propellers,
-            cables,
+            wires,
             structure,
         ]
 
@@ -454,9 +547,9 @@ def multirotor_geometry_plot(
     arm_length = variables["data:geometry:arms:length"].value[0]  # [m]
     arm_diameter = variables["data:structures:arms:diameter:outer"].value[0]  # [m]
     N_pro_arm = variables["data:geometry:arms:prop_per_arm"].value[0]  # [-]
-    D_pro = variables["data:propulsion:propeller:diameter"].value[0]  # [m]
-    Vol_bat = variables["data:propulsion:battery:volume"].value[0] * 0.000001  # [m**3]
-    Lmot = variables["data:propulsion:motor:length:estimated"].value[
+    D_pro = variables["data:propulsion:%s:propeller:diameter" % MR_PROPULSION].value[0]  # [m]
+    Vol_bat = variables["data:propulsion:%s:battery:volume" % MR_PROPULSION].value[0] * 0.000001  # [m**3]
+    Lmot = variables["data:propulsion:%s:motor:length:estimated" % MR_PROPULSION].value[
         0
     ]  # [m] TODO: get length from catalogues too
 
@@ -696,7 +789,7 @@ def fixedwing_geometry_plot(
 
 def energy_breakdown_sun_plot_drone(
     drone_file_path: str,
-    mission_name: str = "design_mission",
+    mission_name: str = "sizing",
     file_formatter=None,
     fig=None,
 ):
@@ -780,7 +873,7 @@ def energy_breakdown_sun_plot_drone(
     return fig
 
 
-def _data_mission_decomposition(variables: VariableList, mission_name: str = "design_mission"):
+def _data_mission_decomposition(variables: VariableList, mission_name: str = "sizing"):
     """
     Returns the routes decomposition of mission.
 
@@ -802,7 +895,47 @@ def _data_mission_decomposition(variables: VariableList, mission_name: str = "de
                 name_split[0] == "mission"
                 and name_split[1] == mission_name
                 and name_split[-1] == "energy"
-                and "constraints" not in name_split[2]
+            ):
+                category_values.append(
+                    convert_units(variables[variable].value[0], variables[variable].units, "W*h")
+                )
+                category_names.append(name_split[2])
+                categories_labels.append(
+                    name_split[2]
+                    + "<br>"
+                    + str(int(category_values[-1]))
+                    + " [Wh] ("
+                    + str(round(category_values[-1] / total_energy * 100, 1))
+                    + "%)"
+                )
+
+    result = category_values, category_names, categories_labels
+    return result
+
+
+def _data_route_decomposition(variables: VariableList, mission_name: str = "sizing", route_name: str = None):
+    """
+    Returns the flight phases decomposition of route.
+
+    :param variables: instance containing variables information
+    :return: flight phases names
+    """
+    var_names_and_new_units = {
+        "mission:%s:%s:energy" % (mission_name, route_name): "W*h",
+    }
+    total_energy = _get_variable_values_with_new_units(variables, var_names_and_new_units)[0]
+
+    category_values = []
+    category_names = []
+    categories_labels = []
+    for variable in variables.names():
+        name_split = variable.split(":")
+        if isinstance(name_split, list) and len(name_split) == 4:
+            if (
+                name_split[0] == "mission"
+                and name_split[1] == mission_name
+                and name_split[2] == route_name
+                and name_split[-1] == "energy"
             ):
                 category_values.append(
                     convert_units(variables[variable].value[0], variables[variable].units, "W*h")
