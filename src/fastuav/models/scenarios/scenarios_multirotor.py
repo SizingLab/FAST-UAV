@@ -1,20 +1,16 @@
 """
-Sizing scenarios definition
+Sizing scenarios definition.
+The sizing scenarios return the thrusts and loads requirements to size the UAV.
+The sizing scenarios are extracted from a sizing mission defined by the user.
 """
 import fastoad.api as oad
 import openmdao.api as om
-from fastuav.models.scenarios.atmosphere import Atmosphere
-from fastuav.models.scenarios.multirotor.preliminary import (
-    MTOWguess,
-    NumberPropellersMR,
-    BodySurfacesMR,
-)
-from fastuav.models.scenarios.multirotor.thrust import (
-    ThrustClimbMR,
-    ThrustCruiseMR,
-    ThrustHoverMR,
-    ThrustTakeOffMR,
-)
+from fastuav.models.mtow.mtow import MTOW_guess
+from fastuav.models.geometry.geometry_multirotor import BodyAreas
+from fastuav.models.scenarios.thrust.takeoff import VerticalTakeoffThrust
+from fastuav.models.scenarios.thrust.cruise import MultirotorCruiseThrust
+from fastuav.models.scenarios.thrust.climb import VerticalClimbThrust
+from fastuav.models.scenarios.thrust.hover import HoverThrust
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.scenarios.multirotor")
@@ -25,14 +21,11 @@ class SizingScenariosMultirotor(om.Group):
 
     def setup(self):
         preliminary = self.add_subsystem("preliminary", om.Group(), promotes=["*"])
-        preliminary.add_subsystem("MTOW_guess", MTOWguess(), promotes=["*"])
-        preliminary.add_subsystem("number_props", NumberPropellersMR(), promotes=["*"])
-        preliminary.add_subsystem("body_surface", BodySurfacesMR(), promotes=["*"])
-
-        self.add_subsystem("atmosphere", Atmosphere(), promotes=["*"])
+        preliminary.add_subsystem("mtow_guess", MTOW_guess(), promotes=["*"])
+        preliminary.add_subsystem("body_areas", BodyAreas(), promotes=["*"])
 
         thrust = self.add_subsystem("thrust", om.Group(), promotes=["*"])
-        thrust.add_subsystem("hover", ThrustHoverMR(), promotes=["*"])
-        thrust.add_subsystem("takeoff", ThrustTakeOffMR(), promotes=["*"])
-        thrust.add_subsystem("climb", ThrustClimbMR(), promotes=["*"])
-        thrust.add_subsystem("cruise", ThrustCruiseMR(), promotes=["*"])
+        thrust.add_subsystem("hover", HoverThrust(), promotes=["*"])
+        thrust.add_subsystem("takeoff", VerticalTakeoffThrust(), promotes=["*"])
+        thrust.add_subsystem("climb", VerticalClimbThrust(), promotes=["*"])
+        thrust.add_subsystem("cruise", MultirotorCruiseThrust(), promotes=["*"])
