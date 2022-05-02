@@ -1,24 +1,8 @@
 """
-Center of gravity module.
+Module containing the center of gravity calculations for all components.
 """
 import openmdao.api as om
 import numpy as np
-
-
-class CenterOfGravity(om.Group):
-    """
-    Group containing the fixed wing center of gravity calculations
-    """
-
-    def setup(self):
-        self.add_subsystem("fuselage", CoG_fuselage(), promotes=["*"])
-        self.add_subsystem("wing", CoG_wing(), promotes=["*"])
-        self.add_subsystem("horizontal_tail", CoG_ht(), promotes=["*"])
-        self.add_subsystem("vertical_tail", CoG_vt(), promotes=["*"])
-        self.add_subsystem("propeller", CoG_propeller(), promotes=["*"])
-        self.add_subsystem("motor", CoG_motor(), promotes=["*"])
-        self.add_subsystem("battery", CoG_battery(), promotes=["*"])
-        self.add_subsystem("UAV", CoG_UAV(), promotes=["*"])
 
 
 class CoG_fuselage(om.ExplicitComponent):
@@ -32,10 +16,10 @@ class CoG_fuselage(om.ExplicitComponent):
         self.add_input("data:geometry:fuselage:length:rear", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:mid", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:tip", val=np.nan, units="m")
-        self.add_input("data:weights:fuselage:mass:nose", val=np.nan, units="kg")
-        self.add_input("data:weights:fuselage:mass:mid", val=np.nan, units="kg")
-        self.add_input("data:weights:fuselage:mass:rear", val=np.nan, units="kg")
-        self.add_input("data:weights:fuselage:mass", val=np.nan, units="kg")
+        self.add_input("data:weights:airframe:fuselage:mass:nose", val=np.nan, units="kg")
+        self.add_input("data:weights:airframe:fuselage:mass:mid", val=np.nan, units="kg")
+        self.add_input("data:weights:airframe:fuselage:mass:rear", val=np.nan, units="kg")
+        self.add_input("data:weights:airframe:fuselage:mass", val=np.nan, units="kg")
         self.add_output("data:stability:CoG:fuselage", units="m")
 
     def setup_partials(self):
@@ -48,10 +32,10 @@ class CoG_fuselage(om.ExplicitComponent):
         l_rear = inputs["data:geometry:fuselage:length:rear"]
         d_fus_mid = inputs["data:geometry:fuselage:diameter:mid"]
         d_fus_tip = inputs["data:geometry:fuselage:diameter:tip"]
-        m_nose = inputs["data:weights:fuselage:mass:nose"]
-        m_mid = inputs["data:weights:fuselage:mass:mid"]
-        m_rear = inputs["data:weights:fuselage:mass:rear"]
-        m_fus = inputs["data:weights:fuselage:mass"]
+        m_nose = inputs["data:weights:airframe:fuselage:mass:nose"]
+        m_mid = inputs["data:weights:airframe:fuselage:mass:mid"]
+        m_rear = inputs["data:weights:airframe:fuselage:mass:rear"]
+        m_fus = inputs["data:weights:airframe:fuselage:mass"]
 
         x_cg_nose = l_nose / 2  # [m]
         x_cg_mid = l_nose + l_mid / 2  # [m]
@@ -132,9 +116,9 @@ class CoG_vt(om.ExplicitComponent):
         outputs["data:stability:CoG:tail:vertical"] = x_cg_vt
 
 
-class CoG_propeller(om.ExplicitComponent):
+class CoG_propeller_tractor(om.ExplicitComponent):
     """
-    Computes the center of gravity of the nose propeller.
+    Computes the center of gravity of a tractor propeller located at the nose tip.
     """
 
     def setup(self):
@@ -150,7 +134,7 @@ class CoG_propeller(om.ExplicitComponent):
         outputs["data:stability:CoG:propeller"] = x_cg_prop
 
 
-class CoG_motor(om.ExplicitComponent):
+class CoG_motor_tractor(om.ExplicitComponent):
     """
     Computes the center of gravity of the motor located in the nose.
     """
@@ -198,58 +182,4 @@ class CoG_battery(om.ExplicitComponent):
         outputs["data:stability:CoG:battery"] = x_cg_bat
 
 
-class CoG_UAV(om.ExplicitComponent):
-    """
-    Computes the center of gravity of a fixed wing UAV.
-    """
 
-    def setup(self):
-        self.add_input("data:stability:CoG:fuselage", val=np.nan, units="m")
-        self.add_input("data:stability:CoG:wing", val=np.nan, units="m")
-        self.add_input("data:stability:CoG:tail:horizontal", val=np.nan, units="m")
-        self.add_input("data:stability:CoG:tail:vertical", val=np.nan, units="m")
-        self.add_input("data:stability:CoG:propeller", val=np.nan, units="m")
-        self.add_input("data:stability:CoG:motor", val=np.nan, units="m")
-        self.add_input("data:stability:CoG:battery", val=np.nan, units="m")
-        self.add_input("data:weights:fuselage:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:wing:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:tail:horizontal:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:tail:vertical:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:propeller:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:motor:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:battery:mass", val=np.nan, units="kg")
-        # self.add_input("data:weights:MTOW", val=np.nan, units="kg")
-        self.add_output("data:stability:CoG", units="m")
-
-    def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
-
-    def compute(self, inputs, outputs):
-        x_cg_fus = inputs["data:stability:CoG:fuselage"]
-        x_cg_w = inputs["data:stability:CoG:wing"]
-        x_cg_ht = inputs["data:stability:CoG:tail:horizontal"]
-        x_cg_vt = inputs["data:stability:CoG:tail:vertical"]
-        x_cg_prop = inputs["data:stability:CoG:propeller"]
-        x_cg_mot = inputs["data:stability:CoG:motor"]
-        x_cg_bat = inputs["data:stability:CoG:battery"]
-        m_fus = inputs["data:weights:fuselage:mass"]
-        m_wing = inputs["data:weights:wing:mass"]
-        m_ht = inputs["data:weights:tail:horizontal:mass"]
-        m_vt = inputs["data:weights:tail:vertical:mass"]
-        m_prop = inputs["data:weights:propeller:mass"]
-        m_mot = inputs["data:weights:motor:mass"]
-        m_bat = inputs["data:weights:battery:mass"]
-        # m_total = inputs["data:weights:MTOW"]
-
-        x_cg = (
-            x_cg_fus * m_fus
-            + x_cg_w * m_wing
-            + x_cg_ht * m_ht
-            + x_cg_vt * m_vt
-            + x_cg_prop * m_prop
-            + x_cg_mot * m_mot
-            + x_cg_bat * m_bat
-        ) / (m_fus + m_wing + m_ht + m_vt + m_prop + m_mot + m_bat)
-
-        outputs["data:stability:CoG"] = x_cg
