@@ -1,5 +1,6 @@
 """
-UAV flight model - static methods definition.
+UAV flight models for thrust calculations - static methods definition.
+(Unused in current version of FAST-UAV).
 """
 
 import numpy as np
@@ -9,7 +10,7 @@ from scipy.optimize import brentq
 
 class MultirotorFlightModel:
     """
-    Flight model (aerodynamics and forces)
+    Flight model for multirotor.
     """
 
     @staticmethod
@@ -35,10 +36,11 @@ class MultirotorFlightModel:
         return lift
 
     @staticmethod
-    def get_AoA(Mtotal, V, theta, S_front, S_top, C_D, C_L0, rho_air):
+    def get_angle_of_attack(Mtotal, V, RoC, S_front, S_top, C_D, C_L0, rho_air):
         """
-        Computes required angle of attack to maintain flight path
+        Computes angle of attack to maintain flight path
         """
+        theta = np.arcsin(RoC / V)  # [rad] flight path angle
 
         def func(x):
             drag = MultirotorFlightModel.get_drag(V, x, S_front, S_top, C_D, rho_air)  # [N] drag
@@ -53,14 +55,11 @@ class MultirotorFlightModel:
         return alpha
 
     @staticmethod
-    def get_thrust(Mtotal, V, theta, S_front, S_top, C_D, C_L0, rho_air):
+    def get_thrust(Mtotal, V, RoC, alpha, S_front, S_top, C_D, C_L0, rho_air):
         """
-        Computes required thrust to maintain flight path.
-        Generic function for any case.
+        Computes thrust to maintain flight path
         """
-        alpha = MultirotorFlightModel.get_AoA(
-            Mtotal, V, theta, S_front, S_top, C_D, C_L0, rho_air
-        )  # [rad] angle of attack
+        theta = np.arcsin(RoC / V)  # [rad] flight path angle
         weight = Mtotal * g  # [N] weight
         lift = MultirotorFlightModel.get_lift(V, alpha, S_top, C_L0, rho_air)  # [N] lift
         drag = MultirotorFlightModel.get_drag(V, alpha, S_front, S_top, C_D, rho_air)  # [N] drag
@@ -69,5 +68,31 @@ class MultirotorFlightModel:
             + (drag * np.cos(theta) + lift * np.sin(theta)) ** 2
         ) ** (
             1 / 2
-        )  # [N] thrust requirement
-        return thrust, alpha
+        )  # [N] total thrust requirement
+        return thrust
+
+
+class FixedwingFlightModel:
+    """
+    Flight model for fixed wings.
+    """
+
+    @staticmethod
+    def get_angle_of_attack():
+        """
+        Computes angle of attack to maintain flight path
+        """
+        alpha = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight TODO: estimate trim?)
+        return alpha
+
+    @staticmethod
+    def get_thrust(Mtotal, V, RoC, WS, K, CD0, rho_air):
+        """
+        Computes thrust to maintain flight path
+        """
+        q = 0.5 * rho_air * V ** 2  # [Pa] dynamic pressure
+        TW = (
+                RoC / V + q * CD0 / WS + K / q * WS
+        )  # thrust-to-weight ratio in climb conditions [-]
+        thrust = TW * Mtotal * g  # [N] total thrust requirement
+        return thrust
