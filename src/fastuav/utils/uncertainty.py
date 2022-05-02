@@ -1,5 +1,6 @@
 """
-Variable uncertainty component.
+Methods for adding deviations to the variables of the problem.
+This is useful for sensitivity analysis studies (see utils.postprocessing.sensitivity_analysis module)
 """
 
 import openmdao.api as om
@@ -14,15 +15,13 @@ def add_subsystem_with_deviation(
 ):
     """
     Add the model component as a subsystem to the group,
-    then add an additional subsystem that modifies the uncertain outputs values according to the user-defined variations.
+    then add a subsystem that modifies the uncertain outputs values according to the user-defined variations.
 
     Parameters
     ----------
     group : om.Group
             Parent group object.
-    subsys_name : str
-            Name of the subsystem being added.
-    subsys : om.Performance
+    subsys : om.ExplicitComponent
             An instantiated, but not-yet-set up system object.
     uncertain_outputs: dict
             Dictionary containing the names and units of the subsystem's outputs to be modified.
@@ -30,9 +29,9 @@ def add_subsystem_with_deviation(
 
     Example
         >> class Group(om.Group):
-        >> def setup(self):
-        >>      add_subsystem_with_deviation(self, "nominal_torque", NominalTorque(),
-                                                uncertain_outputs={'data:propulsion:motor:torque:nominal:estimated': 'N*m'})
+        >>      def setup(self):
+        >>              add_subsystem_with_deviation(self, "nominal_torque", NominalTorque(),
+                                        uncertain_outputs={'data:propulsion:motor:torque:nominal:estimated': 'N*m'})
     """
 
     # add model component
@@ -44,7 +43,7 @@ def add_subsystem_with_deviation(
     units = []  # units
     for name, unit in uncertain_outputs.items():
         long_names.append(name)
-        name_split = name.split(":")
+        # name_split = name.split(":")
         # if name_split[-1] == 'estimated':
         short_names.append(
             ":".join(name.split(":")[1:-1])
@@ -99,7 +98,7 @@ class ComponentWithDeviation(om.ExplicitComponent):
             if long_names not in self._long_names:
                 short_name = short_names[i]
                 unit = units[i]
-                self.add_input("uncertainty:" + short_name + ":mean", units=unit)
+                self.add_input("uncertainty:" + short_name + ":mean", units=unit, tags="local")
                 self.add_input("uncertainty:" + short_name + ":rel", val=0.0, units=None)
                 self.add_input("uncertainty:" + short_name + ":abs", val=0.0, units=unit)
                 self.add_output(long_name, units=unit)
