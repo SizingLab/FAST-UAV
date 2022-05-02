@@ -1,32 +1,36 @@
 """
 Propeller component
 """
-import fastoad.api as oad
 import openmdao.api as om
 from fastuav.models.propulsion.propeller.definition_parameters import PropellerDefinitionParameters
-from fastuav.models.propulsion.propeller.estimation.models import PropellerEstimationModels
-from fastuav.models.propulsion.propeller.estimation.catalogue import PropellerCatalogueSelection
-from fastuav.models.propulsion.propeller.performances import PropellerPerfos
+from fastuav.models.propulsion.propeller.estimation_models import PropellerEstimationModels
+from fastuav.models.propulsion.propeller.catalogue import PropellerCatalogueSelection
+from fastuav.models.propulsion.propeller.performance_analysis import PropellerPerformanceGroup
 from fastuav.models.propulsion.propeller.constraints import PropellerConstraints
+from fastuav.utils.constants import PROPULSION_ID_LIST
 
 
-@oad.RegisterOpenMDAOSystem("fastuav.propulsion.propeller")
 class Propeller(om.Group):
     """
     Group containing the Propeller MDA.
     """
 
     def initialize(self):
-        self.options.declare("use_catalogue", default=False, types=bool)
+        self.options.declare("off_the_shelf", default=False, types=bool)
+        self.options.declare("propulsion_id", default=None, values=PROPULSION_ID_LIST)
 
     def setup(self):
+        propulsion_id = self.options["propulsion_id"]
         self.add_subsystem("definition_parameters", PropellerDefinitionParameters(), promotes=["*"])
-        estimation = self.add_subsystem("estimation", om.Group(), promotes=["*"])
-        estimation.add_subsystem("models", PropellerEstimationModels(), promotes=["*"])
-        estimation.add_subsystem(
-            "catalogue" if self.options["use_catalogue"] else "no_catalogue",
-            PropellerCatalogueSelection(use_catalogue=self.options["use_catalogue"]),
-            promotes=["*"],
-        )
-        self.add_subsystem("performances", PropellerPerfos(), promotes=["*"])
-        self.add_subsystem("constraints", PropellerConstraints(), promotes=["*"])
+        self.add_subsystem("estimation_models",
+                           PropellerEstimationModels(propulsion_id=propulsion_id),
+                           promotes=["*"])
+        self.add_subsystem("catalogue_selection" if self.options["off_the_shelf"] else "skip_catalogue_selection",
+                           PropellerCatalogueSelection(off_the_shelf=self.options["off_the_shelf"]),
+                           promotes=["*"])
+        self.add_subsystem("performance_analysis",
+                           PropellerPerformanceGroup(propulsion_id=propulsion_id),
+                           promotes=["*"])
+        self.add_subsystem("constraints",
+                           PropellerConstraints(),
+                           promotes=["*"])
