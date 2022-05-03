@@ -114,10 +114,13 @@ optimization:
       - name: data:propulsion:multirotor:propeller:constraints:rpm:cruise  # propeller rpm in cruise
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:torque:takeoff  # motor torque at takeoff
+      - name: data:propulsion:multirotor:motor:constraints:torque:takeoff  # motor torque at takeoff (transient)
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:torque:climb  # motor torque in climb
+      - name: data:propulsion:multirotor:motor:constraints:torque:climb  # motor torque in climb (transient)
+        lower: 0.0
+        
+      - name: data:propulsion:multirotor:motor:constraints:torque:hover  # steady motor torque in hover (steady)
         lower: 0.0
       
       - name: data:propulsion:multirotor:battery:constraints:power:takeoff  # battery power at takeoff

@@ -1,9 +1,5 @@
 <FASTOAD_model>
   <data>
-    <aerodynamics>
-      <CD0 is_input="True">0.5<!--Parasitic drag coefficient--></CD0>
-      <CLmax is_input="True">0.0<!--Max. lift coefficient--></CLmax>
-    </aerodynamics>
     <scenarios>
       <dISA units="degK" is_input="True">0.0</dISA>
       <multirotor>
@@ -26,6 +22,12 @@
         <mass units="kg" is_input="True">6.35</mass>
       </payload>
     </scenarios>
+    <aerodynamics>
+      <multirotor>
+        <CD is_input="True">0.5</CD>
+        <CL is_input="True">0.0</CL>
+      </multirotor>
+    </aerodynamics>
     <weights>
       <arms>
         <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
@@ -77,6 +79,26 @@
         </multirotor>
       </propulsion>
     </weights>
+    <geometry>
+      <projected_area>
+        <front>
+          <k is_input="True">1.0</k>
+        </front>
+        <top>
+          <k is_input="True">1.0</k>
+        </top>
+      </projected_area>
+      <body>
+        <surface>
+          <front>
+            <reference units="m**2" is_input="True">0.02<!--Front surface reference for scaling law--></reference>
+          </front>
+          <top>
+            <reference units="m**2" is_input="True">0.045<!--Top surface reference for scaling law--></reference>
+          </top>
+        </surface>
+      </body>
+    </geometry>
     <propulsion>
       <multirotor>
         <propeller>
@@ -188,21 +210,17 @@
         </stress>
       </arms>
     </structures>
-    <geometry>
-      <body>
-        <surface>
-          <front>
-            <reference units="m**2" is_input="True">0.02<!--Front surface reference for scaling law--></reference>
-          </front>
-          <top>
-            <reference units="m**2" is_input="True">0.045<!--Top surface reference for scaling law--></reference>
-          </top>
-        </surface>
-      </body>
-    </geometry>
   </data>
   <mission>
     <sizing>
+      <diversion>
+        <cruise>
+          <distance units="m" is_input="True">0.0</distance>
+        </cruise>
+        <hover>
+          <duration units="min" is_input="True">0.0</duration>
+        </hover>
+      </diversion>
       <main_route>
         <cruise>
           <distance units="m" is_input="True">0.0</distance>

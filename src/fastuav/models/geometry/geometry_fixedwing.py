@@ -19,7 +19,10 @@ class Geometry(om.Group):
         self.add_subsystem("horizontal_tail", HorizontalTailGeometry(), promotes=["*"])
         self.add_subsystem("vertical_tail", VerticalTailGeometry(), promotes=["*"])
         self.add_subsystem("fuselage", FuselageGeometry(), promotes=["*"])
-        self.add_subsystem("constraints", GeometryConstraints(), promotes=["*"])
+
+        constraints = self.add_subsystem("constraints", om.Group(), promotes=["*"])
+        # constraints.add_subsystem("projected_areas", ProjectedAreasConstraint(), promotes=["*"])
+        constraints.add_subsystem("fuselage_volume", FuselageVolumeConstraint(), promotes=["*"])
 
 
 class WingGeometry(om.ExplicitComponent):
@@ -348,9 +351,80 @@ class FuselageGeometry(om.ExplicitComponent):
         outputs["data:geometry:fuselage:volume:mid"] = V_mid
 
 
-class GeometryConstraints(om.ExplicitComponent):
+class ProjectedAreasGuess(om.ExplicitComponent):
     """
-    Geometry constraint definition.
+    Computes a rough estimate of the projected area(s) of the UAV from the wing loading.
+    """
+
+    def setup(self):
+        self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
+        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:geometry:projected_area:top:k", val=np.nan, units=None)
+        self.add_output("data:geometry:projected_area:top", units="m**2")
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="fd")
+
+    def compute(self, inputs, outputs):
+        WS = inputs["data:scenarios:wing_loading"]
+        mtow_guess = inputs["data:weights:mtow:guess"]
+        k_top = inputs["data:geometry:projected_area:top:k"]
+
+        S_top = k_top * mtow_guess * g / WS  # [m**2] top area guess
+
+        outputs["data:geometry:projected_area:top"] = S_top
+
+
+class ProjectedAreasConstraint(om.ExplicitComponent):
+    """
+    Projected area(s) consistency constraint.
+    """
+
+    def setup(self):
+        self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
+        self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
+        self.add_input("data:geometry:tail:horizontal:surface", val=np.nan, units="m**2")
+        self.add_input("data:geometry:fuselage:surface", val=np.nan, units="m**2")
+        self.add_output("data:geometry:projected_area:top:constraint", units=None)
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        S_top_guess = inputs["data:geometry:projected_area:top"]  # [m**2] projected area initial guess
+
+        S_w = inputs["data:geometry:wing:surface"]
+        S_ht = inputs["data:geometry:tail:horizontal:surface"]
+        S_fus = inputs["data:geometry:fuselage:surface"]
+        S_fus_proj = S_fus / np.pi  # [m**2] projected area of the fuselage
+        S_top = S_w + S_ht + S_fus_proj  # [m**2] projected area
+
+        S_constraint = (S_top_guess - S_top) / S_top  # [-] projected area consistency constraint
+
+        outputs["data:geometry:projected_area:top:constraint"] = S_constraint
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        S_top_guess = inputs["data:geometry:projected_area:top"]  # [m**2] projected area initial guess
+        S_w = inputs["data:geometry:wing:surface"]
+        S_ht = inputs["data:geometry:tail:horizontal:surface"]
+        S_fus = inputs["data:geometry:fuselage:surface"]
+        S_fus_proj = S_fus / np.pi  # [m**2] projected area of the fuselage
+        S_top = S_w + S_ht + S_fus_proj  # [m**2] projected area
+
+        partials["data:geometry:projected_area:top:constraint",
+                 "data:geometry:projected_area:top"] = 1 / S_top
+        partials["data:geometry:projected_area:top:constraint",
+                 "data:geometry:wing:surface"] = - S_top_guess / S_top ** 2
+        partials["data:geometry:projected_area:top:constraint",
+                 "data:geometry:tail:horizontal:surface"] = - S_top_guess / S_top ** 2
+        partials["data:geometry:projected_area:top:constraint",
+                 "data:geometry:fuselage:surface"] = - S_top_guess / np.pi / S_top ** 2
+
+
+
+class FuselageVolumeConstraint(om.ExplicitComponent):
+    """
+    Fuselage volume constraint definition.
     The mid fuselage part has to house the payload and the batteries.
     Therefore, a constraint is set on the volume of the mid fuselage part.
     """

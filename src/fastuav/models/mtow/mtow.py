@@ -20,11 +20,11 @@ class MTOW(om.Group):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_subsystem("mtow_calculation", MTOW_calculation(propulsion_id=propulsion_id), promotes=["*"])
-        self.add_subsystem("constraints", MTOW_constraints(), promotes=["*"])
+        self.add_subsystem("mtow_calculation", MtowCalculation(propulsion_id=propulsion_id), promotes=["*"])
+        self.add_subsystem("constraints", MtowConstraints(), promotes=["*"])
 
 
-class MTOW_guess(om.ExplicitComponent):
+class MtowGuess(om.ExplicitComponent):
     """
     Computes an initial guess for the MTOW. This module is used as a preliminary calculation for sizing scenarios.
     """
@@ -54,7 +54,7 @@ class MTOW_guess(om.ExplicitComponent):
         partials["data:weights:mtow:guess", "data:scenarios:payload:mass"] = k_M
 
 
-class MTOW_calculation(om.ExplicitComponent):
+class MtowCalculation(om.ExplicitComponent):
     """
     Maximum Take-Off Weight calculation
     """
@@ -156,7 +156,7 @@ class MTOW_calculation(om.ExplicitComponent):
                      "data:weights:airframe:tail:vertical:mass"] = 1.0
 
 
-class MTOW_constraints(om.ExplicitComponent):
+class MtowConstraints(om.ExplicitComponent):
     """
     MTOW constraints
     """
