@@ -46,7 +46,7 @@ class Aerodynamics(om.Group):
 
 class ParasiticDrag(om.ExplicitComponent):
     """
-    Computes parasitic drag at cruise conditions
+    Computes parasitic drag at cruise conditions, in fixed wing configuration
     """
 
     def initialize(self):
@@ -159,7 +159,7 @@ class MaxLiftToDrag(om.ExplicitComponent):
 
 class ParasiticDragConstraint(om.ExplicitComponent):
     """
-    Computes Aerodynamics Constraints
+    Parasitic drag consistency constraint, to ensure that the initial guess equals the estimated value.
     """
 
     def setup(self):
