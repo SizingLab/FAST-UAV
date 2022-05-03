@@ -15,4 +15,4 @@ class MTOWHybrid(MTOW):
 
     def initialize(self):
         MTOW.initialize(self)
-        self.options["propulsion_id"] = [MR_PROPULSION, FW_PROPULSION]
+        self.options["propulsion_id_list"] = [MR_PROPULSION, FW_PROPULSION]

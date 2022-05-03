@@ -15,4 +15,4 @@ class MTOWMultirotor(MTOW):
 
     def initialize(self):
         MTOW.initialize(self)
-        self.options["propulsion_id"] = [MR_PROPULSION]
+        self.options["propulsion_id_list"] = [MR_PROPULSION]

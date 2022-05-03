@@ -186,7 +186,7 @@ class WingWeight(om.ExplicitComponent):
         self.options.declare("spar_model", default="pipe", values=["pipe", "I_beam"])
 
     def setup(self):
-        self.add_input("data:loads:vertical:factor", val=4.5, units=None)
+        self.add_input("data:scenarios:load_factor:vertical:ultimate", val=4.5, units=None)
         self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
@@ -234,7 +234,7 @@ class WingWeight(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        n_ult = inputs["data:loads:vertical:factor"]
+        n_ult = inputs["data:scenarios:load_factor:vertical:ultimate"]
         Mtotal_guess = inputs["data:weights:mtow:guess"]
         S_w = inputs["data:geometry:wing:surface"]
         b_w = inputs["data:geometry:wing:span"]
@@ -306,7 +306,7 @@ class HorizontalTailWeight(om.ExplicitComponent):
         self.add_input("data:weights:airframe:tail:density", val=np.nan, units="kg/m**2")
         self.add_output("data:weights:airframe:tail:horizontal:mass", units="kg", lower=0.0)
         # self.add_output("data:weights:airframe:tail:horizontal:skin:mass", units="kg", lower=0.0)
-        # self.add_input("data:loads:vertical:factor", val=4.5, units=None)
+        # self.add_input("data:scenarios:load_factor:vertical:ultimate", val=4.5, units=None)
         # self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
         # self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         # self.add_input("data:geometry:tail:horizontal:MAC:y:local", val=np.nan, units="m")
@@ -334,7 +334,7 @@ class HorizontalTailWeight(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         S_ht = inputs["data:geometry:tail:horizontal:surface"]
         rho_skin = inputs["data:weights:airframe:tail:density"]
-        # n_ult = inputs["data:loads:vertical:factor"]
+        # n_ult = inputs["data:scenarios:load_factor:vertical:ultimate"]
         # Mtotal_guess = inputs["data:weights:mtow:guess"]
         # S_w = inputs["data:geometry:wing:surface"]
         # y_MAC = inputs["data:geometry:tail:horizontal:MAC:y:local"]

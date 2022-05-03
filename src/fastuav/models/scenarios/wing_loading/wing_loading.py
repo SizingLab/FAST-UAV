@@ -149,7 +149,7 @@ class WingLoadingSelection(om.ExplicitComponent):
     The lowest wing loading is selected for sizing the wing.
     This ensures that the wing is large enough for all flight conditions,
     i.e. it provides enough lift in all circumstances.
-    This selection achieved with an undersizing coefficient and constraints on the wing loading.
+    This selection is achieved with an undersizing coefficient and constraints on the wing loading.
     """
 
     def setup(self):

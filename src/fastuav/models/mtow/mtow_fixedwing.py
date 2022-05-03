@@ -15,4 +15,4 @@ class MTOWFixedWing(MTOW):
 
     def initialize(self):
         MTOW.initialize(self)
-        self.options["propulsion_id"] = [FW_PROPULSION]
+        self.options["propulsion_id_list"] = [FW_PROPULSION]

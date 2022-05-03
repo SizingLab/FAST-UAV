@@ -39,8 +39,8 @@ class PropellerConstraints(om.ExplicitComponent):
 
         prop_con1 = (NDmax - W_pro_cl * Dpro / 2 / np.pi) / NDmax
         prop_con2 = (NDmax - W_pro_cr * Dpro / 2 / np.pi) / NDmax
-        prop_con3 = (V_cl - J_climb * W_pro_cl * Dpro / 2 / np.pi) / V_cl
-        prop_con4 = (V_cr - J_cruise * W_pro_cr * Dpro / 2 / np.pi) / V_cr
+        prop_con3 = (V_cl - J_climb * W_pro_cl * Dpro / 2 / np.pi) / V_cl if V_cl > 0 else 0.0
+        prop_con4 = (V_cr - J_cruise * W_pro_cr * Dpro / 2 / np.pi) / V_cr if V_cr > 0 else 0.0
 
         outputs["data:propulsion:propeller:constraints:rpm:climb"] = prop_con1
         outputs["data:propulsion:propeller:constraints:rpm:cruise"] = prop_con2
@@ -99,48 +99,48 @@ class PropellerConstraints(om.ExplicitComponent):
             "data:propulsion:propeller:constraints:airspeed:climb",
             "data:scenarios:climb:speed",
         ] = (
-            J_climb * W_pro_cl * Dpro / V_cl**2 / 2 / np.pi
+            J_climb * W_pro_cl * Dpro / V_cl**2 / 2 / np.pi if V_cl > 0 else 0.0
         )
         partials[
             "data:propulsion:propeller:constraints:airspeed:climb",
             "data:propulsion:propeller:advance_ratio:climb",
         ] = (
-            -W_pro_cl * Dpro / V_cl / 2 / np.pi
+            -W_pro_cl * Dpro / V_cl / 2 / np.pi if V_cl > 0 else 0.0
         )
         partials[
             "data:propulsion:propeller:constraints:airspeed:climb",
             "data:propulsion:propeller:speed:climb",
         ] = (
-            -J_climb * Dpro / V_cl / 2 / np.pi
+            -J_climb * Dpro / V_cl / 2 / np.pi if V_cl > 0 else 0.0
         )
         partials[
             "data:propulsion:propeller:constraints:airspeed:climb",
             "data:propulsion:propeller:diameter",
         ] = (
-            -J_climb * W_pro_cl / V_cl / 2 / np.pi
+            -J_climb * W_pro_cl / V_cl / 2 / np.pi if V_cl > 0 else 0.0
         )
 
         partials[
             "data:propulsion:propeller:constraints:airspeed:cruise",
             "data:scenarios:cruise:speed",
         ] = (
-            J_cruise * W_pro_cr * Dpro / V_cr**2 / 2 / np.pi
+            J_cruise * W_pro_cr * Dpro / V_cr**2 / 2 / np.pi if V_cr > 0 else 0.0
         )
         partials[
             "data:propulsion:propeller:constraints:airspeed:cruise",
             "data:propulsion:propeller:advance_ratio:cruise",
         ] = (
-            -W_pro_cr * Dpro / V_cr / 2 / np.pi
+            -W_pro_cr * Dpro / V_cr / 2 / np.pi if V_cr > 0 else 0.0
         )
         partials[
             "data:propulsion:propeller:constraints:airspeed:cruise",
             "data:propulsion:propeller:speed:cruise",
         ] = (
-            -J_cruise * Dpro / V_cr / 2 / np.pi
+            -J_cruise * Dpro / V_cr / 2 / np.pi if V_cr > 0 else 0.0
         )
         partials[
             "data:propulsion:propeller:constraints:airspeed:cruise",
             "data:propulsion:propeller:diameter",
         ] = (
-            -J_cruise * W_pro_cr / V_cr / 2 / np.pi
+            -J_cruise * W_pro_cr / V_cr / 2 / np.pi if V_cr > 0 else 0.0
         )

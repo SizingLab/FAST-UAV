@@ -14,13 +14,13 @@ class MTOW(om.Group):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id",
+        self.options.declare("propulsion_id_list",
                              default=[MR_PROPULSION],
                              values=[[MR_PROPULSION], [FW_PROPULSION], [MR_PROPULSION, FW_PROPULSION]])
 
     def setup(self):
-        propulsion_id = self.options["propulsion_id"]
-        self.add_subsystem("mtow_calculation", MtowCalculation(propulsion_id=propulsion_id), promotes=["*"])
+        propulsion_id_list = self.options["propulsion_id_list"]
+        self.add_subsystem("mtow_calculation", MtowCalculation(propulsion_id_list=propulsion_id_list), promotes=["*"])
         self.add_subsystem("constraints", MtowConstraints(), promotes=["*"])
 
 
@@ -60,14 +60,15 @@ class MtowCalculation(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id",
+        self.options.declare("propulsion_id_list",
                              default=[MR_PROPULSION],
                              values=[[MR_PROPULSION], [FW_PROPULSION], [MR_PROPULSION, FW_PROPULSION]])
 
     def setup(self):
+        propulsion_id_list = self.options["propulsion_id_list"]
         self.add_input("data:scenarios:payload:mass", val=0.0, units="kg")
 
-        for propulsion_id in self.options["propulsion_id"]:
+        for propulsion_id in propulsion_id_list:
             self.add_input("data:weights:propulsion:%s:gearbox:mass" % propulsion_id, val=0.0, units="kg")
             self.add_input("data:weights:propulsion:%s:esc:mass" % propulsion_id, val=0.0, units="kg")
             self.add_input("data:weights:propulsion:%s:wires:mass" % propulsion_id, val=0.0, units="kg")
@@ -76,10 +77,10 @@ class MtowCalculation(om.ExplicitComponent):
             self.add_input("data:weights:propulsion:%s:propeller:mass" % propulsion_id, val=0.0, units="kg")
             self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
 
-        if MR_PROPULSION in self.options["propulsion_id"]:
+        if MR_PROPULSION in propulsion_id_list:
             self.add_input("data:weights:airframe:body:mass", val=0.0, units="kg")
             self.add_input("data:weights:airframe:arms:mass", val=0.0, units="kg")
-        if FW_PROPULSION in self.options["propulsion_id"]:
+        if FW_PROPULSION in propulsion_id_list:
             self.add_input("data:weights:airframe:wing:mass", val=0.0, units="kg")
             self.add_input("data:weights:airframe:tail:horizontal:mass", val=0.0, units="kg")
             self.add_input("data:weights:airframe:tail:vertical:mass", val=0.0, units="kg")
@@ -91,9 +92,10 @@ class MtowCalculation(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
+        propulsion_id_list = self.options["propulsion_id_list"]
         mtow = inputs["data:scenarios:payload:mass"]
 
-        for propulsion_id in self.options["propulsion_id"]:
+        for propulsion_id in propulsion_id_list:
             mtow += ((inputs["data:weights:propulsion:%s:gearbox:mass" % propulsion_id]
                      + inputs["data:weights:propulsion:%s:motor:mass" % propulsion_id]
                      + inputs["data:weights:propulsion:%s:esc:mass" % propulsion_id]
@@ -102,11 +104,11 @@ class MtowCalculation(om.ExplicitComponent):
                      + inputs["data:weights:propulsion:%s:wires:mass" % propulsion_id]
                      + inputs["data:weights:propulsion:%s:battery:mass" % propulsion_id])
 
-        if MR_PROPULSION in self.options["propulsion_id"]:
+        if MR_PROPULSION in propulsion_id_list:
             mtow += (inputs["data:weights:airframe:body:mass"]
                      + inputs["data:weights:airframe:arms:mass"])
 
-        if FW_PROPULSION in self.options["propulsion_id"]:
+        if FW_PROPULSION in propulsion_id_list:
             mtow += (inputs["data:weights:airframe:wing:mass"]
                     + inputs["data:weights:airframe:fuselage:mass"]
                     + inputs["data:weights:airframe:tail:horizontal:mass"]
@@ -115,10 +117,11 @@ class MtowCalculation(om.ExplicitComponent):
         outputs["data:weights:mtow"] = mtow
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
+        propulsion_id_list = self.options["propulsion_id_list"]
         partials["data:weights:mtow",
                  "data:scenarios:payload:mass"] = 1.0
 
-        for propulsion_id in self.options["propulsion_id"]:
+        for propulsion_id in propulsion_id_list:
             N_pro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
             m_gearbox = inputs["data:weights:propulsion:%s:gearbox:mass" % propulsion_id]
             m_motor = inputs["data:weights:propulsion:%s:motor:mass" % propulsion_id]
@@ -139,13 +142,13 @@ class MtowCalculation(om.ExplicitComponent):
             partials["data:weights:mtow",
                      "data:weights:propulsion:%s:battery:mass" % propulsion_id] = 1.0
 
-        if MR_PROPULSION in self.options["propulsion_id"]:
+        if MR_PROPULSION in propulsion_id_list:
             partials["data:weights:mtow",
                      "data:weights:airframe:body:mass"] = 1.0
             partials["data:weights:mtow",
                      "data:weights:airframe:arms:mass"] = 1.0
 
-        if FW_PROPULSION in self.options["propulsion_id"]:
+        if FW_PROPULSION in propulsion_id_list:
             partials["data:weights:mtow",
                      "data:weights:airframe:wing:mass"] = 1.0
             partials["data:weights:mtow",

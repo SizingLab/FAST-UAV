@@ -366,6 +366,8 @@ def mass_breakdown_bar_plot_drone(
     drone_file_path: str, name=None, fig=None, file_formatter=None
 ) -> go.FigureWidget:
     """
+    DEPRECATED FOR NOW.
+
     Returns a figure plot of the drone mass breakdown using bar plots.
     Different designs can be superposed by providing an existing fig.
     Each design can be provided a name.
@@ -480,7 +482,7 @@ def mass_breakdown_bar_plot_drone(
             motors,
             propellers,
             wires,
-            structure,
+            airframe,
         ]
     else:
         weight_labels = [

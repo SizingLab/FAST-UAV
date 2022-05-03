@@ -27,7 +27,7 @@ model:
     wires:
         id: fastuav.propulsion.wires.fixedwing
     mtow:
-        id: fastuav.mtow.fixedwing
+        id: fastuav.mtow.hybrid
     stability:
         id: fastuav.stability.fixedwing
     performance:
@@ -49,7 +49,7 @@ optimization:
         upper: 40.0
         
       - name: data:scenarios:wing_loading:k
-        lower: 0.01
+        lower: 0.5
         upper: 2.0
         
         ## PROPULSION FIXED WING ##
