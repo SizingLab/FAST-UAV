@@ -34,12 +34,15 @@ class MotorDefinitionParameters(om.Group):
 
 class NominalTorque(om.ExplicitComponent):
     """
-    Computes nominal torque
+    Estimates the nominal torque from a steady state flight scenario.
+    The cruising scenario is taken in priority, but if it hasn't been defined for the propulsion system
+    the hovering scenario is used.
     """
 
     def setup(self):
         self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
         self.add_input("data:propulsion:propeller:torque:cruise", val=np.nan, units="N*m")
+        self.add_input("data:propulsion:propeller:torque:hover", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:k", val=np.nan, units=None)
         self.add_output("data:propulsion:motor:torque:nominal:estimated", units="N*m")
 
@@ -49,32 +52,51 @@ class NominalTorque(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         Nred = inputs["data:propulsion:gearbox:N_red"]
         Qpro_cruise = inputs["data:propulsion:propeller:torque:cruise"]
+        Qpro_hover = inputs["data:propulsion:propeller:torque:hover"]
         k_mot = inputs["data:propulsion:motor:torque:k"]
 
-        Tmot_cruise = Qpro_cruise / Nred  # [N.m] cruise torque
-        Tmot = k_mot * Tmot_cruise  # [N.m] required motor nominal torque
+        if Qpro_cruise > 0:
+            Tmot_cruise = Qpro_cruise / Nred  # [N.m] cruise torque
+            Tmot = k_mot * Tmot_cruise  # [N.m] required motor nominal torque
+        else:  # if no cruise scenario has been defined for this propulsion system
+            Tmot_hover = Qpro_hover / Nred  # [N.m] hover torque
+            Tmot = k_mot * Tmot_hover  # [N.m] required motor nominal torque
 
         outputs["data:propulsion:motor:torque:nominal:estimated"] = Tmot
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         Nred = inputs["data:propulsion:gearbox:N_red"]
         Qpro_cruise = inputs["data:propulsion:propeller:torque:cruise"]
+        Qpro_hover = inputs["data:propulsion:propeller:torque:hover"]
         k_mot = inputs["data:propulsion:motor:torque:k"]
 
-        partials[
-            "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:gearbox:N_red"
-        ] = (-k_mot * Qpro_cruise / Nred**2)
+        if Qpro_cruise > 0:
+            partials[
+                "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:gearbox:N_red"
+            ] = (-k_mot * Qpro_cruise / Nred**2)
+            partials[
+                "data:propulsion:motor:torque:nominal:estimated",
+                "data:propulsion:propeller:torque:cruise",
+            ] = (
+                k_mot / Nred
+            )
+            partials[
+                "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:motor:torque:k"
+            ] = (Qpro_cruise / Nred)
 
-        partials[
-            "data:propulsion:motor:torque:nominal:estimated",
-            "data:propulsion:propeller:torque:cruise",
-        ] = (
-            k_mot / Nred
-        )
-
-        partials[
-            "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:motor:torque:k"
-        ] = (Qpro_cruise / Nred)
+        else:
+            partials[
+                "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:gearbox:N_red"
+            ] = (-k_mot * Qpro_hover / Nred**2)
+            partials[
+                "data:propulsion:motor:torque:nominal:estimated",
+                "data:propulsion:propeller:torque:hover",
+            ] = (
+                k_mot / Nred
+            )
+            partials[
+                "data:propulsion:motor:torque:nominal:estimated", "data:propulsion:motor:torque:k"
+            ] = (Qpro_hover / Nred)
 
 
 class TorqueCoefficient(om.ExplicitComponent):
