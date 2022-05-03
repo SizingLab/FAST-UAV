@@ -4,6 +4,7 @@ Mission generator.
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
+from itertools import chain
 from fastuav.utils.constants import *
 from fastuav.models.performance.mission.mission_definition.schema import MissionDefinition
 from fastuav.models.performance.mission.route_builder import RouteBuilder
@@ -24,7 +25,7 @@ class MissionBuilder(om.Group):
 
         for mission_name, mission_definition in mission_dict[MISSION_DEFINITION_TAG].items():
             routes_list = []  # list of routes names
-            propulsion_id_list = []  # list of propulsion systems used to complete the mission
+            propulsion_id_dict = {}  # list of propulsion systems used to complete the mission
             is_sizing = True if mission_name == SIZING_MISSION_TAG else False  # sizing mission flag
 
             # Create mission group
@@ -35,7 +36,7 @@ class MissionBuilder(om.Group):
                 _, route_name = tuple(*route.items())  # get route name
                 route_definition = mission_dict[ROUTE_DEFINITION_TAG][route_name]  # get route definition
                 routes_list.append(route_name)
-                propulsion_id_list.extend(RouteBuilder.get_propulsion_id_list(route_definition))
+                propulsion_id_dict[route_name] = RouteBuilder.get_propulsion_id_list(route_definition)
                 # Add OpenMDAO subgroup to mission group
                 mission_group.add_subsystem(route_name,
                                             RouteBuilder(mission_name=mission_name,
@@ -48,14 +49,14 @@ class MissionBuilder(om.Group):
             mission_group.add_subsystem("mission",
                                         MissionComponent(mission_name=mission_name,
                                                          routes_list=routes_list,
-                                                         propulsion_id_list=set(propulsion_id_list)),
+                                                         propulsion_id_dict=propulsion_id_dict),
                                         promotes=["*"])
 
             # Add constraint for sizing the battery capacity / energy to complete the sizing mission
             if is_sizing:
                 mission_group.add_subsystem("constraints",
                                             MissionConstraints(mission_name=mission_name,
-                                                               propulsion_id_list=set(propulsion_id_list)),
+                                                               propulsion_id_dict=propulsion_id_dict),
                                             promotes=["*"])
 
 
@@ -67,21 +68,21 @@ class MissionComponent(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("mission_name", default=None, types=str)
         self.options.declare("routes_list", default=[], types=list)
-        self.options.declare("propulsion_id_list", default=None, types=set)
+        self.options.declare("propulsion_id_dict", default=None, types=dict)
 
     def setup(self):
         mission_name = self.options["mission_name"]
         routes_list = self.options["routes_list"]
-        propulsion_id_list = self.options["propulsion_id_list"]
+        propulsion_id_dict = self.options["propulsion_id_dict"]
 
         for route_name in routes_list:
-            for propulsion_id in propulsion_id_list:
+            for propulsion_id in propulsion_id_dict[route_name]:
                 self.add_input("mission:%s:%s:energy:%s" % (mission_name, route_name, propulsion_id),
                                val=np.nan,
                                units="kJ")
                 self.add_input("mission:%s:%s:duration:%s" % (mission_name, route_name, propulsion_id),
-                                val=np.nan,
-                                units="min")
+                               val=np.nan,
+                               units="min")
             self.add_input("mission:%s:%s:energy" % (mission_name, route_name),
                            val=np.nan,
                            units="kJ")
@@ -89,7 +90,7 @@ class MissionComponent(om.ExplicitComponent):
                            val=np.nan,
                            units="min")
 
-        for propulsion_id in propulsion_id_list:
+        for propulsion_id in list(set(chain(*propulsion_id_dict.values()))):  # list of unique propulsion ids
             self.add_output("mission:%s:energy:%s" % (mission_name, propulsion_id), units="kJ")
             self.add_output("mission:%s:duration:%s" % (mission_name, propulsion_id), units="min")
         self.add_output("mission:%s:energy" % mission_name, units="kJ")
@@ -101,15 +102,15 @@ class MissionComponent(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         mission_name = self.options["mission_name"]
         routes_list = self.options["routes_list"]
-        propulsion_id_list = self.options["propulsion_id_list"]
+        propulsion_id_dict = self.options["propulsion_id_dict"]
 
-        for propulsion_id in propulsion_id_list:
+        for propulsion_id in list(set(chain(*propulsion_id_dict.values()))):  # list of unique propulsion ids
             outputs["mission:%s:energy:%s" % (mission_name, propulsion_id)] = sum(
                 inputs["mission:%s:%s:energy:%s" % (mission_name, route_name, propulsion_id)] for route_name in
-                routes_list)
+                routes_list if propulsion_id in propulsion_id_dict[route_name])
             outputs["mission:%s:duration:%s" % (mission_name, propulsion_id)] = sum(
                 inputs["mission:%s:%s:duration:%s" % (mission_name, route_name, propulsion_id)] for route_name in
-                routes_list)
+                routes_list if propulsion_id in propulsion_id_dict[route_name])
 
         outputs["mission:%s:energy" % mission_name] = sum(
             inputs["mission:%s:%s:energy" % (mission_name, route_name)] for route_name in routes_list)
@@ -125,12 +126,12 @@ class MissionConstraints(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("mission_name", default=None, types=str)
-        self.options.declare("propulsion_id_list", default=None, types=set)
+        self.options.declare("propulsion_id_dict", default=None, types=dict)
 
     def setup(self):
         mission_name = self.options["mission_name"]
-        propulsion_id_list = self.options["propulsion_id_list"]
-        for propulsion_id in propulsion_id_list:
+        propulsion_id_dict = self.options["propulsion_id_dict"]
+        for propulsion_id in list(set(chain(*propulsion_id_dict.values()))):  # list of unique propulsion ids
             self.add_input("mission:%s:energy:%s" % (mission_name, propulsion_id), val=np.nan, units="kJ")
             self.add_input("data:propulsion:%s:battery:energy" % propulsion_id, val=0.0, units="kJ")
             self.add_input("data:propulsion:%s:battery:DoD:max" % propulsion_id, val=0.8, units=None)
@@ -141,9 +142,9 @@ class MissionConstraints(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         mission_name = self.options["mission_name"]
-        propulsion_id_list = self.options["propulsion_id_list"]
+        propulsion_id_dict = self.options["propulsion_id_dict"]
 
-        for propulsion_id in propulsion_id_list:
+        for propulsion_id in list(set(chain(*propulsion_id_dict.values()))):  # list of unique propulsion ids
             E_mission = inputs["mission:%s:energy:%s" % (mission_name, propulsion_id)]
             E_bat = inputs["data:propulsion:%s:battery:energy" % propulsion_id]
             C_ratio = inputs["data:propulsion:%s:battery:DoD:max" % propulsion_id]
@@ -152,9 +153,9 @@ class MissionConstraints(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         mission_name = self.options["mission_name"]
-        propulsion_id_list = self.options["propulsion_id_list"]
+        propulsion_id_dict = self.options["propulsion_id_dict"]
 
-        for propulsion_id in propulsion_id_list:
+        for propulsion_id in list(set(chain(*propulsion_id_dict.values()))):  # list of unique propulsion ids
             E_mission = inputs["mission:%s:energy:%s" % (mission_name, propulsion_id)]
             E_bat = inputs["data:propulsion:%s:battery:energy" % propulsion_id]
             C_ratio = inputs["data:propulsion:%s:battery:DoD:max" % propulsion_id]

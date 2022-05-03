@@ -160,10 +160,10 @@ class PhaseComponent(om.ExplicitComponent):
             if phase_name == CLIMB_TAG:
                 self.add_input("mission:%s:%s:climb:rate" % (mission_name, route_name), val=np.nan, units="m/s")
             if propulsion_id == MR_PROPULSION:
-                self.add_input("data:aerodynamics:CD0", val=np.nan, units=None)
-                self.add_input("data:aerodynamics:CLmax", val=np.nan, units=None)
-                self.add_input("data:geometry:body:surface:front", val=np.nan, units="m**2")
-                self.add_input("data:geometry:body:surface:top", val=np.nan, units="m**2")
+                self.add_input("data:aerodynamics:%s:CD" % propulsion_id, val=np.nan, units=None)
+                self.add_input("data:aerodynamics:%s:CL" % propulsion_id, val=np.nan, units=None)
+                self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
+                self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
             elif propulsion_id == FW_PROPULSION:
                 self.add_input("data:aerodynamics:CD0", val=np.nan, units=None)
                 self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
@@ -221,10 +221,10 @@ class PhaseComponent(om.ExplicitComponent):
             flight_model.payload_power = inputs["mission:%s:%s:%s:payload:power" % (mission_name, route_name, phase_name)]
 
             if propulsion_id == MR_PROPULSION:
-                flight_model.mr_parasitic_drag_coef = inputs["data:aerodynamics:CD0"]
-                flight_model.mr_lift_coef = inputs["data:aerodynamics:CLmax"]
-                flight_model.mr_area_front = inputs["data:geometry:body:surface:front"]
-                flight_model.mr_area_top = inputs["data:geometry:body:surface:top"]
+                flight_model.mr_parasitic_drag_coef = inputs["data:aerodynamics:%s:CD" % propulsion_id]
+                flight_model.mr_lift_coef = inputs["data:aerodynamics:%s:CL" % propulsion_id]
+                flight_model.mr_area_front = inputs["data:geometry:projected_area:front"]
+                flight_model.mr_area_top = inputs["data:geometry:projected_area:top"]
 
             elif propulsion_id == FW_PROPULSION:
                 flight_model.fw_induced_drag_constant = inputs["data:aerodynamics:CDi:K"]

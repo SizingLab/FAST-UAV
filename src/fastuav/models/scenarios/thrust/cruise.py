@@ -22,10 +22,10 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
-        self.add_input("data:aerodynamics:CD0", val=np.nan, units=None)
-        self.add_input("data:aerodynamics:CLmax", val=np.nan, units=None)
-        self.add_input("data:geometry:body:surface:top", val=np.nan, units="m**2")
-        self.add_input("data:geometry:body:surface:front", val=np.nan, units="m**2")
+        self.add_input("data:aerodynamics:%s:CD" % propulsion_id, val=np.nan, units=None)
+        self.add_input("data:aerodynamics:%s:CL" % propulsion_id, val=np.nan, units=None)
+        self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
+        self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
         self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
         self.add_input("data:scenarios:%s:cruise:speed" % propulsion_id, val=0.0, units="m/s")
         self.add_input("data:scenarios:dISA", val=0.0, units="K")
@@ -54,24 +54,24 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         weight = Mtotal_guess * g
 
         # Drag and lift parameters
-        C_D = inputs["data:aerodynamics:CD0"]
-        C_L0 = inputs["data:aerodynamics:CLmax"]
-        S_top_estimated = inputs["data:geometry:body:surface:top"]
-        S_front_estimated = inputs["data:geometry:body:surface:front"]
+        C_D = inputs["data:aerodynamics:%s:CD" % propulsion_id]
+        C_L = inputs["data:aerodynamics:%s:CL" % propulsion_id]
+        S_top = inputs["data:geometry:projected_area:top"]
+        S_front = inputs["data:geometry:projected_area:front"]
 
         # Thrust and trim calculation (equilibrium)
         func = lambda x: np.tan(x) - q_cruise * C_D * (
-            S_top_estimated * np.sin(x) + S_front_estimated * np.cos(x)
+            S_top * np.sin(x) + S_front * np.cos(x)
         ) / (
             Mtotal_guess * g
-            + q_cruise * C_L0 * (S_top_estimated * np.sin(x) + S_front_estimated * np.cos(x))
+            + q_cruise * C_L * (S_top * np.sin(x) + S_front * np.cos(x))
         )
         alpha_cr = brentq(func, 0, np.pi / 2)  # [rad] angle of attack
-        S_ref = S_top_estimated * np.sin(alpha_cr) + S_front_estimated * np.cos(
+        S_ref = S_top * np.sin(alpha_cr) + S_front * np.cos(
             alpha_cr
-        )  # [m2] reference surface for drag and lift calculation
+        )  # [m2] reference area for drag and lift calculation
         drag = q_cruise * C_D * S_ref  # [N] drag
-        lift = - q_cruise * C_L0 * S_ref  # [N] lift (downwards force)
+        lift = - q_cruise * C_L * S_ref  # [N] lift (downwards force)
         # lift = - q_cruise * C_L0 * np.sin(2*alpha) * S_top_estimated * np.sin(alpha)  # Flat plate model
         F_pro_cr = ((weight - lift) ** 2 + drag ** 2) ** (1 / 2) / Npro  # [N] thrust per propeller
 
@@ -136,3 +136,22 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
 
         outputs["data:propulsion:%s:propeller:thrust:cruise" % propulsion_id] = F_pro_cruise
         outputs["data:propulsion:%s:propeller:AoA:cruise" % propulsion_id] = alpha_cr
+
+
+class NoCruise(om.ExplicitComponent):
+    """
+    Simple component to declare the absence of cruise scenario.
+    """
+
+    def initialize(self):
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
+
+    def setup(self):
+        propulsion_id = self.options["propulsion_id"]
+        self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
+        self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
+
+    def compute(self, inputs, outputs):
+        propulsion_id = self.options["propulsion_id"]
+        outputs["data:propulsion:%s:propeller:thrust:cruise" % propulsion_id] = 0.0
+        outputs["data:propulsion:%s:propeller:AoA:cruise" % propulsion_id] = np.pi / 2
