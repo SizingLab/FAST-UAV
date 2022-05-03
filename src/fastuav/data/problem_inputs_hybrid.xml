@@ -1,0 +1,647 @@
+<FASTOAD_model>
+  <data>
+    <aerodynamics>
+      <CLmax is_input="True">1.2<!--Max. lift coefficient--></CLmax>
+      <CD0>
+        <guess is_input="True">0.02</guess>
+      </CD0>
+      <multirotor>
+        <CD is_input="True">0.5</CD>
+      </multirotor>
+    </aerodynamics>
+    <scenarios>
+      <dISA units="degK" is_input="True">0.0</dISA>
+      <multirotor>
+        <thrust_weight_ratio is_input="True">1.8</thrust_weight_ratio>
+        <climb>
+          <speed units="m/s" is_input="True">3.0</speed>
+        </climb>
+        <cruise>
+          <altitude units="m" is_input="True">100.0</altitude>
+          <speed units="m/s" is_input="True">13.9</speed>
+        </cruise>
+        <payload>
+          <power units="W" is_input="True">0.0</power>
+        </payload>
+        <takeoff>
+          <altitude units="m" is_input="True">0.0</altitude>
+        </takeoff>
+      </multirotor>
+      <payload>
+        <mass units="kg" is_input="True">3.0</mass>
+        <volume units="m**3" is_input="True">0.01633632</volume>
+      </payload>
+      <wing_loading>
+        <k is_input="True">1.0</k>
+      </wing_loading>
+      <fixedwing>
+        <climb>
+          <rate units="m/s" is_input="True">3.0</rate>
+          <speed units="m/s" is_input="True">13.9</speed>
+        </climb>
+        <cruise>
+          <altitude units="m" is_input="True">120.0</altitude>
+          <speed units="m/s" is_input="True">13.9</speed>
+        </cruise>
+        <payload>
+          <power units="W" is_input="True">0.0</power>
+        </payload>
+        <stall>
+          <speed units="m/s" is_input="True">12.5</speed>
+        </stall>
+        <takeoff>
+          <altitude units="m" is_input="True">0.0</altitude>
+        </takeoff>
+      </fixedwing>
+    </scenarios>
+    <geometry>
+      <fuselage>
+        <fineness is_input="True">5.0</fineness>
+        <diameter>
+          <k is_input="True">0.2</k>
+        </diameter>
+      </fuselage>
+      <wing>
+        <AR is_input="True">8.0</AR>
+        <lambda is_input="True">0.7</lambda>
+        <tc is_input="True">0.15</tc>
+        <MAC>
+          <LE>
+            <x>
+              <k is_input="True">0.4</k>
+            </x>
+          </LE>
+        </MAC>
+      </wing>
+      <projected_area>
+        <top>
+          <k is_input="True">1.4</k>
+        </top>
+      </projected_area>
+      <tail>
+        <horizontal>
+          <AR is_input="True">4.0</AR>
+          <coefficient is_input="True">0.5</coefficient>
+          <lambda is_input="True">0.9</lambda>
+          <arm>
+            <k is_input="True">0.75</k>
+          </arm>
+        </horizontal>
+        <vertical>
+          <AR is_input="True">1.5</AR>
+          <coefficient is_input="True">0.04</coefficient>
+          <lambda is_input="True">0.9</lambda>
+        </vertical>
+      </tail>
+    </geometry>
+    <loads>
+      <vertical>
+        <factor is_input="True">4.5</factor>
+      </vertical>
+    </loads>
+    <weights>
+      <mtow>
+        <k is_input="True">2.0<!--Oversizing coefficient on load mass--></k>
+        <requirement units="kg" is_input="True">100.0<!--Top-level requirement: Maximum Take Off Weight--></requirement>
+      </mtow>
+      <airframe>
+        <tail>
+          <density units="kg/m**2" is_input="True">2.0</density>
+        </tail>
+        <fuselage>
+          <mass>
+            <density units="kg/m**2" is_input="True">2.0</density>
+          </mass>
+        </fuselage>
+        <wing>
+          <ribs>
+            <density units="kg/m**3" is_input="True">160.0</density>
+          </ribs>
+          <skin>
+            <density units="kg/m**2" is_input="True">0.2</density>
+          </skin>
+          <spar>
+            <density units="kg/m**3" is_input="True">1600.0</density>
+          </spar>
+        </wing>
+      </airframe>
+      <propulsion>
+        <fixedwing>
+          <battery>
+            <mass>
+              <reference units="kg" is_input="True">0.68</reference>
+            </mass>
+          </battery>
+          <esc>
+            <mass>
+              <reference units="kg" is_input="True">0.115</reference>
+            </mass>
+          </esc>
+          <motor>
+            <mass>
+              <reference units="kg" is_input="True">0.575</reference>
+            </mass>
+          </motor>
+          <propeller>
+            <mass>
+              <reference units="kg" is_input="True">0.014999</reference>
+            </mass>
+          </propeller>
+          <wires>
+            <density>
+              <reference units="kg/m" is_input="True">0.19</reference>
+            </density>
+          </wires>
+        </fixedwing>
+        <multirotor>
+          <battery>
+            <mass>
+              <reference units="kg" is_input="True">0.68</reference>
+            </mass>
+          </battery>
+          <esc>
+            <mass>
+              <reference units="kg" is_input="True">0.115</reference>
+            </mass>
+          </esc>
+          <motor>
+            <mass>
+              <reference units="kg" is_input="True">0.575</reference>
+            </mass>
+          </motor>
+          <propeller>
+            <mass>
+              <reference units="kg" is_input="True">0.014999</reference>
+            </mass>
+          </propeller>
+        </multirotor>
+      </propulsion>
+    </weights>
+    <propulsion>
+      <fixedwing>
+        <propeller>
+          <number is_input="True">1.0</number>
+          <ND>
+            <k is_input="True">1.0</k>
+            <max>
+              <reference units="m/s" is_input="True">38.1</reference>
+            </max>
+          </ND>
+          <advance_ratio>
+            <climb is_input="True">0.1</climb>
+            <cruise is_input="True">0.2</cruise>
+          </advance_ratio>
+          <beta>
+            <guess is_input="True">0.5</guess>
+          </beta>
+          <diameter>
+            <reference units="m" is_input="True">0.2794</reference>
+          </diameter>
+        </propeller>
+        <battery>
+          <capacity>
+            <k is_input="True">1.0</k>
+            <reference units="A*s" is_input="True">20520.0</reference>
+          </capacity>
+          <energy>
+            <reference units="kJ" is_input="True">467.856</reference>
+          </energy>
+          <voltage>
+            <k is_input="True">1.0</k>
+            <reference units="V" is_input="True">22.8</reference>
+          </voltage>
+          <volume>
+            <reference units="cm**3" is_input="True">500.0</reference>
+          </volume>
+          <DoD>
+            <max>
+              <reference is_input="True">0.8</reference>
+            </max>
+          </DoD>
+          <cell>
+            <voltage>
+              <estimated units="V" is_input="True">3.8</estimated>
+            </voltage>
+          </cell>
+          <current>
+            <max>
+              <reference units="A" is_input="True">200.0</reference>
+            </max>
+          </current>
+        </battery>
+        <esc>
+          <efficiency>
+            <reference is_input="True">0.95</reference>
+          </efficiency>
+          <power>
+            <k is_input="True">1.0</k>
+            <reference units="W" is_input="True">3108.0</reference>
+          </power>
+          <voltage>
+            <reference units="V" is_input="True">44.4</reference>
+          </voltage>
+        </esc>
+        <motor>
+          <length>
+            <reference units="m" is_input="True">0.088</reference>
+          </length>
+          <resistance>
+            <reference units="V/A" is_input="True">0.03</reference>
+          </resistance>
+          <speed>
+            <k is_input="True">1.0</k>
+          </speed>
+          <torque>
+            <k is_input="True">1.0</k>
+            <coefficient>
+              <reference units="N*m/A" is_input="True">0.03</reference>
+            </coefficient>
+            <friction>
+              <reference units="N*m" is_input="True">0.03</reference>
+            </friction>
+            <max>
+              <reference units="N*m" is_input="True">2.81714286</reference>
+            </max>
+            <nominal>
+              <reference units="N*m" is_input="True">2.32</reference>
+            </nominal>
+          </torque>
+        </motor>
+        <wires>
+          <current>
+            <reference units="A" is_input="True">190.0</reference>
+          </current>
+          <radius>
+            <reference units="m" is_input="True">0.005</reference>
+          </radius>
+        </wires>
+      </fixedwing>
+      <multirotor>
+        <propeller>
+          <number is_input="True">4.0</number>
+          <ND>
+            <k is_input="True">1.0</k>
+            <max>
+              <reference units="m/s" is_input="True">44.45</reference>
+            </max>
+          </ND>
+          <advance_ratio>
+            <climb is_input="True">0.15</climb>
+            <cruise is_input="True">0.6</cruise>
+          </advance_ratio>
+          <beta>
+            <guess is_input="True">0.3</guess>
+          </beta>
+          <diameter>
+            <reference units="m" is_input="True">0.2794</reference>
+          </diameter>
+        </propeller>
+        <battery>
+          <capacity>
+            <k is_input="True">1.0</k>
+            <reference units="A*s" is_input="True">20520.0</reference>
+          </capacity>
+          <energy>
+            <reference units="kJ" is_input="True">467.856</reference>
+          </energy>
+          <voltage>
+            <k is_input="True">1.0</k>
+            <reference units="V" is_input="True">22.8</reference>
+          </voltage>
+          <volume>
+            <reference units="cm**3" is_input="True">500.0</reference>
+          </volume>
+          <DoD>
+            <max>
+              <reference is_input="True">0.8</reference>
+            </max>
+          </DoD>
+          <cell>
+            <voltage>
+              <estimated units="V" is_input="True">3.8</estimated>
+            </voltage>
+          </cell>
+          <current>
+            <max>
+              <reference units="A" is_input="True">200.0</reference>
+            </max>
+          </current>
+        </battery>
+        <esc>
+          <efficiency>
+            <reference is_input="True">0.95</reference>
+          </efficiency>
+          <power>
+            <k is_input="True">1.0</k>
+            <reference units="W" is_input="True">3108.0</reference>
+          </power>
+          <voltage>
+            <reference units="V" is_input="True">44.4</reference>
+          </voltage>
+        </esc>
+        <motor>
+          <length>
+            <reference units="m" is_input="True">0.088</reference>
+          </length>
+          <resistance>
+            <reference units="V/A" is_input="True">0.03</reference>
+          </resistance>
+          <speed>
+            <k is_input="True">1.0</k>
+          </speed>
+          <torque>
+            <k is_input="True">1.0</k>
+            <coefficient>
+              <reference units="N*m/A" is_input="True">0.03</reference>
+            </coefficient>
+            <friction>
+              <reference units="N*m" is_input="True">0.03</reference>
+            </friction>
+            <max>
+              <reference units="N*m" is_input="True">2.81714286</reference>
+            </max>
+            <nominal>
+              <reference units="N*m" is_input="True">2.32</reference>
+            </nominal>
+          </torque>
+        </motor>
+      </multirotor>
+    </propulsion>
+    <structures>
+      <wing>
+        <ribs>
+          <thickness units="m" is_input="True">0.0035</thickness>
+        </ribs>
+        <spar>
+          <depth>
+            <k is_input="True">0.1</k>
+          </depth>
+          <stress>
+            <max units="N/m**2" is_input="True">140000000.0</max>
+          </stress>
+        </spar>
+      </wing>
+    </structures>
+  </data>
+  <uncertainty>
+    <aerodynamics>
+      <abs is_input="True">0.0</abs>
+      <rel is_input="True">0.0</rel>
+    </aerodynamics>
+    <propeller>
+      <aerodynamics>
+        <CP>
+          <axial>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </axial>
+          <incidence>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </incidence>
+          <static>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </static>
+        </CP>
+        <CT>
+          <axial>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </axial>
+          <incidence>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </incidence>
+          <static>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </static>
+        </CT>
+      </aerodynamics>
+    </propeller>
+    <propulsion>
+      <fixedwing>
+        <battery>
+          <capacity>
+            <abs units="A*s" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </capacity>
+          <voltage>
+            <abs units="V" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </voltage>
+          <DoD>
+            <max>
+              <abs is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </max>
+          </DoD>
+          <current>
+            <max>
+              <abs units="A" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </max>
+          </current>
+        </battery>
+        <esc>
+          <efficiency>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </efficiency>
+          <voltage>
+            <abs units="V" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </voltage>
+          <power>
+            <max>
+              <abs units="W" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </max>
+          </power>
+        </esc>
+        <motor>
+          <resistance>
+            <abs units="V/A" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </resistance>
+          <torque>
+            <coefficient>
+              <abs units="N*m/A" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </coefficient>
+            <friction>
+              <abs units="N*m" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </friction>
+            <max>
+              <abs units="N*m" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </max>
+            <nominal>
+              <abs units="N*m" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </nominal>
+          </torque>
+        </motor>
+        <propeller>
+          <beta>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </beta>
+          <diameter>
+            <abs units="m" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </diameter>
+        </propeller>
+      </fixedwing>
+      <multirotor>
+        <battery>
+          <capacity>
+            <abs units="A*s" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </capacity>
+          <voltage>
+            <abs units="V" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </voltage>
+          <DoD>
+            <max>
+              <abs is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </max>
+          </DoD>
+          <current>
+            <max>
+              <abs units="A" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </max>
+          </current>
+        </battery>
+        <esc>
+          <efficiency>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </efficiency>
+          <voltage>
+            <abs units="V" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </voltage>
+          <power>
+            <max>
+              <abs units="W" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </max>
+          </power>
+        </esc>
+        <motor>
+          <resistance>
+            <abs units="V/A" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </resistance>
+          <torque>
+            <coefficient>
+              <abs units="N*m/A" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </coefficient>
+            <friction>
+              <abs units="N*m" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </friction>
+            <max>
+              <abs units="N*m" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </max>
+            <nominal>
+              <abs units="N*m" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </nominal>
+          </torque>
+        </motor>
+        <propeller>
+          <beta>
+            <abs is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </beta>
+          <diameter>
+            <abs units="m" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </diameter>
+        </propeller>
+      </multirotor>
+    </propulsion>
+    <weights>
+      <propulsion>
+        <fixedwing>
+          <battery>
+            <mass>
+              <abs units="kg" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </mass>
+          </battery>
+          <esc>
+            <mass>
+              <abs units="kg" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </mass>
+          </esc>
+          <motor>
+            <mass>
+              <abs units="kg" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </mass>
+          </motor>
+          <propeller>
+            <mass>
+              <abs units="kg" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </mass>
+          </propeller>
+        </fixedwing>
+        <multirotor>
+          <battery>
+            <mass>
+              <abs units="kg" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </mass>
+          </battery>
+          <esc>
+            <mass>
+              <abs units="kg" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </mass>
+          </esc>
+          <motor>
+            <mass>
+              <abs units="kg" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </mass>
+          </motor>
+          <propeller>
+            <mass>
+              <abs units="kg" is_input="True">0.0</abs>
+              <rel is_input="True">0.0</rel>
+            </mass>
+          </propeller>
+        </multirotor>
+      </propulsion>
+    </weights>
+  </uncertainty>
+  <mission>
+    <sizing>
+      <diversion>
+        <cruise>
+          <distance units="m" is_input="True">0.0</distance>
+        </cruise>
+      </diversion>
+      <main_route>
+        <cruise>
+          <distance units="m" is_input="True">50000.0</distance>
+        </cruise>
+        <hover>
+          <duration units="min" is_input="True">5.0</duration>
+        </hover>
+      </main_route>
+    </sizing>
+  </mission>
+</FASTOAD_model>
