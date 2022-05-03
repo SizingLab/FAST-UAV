@@ -18,14 +18,11 @@ class Geometry(om.Group):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_subsystem("arms", Arms(propulsion_id=propulsion_id), promotes=["*"])
-
-        # self.add_subsystem("body",
-        # BodyAreas(),
-        # promotes=["*"])  # The body areas calculation is called prior to sizing scenarios to break the algebraic loop
+        self.add_subsystem("arms", ArmsGeometry(propulsion_id=propulsion_id), promotes=["*"])
+        self.add_subsystem("body", BodyGeometry(), promotes=["*"])
 
 
-class Arms(om.ExplicitComponent):
+class ArmsGeometry(om.ExplicitComponent):
     """
     Computes arms geometry
     """
@@ -75,9 +72,30 @@ class Arms(om.ExplicitComponent):
         outputs["data:structures:arms:diameter:inner"] = Din
 
 
-class BodyAreas(om.ExplicitComponent):
+class BodyGeometry(om.ExplicitComponent):
     """
-    Computes body's top and front areas with scaling laws based on the MTOW.
+    Computes body's top and front areas.
+    For now this is a simple duplicate of the projected areas estimates,
+    such that no consistency constraint for the projected areas is needed.
+    """
+
+    def setup(self):
+        self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
+        self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
+        self.add_output("data:geometry:body:surface:top", units="m**2")
+        self.add_output("data:geometry:body:surface:front", units="m**2")
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="fd")
+
+    def compute(self, inputs, outputs):
+        outputs["data:geometry:body:surface:top"] = inputs["data:geometry:projected_area:top"]
+        outputs["data:geometry:body:surface:front"] = inputs[ "data:geometry:projected_area:front"]
+
+
+class ProjectedAreasGuess(om.ExplicitComponent):
+    """
+    Computes a rough estimate of the projected areas with scaling laws.
     This is used as a preliminary calculation for sizing scenarios.
     """
 
@@ -86,8 +104,10 @@ class BodyAreas(om.ExplicitComponent):
         self.add_input("data:geometry:body:surface:top:reference", val=np.nan, units="m**2")
         self.add_input("data:geometry:body:surface:front:reference", val=np.nan, units="m**2")
         self.add_input("data:weights:mtow:reference", val=np.nan, units="kg")
-        self.add_output("data:geometry:body:surface:top", units="m**2")
-        self.add_output("data:geometry:body:surface:front", units="m**2")
+        self.add_input("data:geometry:projected_area:top:k", val=1.0, units=None)
+        self.add_input("data:geometry:projected_area:front:k", val=1.0, units=None)
+        self.add_output("data:geometry:projected_area:top", units="m**2")
+        self.add_output("data:geometry:projected_area:front", units="m**2")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="fd")
@@ -97,13 +117,15 @@ class BodyAreas(om.ExplicitComponent):
         S_top_ref = inputs["data:geometry:body:surface:top:reference"]
         S_front_ref = inputs["data:geometry:body:surface:front:reference"]
         MTOW_ref = inputs["data:weights:mtow:reference"]
+        k_top = inputs["data:geometry:projected_area:top:k"]
+        k_front = inputs["data:geometry:projected_area:front:k"]
 
-        S_top_estimated = S_top_ref * (Mtotal_guess / MTOW_ref) ** (
+        S_top = k_top * S_top_ref * (Mtotal_guess / MTOW_ref) ** (
             2 / 3
         )  # [m2] top surface estimation
-        S_front_estimated = S_front_ref * (Mtotal_guess / MTOW_ref) ** (
+        S_front = k_front * S_front_ref * (Mtotal_guess / MTOW_ref) ** (
             2 / 3
         )  # [m2] front surface estimation
 
-        outputs["data:geometry:body:surface:top"] = S_top_estimated
-        outputs["data:geometry:body:surface:front"] = S_front_estimated
+        outputs["data:geometry:projected_area:top"] = S_top
+        outputs["data:geometry:projected_area:front"] = S_front
