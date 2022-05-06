@@ -30,7 +30,7 @@ class WingLoadingStall(om.ExplicitComponent):
         self.add_output("data:scenarios:wing_loading:stall", units="N/m**2")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="exact")
+        self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
         # UAV configuration
@@ -50,23 +50,18 @@ class WingLoadingStall(om.ExplicitComponent):
         # Wing loading calculation
         WS_stall = q_stall * CL_max  # wing loading required to meet stall speed requirement [N/m2]
 
-        # if WS_stall < WS_MIN:
-        #    _LOGGER.warning(
-        #        "Very low wing loading for stall speed requirement. Consider increasing CLmax or relaxing the stall speed requirement."
-        #    )
-
         outputs["data:scenarios:wing_loading:stall"] = WS_stall
 
-    def compute_partials(self, inputs, partials, discrete_inputs=None):
-        propulsion_id = self.options["propulsion_id"]
-        V_stall = inputs["data:scenarios:%s:stall:speed" % propulsion_id]
-        altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
-        dISA = inputs["data:scenarios:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
-        atm.true_airspeed = V_stall
-        q_stall = atm.dynamic_pressure
-
-        partials["data:scenarios:wing_loading:stall", "data:aerodynamics:CLmax"] = q_stall
+    # def compute_partials(self, inputs, partials, discrete_inputs=None):
+    #     propulsion_id = self.options["propulsion_id"]
+    #     V_stall = inputs["data:scenarios:%s:stall:speed" % propulsion_id]
+    #     altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
+    #     dISA = inputs["data:scenarios:dISA"]
+    #     atm = AtmosphereSI(altitude_cruise, dISA)
+    #     atm.true_airspeed = V_stall
+    #     q_stall = atm.dynamic_pressure
+    #
+    #     partials["data:scenarios:wing_loading:stall", "data:aerodynamics:CLmax"] = q_stall
 
 
 class WingLoadingCruise(om.ExplicitComponent):
@@ -87,7 +82,7 @@ class WingLoadingCruise(om.ExplicitComponent):
         self.add_output("data:scenarios:wing_loading:cruise", units="N/m**2")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="exact")
+        self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
         # UAV configuration
@@ -112,35 +107,30 @@ class WingLoadingCruise(om.ExplicitComponent):
             CD_0_guess / K
         )  # wing loading that maximizes range during cruise [N/m2] (simplified drag model CD = CD_0 + K * CL^2)
 
-        # if WS_cruise < WS_MIN:
-        #    _LOGGER.warning(
-        #        "Very low wing loading for optimal range. Consider increasing the cruise speed requirement."
-        #    )
-
         outputs["data:scenarios:wing_loading:cruise"] = WS_cruise
 
-    def compute_partials(self, inputs, partials, discrete_inputs=None):
-        propulsion_id = self.options["propulsion_id"]
-        V_cruise = inputs["data:scenarios:%s:cruise:speed" % propulsion_id]
-        altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
-        dISA = inputs["data:scenarios:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
-        atm.true_airspeed = V_cruise
-        q_cruise = atm.dynamic_pressure
-        K = inputs["data:aerodynamics:CDi:K"]
-        CD_0_guess = inputs["data:aerodynamics:CD0:guess"]
-
-        partials["data:scenarios:wing_loading:cruise", "data:aerodynamics:CD0:guess"] = (
-            0.5 * q_cruise / np.sqrt(K) / np.sqrt(CD_0_guess)
-        )
-        partials["data:scenarios:wing_loading:cruise", "data:aerodynamics:CDi:K"] = (
-            -0.5 * q_cruise * np.sqrt(CD_0_guess) * (1.0 / K) ** (3 / 2)
-        )
+    # def compute_partials(self, inputs, partials, discrete_inputs=None):
+    #     propulsion_id = self.options["propulsion_id"]
+    #     V_cruise = inputs["data:scenarios:%s:cruise:speed" % propulsion_id]
+    #     altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
+    #     dISA = inputs["data:scenarios:dISA"]
+    #     atm = AtmosphereSI(altitude_cruise, dISA)
+    #     atm.true_airspeed = V_cruise
+    #     q_cruise = atm.dynamic_pressure
+    #     K = inputs["data:aerodynamics:CDi:K"]
+    #     CD_0_guess = inputs["data:aerodynamics:CD0:guess"]
+    #
+    #     partials["data:scenarios:wing_loading:cruise", "data:aerodynamics:CD0:guess"] = (
+    #         0.5 * q_cruise / np.sqrt(K) / np.sqrt(CD_0_guess)
+    #     )
+    #     partials["data:scenarios:wing_loading:cruise", "data:aerodynamics:CDi:K"] = (
+    #         -0.5 * q_cruise * np.sqrt(CD_0_guess) * (1.0 / K) ** (3 / 2)
+    #     )
 
 
 @ValidityDomainChecker(
     {
-        "data:scenarios:wing_loading": (WS_MIN, None),  # Defines only a lower bound
+        "data:scenarios:wing_loading": (WS_MIN, None),  # defines a lower bound for wing loading
     }
 )
 class WingLoadingSelection(om.ExplicitComponent):
@@ -149,7 +139,7 @@ class WingLoadingSelection(om.ExplicitComponent):
     The lowest wing loading is selected for sizing the wing.
     This ensures that the wing is large enough for all flight conditions,
     i.e. it provides enough lift in all circumstances.
-    This selection is achieved with an undersizing coefficient and constraints on the wing loading.
+    This selection is achieved with an under-sizing coefficient and constraints on the wing loading.
     """
 
     def setup(self):
@@ -169,7 +159,7 @@ class WingLoadingSelection(om.ExplicitComponent):
 
         WS = (
             k_WS * WS_cruise
-        )  # [N/m**2] wing loading selection from cruise requirement with undersizing variable
+        )  # [N/m**2] wing loading selection from cruise requirement with under-sizing coefficient
         WS_stall_cnstr = (
             WS_stall - WS
         ) / WS  # constraint on stall WS (selected WS should be lower than stall WS)
@@ -188,7 +178,7 @@ class WingLoadingSelection(om.ExplicitComponent):
         partials["data:scenarios:wing_loading:stall:constraint", "data:scenarios:wing_loading:stall"] = 1.0 / WS
         partials[
             "data:scenarios:wing_loading:stall:constraint", "data:scenarios:wing_loading:cruise"
-        ] = -WS_stall / (k_WS * WS_cruise**2)
+        ] = - WS_stall / (k_WS * WS_cruise ** 2)
         partials[
             "data:scenarios:wing_loading:stall:constraint", "data:scenarios:wing_loading:k"
-        ] = -WS_stall / (k_WS**2 * WS_cruise)
+        ] = - WS_stall / (k_WS ** 2 * WS_cruise)

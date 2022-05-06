@@ -21,7 +21,7 @@ class VerticalClimbThrust(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
-        self.add_input("data:aerodynamics:%s:CD" % propulsion_id, val=np.nan, units=None)
+        self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
         self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
         self.add_input("data:scenarios:%s:climb:speed" % propulsion_id, val=0.0, units="m/s")
@@ -50,14 +50,16 @@ class VerticalClimbThrust(om.ExplicitComponent):
         Mtotal_guess = inputs["data:weights:mtow:guess"]
         Weight = Mtotal_guess * g  # [N]
 
-        # Drag parameters
-        C_D = inputs["data:aerodynamics:%s:CD" % propulsion_id]
-        S_top = inputs["data:geometry:projected_area:top"]
-        Drag = q_climb * C_D * S_top  # [N]
-
-        # Thrust and trim calculation (equilibrium)
-        F_pro_cl = (Weight + Drag) / Npro  # [N] Thrust per propeller
+        # Angle of attack
         alpha_cl = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight)
+
+        # Drag parameters
+        C_D0 = inputs["data:aerodynamics:%s:CD0" % propulsion_id]
+        S_top = inputs["data:geometry:projected_area:top"]
+        Drag = q_climb * S_top * C_D0 * np.sin(alpha_cl)  # [N]
+
+        # Thrust calculation (equilibrium)
+        F_pro_cl = (Weight + Drag) / Npro  # [N] Thrust per propeller
 
         # PROVISION FOR CLIMBING FORWARD FLIGHT (PATH ANGLE THETA)
         # theta = np.pi / 2  # [rad] flight path angle (vertical climb)

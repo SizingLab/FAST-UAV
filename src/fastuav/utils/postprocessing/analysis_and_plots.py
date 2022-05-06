@@ -692,9 +692,9 @@ def fixedwing_geometry_plot(
     """
     variables = VariableIO(aircraft_file_path, file_formatter).read()
 
-    # Wing parameters
+    # Wing parameters  # TODO: add sweep
     wing_tip_leading_edge_x = 0
-    wing_root_y = 0  # variables["data:geometry:fuselage:diameter:mid"].value[0] / 2.0
+    wing_root_y = 0
     wing_tip_y = variables["data:geometry:wing:span"].value[0] / 2.0
     wing_root_chord = variables["data:geometry:wing:root:chord"].value[0]
     wing_tip_chord = variables["data:geometry:wing:tip:chord"].value[0]
