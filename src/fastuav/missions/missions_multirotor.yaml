@@ -1,3 +1,5 @@
+# Missions definition for multirotor UAV
+
 routes:
   main_route:
     climb_part:

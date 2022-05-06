@@ -34,6 +34,11 @@
           <altitude units="m" is_input="True">0.0</altitude>
         </takeoff>
       </fixedwing>
+      <load_factor>
+        <vertical>
+          <ultimate is_input="True">4.5</ultimate>
+        </vertical>
+      </load_factor>
     </scenarios>
     <geometry>
       <fuselage>
@@ -46,6 +51,9 @@
         <AR is_input="True">8.0</AR>
         <lambda is_input="True">0.7</lambda>
         <tc is_input="True">0.15</tc>
+        <sweep>
+          <LE units="rad" is_input="True">0.0</LE>
+        </sweep>
         <MAC>
           <LE>
             <x>
@@ -70,11 +78,6 @@
         </vertical>
       </tail>
     </geometry>
-    <loads>
-      <vertical>
-        <factor is_input="True">4.5</factor>
-      </vertical>
-    </loads>
     <weights>
       <mtow>
         <k is_input="True">2.0<!--Oversizing coefficient on load mass--></k>

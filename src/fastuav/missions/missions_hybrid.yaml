@@ -1,3 +1,5 @@
+# Missions definition for hybrid VTOL UAV
+
 routes:
   main_route:
     climb_part:

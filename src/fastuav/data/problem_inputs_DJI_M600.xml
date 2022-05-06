@@ -24,7 +24,7 @@
     </scenarios>
     <aerodynamics>
       <multirotor>
-        <CD is_input="True">0.5</CD>
+        <CD0 is_input="True">0.5</CD0>
         <CL is_input="True">0.0</CL>
       </multirotor>
     </aerodynamics>

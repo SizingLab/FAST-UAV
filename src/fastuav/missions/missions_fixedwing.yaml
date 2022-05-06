@@ -1,3 +1,5 @@
+# Missions definition for fixed wing UAV
+
 routes:
   main_route:
     climb_part:

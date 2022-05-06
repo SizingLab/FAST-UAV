@@ -49,7 +49,7 @@ optimization:
         upper: 40.0
         
       - name: data:scenarios:wing_loading:k
-        lower: 0.01
+        lower: 0.5
         upper: 2.0
         
         ## PROPULSION ##
@@ -133,7 +133,7 @@ optimization:
       - name: data:weights:mtow:requirement:constraint # MTOW requirement
         lower: 0.0
         
-      - name: data:scenarios:wing_loading:stall:constraint  # minimum wing loading required for stall speed
+      - name: data:scenarios:wing_loading:stall:constraint  # maximum wing loading requirement (stall speed)
         lower: 0.0
         
       ## PROPULSION ##
@@ -190,7 +190,7 @@ optimization:
       #  lower: 0.0
     
         ## AERODYNAMICS ##
-      - name: data:aerodynamics:constraints:CD0:consistency # Drag consistency
+      - name: data:aerodynamics:CD0:guess:constraint # Drag consistency
         lower: 0.0
         upper: 0.01
       

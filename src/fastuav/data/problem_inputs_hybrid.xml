@@ -6,7 +6,7 @@
         <guess is_input="True">0.02</guess>
       </CD0>
       <multirotor>
-        <CD is_input="True">2.0</CD>
+        <CD0 is_input="True">1.0</CD0>
       </multirotor>
     </aerodynamics>
     <scenarios>
@@ -70,6 +70,9 @@
         <AR is_input="True">8.0</AR>
         <lambda is_input="True">0.7</lambda>
         <tc is_input="True">0.15</tc>
+        <sweep>
+          <LE units="rad" is_input="True">0.0</LE>
+        </sweep>
         <MAC>
           <LE>
             <x>
@@ -78,6 +81,11 @@
           </LE>
         </MAC>
       </wing>
+      <multirotor>
+        <propeller>
+          <clearance units="m" is_input="True">0.1</clearance>
+        </propeller>
+      </multirotor>
       <projected_area>
         <top>
           <k is_input="True">1.4</k>
@@ -100,14 +108,14 @@
       </tail>
     </geometry>
     <weights>
+      <arms>
+        <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
+      </arms>
       <mtow>
         <k is_input="True">5.0<!--Oversizing coefficient on load mass--></k>
         <requirement units="kg" is_input="True">100.0<!--Top-level requirement: Maximum Take Off Weight--></requirement>
       </mtow>
       <airframe>
-        <arms>
-          <mass units="kg" is_input="True">0.0<!--Total arms mass--></mass>
-        </arms>
         <body>
           <mass units="kg" is_input="True">0.0<!--Body mass--></mass>
         </body>
@@ -132,31 +140,6 @@
         </wing>
       </airframe>
       <propulsion>
-        <multirotor>
-          <wires>
-            <mass units="kg" is_input="True">0.0</mass>
-          </wires>
-          <battery>
-            <mass>
-              <reference units="kg" is_input="True">1.0</reference>
-            </mass>
-          </battery>
-          <esc>
-            <mass>
-              <reference units="kg" is_input="True">0.115</reference>
-            </mass>
-          </esc>
-          <motor>
-            <mass>
-              <reference units="kg" is_input="True">0.575</reference>
-            </mass>
-          </motor>
-          <propeller>
-            <mass>
-              <reference units="kg" is_input="True">0.014999</reference>
-            </mass>
-          </propeller>
-        </multirotor>
         <fixedwing>
           <battery>
             <mass>
@@ -184,6 +167,33 @@
             </density>
           </wires>
         </fixedwing>
+        <multirotor>
+          <battery>
+            <mass>
+              <reference units="kg" is_input="True">1.0</reference>
+            </mass>
+          </battery>
+          <esc>
+            <mass>
+              <reference units="kg" is_input="True">0.115</reference>
+            </mass>
+          </esc>
+          <motor>
+            <mass>
+              <reference units="kg" is_input="True">0.575</reference>
+            </mass>
+          </motor>
+          <propeller>
+            <mass>
+              <reference units="kg" is_input="True">0.014999</reference>
+            </mass>
+          </propeller>
+          <wires>
+            <density>
+              <reference units="kg/m" is_input="True">0.19</reference>
+            </density>
+          </wires>
+        </multirotor>
       </propulsion>
     </weights>
     <propulsion>
@@ -287,6 +297,7 @@
       </fixedwing>
       <multirotor>
         <propeller>
+          <is_coaxial is_input="True">0.0</is_coaxial>
           <number is_input="True">4.0</number>
           <ND>
             <k is_input="True">1.0</k>
@@ -374,9 +385,25 @@
             </nominal>
           </torque>
         </motor>
+        <wires>
+          <current>
+            <reference units="A" is_input="True">190.0</reference>
+          </current>
+          <radius>
+            <reference units="m" is_input="True">0.005</reference>
+          </radius>
+        </wires>
       </multirotor>
     </propulsion>
     <structures>
+      <arms>
+        <diameter>
+          <k is_input="True">0.99<!--Inner to outer beam diameter ratio--></k>
+        </diameter>
+        <stress>
+          <max units="N/m**2" is_input="True">70000000.0<!--Arms material maximum allowable stress--></max>
+        </stress>
+      </arms>
       <wing>
         <ribs>
           <thickness units="m" is_input="True">0.0035</thickness>

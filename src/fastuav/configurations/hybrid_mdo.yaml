@@ -18,21 +18,21 @@ model:
         id: fastuav.propulsion.hybrid
         gearbox: False
     geometry:
-        id: fastuav.geometry.fixedwing
+        id: fastuav.geometry.hybrid
     structures:
-        id: fastuav.structures.fixedwing
+        id: fastuav.structures.hybrid
         spar_model: "I_beam"  # "I_beam" or "pipe"
     aerodynamics:
-        id: fastuav.aerodynamics.fixedwing
+        id: fastuav.aerodynamics.hybrid
     wires:
-        id: fastuav.propulsion.wires.fixedwing
+        id: fastuav.propulsion.wires.hybrid
     mtow:
         id: fastuav.mtow.hybrid
     stability:
-        id: fastuav.stability.fixedwing
+        id: fastuav.stability.hybrid
     performance:
         cruise_range:
-            id: fastuav.performance.endurance.fixedwing
+            id: fastuav.performance.endurance.hybrid
         missions:
             id: fastuav.performance.mission
             file_path: ../../missions/missions_hybrid.yaml
@@ -47,6 +47,10 @@ optimization:
       - name: data:weights:mtow:k # over estimation coefficient on the load mass
         lower: 1.0
         upper: 40.0
+        
+      - name: data:geometry:projected_area:top:k  # over estimation coefficient on the wing area
+        lower: 1.0
+        upper: 5.0
         
       - name: data:scenarios:wing_loading:k
         lower: 0.5
@@ -151,6 +155,10 @@ optimization:
       #- name: data:structures:wing:spar:diameter:k # replaced by "internal" design variable in OpenMDAO ExplicitComponent
       #  lower: 0.05
       #  upper: 0.99
+      
+      - name: data:structures:arms:diameter:k # aspect ratio D_out/D_in for the VTOL arms
+        lower: 0.05
+        upper: 0.99
 
         ## AERODYNAMICS ##
       - name: data:aerodynamics:CD0:guess
@@ -164,6 +172,9 @@ optimization:
         lower: 0.0
 
       - name: data:weights:mtow:requirement:constraint # MTOW requirement
+        lower: 0.0
+        
+      - name: data:geometry:projected_area:top:constraint # Area consistency
         lower: 0.0
         
       - name: data:scenarios:wing_loading:stall:constraint  # minimum wing loading required for stall speed
@@ -255,7 +266,7 @@ optimization:
       #  lower: 0.0
     
         ## AERODYNAMICS ##
-      - name: data:aerodynamics:constraints:CD0:consistency # Drag consistency
+      - name: data:aerodynamics:CD0:guess:constraint # Drag consistency
         lower: 0.0
         upper: 0.01
       
