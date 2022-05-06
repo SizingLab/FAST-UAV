@@ -6,7 +6,8 @@ import openmdao.api as om
 
 from fastuav.models.stability.static_longitudinal.static_margin import StaticMargin
 from fastuav.models.stability.static_longitudinal.neutral_point import NeutralPoint
-from fastuav.models.stability.static_longitudinal.center_of_gravity.cog_fixedwing import CenterOfGravity
+from fastuav.models.stability.static_longitudinal.center_of_gravity.cog import CenterOfGravity
+from fastuav.utils.constants import PROPULSION_ID_LIST
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.stability.hybrid")
@@ -16,6 +17,6 @@ class StabilityFixedWing(om.Group):
     """
 
     def setup(self):
-        self.add_subsystem("center_of_gravity", CenterOfGravity(), promotes=["*"])
+        self.add_subsystem("center_of_gravity", CenterOfGravity(propulsion_id_list=PROPULSION_ID_LIST), promotes=["*"])
         self.add_subsystem("neutral_point", NeutralPoint(), promotes=["*"])
         self.add_subsystem("static_margin", StaticMargin(), promotes=["*"])

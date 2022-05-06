@@ -34,6 +34,7 @@ class WingGeometry(om.ExplicitComponent):
         self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
         self.add_input("data:geometry:wing:AR", val=np.nan, units=None)
         self.add_input("data:geometry:wing:lambda", val=np.nan, units=None)
+        self.add_input("data:geometry:wing:sweep:LE", val=np.nan, units="rad")
         self.add_input("data:geometry:wing:MAC:LE:x:k", val=0.40, units=None)
         self.add_input("data:geometry:wing:tc", val=0.15, units=None)
         self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
@@ -49,6 +50,7 @@ class WingGeometry(om.ExplicitComponent):
         self.add_output("data:geometry:wing:MAC:C4:x", units="m", lower=0.0)
         self.add_output("data:geometry:wing:root:LE:x", units="m", lower=0.0)
         self.add_output("data:geometry:wing:root:TE:x", units="m", lower=0.0)
+        self.add_output("data:geometry:wing:sweep:TE", units="rad")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -58,6 +60,7 @@ class WingGeometry(om.ExplicitComponent):
         WS = inputs["data:scenarios:wing_loading"]
         Mtotal_guess = inputs["data:weights:mtow:guess"]
         tc_ratio = inputs["data:geometry:wing:tc"]
+        sweep_LE = inputs["data:geometry:wing:sweep:LE"]
 
         # design variables
         AR_w = inputs["data:geometry:wing:AR"]
@@ -76,12 +79,13 @@ class WingGeometry(om.ExplicitComponent):
         # Wing location
         y_MAC = (
             (b_w / 6) * (1 + 2 * lmbda_w) / (1 + lmbda_w)
-        )  # y-location of MAC (from the root) [m]
-        x_MAC_LE_loc = 0  # x-location of MAC leading edge (from the leading edge of the root) [m] # TODO: add sweep
+        )  # y-location of MAC (from wing root, i.e. symmetry axis of the UAV) [m]
+        x_MAC_LE_loc = y_MAC * np.tan(sweep_LE)  # x-location of MAC leading edge (from leading edge of root) [m]
         x_MAC_LE = k_xw * b_w  # x-location of MAC leading edge (from nose tip) [m]
         x_MAC_c4 = x_MAC_LE + 0.25 * c_MAC  # x-location of MAC quarter chord (from nose tip) [m]
         x_root_LE = x_MAC_LE - x_MAC_LE_loc  # x-location of root leading edge (from nose tip) [m]
         x_root_TE = x_root_LE + c_root  # x-location of root trailing edge (from nose tip) [m]
+        sweep_TE = np.arctan(np.tan(sweep_LE) - 4 / AR_w * (1 - lmbda_w)/(1 + lmbda_w))
 
         outputs["data:geometry:wing:surface"] = S_w
         outputs["data:geometry:wing:span"] = b_w
@@ -95,6 +99,7 @@ class WingGeometry(om.ExplicitComponent):
         outputs["data:geometry:wing:MAC:C4:x"] = x_MAC_c4
         outputs["data:geometry:wing:root:LE:x"] = x_root_LE
         outputs["data:geometry:wing:root:TE:x"] = x_root_TE
+        outputs["data:geometry:wing:sweep:TE"] = sweep_TE
 
 
 class HorizontalTailGeometry(om.ExplicitComponent):
@@ -421,7 +426,6 @@ class ProjectedAreasConstraint(om.ExplicitComponent):
                  "data:geometry:fuselage:surface"] = - S_top_guess / np.pi / S_top ** 2
 
 
-
 class FuselageVolumeConstraint(om.ExplicitComponent):
     """
     Fuselage volume constraint definition.
@@ -440,16 +444,16 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
 
     def setup_partials(self):
         # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
-        V_fus_mid = inputs["data:geometry:fuselage:volume:mid"]
+        V_fus = inputs["data:geometry:fuselage:volume:mid"]  # only the mid-fuselage part is considered
         V_pay = inputs["data:scenarios:payload:volume"]
         V_bat = inputs["data:propulsion:%s:battery:volume" % propulsion_id]
         V_req = V_pay + V_bat
 
-        V_cnstr = (V_fus_mid - V_req) / V_req  # mid fuselage volume constraint
+        V_cnstr = (V_fus - V_req) / V_req  # mid fuselage volume constraint
 
         outputs["data:geometry:fuselage:volume:constraint"] = V_cnstr
 
