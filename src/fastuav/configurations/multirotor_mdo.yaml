@@ -114,13 +114,13 @@ optimization:
       - name: data:propulsion:multirotor:propeller:constraints:rpm:cruise  # propeller rpm in cruise
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:torque:takeoff  # motor torque at takeoff (transient)
-        lower: 0.0
-        
       - name: data:propulsion:multirotor:motor:constraints:torque:climb  # motor torque in climb (transient)
         lower: 0.0
         
       - name: data:propulsion:multirotor:motor:constraints:torque:hover  # steady motor torque in hover (steady)
+        lower: 0.0
+        
+      - name: data:propulsion:multirotor:motor:constraints:torque:cruise  # steady motor torque in cruise (steady)
         lower: 0.0
       
       - name: data:propulsion:multirotor:battery:constraints:power:takeoff  # battery power at takeoff
@@ -148,22 +148,22 @@ optimization:
         lower: 0.0
       
         ## MISSION ##
-      - name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
-        lower: 0.0
+      #- name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+      #  lower: 0.0
 
       
     objective:
       # MASS MINIMIZATION
-      - name: data:weights:mtow
-        scaler: 1e-1
+      #- name: data:weights:mtow
+      #  scaler: 1e-1
 
       # ENERGY MINIMIZATION
       #- name: mission:sizing:energy
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      #- name: data:performance:range:cruise
-      #  scaler: -1e-3
+      - name: data:performance:endurance:cruise
+        scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION
       #- name: data:performance:endurance:hover:max

@@ -110,9 +110,9 @@ class MtowCalculation(om.ExplicitComponent):
 
         if FW_PROPULSION in propulsion_id_list:
             mtow += (inputs["data:weights:airframe:wing:mass"]
-                    + inputs["data:weights:airframe:fuselage:mass"]
-                    + inputs["data:weights:airframe:tail:horizontal:mass"]
-                    + inputs["data:weights:airframe:tail:vertical:mass"])
+                     + inputs["data:weights:airframe:fuselage:mass"]
+                     + inputs["data:weights:airframe:tail:horizontal:mass"]
+                     + inputs["data:weights:airframe:tail:vertical:mass"])
 
         outputs["data:weights:mtow"] = mtow
 

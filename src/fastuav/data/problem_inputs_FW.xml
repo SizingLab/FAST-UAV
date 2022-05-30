@@ -13,7 +13,7 @@
         <volume units="m**3" is_input="True">0.01633632</volume>
       </payload>
       <wing_loading>
-        <k is_input="True">1.0</k>
+        <k is_input="True">2.0</k>
       </wing_loading>
       <fixedwing>
         <climb>
@@ -64,7 +64,7 @@
       </wing>
       <tail>
         <horizontal>
-          <AR is_input="True">4.0</AR>
+          <AR is_input="True">6.0</AR>
           <coefficient is_input="True">0.5</coefficient>
           <lambda is_input="True">0.9</lambda>
           <arm>
@@ -72,7 +72,7 @@
           </arm>
         </horizontal>
         <vertical>
-          <AR is_input="True">1.5</AR>
+          <AR is_input="True">4.0</AR>
           <coefficient is_input="True">0.04</coefficient>
           <lambda is_input="True">0.9</lambda>
         </vertical>
@@ -246,6 +246,11 @@
           <stress>
             <max units="N/m**2" is_input="True">140000000.0</max>
           </stress>
+          <web>
+            <depth>
+              <k is_input="True">1.0</k>
+            </depth>
+          </web>
         </spar>
       </wing>
     </structures>

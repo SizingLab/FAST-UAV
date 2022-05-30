@@ -25,9 +25,9 @@ DF = pd.read_csv(PATH, sep=";")
 
 @ValidityDomainChecker(
     {
-        "data:propulsion:motor:torque:nominal:estimated": (
-            DF["Tnom_Nm"].min(),
-            DF["Tnom_Nm"].max(),
+        "data:propulsion:motor:torque:max:estimated": (
+            DF["Tmax_Nm"].min(),
+            DF["Tmax_Nm"].max(),
         ),
         "data:propulsion:motor:torque:coefficient:estimated": (
             DF["Kt_Nm_A"].min(),
@@ -119,7 +119,7 @@ class MotorCatalogueSelection(om.ExplicitComponent):
 
             # Definition parameters for motor selection
             Tmax_opt = inputs["data:propulsion:motor:torque:max:estimated"]
-            Tnom_opt = inputs["data:propulsion:motor:torque:nominal:estimated"]
+            # Tnom_opt = inputs["data:propulsion:motor:torque:nominal:estimated"]
             Ktmot_opt = inputs["data:propulsion:motor:torque:coefficient:estimated"]
 
             # Get closest product

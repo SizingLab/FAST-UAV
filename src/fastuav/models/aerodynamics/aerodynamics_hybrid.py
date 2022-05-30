@@ -19,11 +19,12 @@ class StoppedPropellersAerodynamicsModel:
     @staticmethod
     def stopped_propeller_drag_coefficient(alpha, N_blades=3, Cl_alpha=0.04 * 180 / np.pi, A_blade=7):
         """
-        Computes the drag coefficient of a stopped VTOL propeller when the aircraft is in forward flight,
+        Computes the parasitic drag coefficient of a stopped VTOL propeller when the aircraft is in forward flight,
         with an angle of attack alpha (rad).
         """
         BAR = N_blades / (np.pi * A_blade)  # [-] blade area ratio
-        CD_blade = (0.1 + Cl_alpha ** 2 * alpha ** 2)  # feathered blade drag coefficient
+        CD_blade = 0.1  # feather blade parasitic drag coefficient
+        # CD_blade = (0.1 + Cl_alpha ** 2 * alpha ** 2)  # feathered blade drag coefficient (with induced drag)
         CD_prop = BAR * CD_blade  # [-] drag coefficient of the propeller
         return CD_prop
 
@@ -73,7 +74,8 @@ class ParasiticDrag(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        outputs["data:aerodynamics:CD0"] = inputs["data:aerodynamics:CD0:wing"] \
+        outputs["data:aerodynamics:CD0"] = inputs["data:aerodynamics:CD0:stopped_propellers"] \
+                                           + inputs["data:aerodynamics:CD0:wing"] \
                                            + inputs["data:aerodynamics:CD0:tail:horizontal"] \
                                            + inputs["data:aerodynamics:CD0:tail:vertical"] \
                                            + inputs["data:aerodynamics:CD0:fuselage"]

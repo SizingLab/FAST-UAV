@@ -128,6 +128,39 @@ class WingLoadingCruise(om.ExplicitComponent):
     #     )
 
 
+# @ValidityDomainChecker(
+#     {
+#         "data:scenarios:wing_loading": (WS_MIN, None),  # defines a lower bound for wing loading
+#     }
+# )
+# class WingLoadingSelection(om.ExplicitComponent):
+#     """
+#     Wing loading selection.
+#     The lowest wing loading is selected for sizing the wing.
+#     This ensures that the wing is large enough for all flight conditions,
+#     i.e. it provides enough lift in all circumstances.
+#     This selection is achieved with an under-sizing coefficient and constraints on the wing loading.
+#     """
+#
+#     def setup(self):
+#         self.add_input("data:scenarios:wing_loading:stall", val=np.nan, units="N/m**2")
+#         self.add_input("data:scenarios:wing_loading:k", val=1.0, units=None)
+#         self.add_output("data:scenarios:wing_loading", units="N/m**2")
+#
+#     def setup_partials(self):
+#         self.declare_partials("*", "*", method="fd")
+#
+#     def compute(self, inputs, outputs):
+#         WS_stall = inputs["data:scenarios:wing_loading:stall"]
+#         k_WS = inputs["data:scenarios:wing_loading:k"]
+#
+#         WS = (
+#             k_WS * WS_stall
+#         )  # [N/m**2] wing loading selection from cruise requirement with under-sizing coefficient
+#
+#         outputs["data:scenarios:wing_loading"] = WS
+
+
 @ValidityDomainChecker(
     {
         "data:scenarios:wing_loading": (WS_MIN, None),  # defines a lower bound for wing loading

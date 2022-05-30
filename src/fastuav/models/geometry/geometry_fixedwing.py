@@ -5,7 +5,7 @@ import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 from scipy.constants import g
-from fastuav.utils.constants import FW_PROPULSION
+from fastuav.utils.constants import FW_PROPULSION, PROPULSION_ID_LIST
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.geometry.fixedwing")
@@ -341,7 +341,7 @@ class FuselageGeometry(om.ExplicitComponent):
         S_nose = 2 * np.pi * (d_fus_mid / 2) ** 2  # nose part of fuselage (half spherical) [m2]
         S_fus = S_rear + S_mid + S_nose  # total fuselage area [m2]
 
-        V_mid = S_mid * l_mid  # mid part of fuselage (cylindrical) [m3]
+        V_mid = np.pi * (d_fus_mid / 2) ** 2 * l_mid  # mid part of fuselage (cylindrical) [m3]
 
         outputs["data:geometry:fuselage:length"] = l_fus
         outputs["data:geometry:fuselage:length:nose"] = l_nose
@@ -433,24 +433,27 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
     Therefore, a constraint is set on the volume of the mid fuselage part.
     """
     def initialize(self):
-        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
+        self.options.declare("propulsion_id_list",
+                             default=[FW_PROPULSION],
+                             values=[[FW_PROPULSION], PROPULSION_ID_LIST])
 
     def setup(self):
-        propulsion_id = self.options["propulsion_id"]
+        propulsion_id_list = self.options["propulsion_id_list"]
+        for propulsion_id in propulsion_id_list:
+            self.add_input("data:propulsion:%s:battery:volume" % propulsion_id, val=np.nan, units="m**3")
         self.add_input("data:geometry:fuselage:volume:mid", val=np.nan, units="m**3")
         self.add_input("data:scenarios:payload:volume", val=np.nan, units="m**3")
-        self.add_input("data:propulsion:%s:battery:volume" % propulsion_id, val=np.nan, units="m**3")
         self.add_output("data:geometry:fuselage:volume:constraint", units=None)
 
     def setup_partials(self):
-        # Finite difference all partials.
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        propulsion_id = self.options["propulsion_id"]
+        propulsion_id_list = self.options["propulsion_id_list"]
+        V_bat = sum(inputs["data:propulsion:%s:battery:volume" % propulsion_id]
+                    for propulsion_id in propulsion_id_list)
         V_fus = inputs["data:geometry:fuselage:volume:mid"]  # only the mid-fuselage part is considered
         V_pay = inputs["data:scenarios:payload:volume"]
-        V_bat = inputs["data:propulsion:%s:battery:volume" % propulsion_id]
         V_req = V_pay + V_bat
 
         V_cnstr = (V_fus - V_req) / V_req  # mid fuselage volume constraint
@@ -458,18 +461,19 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
         outputs["data:geometry:fuselage:volume:constraint"] = V_cnstr
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        propulsion_id = self.options["propulsion_id"]
+        propulsion_id_list = self.options["propulsion_id_list"]
+        V_bat = sum(inputs["data:propulsion:%s:battery:volume" % propulsion_id]
+                    for propulsion_id in propulsion_id_list)
         V_fus = inputs["data:geometry:fuselage:volume:mid"]
         V_pay = inputs["data:scenarios:payload:volume"]
-        V_bat = inputs["data:propulsion:%s:battery:volume" % propulsion_id]
         V_req = V_pay + V_bat
 
         partials[
-            "data:geometry:fuselage:volume:constraint", "data:geometry:fuselage:volume:mid"
-        ] = (1 / V_req)
-        partials["data:geometry:fuselage:volume:constraint", "data:scenarios:payload:volume"] = (
-            -V_fus / V_req**2
-        )
-        partials["data:geometry:fuselage:volume:constraint", "data:propulsion:%s:battery:volume" % propulsion_id] = (
-            -V_fus / V_req**2
-        )
+            "data:geometry:fuselage:volume:constraint",
+            "data:geometry:fuselage:volume:mid"] = 1 / V_req
+        partials["data:geometry:fuselage:volume:constraint",
+                 "data:scenarios:payload:volume"] = - V_fus / V_req ** 2
+
+        for propulsion_id in propulsion_id_list:
+            partials["data:geometry:fuselage:volume:constraint",
+                     "data:propulsion:%s:battery:volume" % propulsion_id] = - V_fus / V_req ** 2

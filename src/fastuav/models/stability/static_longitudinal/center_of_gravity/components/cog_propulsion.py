@@ -74,8 +74,8 @@ class CoG_propulsion_MR(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
 
-        self.add_input("data:geometry:%s:propeller:front:x" % propulsion_id, val=np.nan, units="m")
-        self.add_input("data:geometry:%s:propeller:rear:x" % propulsion_id, val=np.nan, units="m")
+        self.add_input("data:geometry:%s:propeller:x:front" % propulsion_id, val=np.nan, units="m")
+        self.add_input("data:geometry:%s:propeller:x:rear" % propulsion_id, val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:LE:x", val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:TE:x", val=np.nan, units="m")
         self.add_input("data:weights:propulsion:%s:propeller:mass" % propulsion_id, val=np.nan, units="kg")
@@ -91,8 +91,8 @@ class CoG_propulsion_MR(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
-        x_pro_front = inputs["data:geometry:%s:propeller:front:x" % propulsion_id]
-        x_pro_rear = inputs["data:geometry:%s:propeller:rear:x" % propulsion_id]
+        x_pro_front = inputs["data:geometry:%s:propeller:x:front" % propulsion_id]
+        x_pro_rear = inputs["data:geometry:%s:propeller:x:rear" % propulsion_id]
         x_root_LE_w = inputs["data:geometry:wing:root:LE:x"]
         x_root_TE_w = inputs["data:geometry:wing:root:TE:x"]
         m_pro = inputs["data:weights:propulsion:%s:propeller:mass" % propulsion_id]

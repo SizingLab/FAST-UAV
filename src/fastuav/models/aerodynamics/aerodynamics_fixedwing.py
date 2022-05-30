@@ -176,7 +176,7 @@ class TailParasiticDrag(om.ExplicitComponent):
         # Friction coefficients assuming cruise conditions
         cf_tail = AirframeAerodynamicsModel.friction_flatplate(V_cruise, c_MAC_t, nu_air, a_air)
 
-        # Form drag factors
+        # Form drag factors TODO: add sweep @ 0.3
         FF_tail = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4) * (
             1.34 * (V_cruise / a_air) ** 0.18
         )
