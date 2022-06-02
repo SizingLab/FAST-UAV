@@ -115,7 +115,7 @@
         <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
       </arms>
       <mtow>
-        <k is_input="True">5.0<!--Oversizing coefficient on load mass--></k>
+        <k is_input="True">3.0<!--Oversizing coefficient on load mass--></k>
         <requirement units="kg" is_input="True">15.0<!--Top-level requirement: Maximum Take Off Weight--></requirement>
       </mtow>
       <airframe>
