@@ -12,9 +12,9 @@ For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 import contextlib
 import os
 
-from openmdao_drivers.cmaes_driver import CMAESDriver
+# from openmdao_drivers.cmaes_driver import CMAESDriver
 
-from utils.drivers.salib_doe_driver import SalibDOEDriver
+from fastuav.utils.drivers.salib_doe_driver import SalibDOEDriver
 import fastoad.api as oad
 from fastoad.io.variable_io import DataFile
 import openmdao.api as om
