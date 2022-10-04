@@ -148,22 +148,22 @@ optimization:
         lower: 0.0
       
         ## MISSION ##
-      #- name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
-      #  lower: 0.0
+      - name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+        lower: 0.0
 
       
     objective:
       # MASS MINIMIZATION
-      #- name: data:weights:mtow
-      #  scaler: 1e-1
+      - name: data:weights:mtow
+        scaler: 1e-1
 
       # ENERGY MINIMIZATION
       #- name: mission:sizing:energy
       #  scaler: 1e-3
         
       # MAX. RANGE MAXIMIZATION
-      - name: data:performance:endurance:cruise
-        scaler: -1e-3
+      #- name: data:performance:endurance:cruise
+      #  scaler: -1e-3
 
       # HOVER AUTONOMY MAXIMIZATION
       #- name: data:performance:endurance:hover:max

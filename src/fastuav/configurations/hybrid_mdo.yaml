@@ -147,7 +147,7 @@ optimization:
         lower: 0.01
         upper: 1.0
         
-      #- name: data:geometry:multirotor:propeller:y:k  # over estimation coefficient on y-location of VTOL propellers
+      #- name: data:geometry:multirotor:propeller:y:k  # over estimation coefficient on y-location of VTOL propellers (to be robustified in models to avoid negative values if located after wingtip)
       #  lower: 1.0
       #  upper: 5.0
         
@@ -248,7 +248,7 @@ optimization:
       - name: data:propulsion:multirotor:motor:constraints:torque:hover  # steady motor torque in hover (steady)
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:torque:hover  # steady motor torque in cruise (steady)
+      - name: data:propulsion:multirotor:motor:constraints:torque:cruise  # steady motor torque in cruise (steady)
         lower: 0.0
       
       - name: data:propulsion:multirotor:battery:constraints:power:takeoff  # battery power at takeoff
