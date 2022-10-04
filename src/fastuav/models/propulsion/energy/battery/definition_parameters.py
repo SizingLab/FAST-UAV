@@ -43,7 +43,6 @@ class CellNumber(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:motor:voltage:takeoff", val=np.nan, units="V")
-        # self.add_input('data:propulsion:battery:voltage:guess', val=np.nan, units='V')
         self.add_input("data:propulsion:battery:voltage:k", val=np.nan, units=None)
         self.add_input("data:propulsion:battery:cell:voltage:estimated", val=3.7, units="V")
         self.add_output("data:propulsion:battery:cell:number:estimated", units=None)
@@ -57,10 +56,7 @@ class CellNumber(om.ExplicitComponent):
         V_cell = inputs["data:propulsion:battery:cell:voltage:estimated"]
         U_mot_to = inputs["data:propulsion:motor:voltage:takeoff"]
         k_vb = inputs["data:propulsion:battery:voltage:k"]
-        # V_bat_guess = inputs['data:propulsion:battery:voltage:guess']
 
-        # N_series = np.ceil(V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
-        # N_series = (V_bat_guess / V_cell)  # [-] Number of series connections (for voltage upgrade)
         N_series = k_vb * (
             U_mot_to / V_cell
         )  # [-] Number of series connections (for voltage upgrade)
@@ -78,7 +74,6 @@ class CellNumber(om.ExplicitComponent):
     #     """
     #
     #     V_cell = inputs['data:propulsion:battery:cell:voltage:estimated']
-    #     # V_bat_guess = inputs['data:propulsion:battery:voltage:guess']
     #     k_vb = inputs['data:propulsion:battery:voltage:k']
     #     U_mot_to = inputs['data:propulsion:motor:voltage:takeoff']
     #

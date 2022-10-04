@@ -11,7 +11,6 @@ class BatteryConstraints(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:propulsion:battery:voltage:guess", val=np.nan, units="V")
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
         self.add_input("data:propulsion:battery:current:max", val=np.nan, units="A")
         self.add_input("data:propulsion:motor:voltage:takeoff", val=np.nan, units="V")
@@ -28,13 +27,11 @@ class BatteryConstraints(om.ExplicitComponent):
         self.add_output("data:propulsion:battery:constraints:power:takeoff", units=None)
         self.add_output("data:propulsion:battery:constraints:power:climb", units=None)
         self.add_output("data:propulsion:battery:constraints:power:cruise", units=None)
-        self.add_output("data:propulsion:battery:constraints:voltage:consistency", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        V_bat_guess = inputs["data:propulsion:battery:voltage:guess"]
         V_bat = inputs["data:propulsion:battery:voltage"]
         Imax = inputs["data:propulsion:battery:current:max"]
         Umot_to = inputs["data:propulsion:motor:voltage:takeoff"]
@@ -48,7 +45,6 @@ class BatteryConstraints(om.ExplicitComponent):
             "data:propulsion:esc:efficiency:estimated"
         ]  # TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
 
-        battery_con0 = (V_bat - V_bat_guess) / V_bat  # consistency for V_bat_guess
         battery_con1 = (V_bat - Umot_to) / V_bat
         battery_con2 = (V_bat - Umot_cl) / V_bat
         battery_con3 = (V_bat - Umot_cr) / V_bat
@@ -56,7 +52,6 @@ class BatteryConstraints(om.ExplicitComponent):
         battery_con5 = (V_bat * Imax - Umot_cl * Imot_cl * Npro / eta_ESC) / (V_bat * Imax)
         battery_con6 = (V_bat * Imax - Umot_cr * Imot_cr * Npro / eta_ESC) / (V_bat * Imax)
 
-        outputs["data:propulsion:battery:constraints:voltage:consistency"] = battery_con0
         outputs["data:propulsion:battery:constraints:voltage:takeoff"] = battery_con1
         outputs["data:propulsion:battery:constraints:voltage:climb"] = battery_con2
         outputs["data:propulsion:battery:constraints:voltage:cruise"] = battery_con3
@@ -65,7 +60,6 @@ class BatteryConstraints(om.ExplicitComponent):
         outputs["data:propulsion:battery:constraints:power:cruise"] = battery_con6
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        V_bat_guess = inputs["data:propulsion:battery:voltage:guess"]
         V_bat = inputs["data:propulsion:battery:voltage"]
         Umot_to = inputs["data:propulsion:motor:voltage:takeoff"]
         Umot_cl = inputs["data:propulsion:motor:voltage:climb"]
@@ -76,19 +70,6 @@ class BatteryConstraints(om.ExplicitComponent):
         eta_ESC = inputs["data:propulsion:esc:efficiency:estimated"]
         Imot_cl = inputs["data:propulsion:motor:current:climb"]
         Imot_cr = inputs["data:propulsion:motor:current:cruise"]
-
-        J[
-            "data:propulsion:battery:constraints:voltage:consistency",
-            "data:propulsion:battery:voltage",
-        ] = (
-            V_bat_guess / V_bat**2
-        )
-        J[
-            "data:propulsion:battery:constraints:voltage:consistency",
-            "data:propulsion:battery:voltage:guess",
-        ] = (
-            -1 / V_bat
-        )
 
         J[
             "data:propulsion:battery:constraints:voltage:takeoff", "data:propulsion:battery:voltage"
