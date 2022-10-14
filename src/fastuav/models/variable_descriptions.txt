@@ -1,7 +1,7 @@
 data:propulsion:esc:efficiency || ESC efficiency
-data:weights:propulsion:esc:mass || ESC mass
-data:weights:propulsion:esc:mass:estimated || ESC mass (estimated value)
-data:weights:propulsion:esc:mass:catalogue || ESC mass (catalogue value)
+data:weight:propulsion:esc:mass || ESC mass
+data:weight:propulsion:esc:mass:estimated || ESC mass (estimated value)
+data:weight:propulsion:esc:mass:catalogue || ESC mass (catalogue value)
 data:propulsion:esc:voltage || ESC voltage
 data:propulsion:esc:voltage:estimated || ESC voltage (estimated value)
 data:propulsion:esc:voltage:catalogue || ESC voltage (catalogue value)
@@ -10,10 +10,10 @@ data:propulsion:esc:constraints:power:climb || Constraint on ESC power (climb)
 data:propulsion:esc:constraints:power:cruise || Constraint on ESC power (cruise)
 data:propulsion:esc:power:climb || ESC power in climb
 data:propulsion:esc:power:cruise || ESC power in cruise
-data:propulsion:esc:power:max || Maximum ESC power
-data:propulsion:esc:power:max:estimated || Maximum ESC power (estimated value)
-data:propulsion:esc:power:max:catalogue || Maximum ESC power (catalogue value)
-data:weights:propulsion:esc:mass:reference || ESC mass reference for scaling law
+data:propulsion:esc:power || Maximum ESC power
+data:propulsion:esc:power:estimated || Maximum ESC power (estimated value)
+data:propulsion:esc:power:catalogue || Maximum ESC power (catalogue value)
+data:weight:propulsion:esc:mass:reference || ESC mass reference for scaling law
 data:propulsion:esc:power:reference || ESC max. power reference for scaling law
 data:propulsion:esc:voltage:reference || ESC voltage reference for scaling law
 data:propulsion:esc:power:k || Oversizing coefficient on ESC power
@@ -25,9 +25,9 @@ data:propulsion:battery:energy || Battery energy
 data:propulsion:battery:energy:estimated || Battery energy (estimated value)
 data:propulsion:battery:energy:catalogue || Battery energy (catalogue value)
 data:propulsion:battery:energy:reference || Battery energy reference for scaling law
-data:weights:propulsion:battery:mass || Battery mass
-data:weights:propulsion:battery:mass:estimated || Battery mass (estimated value)
-data:weights:propulsion:battery:mass:catalogue || Battery mass (catalogue value)
+data:weight:propulsion:battery:mass || Battery mass
+data:weight:propulsion:battery:mass:estimated || Battery mass (estimated value)
+data:weight:propulsion:battery:mass:catalogue || Battery mass (catalogue value)
 data:propulsion:battery:voltage || Battery voltage
 data:propulsion:battery:voltage:estimated || Battery voltage (estimated value)
 data:propulsion:battery:voltage:catalogue || Battery voltage (catalogue value)
@@ -52,14 +52,14 @@ data:propulsion:battery:current:max || Maximum battery current
 data:propulsion:battery:current:max:estimated || Maximum battery current (estimated value)
 data:propulsion:battery:current:max:catalogue || Maximum battery current (catalogue value)
 data:propulsion:battery:capacity:reference || Battery capacity reference for scaling law
-data:weights:propulsion:battery:mass:reference || Battery mass reference for scaling law
+data:weight:propulsion:battery:mass:reference || Battery mass reference for scaling law
 data:propulsion:battery:voltage:reference || Battery voltage reference for scaling law
 data:propulsion:battery:volume:reference || Battery volume reference for scaling law
 data:propulsion:battery:current:max:reference || Battery max. current reference for scaling law
 data:propulsion:battery:capacity:k || Oversizing coefficient on battery mass
 data:propulsion:battery:voltage:k || Oversizing coefficient on battery voltage
 data:propulsion:gearbox || 0: no gearbox ; 1: gearbox
-data:weights:propulsion:gearbox:mass || Gearbox mass
+data:weight:propulsion:gearbox:mass || Gearbox mass
 mission:sizing:energy || Total energy consumption to accomplish the mission
 mission:sizing:climb:energy || Climb segment energy consumption
 mission:sizing:cruise:energy || Cruise segment energy consumption
@@ -74,9 +74,9 @@ mission:sizing:cruise:speed || Cruise velocity
 mission:sizing:takeoff:altitude || Takeoff altitude
 mission:sizing:cruise:altitude || Cruise altitude
 mission:sizing:dISA || Temperature variation w.r.t. ISA
-data:weights:propulsion:motor:mass || Motor mass
-data:weights:propulsion:motor:mass:estimated || Motor mass (estimated value)
-data:weights:propulsion:motor:mass:catalogue || Motor mass (catalogue value)
+data:weight:propulsion:motor:mass || Motor mass
+data:weight:propulsion:motor:mass:estimated || Motor mass (estimated value)
+data:weight:propulsion:motor:mass:catalogue || Motor mass (catalogue value)
 data:propulsion:motor:resistance || Motor resistance
 data:propulsion:motor:resistance:estimated || Motor resistance (estimated value)
 data:propulsion:motor:resistance:catalogue || Motor resistance (catalogue value)
@@ -93,7 +93,7 @@ data:propulsion:motor:power:cruise || Motor power (cruise)
 data:propulsion:motor:power:hover || Motor power (hover)
 data:propulsion:motor:power:takeoff || Motor power (takeoff)
 data:propulsion:motor:length:reference || Motor length reference for scaling law
-data:weights:propulsion:motor:mass:reference || Motor mass reference for scaling law
+data:weight:propulsion:motor:mass:reference || Motor mass reference for scaling law
 data:propulsion:motor:resistance:reference || Motor resistance reference for scaling law
 data:propulsion:motor:torque:coefficient:reference || Motor torque coefficient reference for scaling law
 data:propulsion:motor:torque:friction:reference || Motor friction torque reference for scaling law
@@ -123,7 +123,7 @@ data:propulsion:motor:speed:k || Oversizing coefficient of motor speed
 data:propulsion:motor:torque:k || Oversizing coefficient on motor torque
 mission:sizing:payload:mass || Design payload mass
 mission:sizing:payload:power || Design payload power consumption
-data:weights:propulsion:propeller:mass || Propeller mass
+data:weight:propulsion:propeller:mass || Propeller mass
 data:propulsion:propeller:number || Number of propellers
 data:propulsion:propeller:advance_ratio:climb || Advance ratio J (climb)
 data:propulsion:propeller:advance_ratio:cruise || Advance ratio J (cruise)
@@ -138,7 +138,7 @@ data:propulsion:propeller:power:cruise || Propeller power (cruise)
 data:propulsion:propeller:power:hover || Propeller power (hover)
 data:propulsion:propeller:power:takeoff || Propeller power (takeoff)
 data:propulsion:propeller:diameter:reference || Propeller diameter reference for scaling law
-data:weights:propulsion:propeller:mass:reference || Propeller mass reference for scaling law
+data:weight:propulsion:propeller:mass:reference || Propeller mass reference for scaling law
 data:propulsion:propeller:ND:max:reference || Max. rotational speed not to be exceeded
 data:propulsion:propeller:speed:climb || Rotational speed (climb)
 data:propulsion:propeller:speed:cruise || Rotational speed (cruise)
@@ -174,34 +174,34 @@ data:propulsion:propeller:constraints:rpm:climb || Constraint on propeller rotat
 data:propulsion:propeller:constraints:rpm:cruise || Constraint on propeller rotational speed (cruise)
 data:propulsion:propeller:constraints:rpm:max || Constraint on maximum propeller rotational speed
 data:propulsion:propeller:ND:k || Undersizing coefficient on propeller rotational speed
-data:weights:mtow || Maximum Take Off Weight
-data:weights:mtow:guess || Initial guess of Maximum Take Off Weight for sizing scenarios
+data:weight:mtow || Maximum Take Off Weight
+data:weight:mtow:guess || Initial guess of Maximum Take Off Weight for sizing scenarios
 data:performance:endurance:hover:max || Drone endurance in hover flight
 data:performance:range:cruise || Max. Range at given flight speed
 mission:sizing:cruise:distance || Max. Range at given flight speed
-data:weights:mtow:reference || Maximum Take Off Weight reference for scaling law
-data:weights:mtow:requirement:constraint || Constraint on MTOW maximum allowable value
-data:weights:mtow:guess:constraint || Constraint on MTOW convergence
-data:weights:mtow:k || Oversizing coefficient on load mass
+data:weight:mtow:reference || Maximum Take Off Weight reference for scaling law
+data:weight:mtow:requirement:constraint || Constraint on MTOW maximum allowable value
+data:weight:mtow:guess:constraint || Constraint on MTOW convergence
+data:weight:mtow:k || Oversizing coefficient on load mass
 data:aerodynamics:CD0 || Parasitic drag coefficient
 data:aerodynamics:CLmax || Max. lift coefficient
 data:geometry:arms:length || Arms length
-data:weights:airframe:arms:mass || Total arms mass
+data:weight:airframe:arms:mass || Total arms mass
 data:geometry:arms:number || Number of arms
 data:geometry:arms:prop_per_arm || Number of propellers per arm (single or coaxial configuration)
 data:structures:arms:diameter:inner || Inner diameter of the beam
 data:structures:arms:diameter:outer || Outer diameter of the beam
-data:weights:arms:density || Arms material density
+data:weight:arms:density || Arms material density
 data:structures:arms:stress:max || Arms material maximum allowable stress
 data:structures:arms:diameter:k || Inner to outer beam diameter ratio
-data:weights:airframe:body:mass || Body mass
+data:weight:airframe:body:mass || Body mass
 data:geometry:body:surface:front || Front surface of the body
 data:geometry:body:surface:top || Top surface of the body
-data:weights:airframe:arms:mass:reference || Arms mass reference for scaling law
-data:weights:airframe:body:mass:reference || Body mass reference for scaling law
+data:weight:airframe:arms:mass:reference || Arms mass reference for scaling law
+data:weight:airframe:body:mass:reference || Body mass reference for scaling law
 data:geometry:body:surface:front:reference || Front surface reference for scaling law
 data:geometry:body:surface:top:reference || Top surface reference for scaling law
-data:weights:mtow:requirement || Top-level requirement: Maximum Take Off Weight
+data:weight:mtow:requirement || Top-level requirement: Maximum Take Off Weight
 specifications:dISA || Temperature variation w.r.t. ISA
 mission:sizing:climb:height || Top-level requirement: climb height
 mission:sizing:cruise:distance || Top-level requirement: range
@@ -225,14 +225,14 @@ data:propulsion:battery:current:hover || Battery current in hover
 data:propulsion:battery:current:takeoff || Battery current at takeoff
 data:propulsion:battery:DoD:max:reference || Battery depth of discharge reference
 data:propulsion:battery:constraints:voltage:consistency || Consistency constraint on battery voltage
-data:weights:propulsion:wires:density || Cables linear density
-data:weights:propulsion:wires:mass || Cables mass
+data:weight:propulsion:wires:density || Cables linear density
+data:weight:propulsion:wires:mass || Cables mass
 data:propulsion:wires:radius || Cables radius
 data:propulsion:wires:current:reference || Cables current reference for scaling law
-data:weights:propulsion:wires:density:reference || Cables linear density reference for scaling law
+data:weight:propulsion:wires:density:reference || Cables linear density reference for scaling law
 data:propulsion:wires:radius:reference || Cables radius reference for scaling law
 data:propulsion:motor:constraints:torque:hover || Constraint on motor torque (hover)
-data:weights:propulsion:propeller:mass:estimated || Propeller mass (estimated value)
+data:weight:propulsion:propeller:mass:estimated || Propeller mass (estimated value)
 data:propulsion:propeller:ND:takeoff || Propellers' tip speed at takeoff
 data:propulsion:propeller:beta:guess || Angle pitch/diameter (initial guess)
 data:propulsion:propeller:constraints:airspeed:climb || Constraint on climb speed

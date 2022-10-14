@@ -37,7 +37,7 @@ class WingGeometry(om.ExplicitComponent):
         self.add_input("data:geometry:wing:sweep:LE", val=np.nan, units="rad")
         self.add_input("data:geometry:wing:MAC:LE:x:k", val=0.40, units=None)
         self.add_input("data:geometry:wing:tc", val=0.15, units=None)
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_output("data:geometry:wing:surface", units="m**2", lower=0.0)
         self.add_output("data:geometry:wing:span", units="m", lower=0.0)
         self.add_output("data:geometry:wing:root:chord", units="m", lower=0.0)
@@ -58,7 +58,7 @@ class WingGeometry(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         WS = inputs["data:scenarios:wing_loading"]
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
+        m_uav_guess = inputs["data:weight:mtow:guess"]
         tc_ratio = inputs["data:geometry:wing:tc"]
         sweep_LE = inputs["data:geometry:wing:sweep:LE"]
 
@@ -68,7 +68,7 @@ class WingGeometry(om.ExplicitComponent):
         k_xw = inputs["data:geometry:wing:MAC:LE:x:k"]
 
         # Wing sizing
-        S_w = Mtotal_guess * g / WS  # wing surface [m2]
+        S_w = m_uav_guess * g / WS  # wing surface [m2]
         b_w = np.sqrt(AR_w * S_w)  # wing span [m]
         c_root = 2 * S_w / b_w / (1 + lmbda_w)  # chord at root [m]
         c_tip = lmbda_w * c_root  # chord at tip [m]
@@ -363,7 +363,7 @@ class ProjectedAreasGuess(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:geometry:projected_area:top:k", val=np.nan, units=None)
         self.add_output("data:geometry:projected_area:top", units="m**2")
 
@@ -372,7 +372,7 @@ class ProjectedAreasGuess(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         WS = inputs["data:scenarios:wing_loading"]
-        mtow_guess = inputs["data:weights:mtow:guess"]
+        mtow_guess = inputs["data:weight:mtow:guess"]
         k_top = inputs["data:geometry:projected_area:top:k"]
 
         S_top = k_top * mtow_guess * g / WS  # [m**2] top area guess

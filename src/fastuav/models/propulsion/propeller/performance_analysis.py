@@ -109,10 +109,10 @@ class PropellerPerformance(om.ExplicitComponent):
                                                                               propulsion_id=propulsion_id)
 
         rho_air = AtmosphereSI(altitude, dISA).density  # [kg/m3] Air density
-        Wpro = PropellerPerformanceModel.speed(F_pro, Dpro, C_t, rho_air)
-        Ppro = PropellerPerformanceModel.power(Wpro, Dpro, C_p, rho_air)
-        Qpro = PropellerPerformanceModel.torque(Ppro, Wpro)
+        W_pro = PropellerPerformanceModel.speed(F_pro, Dpro, C_t, rho_air)
+        P_pro = PropellerPerformanceModel.power(W_pro, Dpro, C_p, rho_air)
+        Q_pro = PropellerPerformanceModel.torque(P_pro, W_pro)
 
-        outputs["data:propulsion:propeller:speed:%s" % scenario] = Wpro
-        outputs["data:propulsion:propeller:torque:%s" % scenario] = Qpro
-        outputs["data:propulsion:propeller:power:%s" % scenario] = Ppro
+        outputs["data:propulsion:propeller:speed:%s" % scenario] = W_pro
+        outputs["data:propulsion:propeller:torque:%s" % scenario] = Q_pro
+        outputs["data:propulsion:propeller:power:%s" % scenario] = P_pro

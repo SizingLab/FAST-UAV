@@ -44,16 +44,16 @@ class CoG_airframe_component(om.ExplicitComponent):
         self.add_input("data:stability:CoG:airframe:wing", val=np.nan, units="m")
         self.add_input("data:stability:CoG:airframe:tail:horizontal", val=np.nan, units="m")
         self.add_input("data:stability:CoG:airframe:tail:vertical", val=np.nan, units="m")
-        self.add_input("data:weights:airframe:fuselage:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:airframe:wing:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:airframe:tail:horizontal:mass", val=np.nan, units="kg")
-        self.add_input("data:weights:airframe:tail:vertical:mass", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:fuselage:mass", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:wing:mass", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:tail:horizontal:mass", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:tail:vertical:mass", val=np.nan, units="kg")
 
         if MR_PROPULSION in propulsion_id_list:
             self.add_input("data:stability:CoG:arms", val=np.nan, units="m")
-            self.add_input("data:weights:airframe:arms:mass", val=np.nan, units="kg")
+            self.add_input("data:weight:airframe:arms:mass", val=np.nan, units="kg")
 
-        self.add_output("data:weights:airframe", units="kg")
+        self.add_output("data:weight:airframe", units="kg")
         self.add_output("data:stability:CoG:airframe", units="m")
 
     def setup_partials(self):
@@ -67,14 +67,14 @@ class CoG_airframe_component(om.ExplicitComponent):
         x_cg_w = inputs["data:stability:CoG:airframe:wing"]
         x_cg_ht = inputs["data:stability:CoG:airframe:tail:horizontal"]
         x_cg_vt = inputs["data:stability:CoG:airframe:tail:vertical"]
-        m_fus = inputs["data:weights:airframe:fuselage:mass"]
-        m_wing = inputs["data:weights:airframe:wing:mass"]
-        m_ht = inputs["data:weights:airframe:tail:horizontal:mass"]
-        m_vt = inputs["data:weights:airframe:tail:vertical:mass"]
+        m_fus = inputs["data:weight:airframe:fuselage:mass"]
+        m_wing = inputs["data:weight:airframe:wing:mass"]
+        m_ht = inputs["data:weight:airframe:tail:horizontal:mass"]
+        m_vt = inputs["data:weight:airframe:tail:vertical:mass"]
 
         if MR_PROPULSION in propulsion_id_list:
             x_cg_arms = inputs["data:stability:CoG:arms"]
-            m_arms = inputs["data:weights:airframe:arms:mass"]
+            m_arms = inputs["data:weight:airframe:arms:mass"]
         else:
             x_cg_arms = .0
             m_arms = .0
@@ -86,7 +86,7 @@ class CoG_airframe_component(om.ExplicitComponent):
                          + x_cg_vt * m_vt
                          + x_cg_arms * m_arms) / m_airframe
 
-        outputs["data:weights:airframe"] = m_airframe
+        outputs["data:weight:airframe"] = m_airframe
         outputs["data:stability:CoG:airframe"] = x_cg_airframe
 
 
@@ -101,10 +101,10 @@ class CoG_fuselage(om.ExplicitComponent):
         self.add_input("data:geometry:fuselage:length:rear", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:mid", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:tip", val=np.nan, units="m")
-        self.add_input("data:weights:airframe:fuselage:mass:nose", val=np.nan, units="kg")
-        self.add_input("data:weights:airframe:fuselage:mass:mid", val=np.nan, units="kg")
-        self.add_input("data:weights:airframe:fuselage:mass:rear", val=np.nan, units="kg")
-        self.add_input("data:weights:airframe:fuselage:mass", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:fuselage:mass:nose", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:fuselage:mass:mid", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:fuselage:mass:rear", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:fuselage:mass", val=np.nan, units="kg")
         self.add_output("data:stability:CoG:airframe:fuselage", units="m")
 
     def setup_partials(self):
@@ -117,10 +117,10 @@ class CoG_fuselage(om.ExplicitComponent):
         l_rear = inputs["data:geometry:fuselage:length:rear"]
         d_fus_mid = inputs["data:geometry:fuselage:diameter:mid"]
         d_fus_tip = inputs["data:geometry:fuselage:diameter:tip"]
-        m_nose = inputs["data:weights:airframe:fuselage:mass:nose"]
-        m_mid = inputs["data:weights:airframe:fuselage:mass:mid"]
-        m_rear = inputs["data:weights:airframe:fuselage:mass:rear"]
-        m_fus = inputs["data:weights:airframe:fuselage:mass"]
+        m_nose = inputs["data:weight:airframe:fuselage:mass:nose"]
+        m_mid = inputs["data:weight:airframe:fuselage:mass:mid"]
+        m_rear = inputs["data:weight:airframe:fuselage:mass:rear"]
+        m_fus = inputs["data:weight:airframe:fuselage:mass"]
 
         x_cg_nose = l_nose / 2  # [m]
         x_cg_mid = l_nose + l_mid / 2  # [m]

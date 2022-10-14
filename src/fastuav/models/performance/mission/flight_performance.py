@@ -60,7 +60,7 @@ class FlightPerformanceModel:
         self.battery_voltage = None
         self.esc_efficiency = None
         self.gearbox_ratio = 1.0
-        self.motor_torque_coef = None
+        self.motor_speed_constant = None
         self.motor_torque_friction = None
         self.motor_resistance = None
         self.propeller_number = None
@@ -175,20 +175,20 @@ class FlightPerformanceModel:
     @property
     def motor_current(self) -> float:
         """Motor current in A."""
-        if self._motor_current is None and self.motor_torque_friction is not None and self.motor_torque_coef is not None:
+        if self._motor_current is None and self.motor_torque_friction is not None and self.motor_speed_constant is not None:
             self._motor_current = MotorPerformanceModel.current(self.motor_torque,
                                                                 self.motor_torque_friction,
-                                                                self.motor_torque_coef)
+                                                                self.motor_speed_constant)
         return self._motor_current
 
     @property
     def motor_voltage(self) -> float:
         """Motor voltage in V."""
-        if self._motor_voltage is None and self.motor_resistance is not None and self.motor_torque_coef is not None:
+        if self._motor_voltage is None and self.motor_resistance is not None and self.motor_speed_constant is not None:
             self._motor_voltage = MotorPerformanceModel.voltage(self.motor_current,
                                                                 self.motor_speed,
                                                                 self.motor_resistance,
-                                                                self.motor_torque_coef)
+                                                                self.motor_speed_constant)
         return self._motor_voltage
 
     @property

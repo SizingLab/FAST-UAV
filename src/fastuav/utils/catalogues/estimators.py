@@ -258,9 +258,9 @@ class NearestNeighbor:
         :param df: dataframe
         :param X_names: array of features names
         :param crits: array of selection criteria
-                'previous' for Decision trees based on the selection of the previous value.
-                'next' for Decision trees based on the selection of the next value.
-                'average" for Decision trees centered on the reference.
+                'previous' to force selection of closest lower value.
+                'next' to force selection of closest higher value.
+                'average" for closest value.
         """
         self._df = df  # dataframe
         self._X_names = X_names  # features names

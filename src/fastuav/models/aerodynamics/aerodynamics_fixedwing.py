@@ -299,7 +299,7 @@ class MaxLiftToDrag(om.ExplicitComponent):
         K = inputs["data:aerodynamics:CDi:K"]
 
         LDmax = 0.5 / np.sqrt(CD_0 * K)  # [-] max lift-to-drag ratio
-        # V_opt = np.sqrt(2 * m_tot * g / rho_air / S_w * np.sqrt(K / CD_0))
+        # V_opt = np.sqrt(2 * m_uav * g / rho_air / S_w * np.sqrt(K / CD_0))
 
         outputs["data:aerodynamics:LD:max"] = LDmax
 

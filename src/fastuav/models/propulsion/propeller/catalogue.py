@@ -51,18 +51,18 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         # inputs: estimated values
         self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:diameter:estimated", val=np.nan, units="m")
-        self.add_input("data:weights:propulsion:propeller:mass:estimated", val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:propeller:mass:estimated", val=np.nan, units="kg")
 
         # outputs: catalogue values if off_the_shelfs is True
         if self.options["off_the_shelf"]:
             self.add_output("data:propulsion:propeller:beta:catalogue", units=None)
             self.add_output("data:propulsion:propeller:diameter:catalogue", units="m")
-            self.add_output("data:weights:propulsion:propeller:mass:catalogue", units="kg")
+            self.add_output("data:weight:propulsion:propeller:mass:catalogue", units="kg")
 
         # outputs: 'real' values (= estimated values if off_the_shelf is False, catalogue values else)
         self.add_output("data:propulsion:propeller:beta", units=None)
         self.add_output("data:propulsion:propeller:diameter", units="m")
-        self.add_output("data:weights:propulsion:propeller:mass", units="kg")
+        self.add_output("data:weight:propulsion:propeller:mass", units="kg")
 
     def setup_partials(self):
         self.declare_partials(
@@ -76,8 +76,8 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:weights:propulsion:propeller:mass",
-            "data:weights:propulsion:propeller:mass:estimated",
+            "data:weight:propulsion:propeller:mass",
+            "data:weight:propulsion:propeller:mass:estimated",
             val=1.0,
             method="fd",
         )
@@ -97,7 +97,7 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             df_y = self._clf.predict([beta_opt, Dpro_opt])
             beta = df_y["Pitch (-)"].iloc[0]  # [-] beta
             Dpro = df_y["Diameter (METERS)"].iloc[0]  # [m] diameter
-            Mpro = df_y["Weight (KG)"].iloc[0]  # [kg] mass
+            m_pro = df_y["Weight (KG)"].iloc[0]  # [kg] mass
 
             # Outputs
             outputs["data:propulsion:propeller:beta"] = outputs[
@@ -106,9 +106,9 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:propeller:diameter"] = outputs[
                 "data:propulsion:propeller:diameter:catalogue"
             ] = Dpro
-            outputs["data:weights:propulsion:propeller:mass"] = outputs[
-                "data:weights:propulsion:propeller:mass:catalogue"
-            ] = Mpro
+            outputs["data:weight:propulsion:propeller:mass"] = outputs[
+                "data:weight:propulsion:propeller:mass:catalogue"
+            ] = m_pro
 
         # CUSTOM COMPONENTS (no change)
         else:
@@ -118,4 +118,4 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:propeller:diameter"] = inputs[
                 "data:propulsion:propeller:diameter:estimated"
             ]
-            outputs["data:weights:propulsion:propeller:mass"] = inputs["data:weights:propulsion:propeller:mass:estimated"]
+            outputs["data:weight:propulsion:propeller:mass"] = inputs["data:weight:propulsion:propeller:mass:estimated"]

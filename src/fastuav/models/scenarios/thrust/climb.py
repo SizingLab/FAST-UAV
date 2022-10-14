@@ -19,7 +19,7 @@ class VerticalClimbThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
@@ -47,8 +47,8 @@ class VerticalClimbThrust(om.ExplicitComponent):
         q_climb = atm.dynamic_pressure
 
         # Weight
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
-        Weight = Mtotal_guess * g  # [N]
+        m_uav_guess = inputs["data:weight:mtow:guess"]
+        Weight = m_uav_guess * g  # [N]
 
         # Angle of attack
         alpha_cl = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight)
@@ -63,7 +63,7 @@ class VerticalClimbThrust(om.ExplicitComponent):
 
         # PROVISION FOR CLIMBING FORWARD FLIGHT (PATH ANGLE THETA)
         # theta = np.pi / 2  # [rad] flight path angle (vertical climb)
-        # F_pro_cl, alpha_cl = MultirotorFlightModel.get_thrust(Mtotal_guess, V_cl, theta, S_front_estimated, S_top_estimated, C_D, C_L0, rho_air)  # [N] required thrust (and angle of attack)
+        # F_pro_cl, alpha_cl = MultirotorFlightModel.get_thrust(m_uav_guess, V_cl, theta, S_front_estimated, S_top_estimated, C_D, C_L0, rho_air)  # [N] required thrust (and angle of attack)
         # F_pro_cl = F_pro_cl / Npro  # [N] thrust per propeller
 
         outputs["data:propulsion:%s:propeller:thrust:climb" % propulsion_id] = F_pro_cl
@@ -80,7 +80,7 @@ class FixedwingClimbThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
         self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
         self.add_input("data:aerodynamics:CD0:guess", val=0.04, units=None)
@@ -111,8 +111,8 @@ class FixedwingClimbThrust(om.ExplicitComponent):
         q_climb = atm.dynamic_pressure
 
         # Weight
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
-        Weight = Mtotal_guess * g
+        m_uav_guess = inputs["data:weight:mtow:guess"]
+        Weight = m_uav_guess * g
 
         # Induced drag parameters
         K = inputs["data:aerodynamics:CDi:K"]

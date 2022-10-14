@@ -21,13 +21,13 @@ class MotorPerformanceModel:
         return W_mot
 
     @staticmethod
-    def current(T_mot, Tf_mot, Kt_mot):
-        I_mot = (T_mot + Tf_mot) / Kt_mot  # [I] Current of the motor
+    def current(T_mot, Tf_mot, Kv):
+        I_mot = (T_mot + Tf_mot) * Kv  # [I] Current of the motor
         return I_mot
 
     @staticmethod
-    def voltage(I_mot, W_mot, R_mot, Kt_mot):
-        U_mot = R_mot * I_mot + W_mot * Kt_mot  # [V] Voltage of the motor
+    def voltage(I_mot, W_mot, R, Kv):
+        U_mot = R * I_mot + W_mot / Kv  # [V] Voltage of the motor
         return U_mot
 
     @staticmethod
@@ -157,7 +157,7 @@ class MotorCurrent(om.ExplicitComponent):
         scenario = self.options["scenario"]
         self.add_input("data:propulsion:motor:torque:%s" % scenario, val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:friction", val=np.nan, units="N*m")
-        self.add_input("data:propulsion:motor:torque:coefficient", val=np.nan, units="N*m/A")
+        self.add_input("data:propulsion:motor:speed:constant", val=np.nan, units="rad/V/s")
         self.add_output("data:propulsion:motor:current:%s" % scenario, units="A")
 
     def setup_partials(self):
@@ -167,9 +167,9 @@ class MotorCurrent(om.ExplicitComponent):
         scenario = self.options["scenario"]
         T_mot = inputs["data:propulsion:motor:torque:%s" % scenario]
         Tf_mot = inputs["data:propulsion:motor:torque:friction"]
-        Kt_mot = inputs["data:propulsion:motor:torque:coefficient"]
+        Kv = inputs["data:propulsion:motor:speed:constant"]
 
-        I_mot = MotorPerformanceModel.current(T_mot, Tf_mot, Kt_mot)  # [I] Current of the motor
+        I_mot = MotorPerformanceModel.current(T_mot, Tf_mot, Kv)  # [I] Current of the motor
 
         outputs["data:propulsion:motor:current:%s" % scenario] = I_mot
 
@@ -177,19 +177,19 @@ class MotorCurrent(om.ExplicitComponent):
         scenario = self.options["scenario"]
         T_mot = inputs["data:propulsion:motor:torque:%s" % scenario]
         Tf_mot = inputs["data:propulsion:motor:torque:friction"]
-        Kt_mot = inputs["data:propulsion:motor:torque:coefficient"]
+        Kv = inputs["data:propulsion:motor:speed:constant"]
 
         partials["data:propulsion:motor:current:%s" % scenario,
                  "data:propulsion:motor:torque:%s" % scenario
-        ] = 1 / Kt_mot
+        ] = Kv
 
         partials["data:propulsion:motor:current:%s" % scenario,
                  "data:propulsion:motor:torque:friction"
-        ] = 1 / Kt_mot
+        ] = Kv
 
         partials["data:propulsion:motor:current:%s" % scenario,
-                 "data:propulsion:motor:torque:coefficient"
-        ] = - (T_mot + Tf_mot) / Kt_mot ** 2
+                 "data:propulsion:motor:speed:constant"
+        ] = T_mot + Tf_mot
 
 
 class MotorVoltage(om.ExplicitComponent):
@@ -203,7 +203,7 @@ class MotorVoltage(om.ExplicitComponent):
     def setup(self):
         scenario = self.options["scenario"]
         self.add_input("data:propulsion:motor:resistance", val=np.nan, units="V/A")
-        self.add_input("data:propulsion:motor:torque:coefficient", val=np.nan, units="N*m/A")
+        self.add_input("data:propulsion:motor:speed:constant", val=np.nan, units="rad/V/s")
         self.add_input("data:propulsion:motor:speed:%s" % scenario, val=np.nan, units="rad/s")
         self.add_input("data:propulsion:motor:current:%s" % scenario, val=np.nan, units="A")
         self.add_output("data:propulsion:motor:voltage:%s" % scenario, units="V")
@@ -213,19 +213,19 @@ class MotorVoltage(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         scenario = self.options["scenario"]
-        R_mot = inputs["data:propulsion:motor:resistance"]
-        Kt_mot = inputs["data:propulsion:motor:torque:coefficient"]
+        R = inputs["data:propulsion:motor:resistance"]
+        Kv = inputs["data:propulsion:motor:speed:constant"]
         W_mot = inputs["data:propulsion:motor:speed:%s" % scenario]
         I_mot = inputs["data:propulsion:motor:current:%s" % scenario]
 
-        U_mot = MotorPerformanceModel.voltage(I_mot, W_mot, R_mot, Kt_mot)  # [V] Voltage of the motor
+        U_mot = MotorPerformanceModel.voltage(I_mot, W_mot, R, Kv)  # [V] Voltage of the motor
 
         outputs["data:propulsion:motor:voltage:%s" % scenario] = U_mot
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         scenario = self.options["scenario"]
-        R_mot = inputs["data:propulsion:motor:resistance"]
-        Kt_mot = inputs["data:propulsion:motor:torque:coefficient"]
+        R = inputs["data:propulsion:motor:resistance"]
+        Kv = inputs["data:propulsion:motor:speed:constant"]
         W_mot = inputs["data:propulsion:motor:speed:%s" % scenario]
         I_mot = inputs["data:propulsion:motor:current:%s" % scenario]
 
@@ -234,16 +234,16 @@ class MotorVoltage(om.ExplicitComponent):
         ] = I_mot
 
         partials["data:propulsion:motor:voltage:%s" % scenario,
-                 "data:propulsion:motor:torque:coefficient"
-        ] = W_mot
+                 "data:propulsion:motor:speed:constant"
+        ] = - W_mot / Kv ** 2
 
         partials["data:propulsion:motor:voltage:%s" % scenario,
                  "data:propulsion:motor:speed:%s" % scenario
-        ] = Kt_mot
+        ] = 1 / Kv
 
         partials["data:propulsion:motor:voltage:%s" % scenario,
                  "data:propulsion:motor:current:%s" % scenario
-        ] = R_mot
+        ] = R
 
 
 class MotorPower(om.ExplicitComponent):

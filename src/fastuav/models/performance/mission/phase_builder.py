@@ -150,7 +150,7 @@ class PhaseComponent(om.ExplicitComponent):
             self.add_input("data:propulsion:%s:battery:voltage" % propulsion_id, val=np.nan, units="V")
             self.add_input("data:propulsion:%s:esc:efficiency" % propulsion_id, val=np.nan, units=None)
             self.add_input("data:propulsion:%s:gearbox:N_red" % propulsion_id, val=np.nan, units=None)
-            self.add_input("data:propulsion:%s:motor:torque:coefficient" % propulsion_id, val=np.nan, units="N*m/A")
+            self.add_input("data:propulsion:%s:motor:speed:constant" % propulsion_id, val=np.nan, units="rad/V/s")
             self.add_input("data:propulsion:%s:motor:torque:friction" % propulsion_id, val=np.nan, units="N*m")
             self.add_input("data:propulsion:%s:motor:resistance" % propulsion_id, val=np.nan, units="V/A")
             self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
@@ -211,7 +211,7 @@ class PhaseComponent(om.ExplicitComponent):
             flight_model.battery_voltage = inputs["data:propulsion:%s:battery:voltage" % propulsion_id]
             flight_model.esc_efficiency = inputs["data:propulsion:%s:esc:efficiency" % propulsion_id]
             flight_model.gearbox_ratio = inputs["data:propulsion:%s:gearbox:N_red" % propulsion_id]
-            flight_model.motor_torque_coef = inputs["data:propulsion:%s:motor:torque:coefficient" % propulsion_id]
+            flight_model.motor_speed_constant = inputs["data:propulsion:%s:motor:speed:constant" % propulsion_id]
             flight_model.motor_torque_friction = inputs["data:propulsion:%s:motor:torque:friction" % propulsion_id]
             flight_model.motor_resistance = inputs["data:propulsion:%s:motor:resistance" % propulsion_id]
             flight_model.propeller_number = inputs["data:propulsion:%s:propeller:number" % propulsion_id]

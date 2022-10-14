@@ -35,7 +35,7 @@ model:
 
 optimization:
     design_variables:
-      - name: data:weights:mtow:k # over estimation coefficient on the mass (to solve the mass consistency constraint)
+      - name: data:weight:mtow:k # over estimation coefficient on the mass (to solve the mass consistency constraint)
         upper: 40.0
         lower: 1.0
         
@@ -44,7 +44,7 @@ optimization:
       #  upper: 10.0
 
     constraints:
-      - name: data:weights:mtow:guess:constraint  # consistency constraint on the drone mass
+      - name: data:weight:mtow:guess:constraint  # consistency constraint on the drone mass
         lower: 0.0
         
       #- name: data:propulsion:battery:constraints:voltage:takeoff
@@ -53,7 +53,7 @@ optimization:
       
     objective:
       # MASS MINIMIZATION
-      - name: data:weights:mtow
+      - name: data:weight:mtow
         scaler: 1e-1
 
       # ENERGY MINIMIZATION

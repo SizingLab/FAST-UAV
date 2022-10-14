@@ -44,12 +44,12 @@ class CoG_UAV(om.ExplicitComponent):
 
         # Airframe
         self.add_input("data:stability:CoG:airframe", val=np.nan, units="m")
-        self.add_input("data:weights:airframe", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe", val=np.nan, units="kg")
 
         # Propulsion systems
         for propulsion_id in propulsion_id_list:
             self.add_input("data:stability:CoG:propulsion:%s" % propulsion_id, val=np.nan, units="m")
-            self.add_input("data:weights:propulsion:%s" % propulsion_id, val=np.nan, units="kg")
+            self.add_input("data:weight:propulsion:%s" % propulsion_id, val=np.nan, units="kg")
 
         self.add_output("data:stability:CoG", units="m")
 
@@ -62,12 +62,12 @@ class CoG_UAV(om.ExplicitComponent):
 
         # Airframe
         x_cg_airframe = inputs["data:stability:CoG:airframe"]
-        m_airframe = inputs["data:weights:airframe"]
+        m_airframe = inputs["data:weight:airframe"]
 
         # Propulsion systems
-        m_propulsion = sum(inputs["data:weights:propulsion:%s" % propulsion_id] for propulsion_id in propulsion_id_list)
+        m_propulsion = sum(inputs["data:weight:propulsion:%s" % propulsion_id] for propulsion_id in propulsion_id_list)
         x_cg_propulsion = sum(inputs["data:stability:CoG:propulsion:%s" % propulsion_id]
-                              * inputs["data:weights:propulsion:%s" % propulsion_id]
+                              * inputs["data:weight:propulsion:%s" % propulsion_id]
                               for propulsion_id in propulsion_id_list) / m_propulsion
 
         # UAV

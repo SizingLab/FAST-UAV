@@ -11,8 +11,8 @@ class ESCPerformanceModel:
     """
 
     @staticmethod
-    def power(P_mot, U_mot, V_bat):
-        P_esc = P_mot * V_bat / U_mot if U_mot > 0 else 0.0  # [W] electronic power
+    def power(P_mot, U_mot, U_bat):
+        P_esc = P_mot * U_bat / U_mot if U_mot > 0 else 0.0  # [W] electronic power
         return P_esc
 
 
@@ -51,9 +51,9 @@ class ESCPerformance(om.ExplicitComponent):
         scenario = self.options["scenario"]
         P_mot = inputs["data:propulsion:motor:power:%s" % scenario]
         U_mot = inputs["data:propulsion:motor:voltage:%s" % scenario]
-        V_bat = inputs["data:propulsion:battery:voltage"]
+        U_bat = inputs["data:propulsion:battery:voltage"]
 
-        P_esc = ESCPerformanceModel.power(P_mot, U_mot, V_bat)  # [W] electronic power
+        P_esc = ESCPerformanceModel.power(P_mot, U_mot, U_bat)  # [W] electronic power
 
         outputs["data:propulsion:esc:power:%s" % scenario] = P_esc
 

@@ -52,6 +52,7 @@ class TakeOffSpeed(om.ExplicitComponent):
 
         partials["data:propulsion:propeller:ND:takeoff",
                  "data:propulsion:propeller:ND:k"] = NDmax
+
         partials["data:propulsion:propeller:ND:takeoff",
                  "data:propulsion:propeller:ND:max:reference"] = k_ND
 

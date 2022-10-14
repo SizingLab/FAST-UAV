@@ -105,7 +105,7 @@ class ComputeTOW(om.ExplicitComponent):
     def setup(self):
         mission_name = self.options["mission_name"]
         route_name = self.options["route_name"]
-        self.add_input("data:weights:mtow", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow", val=np.nan, units="kg")
         self.add_input("data:scenarios:payload:mass", val=np.nan, units="kg")
         self.add_input("mission:%s:%s:payload:mass" % (mission_name, route_name), val=np.nan, units="kg")
         self.add_output("mission:%s:%s:tow" % (mission_name, route_name), units="kg")
@@ -117,7 +117,7 @@ class ComputeTOW(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         mission_name = self.options["mission_name"]
         route_name = self.options["route_name"]
-        mtow = inputs["data:weights:mtow"]
+        mtow = inputs["data:weight:mtow"]
         m_pay_design = inputs["data:scenarios:payload:mass"]
         m_pay_mission = inputs["mission:%s:%s:payload:mass" % (mission_name, route_name)]
 

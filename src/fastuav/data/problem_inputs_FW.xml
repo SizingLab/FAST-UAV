@@ -78,7 +78,7 @@
         </vertical>
       </tail>
     </geometry>
-    <weights>
+    <weight>
       <mtow>
         <k is_input="True">2.0<!--Oversizing coefficient on load mass--></k>
         <requirement units="kg" is_input="True">20.0<!--Top-level requirement: Maximum Take Off Weight--></requirement>
@@ -133,7 +133,7 @@
           </wires>
         </fixedwing>
       </propulsion>
-    </weights>
+    </weight>
     <propulsion>
       <fixedwing>
         <propeller>
@@ -207,6 +207,9 @@
           </resistance>
           <speed>
             <k is_input="True">1.0</k>
+            <constant>
+              <reference units="rad/V/s" is_input="True">33.33333</reference>
+            </constant>
           </speed>
           <torque>
             <k is_input="True">1.0</k>
@@ -407,7 +410,7 @@
         </propeller>
       </fixedwing>
     </propulsion>
-    <weights>
+    <weight>
       <propulsion>
         <fixedwing>
           <battery>
@@ -436,6 +439,6 @@
           </propeller>
         </fixedwing>
       </propulsion>
-    </weights>
+    </weight>
   </uncertainty>
 </FASTOAD_model>

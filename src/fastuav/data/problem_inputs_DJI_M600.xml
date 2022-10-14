@@ -28,7 +28,7 @@
         <CL is_input="True">0.0</CL>
       </multirotor>
     </aerodynamics>
-    <weights>
+    <weight>
       <arms>
         <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
       </arms>
@@ -78,7 +78,7 @@
           </wires>
         </multirotor>
       </propulsion>
-    </weights>
+    </weight>
     <geometry>
       <projected_area>
         <front>
@@ -173,6 +173,9 @@
           </resistance>
           <speed>
             <k is_input="True">1.0</k>
+            <constant>
+              <reference units="rad/V/s" is_input="True">33.333333</reference>
+            </constant>
           </speed>
           <torque>
             <k is_input="True">1.0</k>
@@ -340,7 +343,7 @@
         </propeller>
       </multirotor>
     </propulsion>
-    <weights>
+    <weight>
       <propulsion>
         <multirotor>
           <battery>
@@ -369,6 +372,6 @@
           </propeller>
         </multirotor>
       </propulsion>
-    </weights>
+    </weight>
   </uncertainty>
 </FASTOAD_model>

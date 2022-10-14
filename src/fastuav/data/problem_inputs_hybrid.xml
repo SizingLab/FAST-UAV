@@ -110,7 +110,7 @@
         </vertical>
       </tail>
     </geometry>
-    <weights>
+    <weight>
       <arms>
         <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
       </arms>
@@ -198,7 +198,7 @@
           </wires>
         </multirotor>
       </propulsion>
-    </weights>
+    </weight>
     <propulsion>
       <fixedwing>
         <propeller>
@@ -257,10 +257,14 @@
           </efficiency>
           <power>
             <k is_input="True">1.0</k>
+            <max>
             <reference units="W" is_input="True">3108.0</reference>
+            </max>
           </power>
           <voltage>
-            <reference units="V" is_input="True">44.4</reference>
+            <max>
+              <reference units="V" is_input="True">44.4</reference>
+            </max>
           </voltage>
         </esc>
         <motor>
@@ -272,6 +276,9 @@
           </resistance>
           <speed>
             <k is_input="True">1.0</k>
+            <constant>
+              <reference units="rad/V/s" is_input="True">33.33333</reference>
+            </constant>
           </speed>
           <torque>
             <k is_input="True">1.0</k>
@@ -371,6 +378,9 @@
           </resistance>
           <speed>
             <k is_input="True">1.0</k>
+            <constant>
+              <reference units="rad/V/s" is_input="True">33.33333</reference>
+            </constant>
           </speed>
           <torque>
             <k is_input="True">1.0</k>
@@ -614,7 +624,7 @@
         </propeller>
       </multirotor>
     </propulsion>
-    <weights>
+    <weight>
       <propulsion>
         <fixedwing>
           <battery>
@@ -669,7 +679,7 @@
           </propeller>
         </multirotor>
       </propulsion>
-    </weights>
+    </weight>
   </uncertainty>
   <mission>
     <sizing>

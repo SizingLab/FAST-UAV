@@ -17,7 +17,7 @@ class ESCEstimationModels(om.Group):
             self,
             "weight",
             Weight(),
-            uncertain_outputs={"data:weights:propulsion:esc:mass:estimated": "kg"},
+            uncertain_outputs={"data:weight:propulsion:esc:mass:estimated": "kg"},
         )
 
 
@@ -27,20 +27,20 @@ class Weight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:weights:propulsion:esc:mass:reference", val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:esc:mass:reference", val=np.nan, units="kg")
         self.add_input("data:propulsion:esc:power:reference", val=np.nan, units="W")
-        self.add_input("data:propulsion:esc:power:max:estimated", val=np.nan, units="W")
-        self.add_output("data:weights:propulsion:esc:mass:estimated", units="kg")
+        self.add_input("data:propulsion:esc:power:estimated", val=np.nan, units="W")
+        self.add_output("data:weight:propulsion:esc:mass:estimated", units="kg")
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        Mesc_ref = inputs["data:weights:propulsion:esc:mass:reference"]
-        Pesc_ref = inputs["data:propulsion:esc:power:reference"]
-        P_esc = inputs["data:propulsion:esc:power:max:estimated"]
+        m_esc_ref = inputs["data:weight:propulsion:esc:mass:reference"]
+        P_esc_ref = inputs["data:propulsion:esc:power:reference"]
+        P_esc = inputs["data:propulsion:esc:power:estimated"]
 
-        M_esc = Mesc_ref * (P_esc / Pesc_ref)  # [kg] Mass ESC
+        m_esc = m_esc_ref * (P_esc / P_esc_ref)  # [kg] Mass ESC
 
-        outputs["data:weights:propulsion:esc:mass:estimated"] = M_esc
+        outputs["data:weight:propulsion:esc:mass:estimated"] = m_esc

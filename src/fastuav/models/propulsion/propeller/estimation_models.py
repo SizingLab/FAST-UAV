@@ -52,7 +52,7 @@ class PropellerEstimationModels(om.Group):
             self,
             "weight",
             Weight(),
-            uncertain_outputs={"data:weights:propulsion:propeller:mass:estimated": "kg"},
+            uncertain_outputs={"data:weight:propulsion:propeller:mass:estimated": "kg"},
         )
 
 
@@ -103,8 +103,8 @@ class Weight(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:propulsion:propeller:diameter:estimated", val=np.nan, units="m")
         self.add_input("data:propulsion:propeller:diameter:reference", val=np.nan, units="m")
-        self.add_input("data:weights:propulsion:propeller:mass:reference", val=np.nan, units="kg")
-        self.add_output("data:weights:propulsion:propeller:mass:estimated", units="kg")
+        self.add_input("data:weight:propulsion:propeller:mass:reference", val=np.nan, units="kg")
+        self.add_output("data:weight:propulsion:propeller:mass:estimated", units="kg")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -113,10 +113,10 @@ class Weight(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         Dpro = inputs["data:propulsion:propeller:diameter:estimated"]
         Dpro_ref = inputs["data:propulsion:propeller:diameter:reference"]
-        Mpro_ref = inputs["data:weights:propulsion:propeller:mass:reference"]
+        m_pro_ref = inputs["data:weight:propulsion:propeller:mass:reference"]
 
-        Mpro = Mpro_ref * (Dpro / Dpro_ref) ** 3  # [kg] Propeller mass
+        m_pro = m_pro_ref * (Dpro / Dpro_ref) ** 3  # [kg] Propeller mass
 
-        outputs["data:weights:propulsion:propeller:mass:estimated"] = Mpro
+        outputs["data:weight:propulsion:propeller:mass:estimated"] = m_pro
 
 

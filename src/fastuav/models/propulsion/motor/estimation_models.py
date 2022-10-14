@@ -38,7 +38,7 @@ class MotorEstimationModels(om.Group):
             self,
             "weight",
             Weight(),
-            uncertain_outputs={"data:weights:propulsion:motor:mass:estimated": "kg"},
+            uncertain_outputs={"data:weight:propulsion:motor:mass:estimated": "kg"},
         )
 
         self.add_subsystem("geometry", Geometry(), promotes=["*"])
@@ -59,27 +59,27 @@ class NominalTorque(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Tmot_nom_ref = inputs["data:propulsion:motor:torque:nominal:reference"]
-        Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
-        Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
+        T_mot_nom_ref = inputs["data:propulsion:motor:torque:nominal:reference"]
+        T_mot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
+        T_mot_max = inputs["data:propulsion:motor:torque:max:estimated"]
 
-        Tmot_nom = Tmot_nom_ref * Tmot_max / Tmot_max_ref  # [N.m] nominal torque
+        T_mot_nom = T_mot_nom_ref * T_mot_max / T_mot_max_ref  # [N.m] nominal torque
 
-        outputs["data:propulsion:motor:torque:nominal:estimated"] = Tmot_nom
+        outputs["data:propulsion:motor:torque:nominal:estimated"] = T_mot_nom
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Tmot_nom_ref = inputs["data:propulsion:motor:torque:nominal:reference"]
-        Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
-        Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
+        T_mot_nom_ref = inputs["data:propulsion:motor:torque:nominal:reference"]
+        T_mot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
+        T_mot_max = inputs["data:propulsion:motor:torque:max:estimated"]
 
         partials["data:propulsion:motor:torque:nominal:estimated",
-                 "data:propulsion:motor:torque:nominal:reference"] = Tmot_max / Tmot_max_ref
+                 "data:propulsion:motor:torque:nominal:reference"] = T_mot_max / T_mot_max_ref
 
         partials["data:propulsion:motor:torque:nominal:estimated",
-                 "data:propulsion:motor:torque:max:reference"] = - Tmot_nom_ref * Tmot_max / Tmot_max_ref ** 2
+                 "data:propulsion:motor:torque:max:reference"] = - T_mot_nom_ref * T_mot_max / T_mot_max_ref ** 2
 
         partials["data:propulsion:motor:torque:nominal:estimated",
-                 "data:propulsion:motor:torque:max:estimated"] = Tmot_nom_ref / Tmot_max_ref
+                 "data:propulsion:motor:torque:max:estimated"] = T_mot_nom_ref / T_mot_max_ref
 
 
 class FrictionTorque(om.ExplicitComponent):
@@ -97,30 +97,30 @@ class FrictionTorque(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
-        Tfmot_ref = inputs["data:propulsion:motor:torque:friction:reference"]
-        Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
+        T_mot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
+        Tf_ref = inputs["data:propulsion:motor:torque:friction:reference"]
+        T_mot_max = inputs["data:propulsion:motor:torque:max:estimated"]
 
-        Tfmot = Tfmot_ref * (Tmot_max / Tmot_max_ref) ** (3 / 3.5)  # [N.m] Friction torque
+        Tf = Tf_ref * (T_mot_max / T_mot_max_ref) ** (3 / 3.5)  # [N.m] Friction torque
 
-        outputs["data:propulsion:motor:torque:friction:estimated"] = Tfmot
+        outputs["data:propulsion:motor:torque:friction:estimated"] = Tf
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
-        Tfmot_ref = inputs["data:propulsion:motor:torque:friction:reference"]
-        Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
+        T_mot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
+        Tf_ref = inputs["data:propulsion:motor:torque:friction:reference"]
+        T_mot_max = inputs["data:propulsion:motor:torque:max:estimated"]
 
         partials["data:propulsion:motor:torque:friction:estimated",
                  "data:propulsion:motor:torque:friction:reference"
-        ] = (Tmot_max / Tmot_max_ref) ** (3 / 3.5)
+        ] = (T_mot_max / T_mot_max_ref) ** (3 / 3.5)
 
         partials["data:propulsion:motor:torque:friction:estimated",
                  "data:propulsion:motor:torque:max:reference"
-        ] = - (3 / 3.5) * Tfmot_ref * Tmot_max ** (3 / 3.5) / Tmot_max_ref ** (6.5 / 3.5)
+        ] = - (3 / 3.5) * Tf_ref * T_mot_max ** (3 / 3.5) / T_mot_max_ref ** (6.5 / 3.5)
 
         partials["data:propulsion:motor:torque:friction:estimated",
                  "data:propulsion:motor:torque:max:estimated"
-        ] = (3 / 3.5) * Tfmot_ref / Tmot_max_ref ** (3 / 3.5) * Tmot_max ** (- 0.5 / 3.5)
+        ] = (3 / 3.5) * Tf_ref / T_mot_max_ref ** (3 / 3.5) * T_mot_max ** (- 0.5 / 3.5)
 
 
 class Resistance(om.ExplicitComponent):
@@ -130,54 +130,54 @@ class Resistance(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:motor:torque:max:estimated", val=np.nan, units="N*m")
-        self.add_input("data:propulsion:motor:torque:coefficient:estimated", val=np.nan, units="N*m/A")
+        self.add_input("data:propulsion:motor:speed:constant:estimated", val=np.nan, units="rad/V/s")
         self.add_input("data:propulsion:motor:torque:max:reference", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:resistance:reference", val=np.nan, units="V/A")
-        self.add_input("data:propulsion:motor:torque:coefficient:reference", val=np.nan, units="N*m/A")
+        self.add_input("data:propulsion:motor:speed:constant:reference", val=np.nan, units="rad/V/s")
         self.add_output("data:propulsion:motor:resistance:estimated", units="V/A")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
-        Rmot_ref = inputs["data:propulsion:motor:resistance:reference"]
-        Ktmot_ref = inputs["data:propulsion:motor:torque:coefficient:reference"]
-        Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
-        Ktmot = inputs["data:propulsion:motor:torque:coefficient:estimated"]
+        T_mot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
+        R_ref = inputs["data:propulsion:motor:resistance:reference"]
+        Kv_ref = inputs["data:propulsion:motor:speed:constant:reference"]
+        T_mot_max = inputs["data:propulsion:motor:torque:max:estimated"]
+        Kv = inputs["data:propulsion:motor:speed:constant:estimated"]
 
-        Rmot = (
-            Rmot_ref * (Tmot_max / Tmot_max_ref) ** (-5 / 3.5) * (Ktmot / Ktmot_ref) ** 2
+        R = (
+            R_ref * (T_mot_max / T_mot_max_ref) ** (-5 / 3.5) * (Kv / Kv_ref) ** (-2)
         )  # [Ohm] motor resistance
 
-        outputs["data:propulsion:motor:resistance:estimated"] = Rmot
+        outputs["data:propulsion:motor:resistance:estimated"] = R
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
-        Rmot_ref = inputs["data:propulsion:motor:resistance:reference"]
-        Ktmot_ref = inputs["data:propulsion:motor:torque:coefficient:reference"]
-        Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
-        Ktmot = inputs["data:propulsion:motor:torque:coefficient:estimated"]
+        T_mot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
+        R_ref = inputs["data:propulsion:motor:resistance:reference"]
+        Kv_ref = inputs["data:propulsion:motor:speed:constant:reference"]
+        T_mot_max = inputs["data:propulsion:motor:torque:max:estimated"]
+        Kv = inputs["data:propulsion:motor:speed:constant:estimated"]
 
         partials["data:propulsion:motor:resistance:estimated",
                  "data:propulsion:motor:torque:max:reference"
-        ] = (5 / 3.5) * Rmot_ref * Tmot_max ** (-5 / 3.5) * Tmot_max_ref ** (1.5 / 3.5) * (Ktmot / Ktmot_ref) ** 2
+        ] = (5 / 3.5) * R_ref * T_mot_max ** (-5 / 3.5) * T_mot_max_ref ** (1.5 / 3.5) * (Kv / Kv_ref) ** (-2)
 
         partials["data:propulsion:motor:resistance:estimated",
                  "data:propulsion:motor:resistance:reference"
-        ] = (Tmot_max / Tmot_max_ref) ** (-5 / 3.5) * (Ktmot / Ktmot_ref) ** 2
+        ] = (T_mot_max / T_mot_max_ref) ** (-5 / 3.5) * (Kv / Kv_ref) ** (-2)
 
         partials["data:propulsion:motor:resistance:estimated",
-                 "data:propulsion:motor:torque:coefficient:reference"
-        ] = -2 * Rmot_ref * (Tmot_max / Tmot_max_ref) ** (-5 / 3.5) * Ktmot ** 2 / Ktmot_ref ** 3
+                 "data:propulsion:motor:speed:constant:reference"
+        ] = 2 * R_ref * (T_mot_max / T_mot_max_ref) ** (-5 / 3.5) * Kv_ref / Kv ** 2
 
         partials["data:propulsion:motor:resistance:estimated",
                  "data:propulsion:motor:torque:max:estimated"
-        ] = (-5 / 3.5) * Rmot_ref / Tmot_max_ref ** (-5 / 3.5) * Tmot_max ** (-8.5 / 3.5) * (Ktmot / Ktmot_ref) ** 2
+        ] = (-5 / 3.5) * R_ref / T_mot_max_ref ** (-5 / 3.5) * T_mot_max ** (-8.5 / 3.5) * (Kv / Kv_ref) ** (-2)
 
         partials["data:propulsion:motor:resistance:estimated",
-                 "data:propulsion:motor:torque:coefficient:estimated"
-        ] = 2 * Rmot_ref * (Tmot_max / Tmot_max_ref) ** (-5 / 3.5) * Ktmot / Ktmot_ref ** 2
+                 "data:propulsion:motor:speed:constant:estimated"
+        ] = -2 * R_ref * (T_mot_max / T_mot_max_ref) ** (-5 / 3.5) * Kv_ref ** 2 / Kv ** 3
 
 
 class Weight(om.ExplicitComponent):
@@ -188,37 +188,37 @@ class Weight(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:propulsion:motor:torque:max:estimated", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:max:reference", val=np.nan, units="N*m")
-        self.add_input("data:weights:propulsion:motor:mass:reference", val=np.nan, units="kg")
-        self.add_output("data:weights:propulsion:motor:mass:estimated", units="kg")
+        self.add_input("data:weight:propulsion:motor:mass:reference", val=np.nan, units="kg")
+        self.add_output("data:weight:propulsion:motor:mass:estimated", units="kg")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
-        Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
-        Mmot_ref = inputs["data:weights:propulsion:motor:mass:reference"]
+        T_mot_max = inputs["data:propulsion:motor:torque:max:estimated"]
+        T_mot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
+        m_mot_ref = inputs["data:weight:propulsion:motor:mass:reference"]
 
-        Mmot = Mmot_ref * (Tmot_max / Tmot_max_ref) ** (3 / 3.5)  # [kg] Motor mass (estimated)
+        m_mot = m_mot_ref * (T_mot_max / T_mot_max_ref) ** (3 / 3.5)  # [kg] Motor mass (estimated)
 
-        outputs["data:weights:propulsion:motor:mass:estimated"] = Mmot
+        outputs["data:weight:propulsion:motor:mass:estimated"] = m_mot
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
-        Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
-        Mmot_ref = inputs["data:weights:propulsion:motor:mass:reference"]
+        T_mot_max = inputs["data:propulsion:motor:torque:max:estimated"]
+        T_mot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
+        m_mot_ref = inputs["data:weight:propulsion:motor:mass:reference"]
 
-        partials["data:weights:propulsion:motor:mass:estimated",
+        partials["data:weight:propulsion:motor:mass:estimated",
                  "data:propulsion:motor:torque:max:estimated"
-        ] = (3 / 3.5) * Mmot_ref / Tmot_max_ref ** (3 / 3.5) * Tmot_max ** (-0.5 / 3.5)
+        ] = (3 / 3.5) * m_mot_ref / T_mot_max_ref ** (3 / 3.5) * T_mot_max ** (-0.5 / 3.5)
 
-        partials["data:weights:propulsion:motor:mass:estimated",
+        partials["data:weight:propulsion:motor:mass:estimated",
                  "data:propulsion:motor:torque:max:reference"
-        ] = - (3 / 3.5) * Mmot_ref * Tmot_max ** (3 / 3.5) / Tmot_max_ref ** (6.5 / 3.5)
+        ] = - (3 / 3.5) * m_mot_ref * T_mot_max ** (3 / 3.5) / T_mot_max_ref ** (6.5 / 3.5)
 
-        partials["data:weights:propulsion:motor:mass:estimated",
-                 "data:weights:propulsion:motor:mass:reference"
-        ] = (Tmot_max / Tmot_max_ref) ** (3 / 3.5)
+        partials["data:weight:propulsion:motor:mass:estimated",
+                 "data:weight:propulsion:motor:mass:reference"
+        ] = (T_mot_max / T_mot_max_ref) ** (3 / 3.5)
 
 
 class Geometry(om.ExplicitComponent):
@@ -228,36 +228,36 @@ class Geometry(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:motor:length:reference", val=np.nan, units="m")
-        self.add_input("data:weights:propulsion:motor:mass:reference", val=np.nan, units="kg")
-        self.add_input("data:weights:propulsion:motor:mass:estimated", val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:motor:mass:reference", val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:motor:mass:estimated", val=np.nan, units="kg")
         self.add_output("data:propulsion:motor:length:estimated", units="m")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Lmot_ref = inputs["data:propulsion:motor:length:reference"]
-        Mmot_ref = inputs["data:weights:propulsion:motor:mass:reference"]
-        Mmot = inputs["data:weights:propulsion:motor:mass:estimated"]
+        L_mot_ref = inputs["data:propulsion:motor:length:reference"]
+        m_mot_ref = inputs["data:weight:propulsion:motor:mass:reference"]
+        m_mot = inputs["data:weight:propulsion:motor:mass:estimated"]
 
-        Lmot = Lmot_ref * (Mmot / Mmot_ref) ** (1 / 3)  # [m] Motor length (estimated)
+        L_mot = L_mot_ref * (m_mot / m_mot_ref) ** (1 / 3)  # [m] Motor length (estimated)
 
-        outputs["data:propulsion:motor:length:estimated"] = Lmot
+        outputs["data:propulsion:motor:length:estimated"] = L_mot
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Lmot_ref = inputs["data:propulsion:motor:length:reference"]
-        Mmot_ref = inputs["data:weights:propulsion:motor:mass:reference"]
-        Mmot = inputs["data:weights:propulsion:motor:mass:estimated"]
+        L_mot_ref = inputs["data:propulsion:motor:length:reference"]
+        m_mot_ref = inputs["data:weight:propulsion:motor:mass:reference"]
+        m_mot = inputs["data:weight:propulsion:motor:mass:estimated"]
 
         partials["data:propulsion:motor:length:estimated",
                  "data:propulsion:motor:length:reference"
-        ] = (Mmot / Mmot_ref) ** (1 / 3)
+        ] = (m_mot / m_mot_ref) ** (1 / 3)
 
         partials["data:propulsion:motor:length:estimated",
-                 "data:weights:propulsion:motor:mass:estimated"
-        ] = (1 / 3) * Lmot_ref / Mmot_ref ** (1 / 3) * Mmot ** (- 2 / 3)
+                 "data:weight:propulsion:motor:mass:estimated"
+        ] = (1 / 3) * L_mot_ref / m_mot_ref ** (1 / 3) * m_mot ** (- 2 / 3)
 
         partials["data:propulsion:motor:length:estimated",
-                 "data:weights:propulsion:motor:mass:reference"
-        ] = - (1 / 3) * Lmot_ref * Mmot ** (1 / 3) / Mmot_ref ** (4 / 3)
+                 "data:weight:propulsion:motor:mass:reference"
+        ] = - (1 / 3) * L_mot_ref * m_mot ** (1 / 3) / m_mot_ref ** (4 / 3)
 

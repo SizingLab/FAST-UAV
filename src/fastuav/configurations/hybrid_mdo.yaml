@@ -44,7 +44,7 @@ optimization:
     design_variables:
     
         ## GLOBAL ##
-      - name: data:weights:mtow:k # over estimation coefficient on the load mass
+      - name: data:weight:mtow:k # over estimation coefficient on the load mass
         lower: 1.0
         upper: 40.0
         
@@ -177,10 +177,10 @@ optimization:
     constraints:
     
         ## GLOBAL ##
-      - name: data:weights:mtow:guess:constraint # Mass consistency
+      - name: data:weight:mtow:guess:constraint # Mass consistency
         lower: 0.0
 
-      - name: data:weights:mtow:requirement:constraint # MTOW requirement
+      - name: data:weight:mtow:requirement:constraint # MTOW requirement
         lower: 0.0
         
       - name: data:geometry:projected_area:top:constraint # Area consistency
@@ -263,7 +263,7 @@ optimization:
       - name: data:propulsion:multirotor:esc:constraints:power:climb  # ESC power in climb
         lower: 0.0
 
-      - name: data:propulsion:multirotor:esc:constraints:voltage  # ESC voltage
+      - name: data:propulsion:multirotor:esc:constraints:voltage:battery  # ESC voltage
         lower: 0.0
       
         ## GEOMETRY ##  
@@ -300,7 +300,7 @@ optimization:
 
     objective:
       # MASS MINIMIZATION
-      #- name: data:weights:mtow
+      #- name: data:weight:mtow
       #  scaler: 1e-1
         
       # ENDURANCE MAXIMIZATION

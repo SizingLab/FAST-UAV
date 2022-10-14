@@ -20,7 +20,7 @@ class VerticalTakeoffThrust(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("data:scenarios:%s:thrust_weight_ratio" % propulsion_id, val=np.nan, units=None)
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_output("data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, units="N")
 
@@ -31,10 +31,10 @@ class VerticalTakeoffThrust(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
         k_maxthrust = inputs["data:scenarios:%s:thrust_weight_ratio" % propulsion_id]
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
+        m_uav_guess = inputs["data:weight:mtow:guess"]
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
-        F_pro_to = Mtotal_guess * g / Npro * k_maxthrust  # [N] Thrust per propeller
+        F_pro_to = m_uav_guess * g / Npro * k_maxthrust  # [N] Thrust per propeller
 
         outputs["data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id] = F_pro_to
 
@@ -50,7 +50,7 @@ class LauncherTakeoff(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
         self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
         self.add_input("data:scenarios:%s:takeoff:altitude" % propulsion_id, val=0.0, units="m")
@@ -78,8 +78,8 @@ class LauncherTakeoff(om.ExplicitComponent):
         q_takeoff = atm.dynamic_pressure
 
         # Weight
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
-        Weight = Mtotal_guess * g  # [N]
+        m_uav_guess = inputs["data:weight:mtow:guess"]
+        Weight = m_uav_guess * g  # [N]
 
         # Induced drag parameters
         K = inputs["data:aerodynamics:CDi:K"]
