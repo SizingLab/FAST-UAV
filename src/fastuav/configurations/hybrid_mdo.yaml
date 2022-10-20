@@ -231,7 +231,7 @@ optimization:
       - name: data:propulsion:fixedwing:esc:constraints:power:cruise  # ESC power in cruise
         lower: 0.0
 
-      - name: data:propulsion:fixedwing:esc:constraints:voltage  # ESC voltage
+      - name: data:propulsion:fixedwing:esc:constraints:voltage:battery  # ESC voltage
         lower: 0.0
         
       ## PROPULSION MULTIROTOR ##

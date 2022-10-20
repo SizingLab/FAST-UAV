@@ -17,10 +17,10 @@ model:
     propulsion:
         id: fastuav.propulsion.multirotor
         gearbox: False
-        off_the_shelf_propeller: False
+        off_the_shelf_propeller: True
         off_the_shelf_motor: True
-        off_the_shelf_battery: False
-        off_the_shelf_esc: False
+        off_the_shelf_battery: True
+        off_the_shelf_esc: True
     geometry:
         id: fastuav.geometry.multirotor
     structures:
@@ -39,7 +39,13 @@ model:
 
 # This section is needed only if optimization process is run
 optimization: 
-    
+
+    #options: # dev version of fast-oad - not officially available
+    #    - multistart: true
+    #      samples: 10
+    #      criterion: maximin
+    #      num_proc: 4
+
     design_variables:
     
         ## GLOBAL ##
@@ -73,8 +79,8 @@ optimization:
         upper: 10.0
 
       - name: data:propulsion:multirotor:battery:power:k # over estimation coefficient on the battery power
-        lower: 0.01
-        upper: 60.0
+        lower: 1.0
+        upper: 20.0
         
       - name: data:propulsion:multirotor:battery:voltage:k # over estimation coefficient on the battery voltage
         lower: 1.0

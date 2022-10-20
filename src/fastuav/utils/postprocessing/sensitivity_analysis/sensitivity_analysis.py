@@ -11,6 +11,7 @@ For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 
 import contextlib
 import os
+import os.path as pth
 
 # from openmdao_drivers.cmaes_driver import CMAESDriver
 
@@ -26,7 +27,16 @@ from SALib.analyze import sobol, morris
 from typing import List
 from plotly.validators.scatter.marker import SymbolValidator
 
-SA_PATH = "./workdir/sensitivity_analysis"
+SA_PATH = pth.join(
+    pth.dirname(pth.abspath(__file__)),
+    "",
+    "..",
+    "..",
+    "..",
+    "notebooks",
+    "workdir",
+    "sensitivity_analysis",
+)
 
 
 def doe_salib(
@@ -638,16 +648,16 @@ def sobol_analysis(conf_file, data_file):
             fig5.data[0].line = dict(color=df[y], colorscale="Viridis")
 
         # export
-        fig1.write_html(SA_PATH + "/figures/sobol_indices_hist.html")
-        fig1.write_image(SA_PATH + "/figures/sobol_indices_hist.pdf")
-        fig2.write_html(SA_PATH + "/figures/sobol_second_order.html")
-        fig2.write_image(SA_PATH + "/figures/sobol_second_order.pdf")
-        fig3.write_html(SA_PATH + "/figures/sobol_indices_pie.html")
-        fig3.write_image(SA_PATH + "/figures/sobol_indices_pie.pdf")
-        fig4.write_html(SA_PATH + "/figures/output_dist.html")
-        fig4.write_image(SA_PATH + "/figures/output_dist.pdf")
-        fig5.write_html(SA_PATH + "/figures/parallel_plot.html")
-        fig5.write_image(SA_PATH + "/figures/parallel_plot.pdf")
+        fig1.write_html(pth.join(SA_PATH, "figures") + "/sobol_indices_hist.html")
+        fig1.write_image(pth.join(SA_PATH, "figures") + "/sobol_indices_hist.pdf")
+        fig2.write_html(pth.join(SA_PATH, "figures") + "/sobol_second_order.html")
+        fig2.write_image(pth.join(SA_PATH, "figures") + "/sobol_second_order.pdf")
+        fig3.write_html(pth.join(SA_PATH, "figures") + "/sobol_indices_pie.html")
+        fig3.write_image(pth.join(SA_PATH, "figures") + "/sobol_indices_pie.pdf")
+        fig4.write_html(pth.join(SA_PATH, "figures") + "/output_dist.html")
+        fig4.write_image(pth.join(SA_PATH, "figures") + "output_dist.pdf")
+        fig5.write_html(pth.join(SA_PATH, "figures") + "parallel_plot.html")
+        fig5.write_image(pth.join(SA_PATH, "figures") + "parallel_plot.pdf")
 
         # with fig6.batch_update():  # Inputs Distributions
         #    # DEPRECATED : both relative and absolute errors are ploted on the same chart...
@@ -1152,10 +1162,10 @@ def morris_analysis(conf_file, data_file):
             )
 
             # export
-            fig1.write_html(SA_PATH + "/figures/morris_mu.html", include_mathjax="cdn")
-            fig1.write_image(SA_PATH + "/figures/morris_mu.pdf")
-            fig2.write_html(SA_PATH + "/figures/morris_mu_sigma.html", include_mathjax="cdn")
-            fig2.write_image(SA_PATH + "/figures/morris_mu_sigma.pdf")
+            fig1.write_html(pth.join(SA_PATH, "figures") + "/morris_mu.html", include_mathjax="cdn")
+            fig1.write_image(pth.join(SA_PATH, "figures") + "/morris_mu.pdf")
+            fig2.write_html(pth.join(SA_PATH, "figures") + "/morris_mu_sigma.html", include_mathjax="cdn")
+            fig2.write_image(pth.join(SA_PATH, "figures") + "/morris_mu_sigma.pdf")
 
     def update_all(change):
         """

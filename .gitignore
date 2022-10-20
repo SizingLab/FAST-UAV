@@ -1,5 +1,9 @@
 /src/fastuav/configurations/.ipynb_checkpoints/
-/src/fastuav/notebooks/workdir/
+/src/fastuav/notebooks/workdir/*
+!/src/fastuav/notebooks/workdir/sensitivity_analysis
+/src/fastuav/notebooks/workdir/sensitivity_analysis/*
+!/src/fastuav/notebooks/workdir/sensitivity_analysis/figures
+/src/fastuav/notebooks/workdir/sensitivity_analysis/figures/*
 /src/fastuav/notebooks/.ipynb_checkpoints/
 /.ipynb_checkpoints/
 /src/fastuav/models/performance/.pytest_cache/

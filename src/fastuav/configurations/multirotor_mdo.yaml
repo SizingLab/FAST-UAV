@@ -69,8 +69,8 @@ optimization:
         upper: 10.0
 
       - name: data:propulsion:multirotor:battery:power:k # over estimation coefficient on the battery power
-        lower: 0.01
-        upper: 60.0
+        lower: 1.0
+        upper: 20.0
         
       - name: data:propulsion:multirotor:battery:voltage:k # over estimation coefficient on the battery voltage
         lower: 1.0
