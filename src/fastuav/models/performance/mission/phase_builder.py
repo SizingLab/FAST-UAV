@@ -47,7 +47,7 @@ class PhaseBuilder(om.Group):
 
 class SetFlightParameters(om.ExplicitComponent):
     """
-    This class sets the flight parameters of the flight phase from the sizing scenarios.
+    This class sets the flight parameters of the flight phase from the sizing scenarios parameters.
     """
 
     def initialize(self):
@@ -63,20 +63,15 @@ class SetFlightParameters(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
 
         if phase_name == HOVER_TAG:
-            self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=np.nan, units="m")
+            self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
             self.add_output("mission:%s:%s:hover:altitude" % (mission_name, route_name), units="m")
-
         elif phase_name == CLIMB_TAG:
-            self.add_input("data:scenarios:%s:takeoff:altitude" % propulsion_id, val=np.nan, units="m")
-            self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=np.nan, units="m")
-            self.add_input("data:scenarios:%s:climb:speed" % propulsion_id, val=np.nan, units="m/s")
-            self.add_output("mission:%s:%s:climb:altitude" % (mission_name, route_name), units="m")
+            self.add_input("mission:sizing:main_route:climb:speed:%s" % propulsion_id, val=np.nan, units="m/s")
+            self.add_input("mission:sizing:main_route:climb:rate:%s" % propulsion_id, val=np.nan, units="m/s")
             self.add_output("mission:%s:%s:climb:speed" % (mission_name, route_name), units="m/s")
-            self.add_output("mission:%s:%s:climb:distance" % (mission_name, route_name), units="m")
+            self.add_output("mission:%s:%s:climb:rate" % (mission_name, route_name), units="m/s")
         elif phase_name == CRUISE_TAG:
-            self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=np.nan, units="m")
-            self.add_input("data:scenarios:%s:cruise:speed" % propulsion_id, val=np.nan, units="m/s")
-            self.add_output("mission:%s:%s:cruise:altitude" % (mission_name, route_name), units="m")
+            self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=np.nan, units="m/s")
             self.add_output("mission:%s:%s:cruise:speed" % (mission_name, route_name), val=np.nan, units="m/s")
 
     def setup_partials(self):
@@ -90,20 +85,13 @@ class SetFlightParameters(om.ExplicitComponent):
 
         if phase_name == HOVER_TAG:
             outputs["mission:%s:%s:hover:altitude" % (mission_name, route_name)] = inputs[
-                "data:scenarios:%s:cruise:altitude" % propulsion_id]
+                "mission:sizing:main_route:cruise:altitude"]
         elif phase_name == CLIMB_TAG:
-            outputs["mission:%s:%s:climb:altitude" % (mission_name, route_name)] = inputs[
-                "data:scenarios:%s:cruise:altitude" % propulsion_id]
             outputs["mission:%s:%s:climb:speed" % (mission_name, route_name)] = inputs[
-                "data:scenarios:%s:climb:speed" % propulsion_id]  # [m/s]
-            outputs["mission:%s:%s:climb:distance" % (mission_name, route_name)] = inputs[
-                "data:scenarios:%s:cruise:altitude" % propulsion_id] - inputs[
-                "data:scenarios:%s:takeoff:altitude" % propulsion_id]
+                "mission:sizing:main_route:climb:speed:%s" % propulsion_id]  # [m/s]
         elif phase_name == CRUISE_TAG:
-            outputs["mission:%s:%s:cruise:altitude" % (mission_name, route_name)] = inputs[
-                "data:scenarios:%s:cruise:altitude" % propulsion_id]
             outputs["mission:%s:%s:cruise:speed" % (mission_name, route_name)] = inputs[
-                "data:scenarios:%s:cruise:speed" % propulsion_id]  # [m/s]
+                "mission:sizing:main_route:cruise:speed:%s" % propulsion_id]  # [m/s]
 
 
 class PhaseComponent(om.ExplicitComponent):
@@ -111,7 +99,7 @@ class PhaseComponent(om.ExplicitComponent):
     This class builds and computes the UAV performance for a flight phase (energy consumption and phase duration).
         - If the mission is a sizing mission, then the parameters required for calculation are directly retrieved
         from the sizing process.
-        - Else, the parameters are recalculated for the new flight conditions.
+        - Else, the parameters are recalculated under the new flight conditions.
     """
 
     def initialize(self):
@@ -129,18 +117,19 @@ class PhaseComponent(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
 
         if phase_name == HOVER_TAG:
-            self.add_input("mission:%s:%s:hover:altitude" % (mission_name, route_name), val=np.nan, units="m")
+            self.add_input("mission:%s:%s:cruise:altitude" % (mission_name, route_name), val=np.nan, units="m")
             self.add_input("mission:%s:%s:hover:duration" % (mission_name, route_name), val=np.nan, units="min")
-        elif phase_name == CLIMB_TAG:
-            self.add_input("mission:%s:%s:climb:altitude" % (mission_name, route_name), val=np.nan, units="m")
-            self.add_input("mission:%s:%s:climb:distance" % (mission_name, route_name), val=np.nan, units="m")
-            self.add_input("mission:%s:%s:climb:speed" % (mission_name, route_name), val=np.nan, units="m/s")
-            self.add_output("mission:%s:%s:climb:duration" % (mission_name, route_name), units="min")
         elif phase_name == CRUISE_TAG:
             self.add_input("mission:%s:%s:cruise:altitude" % (mission_name, route_name), val=np.nan, units="m")
             self.add_input("mission:%s:%s:cruise:distance" % (mission_name, route_name), val=np.nan, units="m")
             self.add_input("mission:%s:%s:cruise:speed" % (mission_name, route_name), val=np.nan, units="m/s")
             self.add_output("mission:%s:%s:cruise:duration" % (mission_name, route_name), units="min")
+        elif phase_name == CLIMB_TAG:
+            self.add_input("mission:%s:%s:takeoff:altitude" % (mission_name, route_name), val=np.nan, units="m")
+            self.add_input("mission:%s:%s:cruise:altitude" % (mission_name, route_name), val=np.nan, units="m")
+            self.add_input("mission:%s:%s:climb:rate" % (mission_name, route_name), val=np.nan, units="m/s")
+            self.add_input("mission:%s:%s:climb:speed" % (mission_name, route_name), val=np.nan, units="m/s")
+            self.add_output("mission:%s:%s:climb:duration" % (mission_name, route_name), units="min")
 
         if is_sizing:
             self.add_input("data:propulsion:%s:battery:power:%s" % (propulsion_id, phase_name), val=np.nan, units="W")
@@ -156,9 +145,11 @@ class PhaseComponent(om.ExplicitComponent):
             self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
             self.add_input("data:propulsion:%s:propeller:diameter" % propulsion_id, val=np.nan, units="m")
             self.add_input("data:propulsion:%s:propeller:beta" % propulsion_id, val=np.nan, units=None)
+            self.add_input("data:propulsion:%s:propeller:Ct:model:dynamic" % propulsion_id,
+                           shape_by_conn=True, val=np.nan, units=None)
+            self.add_input("data:propulsion:%s:propeller:Cp:model:dynamic" % propulsion_id,
+                           shape_by_conn=True, val=np.nan, units=None)
             self.add_input("mission:%s:%s:%s:payload:power" % (mission_name, route_name, phase_name), val=np.nan, units="W")
-            if phase_name == CLIMB_TAG:
-                self.add_input("mission:%s:%s:climb:rate" % (mission_name, route_name), val=np.nan, units="m/s")
             if propulsion_id == MR_PROPULSION:
                 self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
                 self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
@@ -181,21 +172,27 @@ class PhaseComponent(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         t = .0  # phase duration [s]
         V = .0  # airspeed [m/s]
-        altitude = inputs["mission:%s:%s:%s:altitude" % (mission_name, route_name, phase_name)]  # altitude [m]
+        altitude = .0  # altitude [m]
 
         # PHASE DURATION
         if phase_name == HOVER_TAG:
+            altitude = inputs["mission:%s:%s:cruise:altitude" % (mission_name, route_name)]  # altitude [m] (assumption)
             t = inputs["mission:%s:%s:%s:duration" % (mission_name, route_name, phase_name)] * 60  # [s]
+        elif phase_name == CRUISE_TAG:
+            altitude = inputs["mission:%s:%s:%s:altitude" % (mission_name, route_name, phase_name)]  # altitude [m]
+            d = inputs["mission:%s:%s:%s:distance" % (mission_name, route_name, phase_name)]  # [m]
+            V = inputs["mission:%s:%s:%s:speed" % (mission_name, route_name, phase_name)]
+            t = d / V if V > 0 else 0.0  # [s]
+            outputs["mission:%s:%s:%s:duration" % (mission_name, route_name, phase_name)] = t / 60  # [min]
         elif phase_name == CLIMB_TAG:
-            d = inputs["mission:%s:%s:climb:distance" % (mission_name, route_name)]  # [m]
-            V = inputs["mission:%s:%s:climb:speed" % (mission_name, route_name)]
+            altitude_min = inputs["mission:%s:%s:takeoff:altitude" % (mission_name, route_name)]  # altitude [m]
+            altitude_max = inputs["mission:%s:%s:cruise:altitude" % (mission_name, route_name)]  # altitude [m]
+            altitude = altitude_max  # conservative assumption
+            V = inputs["mission:%s:%s:%s:speed" % (mission_name, route_name, phase_name)]
+            V_v = inputs["mission:%s:%s:%s:rate" % (mission_name, route_name, phase_name)]
+            d = (altitude_max - altitude_min) * V / V_v
             t = d / V if V > 0 else 0.0  # [s]
             outputs["mission:%s:%s:climb:duration" % (mission_name, route_name)] = t / 60  # [min]
-        elif phase_name == CRUISE_TAG:
-            d = inputs["mission:%s:%s:cruise:distance" % (mission_name, route_name)]  # [m]
-            V = inputs["mission:%s:%s:cruise:speed" % (mission_name, route_name)]
-            t = d / V if V > 0 else 0.0  # [s]
-            outputs["mission:%s:%s:cruise:duration" % (mission_name, route_name)] = t / 60  # [min]
 
         # POWER CONSUMPTION
         if is_sizing:
@@ -217,6 +214,8 @@ class PhaseComponent(om.ExplicitComponent):
             flight_model.propeller_number = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
             flight_model.propeller_diameter = inputs["data:propulsion:%s:propeller:diameter" % propulsion_id]
             flight_model.propeller_beta = inputs["data:propulsion:%s:propeller:beta" % propulsion_id]
+            flight_model.propeller_ct_model = inputs["data:propulsion:%s:propeller:Ct:model:dynamic" % propulsion_id]
+            flight_model.propeller_cp_model = inputs["data:propulsion:%s:propeller:Cp:model:dynamic" % propulsion_id]
             flight_model.payload_power = inputs["mission:%s:%s:%s:payload:power" % (mission_name, route_name, phase_name)]
 
             if propulsion_id == MR_PROPULSION:

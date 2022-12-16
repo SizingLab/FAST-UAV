@@ -327,27 +327,27 @@ class NearestNeighbor:
         scaler = self._scaler
 
         # predict output
-        k = df.shape[0]  # min(15, df.shape[0])  # number of neighbors to select
+        k = df.shape[0]  # number of neighbors to select
         df_X = pd.DataFrame({x_name: x for x_name, x in zip(X_names, X)})
         df_X = scaler.transform(df_X)
         distances, indices = clf.kneighbors(df_X, k)
 
-        # select upper values of parameters in database if asked by user
+        # enforce upper or lower values if asked by user
         closest_feasible_id = indices[0][0]
-        for j in range(0, len(indices[0]) - 1):
+        for j in range(0, len(indices[0]) - 1):  # iterate from nearest neighbor to farthest until criteria are met
             is_feasible = True
             idx = indices[0][j]
             neigh = df.iloc[idx]
             for i, x_name in enumerate(X_names):
-                if crits[i] == "next" and neigh[x_name] < X[i][0]:
+                if crits[i] == "next" and neigh[x_name] < X[i][0]:  # criterion not met
                     is_feasible = False
-                    break
-                elif crits[i] == "previous" and neigh[x_name] > X[i][0]:
+                    break  # continue to next neighbor
+                elif crits[i] == "previous" and neigh[x_name] > X[i][0]:  # criterion not met
                     is_feasible = False
-                    break
-            if is_feasible:
-                closest_feasible_id = idx
+                    break  # continue to next neighbor
+            if is_feasible:  # "next" or "previous" criteria are met
+                closest_feasible_id = idx  # return nearest neighbor that meets criteria
                 break
 
-        df_y = df.iloc[[closest_feasible_id]]  # get closest neighbor
+        df_y = df.iloc[[closest_feasible_id]]  # get nearest neighbor
         return df_y

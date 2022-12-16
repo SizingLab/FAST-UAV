@@ -19,7 +19,7 @@ class VerticalTakeoffThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:scenarios:%s:thrust_weight_ratio" % propulsion_id, val=np.nan, units=None)
+        self.add_input("mission:sizing:thrust_weight_ratio:%s" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_output("data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, units="N")
@@ -30,7 +30,7 @@ class VerticalTakeoffThrust(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
-        k_maxthrust = inputs["data:scenarios:%s:thrust_weight_ratio" % propulsion_id]
+        k_maxthrust = inputs["mission:sizing:thrust_weight_ratio:%s" % propulsion_id]
         m_uav_guess = inputs["data:weight:mtow:guess"]
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
@@ -52,10 +52,10 @@ class LauncherTakeoff(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
-        self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
-        self.add_input("data:scenarios:%s:takeoff:altitude" % propulsion_id, val=0.0, units="m")
-        self.add_input("data:scenarios:%s:stall:speed" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("data:scenarios:dISA", val=0.0, units="K")
+        self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
+        self.add_input("mission:sizing:main_route:takeoff:altitude", val=0.0, units="m")
+        self.add_input("mission:sizing:main_route:stall:speed:%s" % propulsion_id, val=np.nan, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_output("data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, units="N")
@@ -67,12 +67,12 @@ class LauncherTakeoff(om.ExplicitComponent):
         # UAV configuration
         propulsion_id = self.options["propulsion_id"]
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
-        WS = inputs["data:scenarios:wing_loading"]
+        WS = inputs["data:geometry:wing:loading"]
 
         # Flight parameters
-        V_stall = inputs["data:scenarios:%s:stall:speed" % propulsion_id]
-        altitude_takeoff = inputs["data:scenarios:%s:takeoff:altitude" % propulsion_id]
-        dISA = inputs["data:scenarios:dISA"]
+        V_stall = inputs["mission:sizing:main_route:stall:speed:%s" % propulsion_id]
+        altitude_takeoff = inputs["mission:sizing:main_route:takeoff:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_takeoff, dISA)
         atm.true_airspeed = 1.1 * V_stall  # 10% margin on the stall speed [kg/ms2]
         q_takeoff = atm.dynamic_pressure

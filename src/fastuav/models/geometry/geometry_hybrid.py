@@ -78,6 +78,9 @@ class PropellersVTOL(om.ExplicitComponent):
         sweep_TE = inputs["data:geometry:wing:sweep:TE"]
 
         # y-location of left propellers (right propellers are symmetrical along the x-axis)
+        # Note that in the absence of controllability requirements and aerodynamic interaction effects,
+        # the position of the propellers along the y-axis is driven by the structural loads.
+        # It is minimal for k_y = 1.
         y = k_y * (D_pro_FW / 2 + c_pro_MR + D_pro_MR / 2)  # [m] y-location
         
         # x-location of front propellers

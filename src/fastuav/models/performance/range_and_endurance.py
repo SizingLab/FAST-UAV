@@ -68,7 +68,7 @@ class Endurance(om.ExplicitComponent):
         self.add_input("data:propulsion:%s:battery:current:%s" % (propulsion_id, phase_name), val=np.nan,
                        units="A")
         if phase_name != HOVER_TAG:
-            self.add_input("data:scenarios:%s:%s:speed" % (propulsion_id, phase_name), val=0.0, units="m/s")
+            self.add_input("mission:sizing:main_route:%s:speed:%s" % (phase_name, propulsion_id), val=0.0, units="m/s")
             self.add_output("data:performance:range:%s" % phase_name, units="m")
         self.add_output("data:performance:endurance:%s" % phase_name, units="min")
 
@@ -87,7 +87,7 @@ class Endurance(om.ExplicitComponent):
 
         # Range calculation
         if phase_name != HOVER_TAG:
-            V = inputs["data:scenarios:%s:%s:speed" % (propulsion_id, phase_name)]
+            V = inputs["mission:sizing:main_route:%s:speed:%s" % (phase_name, propulsion_id)]
             D_max = V * t_max  # [m] Max. Range at given cruise speed and design payload
             outputs["data:performance:range:%s" % phase_name] = D_max  # [m]
 
@@ -102,23 +102,23 @@ class Endurance(om.ExplicitComponent):
         t_max = C_ratio * C_bat / I_bat if I_bat > 0 else 0.0
 
         partials["data:performance:endurance:%s" % phase_name,
-                 "data:propulsion:%s:battery:DoD:max" % propulsion_id] = C_bat / I_bat / 60.0
+                 "data:propulsion:%s:battery:DoD:max" % propulsion_id] = C_bat / I_bat / 60.0 if I_bat > 0 else 0.0
         partials["data:performance:endurance:%s" % phase_name,
-                 "data:propulsion:%s:battery:capacity" % propulsion_id] = C_ratio / I_bat / 60.0
+                 "data:propulsion:%s:battery:capacity" % propulsion_id] = C_ratio / I_bat / 60.0 if I_bat > 0 else 0.0
         partials[
             "data:performance:endurance:%s" % phase_name,
             "data:propulsion:%s:battery:current:%s" % (propulsion_id, phase_name)
         ] = -C_ratio * C_bat / I_bat**2 / 60.0
 
         if phase_name != HOVER_TAG:
-            V = inputs["data:scenarios:%s:%s:speed" % (propulsion_id, phase_name)]
+            V = inputs["mission:sizing:main_route:%s:speed:%s" % (phase_name, propulsion_id)]
             partials["data:performance:range:%s" % phase_name,
-                     "data:scenarios:%s:%s:speed" % (propulsion_id, phase_name)] = t_max
+                     "mission:sizing:main_route:%s:speed:%s" % (phase_name, propulsion_id)] = t_max
             partials["data:performance:range:%s" % phase_name,
-                     "data:propulsion:%s:battery:DoD:max" % propulsion_id] = C_bat / I_bat * V
+                     "data:propulsion:%s:battery:DoD:max" % propulsion_id] = C_bat / I_bat * V if I_bat > 0 else 0.0
             partials["data:performance:range:%s" % phase_name,
-                     "data:propulsion:%s:battery:capacity" % propulsion_id] = C_ratio / I_bat * V
+                     "data:propulsion:%s:battery:capacity" % propulsion_id] = C_ratio / I_bat * V if I_bat > 0 else 0.0
             partials["data:performance:range:%s" % phase_name,
-                     "data:propulsion:%s:battery:current:%s" % (propulsion_id, phase_name)] = -V * C_ratio * C_bat / I_bat**2
+                     "data:propulsion:%s:battery:current:%s" % (propulsion_id, phase_name)] = -V * C_ratio * C_bat / I_bat**2 if I_bat > 0 else 0.0
 
 

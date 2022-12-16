@@ -85,9 +85,9 @@ class WingParasiticDrag(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
-        self.add_input("data:scenarios:%s:cruise:speed" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("data:scenarios:dISA", val=0.0, units="K")
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:geometry:wing:tc", val=0.15, units=None)
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
@@ -105,9 +105,9 @@ class WingParasiticDrag(om.ExplicitComponent):
         S_w = S_ref = inputs["data:geometry:wing:surface"]
 
         # Flight parameters
-        V_cruise = inputs["data:scenarios:%s:cruise:speed" % propulsion_id]
-        altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
-        dISA = inputs["data:scenarios:dISA"]
+        V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_cruise, dISA)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound
@@ -142,9 +142,9 @@ class TailParasiticDrag(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         tail = self.options["tail"]
-        self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
-        self.add_input("data:scenarios:%s:cruise:speed" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("data:scenarios:dISA", val=0.0, units="K")
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:geometry:wing:tc", val=0.15, units=None)
         self.add_input("data:geometry:tail:%s:MAC:length" % tail, val=np.nan, units="m")
         self.add_input("data:geometry:tail:%s:surface" % tail, val=np.nan, units="m**2")
@@ -160,21 +160,21 @@ class TailParasiticDrag(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         tail = self.options["tail"]
         tc_ratio = inputs["data:geometry:wing:tc"]
-        c_MAC_t = inputs["data:geometry:tail:%s:MAC:length" % tail]
+        c_MAc_t = inputs["data:geometry:tail:%s:MAC:length" % tail]
         S_t = inputs["data:geometry:tail:%s:surface" % tail]
         S_ref = inputs["data:geometry:wing:surface"]
 
         # Flight parameters
-        V_cruise = inputs["data:scenarios:%s:cruise:speed" % propulsion_id]
-        altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
-        dISA = inputs["data:scenarios:dISA"]
+        V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_cruise, dISA)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound
         nu_air = atm.kinematic_viscosity
 
         # Friction coefficients assuming cruise conditions
-        cf_tail = AirframeAerodynamicsModel.friction_flatplate(V_cruise, c_MAC_t, nu_air, a_air)
+        cf_tail = AirframeAerodynamicsModel.friction_flatplate(V_cruise, c_MAc_t, nu_air, a_air)
 
         # Form drag factors TODO: add sweep @ 0.3
         FF_tail = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4) * (
@@ -200,9 +200,9 @@ class FuselageParasiticDrag(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
-        self.add_input("data:scenarios:%s:cruise:speed" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("data:scenarios:dISA", val=0.0, units="K")
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:geometry:fuselage:length", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:mid", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:fineness", val=5.0, units=None)
@@ -222,9 +222,9 @@ class FuselageParasiticDrag(om.ExplicitComponent):
         S_ref = inputs["data:geometry:wing:surface"]
 
         # Flight parameters
-        V_cruise = inputs["data:scenarios:%s:cruise:speed" % propulsion_id]
-        altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
-        dISA = inputs["data:scenarios:dISA"]
+        V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_cruise, dISA)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound

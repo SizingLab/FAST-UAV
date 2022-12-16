@@ -1,31 +1,45 @@
 <FASTOAD_model>
-  <data>
-    <scenarios>
-      <dISA units="degK" is_input="True">0.0</dISA>
-      <multirotor>
-        <thrust_weight_ratio is_input="True">1.97</thrust_weight_ratio>
-        <climb>
-          <speed units="m/s" is_input="True">5.0</speed>
-        </climb>
+  <mission>
+    <sizing>
+      <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
+      <payload>
+        <mass units="kg" is_input="True">6.35<!--Design payload mass--></mass>
+        <power>
+          <multirotor units="W" is_input="True">0.0</multirotor>
+        </power>
+      </payload>
+      <thrust_weight_ratio>
+        <multirotor is_input="True">1.97</multirotor>
+      </thrust_weight_ratio>
+      <main_route>
         <cruise>
           <altitude units="m" is_input="True">0.0</altitude>
-          <speed units="m/s" is_input="True">20.0</speed>
+          <distance units="m" is_input="True">0.0</distance>
+          <speed>
+            <multirotor units="m/s" is_input="True">20.0</multirotor>
+          </speed>
         </cruise>
-        <payload>
-          <power units="W" is_input="True">0.0</power>
-        </payload>
+        <hover>
+          <duration units="min" is_input="True">18.0</duration>
+        </hover>
         <takeoff>
           <altitude units="m" is_input="True">0.0</altitude>
         </takeoff>
-      </multirotor>
-      <payload>
-        <mass units="kg" is_input="True">6.35</mass>
-      </payload>
-    </scenarios>
+        <climb>
+          <rate>
+            <multirotor units="m/s" is_input="True">3.0</multirotor>
+          </rate>
+          <speed>
+            <multirotor units="m/s" is_input="True">3.0</multirotor>
+          </speed>
+        </climb>
+      </main_route>
+    </sizing>
+  </mission>
+  <data>
     <aerodynamics>
       <multirotor>
         <CD0 is_input="True">0.5</CD0>
-        <CL is_input="True">0.0</CL>
       </multirotor>
     </aerodynamics>
     <weight>
@@ -120,18 +134,39 @@
           <diameter>
             <reference units="m" is_input="True">0.2794</reference>
           </diameter>
+          <Cp>
+            <model>
+              <dynamic>
+                <reference is_input="True">[0.01813, -0.06218, 0.35712, -0.23774, 0.00343, -0.1235, 0.0, 0.07549, 0.0, 0.0, 0.286, 0.993]</reference>
+              </dynamic>
+              <static>
+                <reference is_input="True">[-0.00148, 0.0972]</reference>
+              </static>
+            </model>
+          </Cp>
+          <Ct>
+            <model>
+              <dynamic>
+                <reference is_input="True">[0.02791, 0.11867, 0.27334, -0.28852, -0.06543, -0.23504, 0.02104, 0.0, 0.0, 0.18677, 0.197, 1.094]</reference>
+              </dynamic>
+              <static>
+                <reference is_input="True">[0.0427, 0.144]</reference>
+              </static>
+            </model>
+          </Ct>
         </propeller>
         <battery>
           <capacity>
-            <k is_input="True">1.0</k>
             <reference units="A*s" is_input="True">20520.0</reference>
           </capacity>
           <energy>
+            <k is_input="True">1.0</k>
             <reference units="kJ" is_input="True">467.856</reference>
           </energy>
           <voltage>
             <k is_input="True">1.0</k>
             <reference units="V" is_input="True">22.8</reference>
+            <tol units="percent" is_input="True">0.0</tol>
           </voltage>
           <volume>
             <reference units="cm**3" is_input="True">500.0</reference>
@@ -161,7 +196,8 @@
             <reference units="W" is_input="True">3108.0</reference>
           </power>
           <voltage>
-            <reference units="V" is_input="True">44.4</reference>
+            <k is_input="True">1.0</k>
+            <tol units="percent" is_input="True">0.0</tol>
           </voltage>
         </esc>
         <motor>
@@ -175,13 +211,11 @@
             <k is_input="True">1.0</k>
             <constant>
               <reference units="rad/V/s" is_input="True">33.333333</reference>
+              <tol units="percent" is_input="True">0.0</tol>
             </constant>
           </speed>
           <torque>
             <k is_input="True">1.0</k>
-            <coefficient>
-              <reference units="N*m/A" is_input="True">0.03</reference>
-            </coefficient>
             <friction>
               <reference units="N*m" is_input="True">0.03</reference>
             </friction>
@@ -214,66 +248,18 @@
       </arms>
     </structures>
   </data>
-  <mission>
-    <sizing>
-      <diversion>
-        <cruise>
-          <distance units="m" is_input="True">0.0</distance>
-        </cruise>
-        <hover>
-          <duration units="min" is_input="True">0.0</duration>
-        </hover>
-      </diversion>
-      <main_route>
-        <cruise>
-          <distance units="m" is_input="True">0.0</distance>
-        </cruise>
-        <hover>
-          <duration units="min" is_input="True">18.0</duration>
-        </hover>
-      </main_route>
-    </sizing>
-  </mission>
   <uncertainty>
-    <propeller>
-      <aerodynamics>
-        <CP>
-          <axial>
-            <abs is_input="True">0.0</abs>
-            <rel is_input="True">0.0</rel>
-          </axial>
-          <incidence>
-            <abs is_input="True">0.0</abs>
-            <rel is_input="True">0.0</rel>
-          </incidence>
-          <static>
-            <abs is_input="True">0.0</abs>
-            <rel is_input="True">0.0</rel>
-          </static>
-        </CP>
-        <CT>
-          <axial>
-            <abs is_input="True">0.0</abs>
-            <rel is_input="True">0.0</rel>
-          </axial>
-          <incidence>
-            <abs is_input="True">0.0</abs>
-            <rel is_input="True">0.0</rel>
-          </incidence>
-          <static>
-            <abs is_input="True">0.0</abs>
-            <rel is_input="True">0.0</rel>
-          </static>
-        </CT>
-      </aerodynamics>
-    </propeller>
     <propulsion>
       <multirotor>
         <battery>
-          <capacity>
-            <abs units="A*s" is_input="True">0.0</abs>
+          <energy>
+            <abs units="kJ" is_input="True">0.0</abs>
             <rel is_input="True">0.0</rel>
-          </capacity>
+          </energy>
+          <power>
+            <abs units="W" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </power>
           <voltage>
             <abs units="V" is_input="True">0.0</abs>
             <rel is_input="True">0.0</rel>
@@ -296,27 +282,27 @@
             <abs is_input="True">0.0</abs>
             <rel is_input="True">0.0</rel>
           </efficiency>
+          <power>
+            <abs units="W" is_input="True">0.0</abs>
+            <rel is_input="True">0.0</rel>
+          </power>
           <voltage>
             <abs units="V" is_input="True">0.0</abs>
             <rel is_input="True">0.0</rel>
           </voltage>
-          <power>
-            <max>
-              <abs units="W" is_input="True">0.0</abs>
-              <rel is_input="True">0.0</rel>
-            </max>
-          </power>
         </esc>
         <motor>
           <resistance>
             <abs units="V/A" is_input="True">0.0</abs>
             <rel is_input="True">0.0</rel>
           </resistance>
-          <torque>
-            <coefficient>
-              <abs units="N*m/A" is_input="True">0.0</abs>
+          <speed>
+            <constant>
+              <abs units="rad/V/s" is_input="True">0.0</abs>
               <rel is_input="True">0.0</rel>
-            </coefficient>
+            </constant>
+          </speed>
+          <torque>
             <friction>
               <abs units="N*m" is_input="True">0.0</abs>
               <rel is_input="True">0.0</rel>
@@ -340,6 +326,30 @@
             <abs units="m" is_input="True">0.0</abs>
             <rel is_input="True">0.0</rel>
           </diameter>
+          <Cp>
+            <model>
+              <dynamic>
+                <abs is_input="True">0.0</abs>
+                <rel is_input="True">0.0</rel>
+              </dynamic>
+              <static>
+                <abs is_input="True">0.0</abs>
+                <rel is_input="True">0.0</rel>
+              </static>
+            </model>
+          </Cp>
+          <Ct>
+            <model>
+              <dynamic>
+                <abs is_input="True">0.0</abs>
+                <rel is_input="True">0.0</rel>
+              </dynamic>
+              <static>
+                <abs is_input="True">0.0</abs>
+                <rel is_input="True">0.0</rel>
+              </static>
+            </model>
+          </Ct>
         </propeller>
       </multirotor>
     </propulsion>

@@ -24,8 +24,8 @@ class MotorDefinitionParameters(om.Group):
 
         add_subsystem_with_deviation(
             self,
-            "torque_coefficient",
-            TorqueCoefficient(),
+            "velocity_constant",
+            VelocityConstant(),
             uncertain_outputs={"data:propulsion:motor:speed:constant:estimated": "rad/V/s"},
         )
 
@@ -73,9 +73,9 @@ class MaxTorque(om.ExplicitComponent):
         ] = (Q_pro_to / N_red)
 
 
-class TorqueCoefficient(om.ExplicitComponent):
+class VelocityConstant(om.ExplicitComponent):
     """
-    Estimates the motor torque coefficient
+    Estimates the motor velocity constant
     """
 
     def setup(self):
@@ -94,6 +94,7 @@ class TorqueCoefficient(om.ExplicitComponent):
         P_pro_to = inputs["data:propulsion:propeller:power:takeoff"]
         k_speed_mot = inputs["data:propulsion:motor:speed:k"]
 
+        #TODO: replace U_bat_guess by Kv_hat from data
         W_mot_to = W_pro_to * N_red  # [rad/s] Motor take-off speed
         U_bat_guess = 1.84 * P_pro_to ** 0.36  # [V] battery voltage estimation
         Kv = k_speed_mot * W_mot_to / U_bat_guess  # [rad/V/s]

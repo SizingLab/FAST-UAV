@@ -57,8 +57,8 @@ class RouteBuilder(om.Group):
         """
         Gets the phase name (e.g. "climb") corresponding the to phase identifier (e.g. "vertical_climb"),
         and also returns the propulsion identifier (e.g. "multirotor" or "fixedwing") used to complete this phase.
+        Note that take-off is not taken into account when building the mission profile, as its duration is neglected.
         """
-        # TODO: add takeoff?
         if part_id == VERTICAL_CLIMB_TAG:
             part_name = CLIMB_TAG
             propulsion_id = MR_PROPULSION
@@ -106,7 +106,7 @@ class ComputeTOW(om.ExplicitComponent):
         mission_name = self.options["mission_name"]
         route_name = self.options["route_name"]
         self.add_input("data:weight:mtow", val=np.nan, units="kg")
-        self.add_input("data:scenarios:payload:mass", val=np.nan, units="kg")
+        self.add_input("mission:sizing:payload:mass", val=np.nan, units="kg")
         self.add_input("mission:%s:%s:payload:mass" % (mission_name, route_name), val=np.nan, units="kg")
         self.add_output("mission:%s:%s:tow" % (mission_name, route_name), units="kg")
 
@@ -118,7 +118,7 @@ class ComputeTOW(om.ExplicitComponent):
         mission_name = self.options["mission_name"]
         route_name = self.options["route_name"]
         mtow = inputs["data:weight:mtow"]
-        m_pay_design = inputs["data:scenarios:payload:mass"]
+        m_pay_design = inputs["mission:sizing:payload:mass"]
         m_pay_mission = inputs["mission:%s:%s:payload:mass" % (mission_name, route_name)]
 
         tow = mtow - m_pay_design + m_pay_mission

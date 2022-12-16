@@ -24,6 +24,7 @@ class Propulsion(om.Group):
                              values=[[MR_PROPULSION], [FW_PROPULSION], [MR_PROPULSION, FW_PROPULSION]])
 
         # TODO: declare the following options for each propulsion system
+        # TODO: add option to provide paths to catalogues
         self.options.declare("off_the_shelf_propeller", default=False, types=bool)
         self.options.declare("off_the_shelf_motor", default=False, types=bool)
         self.options.declare("off_the_shelf_battery", default=False, types=bool)
@@ -41,7 +42,7 @@ class Propulsion(om.Group):
                                             om.Group(),
                                             )
             propulsion.add_subsystem("propeller",
-                                     Propeller(off_the_shelf=off_the_shelf_propeller, propulsion_id=propulsion_id),
+                                     Propeller(off_the_shelf=off_the_shelf_propeller),
                                      promotes=["*"])
             if gearbox:
                 propulsion.add_subsystem("motor",
@@ -63,18 +64,16 @@ class Propulsion(om.Group):
     def configure(self):
         for propulsion_id in self.options["propulsion_id"]:
             old_patterns_list = [":propulsion",
-                                 ":scenarios:takeoff",
-                                 ":scenarios:climb",
-                                 ":scenarios:cruise",
-                                 ":scenarios:stall",
-                                 ":scenarios:payload:power",
+                                 "mission:sizing:main_route:climb:speed",
+                                 "mission:sizing:main_route:cruise:speed",
+                                 "mission:sizing:main_route:stall:speed",
+                                 "mission:sizing:payload:power",
                                  ]
             new_patterns_list = [":propulsion:%s" % propulsion_id,
-                                 ":scenarios:%s:takeoff" % propulsion_id,
-                                 ":scenarios:%s:climb" % propulsion_id,
-                                 ":scenarios:%s:cruise" % propulsion_id,
-                                 ":scenarios:%s:stall" % propulsion_id,
-                                 ":scenarios:%s:payload:power" % propulsion_id,
+                                 "mission:sizing:main_route:climb:speed:%s" % propulsion_id,
+                                 "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+                                 "mission:sizing:main_route:stall:speed:%s" % propulsion_id,
+                                 "mission:sizing:payload:power:%s" % propulsion_id,
                                  ]
             promote_and_rename(group=self,
                                subsys=getattr(self, propulsion_id),

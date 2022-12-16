@@ -86,19 +86,20 @@ class MissionDefinition(dict):
         :param content:
         """
 
-        # Ensure sizing mission is defined
+        # Ensure "sizing" mission is defined
         Ensure(SIZING_MISSION_TAG).is_in(content[MISSION_DEFINITION_TAG].keys())
 
-        # Ensure main_route is defined
+        # Ensure "main_route" is defined
         Ensure(MAIN_ROUTE_TAG).is_in(content[ROUTE_DEFINITION_TAG].keys())
 
+        # Ensure each mission is made of routes that have been defined
         for mission_definition in content[MISSION_DEFINITION_TAG].values():
             for part in mission_definition[PARTS_TAG]:
                 part_type, value = tuple(*part.items())
                 Ensure(part_type).equals(ROUTE_TAG)
                 Ensure(value).is_in(content[ROUTE_DEFINITION_TAG].keys())
 
-            # Disable multiple routes definition for sizing mission,
-            # as it would require processing to get sizing values from multiple routes.
+            # Ensure "sizing" mission contains "main_route"
             if mission_definition == SIZING_MISSION_TAG:
-                routes_count = 0
+                Ensure(MAIN_ROUTE_TAG).is_in(mission_definition.keys())
+

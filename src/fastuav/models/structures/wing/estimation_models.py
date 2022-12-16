@@ -126,7 +126,7 @@ class Spars(om.ExplicitComponent):
         self.options.declare("spar_model", default="pipe", values=["pipe", "I_beam"])
 
     def setup(self):
-        self.add_input("data:scenarios:load_factor:vertical:ultimate", val=4.5, units=None)
+        self.add_input("mission:sizing:load_factor:ultimate", val=3.0, units=None)
         self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:y", val=np.nan, units="m")
@@ -155,7 +155,7 @@ class Spars(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         spar_model = self.options["spar_model"]
-        n_ult = inputs["data:scenarios:load_factor:vertical:ultimate"]
+        n_ult = inputs["mission:sizing:load_factor:ultimate"]
         m_uav_guess = inputs["data:weight:mtow:guess"]
         b_w = inputs["data:geometry:wing:span"]
         y_MAC = inputs["data:geometry:wing:MAC:y"]
@@ -169,7 +169,7 @@ class Spars(om.ExplicitComponent):
         if spar_model == "pipe":  # Circular hollow beam model
             # aspect ratio of the spar [-]:
             k_spar = inputs["data:structures:wing:spar:diameter:k"]
-            # under-sizing coef. [-] on spar outer diameter (1.0 for Fixed-Wing / des. var. for Hybrid):
+            # under-sizing coef. [-] on spar outer diameter (1.0 for FW (monotonicity eq.)/ des. var. for Hybrid):
             k_d = inputs["data:structures:wing:spar:diameter:outer:k"]
             # Outer diameter calculation [m]:
             d_out = k_d * ((32 * M_root) / (np.pi * (1 - k_spar ** 4) * sig_max)) ** (1 / 3)
@@ -184,7 +184,7 @@ class Spars(om.ExplicitComponent):
         else:  # I-beam model
             # aspect ratio of the spar [-], i.e. flanges' thickness over distance between the two flanges:
             k_spar = inputs["data:structures:wing:spar:depth:k"]
-            # under-sizing coef. [-] on spar web depth (1.0 for Fixed-Wing / des. var. for Hybrid):
+            # under-sizing coef. [-] on spar web depth (1.0 for FW (monotonicity eq.)/ des. var. for Hybrid):
             k_h = inputs["data:structures:wing:spar:web:depth:k"]
             # flange depth-to-thickness ratio [-]: b_flange = a_flange / k_flange
             k_flange = 0.1

@@ -41,7 +41,6 @@ class ESCConstraints(om.ExplicitComponent):
         ESC_con0 = (P_esc - P_esc_to) / P_esc
         ESC_con1 = (P_esc - P_esc_cl) / P_esc
         ESC_con2 = (P_esc - P_esc_cr) / P_esc
-        # TODO : hover?
 
         # ESC voltage versus battery voltage
         ESC_con3 = (U_esc - U_bat) / U_esc

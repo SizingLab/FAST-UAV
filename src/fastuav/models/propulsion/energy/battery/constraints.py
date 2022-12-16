@@ -58,7 +58,6 @@ class BatteryConstraints(om.ExplicitComponent):
         battery_con4 = (P_bat - P_mot_to * Npro / eta_ESC) / P_bat
         battery_con5 = (P_bat - P_mot_cl * Npro / eta_ESC) / P_bat
         battery_con6 = (P_bat - P_mot_cr * Npro / eta_ESC) / P_bat
-        # TODO: hover?
 
         # Voltage versus power : tolerance intervals
         U_hat = 0.61 * P_bat ** 0.40  # [V] battery voltage-to-power regression

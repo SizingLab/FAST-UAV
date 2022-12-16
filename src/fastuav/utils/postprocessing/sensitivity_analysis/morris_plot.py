@@ -38,7 +38,7 @@ def covariance_plot(ax, Si, unit="", legend=None, opts=None):
         # out = ax.scatter(Si['mu_star'], y, c=c,
         #                 **opts)
         # out = mscatter(x, y, c=c, m=m, ax=ax, **opts)
-        ax.set_ylabel(r"$\sigma$")
+        ax.set_ylabel(r"$\sigma$ " + unit)
 
         ax.set_xlim(
             0,

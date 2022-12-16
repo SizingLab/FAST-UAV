@@ -18,7 +18,7 @@ missions:
   sizing:
     parts:
       - route: main_route
-      #- route: diversion
   #operational:
   #  parts:
   #    - route: main_route
+  #    - route: diversion

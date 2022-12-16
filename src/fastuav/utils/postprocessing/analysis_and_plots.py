@@ -107,7 +107,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     airframe = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
-    payload = variables["data:scenarios:payload:mass"].value[0]
+    payload = variables["mission:sizing:payload:mass"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
@@ -363,7 +363,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
 
 
 def mass_breakdown_bar_plot_drone(
-    drone_file_path: str, name=None, fig=None, file_formatter=None
+    drone_file_path: str, name=None, fig=None, file_formatter=None, error_y=None,
 ) -> go.FigureWidget:
     """
     DEPRECATED FOR NOW.
@@ -451,7 +451,7 @@ def mass_breakdown_bar_plot_drone(
     airframe = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
-    payload = variables["data:scenarios:payload:mass"].value[0]
+    payload = variables["mission:sizing:payload:mass"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
@@ -463,50 +463,28 @@ def mass_breakdown_bar_plot_drone(
         MTOW = propulsions + airframe + payload + fuel_mission
 
     # DISPLAYED NAMES AND VALUES
-    if gearboxes == 0:
-        weight_labels = [
-            "MTOW",
-            "Payload",
-            "Battery",
-            "esc",
-            "Motors",
-            "Propellers",
-            "Cables",
-            "Structure",
-        ]
-        weight_values = [
-            MTOW,
-            payload,
-            battery,
-            esc,
-            motors,
-            propellers,
-            wires,
-            airframe,
-        ]
-    else:
-        weight_labels = [
-            "MTOW",
-            "Payload",
-            "Battery",
-            "esc",
-            "Motors",
-            "Gearboxes",
-            "Propellers",
-            "Cables",
-            "Structure",
-        ]
-        weight_values = [
-            MTOW,
-            payload,
-            battery,
-            esc,
-            motors,
-            gearboxes,
-            propellers,
-            wires,
-            structure,
-        ]
+    weight_labels = [
+        "Total",
+        "Payload",
+        "Battery",
+        "ESC",
+        "Motors",
+        # "Gearboxes",
+        "Propellers",
+        "Wires",
+        "Airframe",
+    ]
+    weight_values = [
+        MTOW,
+        payload,
+        np.sum(batteries),
+        np.sum(esc),
+        np.sum(motors),
+        # np.sum(gearboxes),
+        np.sum(propellers),
+        np.sum(wires),
+        np.sum(airframe),
+    ]
 
     if fig is None:
         fig = go.Figure()
@@ -514,11 +492,16 @@ def mass_breakdown_bar_plot_drone(
     # Same color for each drone configuration
     i = len(fig.data)
     fig.add_trace(
-        go.Bar(name=name, x=weight_labels, y=weight_values, marker_color=COLS[i]),
+        go.Bar(name=name,
+               x=weight_labels,
+               y=weight_values,
+               marker_color=COLS[i],
+               error_y=dict(type='data', array=error_y)),
     )
 
     fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
     fig.update_layout(yaxis_title="Mass [kg]")
+    fig.update_layout(xaxis={'categoryorder':'total descending'})
 
     return fig
 

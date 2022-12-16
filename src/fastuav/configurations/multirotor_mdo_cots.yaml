@@ -1,4 +1,4 @@
-title: Multirotor Drone Optimal Design for catalogue components selection
+title: Multirotor Drone MDO with COTS components
 
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders:
@@ -18,9 +18,9 @@ model:
         id: fastuav.propulsion.multirotor
         gearbox: False
         off_the_shelf_propeller: True
-        off_the_shelf_motor: True
-        off_the_shelf_battery: True
-        off_the_shelf_esc: True
+        off_the_shelf_motor: False
+        off_the_shelf_battery: False
+        off_the_shelf_esc: False
     geometry:
         id: fastuav.geometry.multirotor
     structures:
@@ -78,8 +78,8 @@ optimization:
         lower: 0.1
         upper: 10.0
 
-      - name: data:propulsion:multirotor:battery:power:k # over estimation coefficient on the battery power
-        lower: 1.0
+      - name: data:propulsion:multirotor:battery:energy:k # over estimation coefficient on the battery energy
+        lower: 0.1
         upper: 20.0
         
       - name: data:propulsion:multirotor:battery:voltage:k # over estimation coefficient on the battery voltage
@@ -137,10 +137,13 @@ optimization:
       - name: data:propulsion:multirotor:motor:constraints:torque:cruise  # motor torque in cruise (steady)
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:speed:constant:min  # min bound for Kv w.r.t. Tmax
+      - name: data:propulsion:multirotor:motor:constraints:torque:takeoff  # motor torque in takeoff (transient)
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:speed:constant:max  # max bound for Kv w.r.t. Tmax
+      - name: data:propulsion:multirotor:motor:constraints:speed:constant:min  # min bound for Kv w.r.t. Tmax. Comment this constraint if off the shelf motor.
+        lower: 0.0
+        
+      - name: data:propulsion:multirotor:motor:constraints:speed:constant:max  # max bound for Kv w.r.t. Tmax. Comment this constraint if off the shelf motor.
         lower: 0.0
       
       - name: data:propulsion:multirotor:battery:constraints:power:takeoff  # battery power at takeoff
@@ -158,10 +161,10 @@ optimization:
       - name: data:propulsion:multirotor:battery:constraints:voltage:cruise  # battery voltage in cruise
         lower: 0.0
         
-      - name: data:propulsion:multirotor:battery:constraints:voltage:min  # min bound for voltage w.r.t. power
+      - name: data:propulsion:multirotor:battery:constraints:voltage:min  # min bound for voltage w.r.t. power. Comment this constraint if off the shelf battery.
         lower: 0.0
         
-      - name: data:propulsion:multirotor:battery:constraints:voltage:max  # max bound for voltage w.r.t. power
+      - name: data:propulsion:multirotor:battery:constraints:voltage:max  # max bound for voltage w.r.t. power. Comment this constraint if off the shelf battery.
         lower: 0.0
       
       - name: data:propulsion:multirotor:esc:constraints:power:climb  # ESC power in climb
@@ -169,14 +172,17 @@ optimization:
         
       - name: data:propulsion:multirotor:esc:constraints:power:cruise  # ESC power in cruise
         lower: 0.0
-
-      #- name: data:propulsion:multirotor:esc:constraints:voltage:battery  # ESC voltage vs battery
-      #  lower: 0.0
         
-      - name: data:propulsion:multirotor:esc:constraints:voltage:min  # min bound for voltage w.r.t. power
+      - name: data:propulsion:multirotor:esc:constraints:power:takeoff  # ESC power at takeoff
+        lower: 0.0
+
+      - name: data:propulsion:multirotor:esc:constraints:voltage:battery  # ESC voltage vs battery
         lower: 0.0
         
-      - name: data:propulsion:multirotor:esc:constraints:voltage:max  # max bound for voltage w.r.t. power
+      - name: data:propulsion:multirotor:esc:constraints:voltage:min  # min bound for voltage w.r.t. power. Comment this constraint if off the shelf ESC.
+        lower: 0.0
+        
+      - name: data:propulsion:multirotor:esc:constraints:voltage:max  # max bound for voltage w.r.t. power. Comment this constraint if off the shelf ESC.
         lower: 0.0
       
         ## MISSION ##

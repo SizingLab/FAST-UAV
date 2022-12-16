@@ -78,7 +78,7 @@ def doe_salib(
             conf = self.options["conf"]
             prob = conf.get_problem(read_inputs=True)
 
-            # UNCOMMENT THESE LINES IF USING CMA-ES Driver
+            # UNCOMMENT THESE LINES IF USING CMA-ES Driver for solving sub-problem  # TODO: automatically detect use of CMA-ES driver
             # driver = prob.driver = CMAESDriver()
             # driver.CMAOptions['tolfunhist'] = 1e-4
             # driver.CMAOptions['popsize'] = 100
@@ -164,6 +164,7 @@ def doe_salib(
         prob.driver = SalibDOEDriver(
             sa_method_name="Morris",
             sa_doe_options={"n_trajs": ns},
+            distributions=dists,
         )
 
     # Attach recorder to the driver
@@ -219,6 +220,9 @@ def sobol_analysis(conf_file, data_file):
     table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
+    # Remove variables whose shape is different from a single value (i.e., n-dimensional arrays).
+    table['type'] = [type(x) for x in table.Value.values]
+    table = table[table['type'] == float].drop('type', axis=1)
     # Uncertain variables table
     x_table = table.loc[table["is_input"]]  # select inputs only
     x_table = x_table.loc[
@@ -779,6 +783,9 @@ def morris_analysis(conf_file, data_file):
     table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
+    # Remove variables whose shape is different from a single value (i.e., n-dimensional arrays).
+    table['type'] = [type(x) for x in table.Value.values]
+    table = table[table['type'] == float].drop('type', axis=1)
     # Uncertain variables table
     x_table = table.loc[table["is_input"]]  # select inputs only
     x_table = x_table.loc[
@@ -812,9 +819,9 @@ def morris_analysis(conf_file, data_file):
         )
         # Distribution laws
         law_buttons = widgets.ToggleButtons(
-            options=["Uniform", "Normal"],
+            options=["Uniform"],  # Alternate distributions are not support yet in SALib (https://github.com/SALib/SALib/issues/515)
             description="Distribution:",
-            disabled=False,
+            disabled=True,
             button_style="",
         )
         # Distribution laws parameters
@@ -1062,8 +1069,9 @@ def morris_analysis(conf_file, data_file):
         """
         Check if the problem is well defined (at least one input and an output).
         """
-        if outputbox.value is None or len(x_dict) == 0:
+        if outputbox.value is None or len(x_dict) <= 1:
             return False
+        # FIXME: display warning error
         else:
             return True
 

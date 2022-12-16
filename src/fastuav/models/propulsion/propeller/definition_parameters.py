@@ -25,6 +25,17 @@ class PropellerDefinitionParameters(om.Group):
                            TakeOffSpeed(),
                            promotes=["*"])
 
+        add_subsystem_with_deviation(
+            self,
+            "aero_coefficients",
+            AerodynamicsModelParameters(),
+            uncertain_outputs={"data:propulsion:propeller:Ct:model:static:estimated": None,
+                               "data:propulsion:propeller:Cp:model:static:estimated": None,
+                               "data:propulsion:propeller:Ct:model:dynamic:estimated": None,
+                               "data:propulsion:propeller:Cp:model:dynamic:estimated": None
+                               },
+        )
+
 
 class TakeOffSpeed(om.ExplicitComponent):
     """
@@ -76,3 +87,69 @@ class Beta(om.ExplicitComponent):
         outputs["data:propulsion:propeller:beta:estimated"] = inputs[
             "data:propulsion:propeller:beta:guess"
         ]
+
+
+class AerodynamicsModelParameters(om.ExplicitComponent):
+    """
+    Sets aerodynamic model parameters for future calculation of thrust and power coefficients.
+    """
+
+    def setup(self):
+        self.add_input("data:propulsion:propeller:Ct:model:static:reference",
+                       val=np.array([4.27e-02, 1.44e-01]),
+                       units=None)
+        self.add_input("data:propulsion:propeller:Cp:model:static:reference",
+                       val=np.array([-1.48e-03, 9.72e-02]),
+                       units=None)
+        self.add_input("data:propulsion:propeller:Ct:model:dynamic:reference",
+                       val=np.array([0.02791, 0.11867, 0.27334, - 0.28852, - 0.06543, - 0.23504, 0.02104, 0.0, 0.0, 0.18677,
+                                     0.197, 1.094]),
+                       units=None)
+        self.add_input("data:propulsion:propeller:Cp:model:dynamic:reference",
+                       val=np.array([0.01813, - 0.06218, 0.35712, - 0.23774, 0.00343, - 0.1235, 0.0, 0.07549, 0.0, 0.0,
+                                     0.286, 0.993]),
+                       units=None)
+        self.add_output("data:propulsion:propeller:Ct:model:static:estimated",
+                        copy_shape="data:propulsion:propeller:Ct:model:static:reference",
+                        units=None)
+        self.add_output("data:propulsion:propeller:Cp:model:static:estimated",
+                        copy_shape="data:propulsion:propeller:Cp:model:static:reference",
+                        units=None)
+        self.add_output("data:propulsion:propeller:Ct:model:dynamic:estimated",
+                        copy_shape="data:propulsion:propeller:Ct:model:dynamic:reference",
+                        units=None)
+        self.add_output("data:propulsion:propeller:Cp:model:dynamic:estimated",
+                        copy_shape="data:propulsion:propeller:Cp:model:dynamic:reference",
+                        units=None)
+
+    def setup_partials(self):
+        self.declare_partials(
+            "data:propulsion:propeller:Ct:model:static:estimated",
+            "data:propulsion:propeller:Ct:model:static:reference",
+            val=1.0
+        )
+        self.declare_partials(
+            "data:propulsion:propeller:Cp:model:static:estimated",
+            "data:propulsion:propeller:Cp:model:static:reference",
+            val=1.0
+        )
+        self.declare_partials(
+            "data:propulsion:propeller:Ct:model:dynamic:estimated",
+            "data:propulsion:propeller:Ct:model:dynamic:reference",
+            val=1.0
+        )
+        self.declare_partials(
+            "data:propulsion:propeller:Cp:model:dynamic:estimated",
+            "data:propulsion:propeller:Cp:model:dynamic:reference",
+            val=1.0
+        )
+
+    def compute(self, inputs, outputs):
+        outputs["data:propulsion:propeller:Ct:model:static:estimated"] = \
+            inputs["data:propulsion:propeller:Ct:model:static:reference"]
+        outputs["data:propulsion:propeller:Cp:model:static:estimated"] = \
+            inputs["data:propulsion:propeller:Cp:model:static:reference"]
+        outputs["data:propulsion:propeller:Ct:model:dynamic:estimated"] = \
+            inputs["data:propulsion:propeller:Ct:model:dynamic:reference"]
+        outputs["data:propulsion:propeller:Cp:model:dynamic:estimated"] = \
+            inputs["data:propulsion:propeller:Cp:model:dynamic:reference"]

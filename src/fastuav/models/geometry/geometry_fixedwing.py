@@ -31,7 +31,7 @@ class WingGeometry(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
+        self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
         self.add_input("data:geometry:wing:AR", val=np.nan, units=None)
         self.add_input("data:geometry:wing:lambda", val=np.nan, units=None)
         self.add_input("data:geometry:wing:sweep:LE", val=np.nan, units="rad")
@@ -57,7 +57,7 @@ class WingGeometry(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        WS = inputs["data:scenarios:wing_loading"]
+        WS = inputs["data:geometry:wing:loading"]
         m_uav_guess = inputs["data:weight:mtow:guess"]
         tc_ratio = inputs["data:geometry:wing:tc"]
         sweep_LE = inputs["data:geometry:wing:sweep:LE"]
@@ -362,7 +362,7 @@ class ProjectedAreasGuess(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
+        self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
         self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:geometry:projected_area:top:k", val=np.nan, units=None)
         self.add_output("data:geometry:projected_area:top", units="m**2")
@@ -371,7 +371,7 @@ class ProjectedAreasGuess(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        WS = inputs["data:scenarios:wing_loading"]
+        WS = inputs["data:geometry:wing:loading"]
         mtow_guess = inputs["data:weight:mtow:guess"]
         k_top = inputs["data:geometry:projected_area:top:k"]
 
@@ -442,7 +442,7 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
         for propulsion_id in propulsion_id_list:
             self.add_input("data:propulsion:%s:battery:volume" % propulsion_id, val=np.nan, units="m**3")
         self.add_input("data:geometry:fuselage:volume:mid", val=np.nan, units="m**3")
-        self.add_input("data:scenarios:payload:volume", val=np.nan, units="m**3")
+        self.add_input("mission:sizing:payload:volume", val=np.nan, units="m**3")
         self.add_output("data:geometry:fuselage:volume:constraint", units=None)
 
     def setup_partials(self):
@@ -453,7 +453,7 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
         V_bat = sum(inputs["data:propulsion:%s:battery:volume" % propulsion_id]
                     for propulsion_id in propulsion_id_list)
         V_fus = inputs["data:geometry:fuselage:volume:mid"]  # only the mid-fuselage part is considered
-        V_pay = inputs["data:scenarios:payload:volume"]
+        V_pay = inputs["mission:sizing:payload:volume"]
         V_req = V_pay + V_bat
 
         V_cnstr = (V_fus - V_req) / V_req  # mid fuselage volume constraint
@@ -465,14 +465,14 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
         V_bat = sum(inputs["data:propulsion:%s:battery:volume" % propulsion_id]
                     for propulsion_id in propulsion_id_list)
         V_fus = inputs["data:geometry:fuselage:volume:mid"]
-        V_pay = inputs["data:scenarios:payload:volume"]
+        V_pay = inputs["mission:sizing:payload:volume"]
         V_req = V_pay + V_bat
 
         partials[
             "data:geometry:fuselage:volume:constraint",
             "data:geometry:fuselage:volume:mid"] = 1 / V_req
         partials["data:geometry:fuselage:volume:constraint",
-                 "data:scenarios:payload:volume"] = - V_fus / V_req ** 2
+                 "mission:sizing:payload:volume"] = - V_fus / V_req ** 2
 
         for propulsion_id in propulsion_id_list:
             partials["data:geometry:fuselage:volume:constraint",

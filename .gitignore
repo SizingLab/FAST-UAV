@@ -13,3 +13,13 @@
 /src/fastuav/data/problem_outputs_discrete_DJI_M600_mdo.xml
 /src/fastuav/data/problem_outputs_DJI_M600_mdo.xml
 /.pytest_cache/
+/src/fastuav/data/problem_outputs_DJI_M600_mdo_custom.xml
+/src/fastuav/data/problem_outputs_DJI_M600_mdo_hybrid.xml
+/src/fastuav/data/problem_outputs_DJI_M600_mdo_off_the_shelf.xml
+/src/fastuav/data/problem_outputs_FW_mdo.xml
+/src/fastuav/data/problem_outputs_FW_VTOL_mdo.xml
+/src/fastuav/models/propulsion/propeller/aerodynamics/surrogate_models_old.py
+/src/fastuav/data/problem_outputs_HybridVTOL_mdo.xml
+/src/fastuav/notebooks/cases.sql
+/src/fastuav/configurations/cases.sql
+/src/fastuav/utils/postprocessing/old/*

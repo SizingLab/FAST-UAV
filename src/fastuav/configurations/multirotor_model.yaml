@@ -1,4 +1,4 @@
-title: Multirotor Drone model
+title: Multirotor Drone Model  # Single evaluation (no MDA or MDO)
 
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders:

@@ -31,7 +31,7 @@ class MtowGuess(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:weight:mtow:k", val=np.nan, units=None)
-        self.add_input("data:scenarios:payload:mass", val=np.nan, units="kg")
+        self.add_input("mission:sizing:payload:mass", val=np.nan, units="kg")
         self.add_output("data:weight:mtow:guess", units="kg")
 
     def setup_partials(self):
@@ -39,7 +39,7 @@ class MtowGuess(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         k_M = inputs["data:weight:mtow:k"]
-        m_load = inputs["data:scenarios:payload:mass"]
+        m_load = inputs["mission:sizing:payload:mass"]
 
         m_uav_guess = (
             k_M * m_load
@@ -49,9 +49,9 @@ class MtowGuess(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         k_M = inputs["data:weight:mtow:k"]
-        m_load = inputs["data:scenarios:payload:mass"]
+        m_load = inputs["mission:sizing:payload:mass"]
         partials["data:weight:mtow:guess", "data:weight:mtow:k"] = m_load
-        partials["data:weight:mtow:guess", "data:scenarios:payload:mass"] = k_M
+        partials["data:weight:mtow:guess", "mission:sizing:payload:mass"] = k_M
 
 
 class MtowCalculation(om.ExplicitComponent):
@@ -66,7 +66,7 @@ class MtowCalculation(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id_list = self.options["propulsion_id_list"]
-        self.add_input("data:scenarios:payload:mass", val=0.0, units="kg")
+        self.add_input("mission:sizing:payload:mass", val=np.nan, units="kg")
 
         for propulsion_id in propulsion_id_list:
             self.add_input("data:weight:propulsion:%s:gearbox:mass" % propulsion_id, val=0.0, units="kg")
@@ -93,7 +93,7 @@ class MtowCalculation(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         propulsion_id_list = self.options["propulsion_id_list"]
-        mtow = inputs["data:scenarios:payload:mass"]
+        mtow = inputs["mission:sizing:payload:mass"]
 
         for propulsion_id in propulsion_id_list:
             mtow += ((inputs["data:weight:propulsion:%s:gearbox:mass" % propulsion_id]
@@ -119,7 +119,7 @@ class MtowCalculation(om.ExplicitComponent):
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         propulsion_id_list = self.options["propulsion_id_list"]
         partials["data:weight:mtow",
-                 "data:scenarios:payload:mass"] = 1.0
+                 "mission:sizing:payload:mass"] = 1.0
 
         for propulsion_id in propulsion_id_list:
             N_pro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
