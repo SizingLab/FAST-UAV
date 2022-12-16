@@ -6,6 +6,7 @@ import numpy as np
 from scipy.constants import g
 import openmdao.api as om
 from stdatm import AtmosphereSI
+from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
 from fastuav.utils.constants import FW_PROPULSION, MR_PROPULSION
 
 
@@ -23,8 +24,10 @@ class VerticalClimbThrust(om.ExplicitComponent):
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
+        self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input("mission:sizing:main_route:climb:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:main_route:climb:rate:%s" % propulsion_id, val=np.nan, units="m/s")
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_output("data:propulsion:%s:propeller:thrust:climb" % propulsion_id, units="N")
         self.add_output("data:propulsion:%s:propeller:AoA:climb" % propulsion_id, units="rad")
@@ -39,32 +42,40 @@ class VerticalClimbThrust(om.ExplicitComponent):
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
         # Flight parameters
+        V_v = inputs["mission:sizing:main_route:climb:rate:%s" % propulsion_id]
         V_climb = inputs["mission:sizing:main_route:climb:speed:%s" % propulsion_id]
         altitude_climb = inputs["mission:sizing:main_route:cruise:altitude"]  # conservative assumption
         dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_climb, dISA)
         atm.true_airspeed = V_climb
-        q_climb = atm.dynamic_pressure
+        rho_air = atm.density
 
         # Weight
         m_uav_guess = inputs["data:weight:mtow:guess"]
-        Weight = m_uav_guess * g  # [N]
-
-        # Angle of attack
-        alpha_cl = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight)
 
         # Drag parameters
         C_D0 = inputs["data:aerodynamics:%s:CD0" % propulsion_id]
+        C_L = 0.0  # it is assumed that the body shape produces only pressure drag and no lift
         S_top = inputs["data:geometry:projected_area:top"]
-        Drag = q_climb * S_top * C_D0 * np.sin(alpha_cl)  # [N]
+        S_front = inputs["data:geometry:projected_area:front"]
 
-        # Thrust calculation (equilibrium)
-        F_pro_cl = (Weight + Drag) / Npro  # [N] Thrust per propeller
-
-        # PROVISION FOR CLIMBING FORWARD FLIGHT (PATH ANGLE THETA)
-        # theta = np.pi / 2  # [rad] flight path angle (vertical climb)
-        # F_pro_cl, alpha_cl = MultirotorFlightModel.get_thrust(m_uav_guess, V_cl, theta, S_front_estimated, S_top_estimated, C_D, C_L0, rho_air)  # [N] required thrust (and angle of attack)
-        # F_pro_cl = F_pro_cl / Npro  # [N] thrust per propeller
+        alpha_cl = MultirotorFlightModel.get_angle_of_attack(m_uav_guess,
+                                                             V_climb,
+                                                             V_v,
+                                                             S_front,
+                                                             S_top,
+                                                             C_D0,
+                                                             C_L,
+                                                             rho_air)  # [rad] angle of attack
+        F_pro_cl = MultirotorFlightModel.get_thrust(m_uav_guess,
+                                                    V_climb,
+                                                    V_v,
+                                                    alpha_cl,
+                                                    S_front,
+                                                    S_top,
+                                                    C_D0,
+                                                    C_L,
+                                                    rho_air) / Npro  # [N] thrust per propeller
 
         outputs["data:propulsion:%s:propeller:thrust:climb" % propulsion_id] = F_pro_cl
         outputs["data:propulsion:%s:propeller:AoA:climb" % propulsion_id] = alpha_cl
