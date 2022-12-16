@@ -4,9 +4,9 @@ Cruise scenarios
 
 import numpy as np
 from scipy.constants import g
-from scipy.optimize import brentq
 import openmdao.api as om
 from stdatm import AtmosphereSI
+from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
 from fastuav.utils.constants import FW_PROPULSION, MR_PROPULSION
 
 
@@ -46,11 +46,10 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_cruise, dISA)
         atm.true_airspeed = V_cruise
-        q_cruise = atm.dynamic_pressure
+        rho_air = atm.density
 
         # Weight  # [N]
         m_uav_guess = inputs["data:weight:mtow:guess"]
-        weight = m_uav_guess * g
 
         # Drag and lift parameters
         C_D0 = inputs["data:aerodynamics:%s:CD0" % propulsion_id]  # pressure drag
@@ -58,22 +57,24 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         S_top = inputs["data:geometry:projected_area:top"]
         S_front = inputs["data:geometry:projected_area:front"]
 
-        # Thrust and trim calculation (equilibrium)
-        func = lambda x: np.tan(x) - q_cruise * C_D0 * (
-            S_top * np.sin(x) + S_front * np.cos(x)
-        ) / (
-            m_uav_guess * g
-            + q_cruise * C_L * (S_top * np.sin(x) + S_front * np.cos(x))
-        )
-        alpha_cr = brentq(func, 0, np.pi / 2)  # [rad] Rotor disk angle of attack
-
-        # Aerodynamics performance
-        S_ref = S_top * np.sin(alpha_cr) + S_front * np.cos(alpha_cr)  # [m2] reference area
-        drag = q_cruise * C_D0 * S_ref  # [N] drag
-        lift = - q_cruise * C_L * S_ref  # [N] lift (downwards force)
-
-        # Thrust calculation (equilibrium)
-        F_pro_cr = ((weight - lift) ** 2 + drag ** 2) ** (1 / 2) / Npro  # [N] thrust per propeller
+        V_v = 0.0  # [m/s] rate of climb (assumption: horizontal flight)
+        alpha_cr = MultirotorFlightModel.get_angle_of_attack(m_uav_guess,
+                                                             V_cruise,
+                                                             V_v,
+                                                             S_front,
+                                                             S_top,
+                                                             C_D0,
+                                                             C_L,
+                                                             rho_air)  # [rad] angle of attack
+        F_pro_cr = MultirotorFlightModel.get_thrust(m_uav_guess,
+                                                    V_cruise,
+                                                    V_v,
+                                                    alpha_cr,
+                                                    S_front,
+                                                    S_top,
+                                                    C_D0,
+                                                    C_L,
+                                                    rho_air) / Npro  # [N] thrust per propeller
 
         outputs["data:propulsion:%s:propeller:thrust:cruise" % propulsion_id] = F_pro_cr
         outputs["data:propulsion:%s:propeller:AoA:cruise" % propulsion_id] = alpha_cr
