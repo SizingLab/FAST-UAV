@@ -9,12 +9,19 @@ Currently, FAST-UAV is bundled with analytical models for multirotor and fixed w
 
 Install
 -------
-It is recommended to install FAST-UAV in a virtual environment.
+It is recommended to install FAST-UAV in a virtual environment, using poetry.
 
 > ``` {.bash}
-> $ conda create --name fastuav
+> $ conda create -n fastuav python=3.8
 > $ conda activate fastuav
-> $ pip install -r requirements.txt
+> $ conda install poetry
+> $ poetry install
+> ```
+
+Run
+-------
+> ``` {.bash}
+> $ jupyter lab
 > ```
 
 Publications
