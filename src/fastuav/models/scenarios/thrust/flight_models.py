@@ -5,7 +5,7 @@ UAV flight models for thrust calculations - static methods definition.
 
 import numpy as np
 from scipy.constants import g
-from scipy.optimize import brentq
+from scipy.optimize import minimize
 
 
 class MultirotorFlightModel:
@@ -40,7 +40,12 @@ class MultirotorFlightModel:
         """
         Computes angle of attack to maintain flight path
         """
-        theta = np.arcsin(RoC / V)  # [rad] flight path angle
+        # flight path angle [rad]
+        if V != .0 and V > RoC:
+            theta = np.arcsin(RoC / V)
+        else:
+            alpha = theta = np.pi / 2
+            return alpha
 
         def func(x):
             drag = MultirotorFlightModel.get_drag(V, x, S_front, S_top, C_D, rho_air)  # [N] drag
@@ -51,7 +56,9 @@ class MultirotorFlightModel:
             )  # [-] equilibrium residual
             return res
 
-        alpha = brentq(func, 0, np.pi / 2)  # [rad] angle of attack
+        bnds = ((0.0, np.pi / 2),)
+        res = minimize(func, (np.pi/2), bounds=bnds, method='SLSQP')  # [rad] angle of attack
+        alpha = res.x if res.success else np.pi/2
         return alpha
 
     @staticmethod
@@ -59,7 +66,12 @@ class MultirotorFlightModel:
         """
         Computes thrust to maintain flight path
         """
-        theta = np.arcsin(RoC / V)  # [rad] flight path angle
+        # flight path angle [rad]
+        if V != .0 and V >= RoC:
+            theta = np.arcsin(RoC / V)
+        else:
+            theta = np.pi / 2
+
         weight = m_uav * g  # [N] weight
         lift = MultirotorFlightModel.get_lift(V, alpha, S_top, C_L0, rho_air)  # [N] lift
         drag = MultirotorFlightModel.get_drag(V, alpha, S_front, S_top, C_D, rho_air)  # [N] drag
