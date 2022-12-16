@@ -11,6 +11,7 @@ For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 
 import contextlib
 import os
+import os.path as pth
 
 # from openmdao_drivers.cmaes_driver import CMAESDriver
 
@@ -26,7 +27,16 @@ from SALib.analyze import sobol, morris
 from typing import List
 from plotly.validators.scatter.marker import SymbolValidator
 
-SA_PATH = "./workdir/sensitivity_analysis"
+SA_PATH = pth.join(
+    pth.dirname(pth.abspath(__file__)),
+    "",
+    "..",
+    "..",
+    "..",
+    "notebooks",
+    "workdir",
+    "sensitivity_analysis",
+)
 
 
 def doe_salib(
@@ -68,7 +78,7 @@ def doe_salib(
             conf = self.options["conf"]
             prob = conf.get_problem(read_inputs=True)
 
-            # UNCOMMENT THESE LINES IF USING CMA-ES Driver
+            # UNCOMMENT THESE LINES IF USING CMA-ES Driver for solving sub-problem  # TODO: automatically detect use of CMA-ES driver
             # driver = prob.driver = CMAESDriver()
             # driver.CMAOptions['tolfunhist'] = 1e-4
             # driver.CMAOptions['popsize'] = 100
@@ -154,6 +164,7 @@ def doe_salib(
         prob.driver = SalibDOEDriver(
             sa_method_name="Morris",
             sa_doe_options={"n_trajs": ns},
+            distributions=dists,
         )
 
     # Attach recorder to the driver
@@ -209,6 +220,9 @@ def sobol_analysis(conf_file, data_file):
     table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
+    # Remove variables whose shape is different from a single value (i.e., n-dimensional arrays).
+    table['type'] = [type(x) for x in table.Value.values]
+    table = table[table['type'] == float].drop('type', axis=1)
     # Uncertain variables table
     x_table = table.loc[table["is_input"]]  # select inputs only
     x_table = x_table.loc[
@@ -638,16 +652,16 @@ def sobol_analysis(conf_file, data_file):
             fig5.data[0].line = dict(color=df[y], colorscale="Viridis")
 
         # export
-        fig1.write_html(SA_PATH + "/figures/sobol_indices_hist.html")
-        fig1.write_image(SA_PATH + "/figures/sobol_indices_hist.pdf")
-        fig2.write_html(SA_PATH + "/figures/sobol_second_order.html")
-        fig2.write_image(SA_PATH + "/figures/sobol_second_order.pdf")
-        fig3.write_html(SA_PATH + "/figures/sobol_indices_pie.html")
-        fig3.write_image(SA_PATH + "/figures/sobol_indices_pie.pdf")
-        fig4.write_html(SA_PATH + "/figures/output_dist.html")
-        fig4.write_image(SA_PATH + "/figures/output_dist.pdf")
-        fig5.write_html(SA_PATH + "/figures/parallel_plot.html")
-        fig5.write_image(SA_PATH + "/figures/parallel_plot.pdf")
+        fig1.write_html(pth.join(SA_PATH, "figures") + "/sobol_indices_hist.html")
+        fig1.write_image(pth.join(SA_PATH, "figures") + "/sobol_indices_hist.pdf")
+        fig2.write_html(pth.join(SA_PATH, "figures") + "/sobol_second_order.html")
+        fig2.write_image(pth.join(SA_PATH, "figures") + "/sobol_second_order.pdf")
+        fig3.write_html(pth.join(SA_PATH, "figures") + "/sobol_indices_pie.html")
+        fig3.write_image(pth.join(SA_PATH, "figures") + "/sobol_indices_pie.pdf")
+        fig4.write_html(pth.join(SA_PATH, "figures") + "/output_dist.html")
+        fig4.write_image(pth.join(SA_PATH, "figures") + "output_dist.pdf")
+        fig5.write_html(pth.join(SA_PATH, "figures") + "parallel_plot.html")
+        fig5.write_image(pth.join(SA_PATH, "figures") + "parallel_plot.pdf")
 
         # with fig6.batch_update():  # Inputs Distributions
         #    # DEPRECATED : both relative and absolute errors are ploted on the same chart...
@@ -769,6 +783,9 @@ def morris_analysis(conf_file, data_file):
     table = variables.to_dataframe()[["name", "val", "units", "is_input", "desc"]].rename(
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
+    # Remove variables whose shape is different from a single value (i.e., n-dimensional arrays).
+    table['type'] = [type(x) for x in table.Value.values]
+    table = table[table['type'] == float].drop('type', axis=1)
     # Uncertain variables table
     x_table = table.loc[table["is_input"]]  # select inputs only
     x_table = x_table.loc[
@@ -802,9 +819,9 @@ def morris_analysis(conf_file, data_file):
         )
         # Distribution laws
         law_buttons = widgets.ToggleButtons(
-            options=["Uniform", "Normal"],
+            options=["Uniform"],  # Alternate distributions are not support yet in SALib (https://github.com/SALib/SALib/issues/515)
             description="Distribution:",
-            disabled=False,
+            disabled=True,
             button_style="",
         )
         # Distribution laws parameters
@@ -1052,8 +1069,9 @@ def morris_analysis(conf_file, data_file):
         """
         Check if the problem is well defined (at least one input and an output).
         """
-        if outputbox.value is None or len(x_dict) == 0:
+        if outputbox.value is None or len(x_dict) <= 1:
             return False
+        # FIXME: display warning error
         else:
             return True
 
@@ -1152,10 +1170,10 @@ def morris_analysis(conf_file, data_file):
             )
 
             # export
-            fig1.write_html(SA_PATH + "/figures/morris_mu.html", include_mathjax="cdn")
-            fig1.write_image(SA_PATH + "/figures/morris_mu.pdf")
-            fig2.write_html(SA_PATH + "/figures/morris_mu_sigma.html", include_mathjax="cdn")
-            fig2.write_image(SA_PATH + "/figures/morris_mu_sigma.pdf")
+            fig1.write_html(pth.join(SA_PATH, "figures") + "/morris_mu.html", include_mathjax="cdn")
+            fig1.write_image(pth.join(SA_PATH, "figures") + "/morris_mu.pdf")
+            fig2.write_html(pth.join(SA_PATH, "figures") + "/morris_mu_sigma.html", include_mathjax="cdn")
+            fig2.write_image(pth.join(SA_PATH, "figures") + "/morris_mu_sigma.pdf")
 
     def update_all(change):
         """

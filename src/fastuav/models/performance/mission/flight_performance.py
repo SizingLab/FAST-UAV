@@ -60,12 +60,14 @@ class FlightPerformanceModel:
         self.battery_voltage = None
         self.esc_efficiency = None
         self.gearbox_ratio = 1.0
-        self.motor_torque_coef = None
+        self.motor_speed_constant = None
         self.motor_torque_friction = None
         self.motor_resistance = None
         self.propeller_number = None
         self.propeller_diameter = None
         self.propeller_beta = None
+        self.propeller_ct_model = None
+        self.propeller_cp_model = None
         self.payload_power = 0.0
 
         # performance outputs
@@ -98,7 +100,7 @@ class FlightPerformanceModel:
     def thrust_per_propeller(self) -> float:
         """Thrust per propeller in N."""
         if self._thrust_per_propeller is None:
-            if self.uav_model == "multirotor":
+            if self.uav_model == MR_PROPULSION:
                 if self.mr_area_front is not None and self.mr_area_top is not None and self.mr_parasitic_drag_coef is not None:
                     thrust = MultirotorFlightModel.get_thrust(
                         self.uav_mass,
@@ -112,7 +114,7 @@ class FlightPerformanceModel:
                         self.air_density,
                     )
                     self._thrust_per_propeller = thrust / self.propeller_number
-            elif self.uav_model == "fixedwing":
+            elif self.uav_model == FW_PROPULSION:
                 if self.fw_induced_drag_constant is not None and self.fw_parasitic_drag_coef is not None:
                     thrust = FixedwingFlightModel.get_thrust(
                         self.uav_mass,
@@ -175,20 +177,20 @@ class FlightPerformanceModel:
     @property
     def motor_current(self) -> float:
         """Motor current in A."""
-        if self._motor_current is None and self.motor_torque_friction is not None and self.motor_torque_coef is not None:
+        if self._motor_current is None and self.motor_torque_friction is not None and self.motor_speed_constant is not None:
             self._motor_current = MotorPerformanceModel.current(self.motor_torque,
                                                                 self.motor_torque_friction,
-                                                                self.motor_torque_coef)
+                                                                self.motor_speed_constant)
         return self._motor_current
 
     @property
     def motor_voltage(self) -> float:
         """Motor voltage in V."""
-        if self._motor_voltage is None and self.motor_resistance is not None and self.motor_torque_coef is not None:
+        if self._motor_voltage is None and self.motor_resistance is not None and self.motor_speed_constant is not None:
             self._motor_voltage = MotorPerformanceModel.voltage(self.motor_current,
                                                                 self.motor_speed,
                                                                 self.motor_resistance,
-                                                                self.motor_torque_coef)
+                                                                self.motor_speed_constant)
         return self._motor_voltage
 
     @property
@@ -207,13 +209,15 @@ class FlightPerformanceModel:
             nD = (thrust / (air_density * propeller_diameter**2 * propeller_ct)) ** (1/2)
         with the thrust coefficient of the propeller being dependent on the advance ratio.
         """
-        if self._advance_ratio is None and self.propeller_diameter is not None and self.propeller_beta is not None and self.thrust_per_propeller > 0:
+        if self._advance_ratio is None and self.propeller_diameter is not None and self.propeller_beta is not None \
+                and self.thrust_per_propeller > 0:
 
             def func(x):
                 propeller_ct, _ = PropellerAerodynamicsModel.aero_coefficients_incidence(self.propeller_beta,
                                                                                          x,
                                                                                          self.propeller_angle_of_attack,
-                                                                                         propulsion_id=self.uav_model)
+                                                                                         ct_model=self.propeller_ct_model,
+                                                                                         cp_model=self.propeller_cp_model)
                 res = x - self.airspeed * np.sqrt(
                     self.air_density * self.propeller_diameter ** 2 * propeller_ct / self.thrust_per_propeller)
                 return res
@@ -228,7 +232,8 @@ class FlightPerformanceModel:
             self._propeller_ct, _ = PropellerAerodynamicsModel.aero_coefficients_incidence(self.propeller_beta,
                                                                                            self.advance_ratio,
                                                                                            self.propeller_angle_of_attack,
-                                                                                           propulsion_id=self.uav_model)
+                                                                                           ct_model=self.propeller_ct_model,
+                                                                                           cp_model=self.propeller_cp_model)
         return self._propeller_ct
 
     @property
@@ -238,7 +243,8 @@ class FlightPerformanceModel:
             _, self._propeller_cp = PropellerAerodynamicsModel.aero_coefficients_incidence(self.propeller_beta,
                                                                                            self.advance_ratio,
                                                                                            self.propeller_angle_of_attack,
-                                                                                           propulsion_id=self.uav_model)
+                                                                                           ct_model=self.propeller_ct_model,
+                                                                                           cp_model=self.propeller_cp_model)
         return self._propeller_cp
 
     @property

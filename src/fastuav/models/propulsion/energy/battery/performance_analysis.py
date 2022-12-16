@@ -16,8 +16,8 @@ class BatteryPerformanceModel:
         return P_bat
 
     @staticmethod
-    def current(P_bat, V_bat):
-        I_bat = P_bat / V_bat if V_bat > 0 else 0.0  # [I] Current of the battery
+    def current(P_bat, U_bat):
+        I_bat = P_bat / U_bat if U_bat > 0 else 0.0  # [I] Current of the battery
         return I_bat
 
 
@@ -47,7 +47,7 @@ class BatteryPerformance(om.ExplicitComponent):
         self.add_input("data:propulsion:motor:power:%s" % scenario, val=np.nan, units="W")
         self.add_input("data:propulsion:esc:efficiency:estimated", val=np.nan, units=None)
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
-        self.add_input("data:scenarios:payload:power", val=np.nan, units="W")
+        self.add_input("mission:sizing:payload:power", val=np.nan, units="W")
         self.add_output("data:propulsion:battery:current:%s" % scenario, units="A")
         self.add_output("data:propulsion:battery:power:%s" % scenario, units="W")
 
@@ -61,12 +61,12 @@ class BatteryPerformance(om.ExplicitComponent):
         P_mot = inputs["data:propulsion:motor:power:%s" % scenario]
         eta_ESC = inputs[
             "data:propulsion:esc:efficiency:estimated"
-        ]  # TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
-        V_bat = inputs["data:propulsion:battery:voltage"]
-        P_payload = inputs["data:scenarios:payload:power"]
+        ]  #TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
+        U_bat = inputs["data:propulsion:battery:voltage"]
+        P_payload = inputs["mission:sizing:payload:power"]
 
-        P_bat = BatteryPerformanceModel.power(P_mot, N_pro,eta_ESC, P_payload)
-        I_bat = BatteryPerformanceModel.current(P_bat, V_bat)
+        P_bat = BatteryPerformanceModel.power(P_mot, N_pro, eta_ESC, P_payload)
+        I_bat = BatteryPerformanceModel.current(P_bat, U_bat)
 
         outputs["data:propulsion:battery:power:%s" % scenario] = P_bat
         outputs["data:propulsion:battery:current:%s" % scenario] = I_bat

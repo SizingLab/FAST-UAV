@@ -18,7 +18,7 @@ class HoverThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_output("data:propulsion:%s:propeller:thrust:hover" % propulsion_id, units="N")
 
@@ -28,10 +28,10 @@ class HoverThrust(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
+        m_uav_guess = inputs["data:weight:mtow:guess"]
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
-        F_pro_hov = Mtotal_guess * g / Npro  # [N] Thrust per propeller
+        F_pro_hov = m_uav_guess * g / Npro  # [N] Thrust per propeller
 
         outputs["data:propulsion:%s:propeller:thrust:hover" % propulsion_id] = F_pro_hov
 

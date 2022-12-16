@@ -24,9 +24,9 @@ class MotorDefinitionParameters(om.Group):
 
         add_subsystem_with_deviation(
             self,
-            "torque_coefficient",
-            TorqueCoefficient(),
-            uncertain_outputs={"data:propulsion:motor:torque:coefficient:estimated": "N*m/A"},
+            "velocity_constant",
+            VelocityConstant(),
+            uncertain_outputs={"data:propulsion:motor:speed:constant:estimated": "rad/V/s"},
         )
 
 
@@ -45,37 +45,37 @@ class MaxTorque(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Nred = inputs["data:propulsion:gearbox:N_red"]
-        Qpro_to = inputs["data:propulsion:propeller:torque:takeoff"]
+        N_red = inputs["data:propulsion:gearbox:N_red"]
+        Q_pro_to = inputs["data:propulsion:propeller:torque:takeoff"]
         k_mot = inputs["data:propulsion:motor:torque:k"]
 
-        Tmot_to = Qpro_to / Nred  # [N.m] takeoff torque
-        Tmot_max = k_mot * Tmot_to  # [N.m] required motor nominal torque
+        T_mot_to = Q_pro_to / N_red  # [N.m] takeoff torque
+        T_mot_max = k_mot * T_mot_to  # [N.m] required motor nominal torque
 
-        outputs["data:propulsion:motor:torque:max:estimated"] = Tmot_max
+        outputs["data:propulsion:motor:torque:max:estimated"] = T_mot_max
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Nred = inputs["data:propulsion:gearbox:N_red"]
-        Qpro_to = inputs["data:propulsion:propeller:torque:takeoff"]
+        N_red = inputs["data:propulsion:gearbox:N_red"]
+        Q_pro_to = inputs["data:propulsion:propeller:torque:takeoff"]
         k_mot = inputs["data:propulsion:motor:torque:k"]
 
         partials[
             "data:propulsion:motor:torque:max:estimated", "data:propulsion:gearbox:N_red"
-        ] = (-k_mot * Qpro_to / Nred**2)
+        ] = (-k_mot * Q_pro_to / N_red**2)
         partials[
             "data:propulsion:motor:torque:max:estimated",
             "data:propulsion:propeller:torque:takeoff",
         ] = (
-            k_mot / Nred
+            k_mot / N_red
         )
         partials[
             "data:propulsion:motor:torque:max:estimated", "data:propulsion:motor:torque:k"
-        ] = (Qpro_to / Nred)
+        ] = (Q_pro_to / N_red)
 
 
-class TorqueCoefficient(om.ExplicitComponent):
+class VelocityConstant(om.ExplicitComponent):
     """
-    Estimates the motor torque coefficient
+    Estimates the motor velocity constant
     """
 
     def setup(self):
@@ -83,45 +83,46 @@ class TorqueCoefficient(om.ExplicitComponent):
         self.add_input("data:propulsion:propeller:power:takeoff", val=np.nan, units="W")
         self.add_input("data:propulsion:propeller:speed:takeoff", val=np.nan, units="rad/s")
         self.add_input("data:propulsion:motor:speed:k", val=np.nan, units=None)
-        self.add_output("data:propulsion:motor:torque:coefficient:estimated", units="N*m/A")
+        self.add_output("data:propulsion:motor:speed:constant:estimated", units="rad/V/s")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Nred = inputs["data:propulsion:gearbox:N_red"]
-        Wpro_to = inputs["data:propulsion:propeller:speed:takeoff"]
-        Ppro_to = inputs["data:propulsion:propeller:power:takeoff"]
+        N_red = inputs["data:propulsion:gearbox:N_red"]
+        W_pro_to = inputs["data:propulsion:propeller:speed:takeoff"]
+        P_pro_to = inputs["data:propulsion:propeller:power:takeoff"]
         k_speed_mot = inputs["data:propulsion:motor:speed:k"]
 
-        W_to_motor = Wpro_to * Nred  # [rad/s] Motor take-off speed
-        V_bat_guess = 1.84 * Ppro_to ** 0.36  # [V] battery voltage estimation
-        Ktmot = V_bat_guess / (k_speed_mot * W_to_motor)  # [N.m/A] or [V/(rad/s)]
+        #TODO: replace U_bat_guess by Kv_hat from data
+        W_mot_to = W_pro_to * N_red  # [rad/s] Motor take-off speed
+        U_bat_guess = 1.84 * P_pro_to ** 0.36  # [V] battery voltage estimation
+        Kv = k_speed_mot * W_mot_to / U_bat_guess  # [rad/V/s]
 
-        outputs["data:propulsion:motor:torque:coefficient:estimated"] = Ktmot
+        outputs["data:propulsion:motor:speed:constant:estimated"] = Kv
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Nred = inputs["data:propulsion:gearbox:N_red"]
-        Ppro_to = inputs["data:propulsion:propeller:power:takeoff"]
-        Wpro_to = inputs["data:propulsion:propeller:speed:takeoff"]
+        N_red = inputs["data:propulsion:gearbox:N_red"]
+        P_pro_to = inputs["data:propulsion:propeller:power:takeoff"]
+        W_pro_to = inputs["data:propulsion:propeller:speed:takeoff"]
         k_speed_mot = inputs["data:propulsion:motor:speed:k"]
 
-        V_bat_guess = 1.84 * Ppro_to ** 0.36  # [V] battery voltage estimation
+        U_bat_guess = 1.84 * P_pro_to ** 0.36  # [V] battery voltage estimation
 
         partials[
-            "data:propulsion:motor:torque:coefficient:estimated", "data:propulsion:gearbox:N_red"
-        ] = -V_bat_guess / (Wpro_to * k_speed_mot * Nred**2)
+            "data:propulsion:motor:speed:constant:estimated", "data:propulsion:gearbox:N_red"
+        ] = k_speed_mot * W_pro_to / U_bat_guess
 
         partials[
-            "data:propulsion:motor:torque:coefficient:estimated",
+            "data:propulsion:motor:speed:constant:estimated",
             "data:propulsion:propeller:power:takeoff",
-        ] = 1.84 * 0.36 * Ppro_to ** (-0.64) / (k_speed_mot * Wpro_to * Nred)
+        ] = - 0.36 * k_speed_mot * W_pro_to * N_red * P_pro_to ** (-1.36) / 1.84
 
         partials[
-            "data:propulsion:motor:torque:coefficient:estimated",
+            "data:propulsion:motor:speed:constant:estimated",
             "data:propulsion:propeller:speed:takeoff",
-        ] = -V_bat_guess / (Wpro_to**2 * k_speed_mot * Nred)
+        ] = k_speed_mot / U_bat_guess
 
         partials[
-            "data:propulsion:motor:torque:coefficient:estimated", "data:propulsion:motor:speed:k"
-        ] = -V_bat_guess / (Wpro_to * k_speed_mot**2 * Nred)
+            "data:propulsion:motor:speed:constant:estimated", "data:propulsion:motor:speed:k"
+        ] = W_pro_to * N_red / U_bat_guess

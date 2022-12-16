@@ -83,9 +83,10 @@ def add_subsystem_with_deviation(
 
 class ComponentWithDeviation(om.ExplicitComponent):
     """
-    Modify a mean value by adding a deviation:
-        y = mean(y) * ( 1 + var)
-    The deviation is provided by the user as an input ('uncertainty:parameter_name:var').
+    Modify a mean value by adding a deviation (either relative, eps, or absolute, delta):
+        y = mean(y) * (1 + eps) + delta
+    The deviation is provided by the user as an input ('uncertainty:parameter_name:rel' or
+    'uncertainty:parameter_name:abs').
     """
 
     def __init__(self):
@@ -98,10 +99,15 @@ class ComponentWithDeviation(om.ExplicitComponent):
             if long_names not in self._long_names:
                 short_name = short_names[i]
                 unit = units[i]
-                self.add_input("uncertainty:" + short_name + ":mean", units=unit, tags="local")
+                self.add_input("uncertainty:" + short_name + ":mean",
+                               shape_by_conn=True,
+                               units=unit,
+                               tags="local")
                 self.add_input("uncertainty:" + short_name + ":rel", val=0.0, units=None)
                 self.add_input("uncertainty:" + short_name + ":abs", val=0.0, units=unit)
-                self.add_output(long_name, units=unit)
+                self.add_output(long_name,
+                                copy_shape="uncertainty:" + short_name + ":mean",
+                                units=unit)
                 self._long_names.append(long_name)
                 self._short_names.append(short_name)
 
@@ -158,8 +164,22 @@ def add_model_deviation(
     Example
         >> class Group(om.Group):
         >> def setup(self):
-        >>      add_model_deviation(self, "aerodynamics_model_deviation", PropellerAerodynamicsModel,
-                                        uncertain_parameters=['Ct_axial_var', 'Cp_axial_var'])
+        >>      add_model_deviation(self,
+                "aerodynamics_model_deviation",
+                PropellerAerodynamicsModel,
+                uncertain_parameters=["propeller:aerodynamics:CT:static", "propeller:aerodynamics:CP:static"])
+
+        Then, in the model class, you must initialize the uncertain parameters as follows:
+        >> init_uncertain_parameters = {
+                "uncertainty:propeller:aerodynamics:CT:static:abs": 0.0,
+                "uncertainty:propeller:aerodynamics:CP:static:abs": 0.0,
+                "uncertainty:propeller:aerodynamics:CT:static:rel": 0.0,
+                "uncertainty:propeller:aerodynamics:CP:static:rel": 0.0,
+            }
+        >> uncertain_parameters = init_uncertain_parameters.copy()
+        >> delta = Model.uncertain_parameters["uncertainty:propeller:aerodynamics:CP:static:abs"]
+        >> eps = Model.uncertain_parameters["uncertainty:propeller:aerodynamics:CP:static:rel"]
+        >> c_p_static = c_p_static * (1 + eps) + delta
     """
 
     # add 'deviation' component to modify the variables

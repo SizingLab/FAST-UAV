@@ -29,9 +29,9 @@ DF = pd.read_csv(PATH, sep=";")
             DF["Tmax_Nm"].min(),
             DF["Tmax_Nm"].max(),
         ),
-        "data:propulsion:motor:torque:coefficient:estimated": (
-            DF["Kt_Nm_A"].min(),
-            DF["Kt_Nm_A"].max(),
+        "data:propulsion:motor:speed:constant:estimated": (
+            DF["Kv_SI"].min(),
+            DF["Kv_SI"].max(),
         ),
     },
 )
@@ -45,9 +45,9 @@ class MotorCatalogueSelection(om.ExplicitComponent):
         """
         self.options.declare("off_the_shelf", default=False, types=bool)
         T_selection = "next"
-        Kt_selection = "average"
+        Kv_selection = "average"
         self._clf = NearestNeighbor(
-            df=DF, X_names=["Tmax_Nm", "Kt_Nm_A"], crits=[T_selection, Kt_selection]
+            df=DF, X_names=["Tmax_Nm", "Kv_SI"], crits=[T_selection, Kv_selection]
         )
         self._clf.train()
 
@@ -55,27 +55,27 @@ class MotorCatalogueSelection(om.ExplicitComponent):
         # inputs: estimated values
         self.add_input("data:propulsion:motor:torque:max:estimated", val=np.nan, units="N*m")
         self.add_input(
-            "data:propulsion:motor:torque:coefficient:estimated", val=np.nan, units="N*m/A"
+            "data:propulsion:motor:speed:constant:estimated", val=np.nan, units="rad/V/s"
         )
         self.add_input("data:propulsion:motor:torque:nominal:estimated", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:friction:estimated", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:resistance:estimated", val=np.nan, units="V/A")
-        self.add_input("data:weights:propulsion:motor:mass:estimated", val=np.nan, units="kg")
-        # outputs: catalogue values if off_the_shelfs is True
+        self.add_input("data:weight:propulsion:motor:mass:estimated", val=np.nan, units="kg")
+        # outputs: catalogue values if off_the_shelf is True
         if self.options["off_the_shelf"]:
             self.add_output("data:propulsion:motor:torque:max:catalogue", units="N*m")
-            self.add_output("data:propulsion:motor:torque:coefficient:catalogue", units="N*m/A")
+            self.add_output("data:propulsion:motor:speed:constant:catalogue", units="rad/V/s")
             self.add_output("data:propulsion:motor:torque:nominal:catalogue", units="N*m")
             self.add_output("data:propulsion:motor:torque:friction:catalogue", units="N*m")
             self.add_output("data:propulsion:motor:resistance:catalogue", units="V/A")
-            self.add_output("data:weights:propulsion:motor:mass:catalogue", units="kg")
+            self.add_output("data:weight:propulsion:motor:mass:catalogue", units="kg")
         # outputs: 'real' values (= estimated values if off_the_shelf is False, catalogue values else)
         self.add_output("data:propulsion:motor:torque:max", units="N*m")
-        self.add_output("data:propulsion:motor:torque:coefficient", units="N*m/A")
+        self.add_output("data:propulsion:motor:speed:constant", units="rad/V/s")
         self.add_output("data:propulsion:motor:torque:nominal", units="N*m")
         self.add_output("data:propulsion:motor:torque:friction", units="N*m")
         self.add_output("data:propulsion:motor:resistance", units="V/A")
-        self.add_output("data:weights:propulsion:motor:mass", units="kg")
+        self.add_output("data:weight:propulsion:motor:mass", units="kg")
 
     def setup_partials(self):
         self.declare_partials(
@@ -84,8 +84,8 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:propulsion:motor:torque:coefficient",
-            "data:propulsion:motor:torque:coefficient:estimated",
+            "data:propulsion:motor:speed:constant",
+            "data:propulsion:motor:speed:constant:estimated",
             val=1.0,
         )
         self.declare_partials(
@@ -104,8 +104,8 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:weights:propulsion:motor:mass",
-            "data:weights:propulsion:motor:mass:estimated",
+            "data:weight:propulsion:motor:mass",
+            "data:weight:propulsion:motor:mass:estimated",
             val=1.0,
         )
 
@@ -120,42 +120,42 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             # Definition parameters for motor selection
             Tmax_opt = inputs["data:propulsion:motor:torque:max:estimated"]
             # Tnom_opt = inputs["data:propulsion:motor:torque:nominal:estimated"]
-            Ktmot_opt = inputs["data:propulsion:motor:torque:coefficient:estimated"]
+            Kv_opt = inputs["data:propulsion:motor:speed:constant:estimated"]
 
             # Get closest product
-            df_y = self._clf.predict([Tmax_opt, Ktmot_opt])
+            df_y = self._clf.predict([Tmax_opt, Kv_opt])
             Tnom = df_y["Tnom_Nm"].iloc[0]  # nominal torque [N.m]
-            Ktmot = df_y["Kt_Nm_A"].iloc[0]  # Kt constant [N.m./A]
-            Rmot = df_y["R_ohm"].iloc[0]  # motor resistance [ohm]
+            Kv = df_y["Kv_SI"].iloc[0]  # speed constant [rad/V/s]
+            R = df_y["R_ohm"].iloc[0]  # motor resistance [ohm]
             Tmax = df_y["Tmax_Nm"].iloc[0]  # max motor torque [Nm]
-            Mmot = df_y["Mass_g"].iloc[0] / 1000  # motor mass [kg]
-            Tfmot = df_y["Cf_Nm"].iloc[0]  # friction torque [Nm]
+            m_mot = df_y["Mass_g"].iloc[0] / 1000  # motor mass [kg]
+            Tf = df_y["Cf_Nm"].iloc[0]  # friction torque [Nm]
 
             # Outputs
             outputs["data:propulsion:motor:torque:max"] = outputs[
                 "data:propulsion:motor:torque:max:catalogue"
             ] = Tmax
-            outputs["data:propulsion:motor:torque:coefficient"] = outputs[
-                "data:propulsion:motor:torque:coefficient:catalogue"
-            ] = Ktmot
+            outputs["data:propulsion:motor:speed:constant"] = outputs[
+                "data:propulsion:motor:speed:constant:catalogue"
+            ] = Kv
             outputs["data:propulsion:motor:torque:nominal"] = outputs[
                 "data:propulsion:motor:torque:nominal:catalogue"
             ] = Tnom
             outputs["data:propulsion:motor:torque:friction"] = outputs[
                 "data:propulsion:motor:torque:friction:catalogue"
-            ] = Tfmot
+            ] = Tf
             outputs["data:propulsion:motor:resistance"] = outputs[
                 "data:propulsion:motor:resistance:catalogue"
-            ] = Rmot
-            outputs["data:weights:propulsion:motor:mass"] = outputs["data:weights:propulsion:motor:mass:catalogue"] = Mmot
+            ] = R
+            outputs["data:weight:propulsion:motor:mass"] = outputs["data:weight:propulsion:motor:mass:catalogue"] = m_mot
 
         # CUSTOM COMPONENTS (no change)
         else:
             outputs["data:propulsion:motor:torque:max"] = inputs[
                 "data:propulsion:motor:torque:max:estimated"
             ]
-            outputs["data:propulsion:motor:torque:coefficient"] = inputs[
-                "data:propulsion:motor:torque:coefficient:estimated"
+            outputs["data:propulsion:motor:speed:constant"] = inputs[
+                "data:propulsion:motor:speed:constant:estimated"
             ]
             outputs["data:propulsion:motor:torque:nominal"] = inputs[
                 "data:propulsion:motor:torque:nominal:estimated"
@@ -166,4 +166,4 @@ class MotorCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:motor:resistance"] = inputs[
                 "data:propulsion:motor:resistance:estimated"
             ]
-            outputs["data:weights:propulsion:motor:mass"] = inputs["data:weights:propulsion:motor:mass:estimated"]
+            outputs["data:weight:propulsion:motor:mass"] = inputs["data:weight:propulsion:motor:mass:estimated"]

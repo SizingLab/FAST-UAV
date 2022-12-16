@@ -25,11 +25,11 @@ class CoG_propulsion_FW(om.ExplicitComponent):
         if propulsion_conf == "pusher":
             self.add_input("data:geometry:fuselage:length", val=np.nan, units="m")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
-        self.add_input("data:weights:propulsion:%s:propeller:mass" % propulsion_id, val=np.nan, units="kg")
-        self.add_input("data:weights:propulsion:%s:motor:mass" % propulsion_id, val=np.nan, units="kg")
-        self.add_input("data:weights:propulsion:%s:battery:mass" % propulsion_id, val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:%s:propeller:mass" % propulsion_id, val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:%s:motor:mass" % propulsion_id, val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:%s:battery:mass" % propulsion_id, val=np.nan, units="kg")
 
-        self.add_output("data:weights:propulsion:%s" % propulsion_id, units="kg")
+        self.add_output("data:weight:propulsion:%s" % propulsion_id, units="kg")
         self.add_output("data:stability:CoG:propulsion:%s" % propulsion_id, units="m")
 
     def setup_partials(self):
@@ -41,9 +41,9 @@ class CoG_propulsion_FW(om.ExplicitComponent):
         x_root_LE_w = inputs["data:geometry:wing:root:LE:x"]
         x_root_TE_w = inputs["data:geometry:wing:root:TE:x"]
         l_mot = inputs["data:propulsion:%s:motor:length:estimated" % propulsion_id]
-        m_pro = inputs["data:weights:propulsion:%s:propeller:mass" % propulsion_id]
-        m_mot = inputs["data:weights:propulsion:%s:motor:mass" % propulsion_id]
-        m_bat = inputs["data:weights:propulsion:%s:battery:mass" % propulsion_id]
+        m_pro = inputs["data:weight:propulsion:%s:propeller:mass" % propulsion_id]
+        m_mot = inputs["data:weight:propulsion:%s:motor:mass" % propulsion_id]
+        m_bat = inputs["data:weight:propulsion:%s:battery:mass" % propulsion_id]
         N_pro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
         if propulsion_conf == "pusher":
@@ -59,7 +59,7 @@ class CoG_propulsion_FW(om.ExplicitComponent):
         m_propulsion = N_pro * m_pro + N_pro * m_mot + m_bat
         x_cg_propulsion = (N_pro * x_cg_pro * m_pro + N_pro * x_cg_mot * m_mot + x_cg_bat * m_bat) / m_propulsion
 
-        outputs["data:weights:propulsion:%s" % propulsion_id] = m_propulsion
+        outputs["data:weight:propulsion:%s" % propulsion_id] = m_propulsion
         outputs["data:stability:CoG:propulsion:%s" % propulsion_id] = x_cg_propulsion
 
 
@@ -78,12 +78,12 @@ class CoG_propulsion_MR(om.ExplicitComponent):
         self.add_input("data:geometry:%s:propeller:x:rear" % propulsion_id, val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:LE:x", val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:TE:x", val=np.nan, units="m")
-        self.add_input("data:weights:propulsion:%s:propeller:mass" % propulsion_id, val=np.nan, units="kg")
-        self.add_input("data:weights:propulsion:%s:motor:mass" % propulsion_id, val=np.nan, units="kg")
-        self.add_input("data:weights:propulsion:%s:battery:mass" % propulsion_id, val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:%s:propeller:mass" % propulsion_id, val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:%s:motor:mass" % propulsion_id, val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:%s:battery:mass" % propulsion_id, val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
 
-        self.add_output("data:weights:propulsion:%s" % propulsion_id, units="kg")
+        self.add_output("data:weight:propulsion:%s" % propulsion_id, units="kg")
         self.add_output("data:stability:CoG:propulsion:%s" % propulsion_id, units="m")
 
     def setup_partials(self):
@@ -95,9 +95,9 @@ class CoG_propulsion_MR(om.ExplicitComponent):
         x_pro_rear = inputs["data:geometry:%s:propeller:x:rear" % propulsion_id]
         x_root_LE_w = inputs["data:geometry:wing:root:LE:x"]
         x_root_TE_w = inputs["data:geometry:wing:root:TE:x"]
-        m_pro = inputs["data:weights:propulsion:%s:propeller:mass" % propulsion_id]
-        m_mot = inputs["data:weights:propulsion:%s:motor:mass" % propulsion_id]
-        m_bat = inputs["data:weights:propulsion:%s:battery:mass" % propulsion_id]
+        m_pro = inputs["data:weight:propulsion:%s:propeller:mass" % propulsion_id]
+        m_mot = inputs["data:weight:propulsion:%s:motor:mass" % propulsion_id]
+        m_bat = inputs["data:weight:propulsion:%s:battery:mass" % propulsion_id]
         N_pro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
         x_cg_pro = x_cg_mot = (x_pro_front + x_pro_rear) / 2  # [m] average position of the propellers / motors
@@ -106,5 +106,5 @@ class CoG_propulsion_MR(om.ExplicitComponent):
         m_propulsion = N_pro * m_pro + N_pro * m_mot + m_bat
         x_cg_propulsion = (N_pro * x_cg_pro * m_pro + N_pro * x_cg_mot * m_mot + x_cg_bat * m_bat) / m_propulsion
 
-        outputs["data:weights:propulsion:%s" % propulsion_id] = m_propulsion
+        outputs["data:weight:propulsion:%s" % propulsion_id] = m_propulsion
         outputs["data:stability:CoG:propulsion:%s" % propulsion_id] = x_cg_propulsion

@@ -19,13 +19,13 @@ class VerticalClimbThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
-        self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
-        self.add_input("data:scenarios:%s:climb:speed" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("data:scenarios:dISA", val=0.0, units="K")
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:climb:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_output("data:propulsion:%s:propeller:thrust:climb" % propulsion_id, units="N")
         self.add_output("data:propulsion:%s:propeller:AoA:climb" % propulsion_id, units="rad")
 
@@ -39,16 +39,16 @@ class VerticalClimbThrust(om.ExplicitComponent):
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
         # Flight parameters
-        V_climb = inputs["data:scenarios:%s:climb:speed" % propulsion_id]
-        altitude_climb = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]  # conservative assumption
-        dISA = inputs["data:scenarios:dISA"]
+        V_climb = inputs["mission:sizing:main_route:climb:speed:%s" % propulsion_id]
+        altitude_climb = inputs["mission:sizing:main_route:cruise:altitude"]  # conservative assumption
+        dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_climb, dISA)
         atm.true_airspeed = V_climb
         q_climb = atm.dynamic_pressure
 
         # Weight
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
-        Weight = Mtotal_guess * g  # [N]
+        m_uav_guess = inputs["data:weight:mtow:guess"]
+        Weight = m_uav_guess * g  # [N]
 
         # Angle of attack
         alpha_cl = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight)
@@ -63,7 +63,7 @@ class VerticalClimbThrust(om.ExplicitComponent):
 
         # PROVISION FOR CLIMBING FORWARD FLIGHT (PATH ANGLE THETA)
         # theta = np.pi / 2  # [rad] flight path angle (vertical climb)
-        # F_pro_cl, alpha_cl = MultirotorFlightModel.get_thrust(Mtotal_guess, V_cl, theta, S_front_estimated, S_top_estimated, C_D, C_L0, rho_air)  # [N] required thrust (and angle of attack)
+        # F_pro_cl, alpha_cl = MultirotorFlightModel.get_thrust(m_uav_guess, V_cl, theta, S_front_estimated, S_top_estimated, C_D, C_L0, rho_air)  # [N] required thrust (and angle of attack)
         # F_pro_cl = F_pro_cl / Npro  # [N] thrust per propeller
 
         outputs["data:propulsion:%s:propeller:thrust:climb" % propulsion_id] = F_pro_cl
@@ -80,15 +80,15 @@ class FixedwingClimbThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
-        self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
+        self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
         self.add_input("data:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
-        self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
-        self.add_input("data:scenarios:%s:climb:speed" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("data:scenarios:%s:climb:rate" % propulsion_id, val=np.nan, units="m/s")
-        self.add_input("data:scenarios:dISA", val=0.0, units="K")
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:climb:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:main_route:climb:rate:%s" % propulsion_id, val=np.nan, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_output("data:propulsion:%s:propeller:thrust:climb" % propulsion_id, units="N")
         self.add_output("data:propulsion:%s:propeller:AoA:climb" % propulsion_id, units="rad")
 
@@ -99,20 +99,20 @@ class FixedwingClimbThrust(om.ExplicitComponent):
         # UAV configuration
         propulsion_id = self.options["propulsion_id"]
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
-        WS = inputs["data:scenarios:wing_loading"]
+        WS = inputs["data:geometry:wing:loading"]
 
         # Flight parameters
-        V_v = inputs["data:scenarios:%s:climb:rate" % propulsion_id]
-        V_climb = inputs["data:scenarios:%s:climb:speed" % propulsion_id]
-        altitude_climb = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]  # conservative assumption
-        dISA = inputs["data:scenarios:dISA"]
+        V_v = inputs["mission:sizing:main_route:climb:rate:%s" % propulsion_id]
+        V_climb = inputs["mission:sizing:main_route:climb:speed:%s" % propulsion_id]
+        altitude_climb = inputs["mission:sizing:main_route:cruise:altitude"]  # conservative assumption
+        dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_climb, dISA)
         atm.true_airspeed = V_climb
         q_climb = atm.dynamic_pressure
 
         # Weight
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
-        Weight = Mtotal_guess * g
+        m_uav_guess = inputs["data:weight:mtow:guess"]
+        Weight = m_uav_guess * g
 
         # Induced drag parameters
         K = inputs["data:aerodynamics:CDi:K"]

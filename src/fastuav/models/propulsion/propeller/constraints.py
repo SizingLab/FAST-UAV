@@ -17,8 +17,8 @@ class PropellerConstraints(om.ExplicitComponent):
         self.add_input("data:propulsion:propeller:advance_ratio:cruise", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:speed:climb", val=np.nan, units="rad/s")
         self.add_input("data:propulsion:propeller:speed:cruise", val=np.nan, units="rad/s")
-        self.add_input("data:scenarios:climb:speed", val=np.nan, units="m/s")
-        self.add_input("data:scenarios:cruise:speed", val=np.nan, units="m/s")
+        self.add_input("mission:sizing:main_route:climb:speed", val=np.nan, units="m/s")
+        self.add_input("mission:sizing:main_route:cruise:speed", val=np.nan, units="m/s")
         self.add_output("data:propulsion:propeller:constraints:rpm:climb", units=None)
         self.add_output("data:propulsion:propeller:constraints:rpm:cruise", units=None)
         self.add_output("data:propulsion:propeller:constraints:airspeed:climb", units=None)
@@ -34,8 +34,8 @@ class PropellerConstraints(om.ExplicitComponent):
         J_cruise = inputs["data:propulsion:propeller:advance_ratio:cruise"]
         W_pro_cl = inputs["data:propulsion:propeller:speed:climb"]
         W_pro_cr = inputs["data:propulsion:propeller:speed:cruise"]
-        V_cl = inputs["data:scenarios:climb:speed"]
-        V_cr = inputs["data:scenarios:cruise:speed"]
+        V_cl = inputs["mission:sizing:main_route:climb:speed"]
+        V_cr = inputs["mission:sizing:main_route:cruise:speed"]
 
         prop_con1 = (NDmax - W_pro_cl * Dpro / 2 / np.pi) / NDmax
         prop_con2 = (NDmax - W_pro_cr * Dpro / 2 / np.pi) / NDmax
@@ -54,8 +54,8 @@ class PropellerConstraints(om.ExplicitComponent):
         J_cruise = inputs["data:propulsion:propeller:advance_ratio:cruise"]
         W_pro_cl = inputs["data:propulsion:propeller:speed:climb"]
         W_pro_cr = inputs["data:propulsion:propeller:speed:cruise"]
-        V_cl = inputs["data:scenarios:climb:speed"]
-        V_cr = inputs["data:scenarios:cruise:speed"]
+        V_cl = inputs["mission:sizing:main_route:climb:speed"]
+        V_cr = inputs["mission:sizing:main_route:cruise:speed"]
 
         partials[
             "data:propulsion:propeller:constraints:rpm:climb",
@@ -97,7 +97,7 @@ class PropellerConstraints(om.ExplicitComponent):
 
         partials[
             "data:propulsion:propeller:constraints:airspeed:climb",
-            "data:scenarios:climb:speed",
+            "mission:sizing:main_route:climb:speed",
         ] = (
             J_climb * W_pro_cl * Dpro / V_cl**2 / 2 / np.pi if V_cl > 0 else 0.0
         )
@@ -122,7 +122,7 @@ class PropellerConstraints(om.ExplicitComponent):
 
         partials[
             "data:propulsion:propeller:constraints:airspeed:cruise",
-            "data:scenarios:cruise:speed",
+            "mission:sizing:main_route:cruise:speed",
         ] = (
             J_cruise * W_pro_cr * Dpro / V_cr**2 / 2 / np.pi if V_cr > 0 else 0.0
         )

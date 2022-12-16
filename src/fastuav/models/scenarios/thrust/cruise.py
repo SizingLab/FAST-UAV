@@ -20,14 +20,14 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
         self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
-        self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
-        self.add_input("data:scenarios:%s:cruise:speed" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("data:scenarios:dISA", val=0.0, units="K")
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
         self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
 
@@ -41,16 +41,16 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
         # Flight parameters
-        V_cruise = inputs["data:scenarios:%s:cruise:speed" % propulsion_id]
-        altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
-        dISA = inputs["data:scenarios:dISA"]
+        V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_cruise, dISA)
         atm.true_airspeed = V_cruise
         q_cruise = atm.dynamic_pressure
 
         # Weight  # [N]
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
-        weight = Mtotal_guess * g
+        m_uav_guess = inputs["data:weight:mtow:guess"]
+        weight = m_uav_guess * g
 
         # Drag and lift parameters
         C_D0 = inputs["data:aerodynamics:%s:CD0" % propulsion_id]  # pressure drag
@@ -62,7 +62,7 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         func = lambda x: np.tan(x) - q_cruise * C_D0 * (
             S_top * np.sin(x) + S_front * np.cos(x)
         ) / (
-            Mtotal_guess * g
+            m_uav_guess * g
             + q_cruise * C_L * (S_top * np.sin(x) + S_front * np.cos(x))
         )
         alpha_cr = brentq(func, 0, np.pi / 2)  # [rad] Rotor disk angle of attack
@@ -89,14 +89,14 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weights:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
-        self.add_input("data:scenarios:wing_loading", val=np.nan, units="N/m**2")
+        self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
         self.add_input("data:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
-        self.add_input("data:scenarios:%s:cruise:altitude" % propulsion_id, val=0.0, units="m")
-        self.add_input("data:scenarios:%s:cruise:speed" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("data:scenarios:dISA", val=0.0, units="K")
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
         self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
 
@@ -107,19 +107,19 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
         # UAV configuration
         propulsion_id = self.options["propulsion_id"]
         Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
-        WS = inputs["data:scenarios:wing_loading"]
+        WS = inputs["data:geometry:wing:loading"]
 
         # Flight parameters
-        V_cruise = inputs["data:scenarios:%s:cruise:speed" % propulsion_id]
-        altitude_cruise = inputs["data:scenarios:%s:cruise:altitude" % propulsion_id]
-        dISA = inputs["data:scenarios:dISA"]
+        V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_cruise, dISA)
         atm.true_airspeed = V_cruise
         q_cruise = atm.dynamic_pressure
 
         # Weight
-        Mtotal_guess = inputs["data:weights:mtow:guess"]
-        Weight = Mtotal_guess * g  # [N]
+        m_uav_guess = inputs["data:weight:mtow:guess"]
+        Weight = m_uav_guess * g  # [N]
 
         # Induced drag parameter
         K = inputs["data:aerodynamics:CDi:K"]

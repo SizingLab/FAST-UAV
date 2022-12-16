@@ -48,72 +48,72 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     propulsions = 0.0
     for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
         propellers[i] = (
-            variables["data:weights:propulsion:%s:propeller:mass" % propulsion_id].value[0]
+            variables["data:weight:propulsion:%s:propeller:mass" % propulsion_id].value[0]
             * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:propeller:mass" % propulsion_id in variables.names() else 0.0
+        ) if "data:weight:propulsion:%s:propeller:mass" % propulsion_id in variables.names() else 0.0
         motors[i] = (
-            variables["data:weights:propulsion:%s:motor:mass" % propulsion_id].value[0]
+            variables["data:weight:propulsion:%s:motor:mass" % propulsion_id].value[0]
             * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:motor:mass" % propulsion_id in variables.names() else 0.0
+        ) if "data:weight:propulsion:%s:motor:mass" % propulsion_id in variables.names() else 0.0
         gearboxes[i] = (
-                variables["data:weights:propulsion:%s:gearbox:mass" % propulsion_id].value[0]
+                variables["data:weight:propulsion:%s:gearbox:mass" % propulsion_id].value[0]
                 * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
-            ) if "data:weights:propulsion:%s:gearbox:mass" % propulsion_id in variables.names() else 0.0
+            ) if "data:weight:propulsion:%s:gearbox:mass" % propulsion_id in variables.names() else 0.0
         esc[i] = (
-            variables["data:weights:propulsion:%s:esc:mass" % propulsion_id].value[0]
+            variables["data:weight:propulsion:%s:esc:mass" % propulsion_id].value[0]
             * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:esc:mass" % propulsion_id in variables.names() else 0.0
+        ) if "data:weight:propulsion:%s:esc:mass" % propulsion_id in variables.names() else 0.0
         batteries[i] = (
-            variables["data:weights:propulsion:%s:battery:mass" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:battery:mass" % propulsion_id in variables.names() else 0.0
+            variables["data:weight:propulsion:%s:battery:mass" % propulsion_id].value[0]
+        ) if "data:weight:propulsion:%s:battery:mass" % propulsion_id in variables.names() else 0.0
         wires[i] = (
-            variables["data:weights:propulsion:%s:wires:mass" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:wires:mass" % propulsion_id in variables.names() else 0.0
+            variables["data:weight:propulsion:%s:wires:mass" % propulsion_id].value[0]
+        ) if "data:weight:propulsion:%s:wires:mass" % propulsion_id in variables.names() else 0.0
 
         propulsion[i] = propellers[i] + motors[i] + gearboxes[i] + esc[i] + batteries[i] + wires[i]
         propulsions += propulsion[i]
 
     # AIRFRAME
     body = (
-        variables["data:weights:airframe:body:mass"].value[0]
-        if "data:weights:airframe:body:mass" in variables.names()
+        variables["data:weight:airframe:body:mass"].value[0]
+        if "data:weight:airframe:body:mass" in variables.names()
         else 0.0
     )
     arms = (
-        variables["data:weights:airframe:arms:mass"].value[0]
-        if "data:weights:airframe:arms:mass" in variables.names()
+        variables["data:weight:airframe:arms:mass"].value[0]
+        if "data:weight:airframe:arms:mass" in variables.names()
         else 0.0
     )
     wing = (
-        variables["data:weights:airframe:wing:mass"].value[0]
-        if "data:weights:airframe:wing:mass" in variables.names()
+        variables["data:weight:airframe:wing:mass"].value[0]
+        if "data:weight:airframe:wing:mass" in variables.names()
         else 0.0
     )
     fuselage = (
-        variables["data:weights:airframe:fuselage:mass"].value[0]
-        if "data:weights:airframe:fuselage:mass" in variables.names()
+        variables["data:weight:airframe:fuselage:mass"].value[0]
+        if "data:weight:airframe:fuselage:mass" in variables.names()
         else 0.0
     )
     htail = (
-        variables["data:weights:airframe:tail:horizontal:mass"].value[0]
-        if "data:weights:airframe:tail:horizontal:mass" in variables.names()
+        variables["data:weight:airframe:tail:horizontal:mass"].value[0]
+        if "data:weight:airframe:tail:horizontal:mass" in variables.names()
         else 0.0
     )
     vtail = (
-        variables["data:weights:airframe:tail:vertical:mass"].value[0]
-        if "data:weights:airframe:tail:vertical:mass" in variables.names()
+        variables["data:weight:airframe:tail:vertical:mass"].value[0]
+        if "data:weight:airframe:tail:vertical:mass" in variables.names()
         else 0.0
     )
     airframe = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
-    payload = variables["data:scenarios:payload:mass"].value[0]
+    payload = variables["mission:sizing:payload:mass"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
 
     # MTOW
-    MTOW = variables["data:weights:mtow"].value[0]
+    MTOW = variables["data:weight:mtow"].value[0]
 
     if round(MTOW, 6) == round(propulsions + airframe + payload + fuel_mission, 6):
         MTOW = propulsions + airframe + payload + fuel_mission
@@ -363,7 +363,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
 
 
 def mass_breakdown_bar_plot_drone(
-    drone_file_path: str, name=None, fig=None, file_formatter=None
+    drone_file_path: str, name=None, fig=None, file_formatter=None, error_y=None,
 ) -> go.FigureWidget:
     """
     DEPRECATED FOR NOW.
@@ -392,121 +392,99 @@ def mass_breakdown_bar_plot_drone(
     propulsions = 0.0
     for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
         propellers[i] = (
-                variables["data:weights:propulsion:%s:propeller:mass" % propulsion_id].value[0]
+                variables["data:weight:propulsion:%s:propeller:mass" % propulsion_id].value[0]
                 * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:propeller:mass" % propulsion_id in variables.names() else 0.0
+        ) if "data:weight:propulsion:%s:propeller:mass" % propulsion_id in variables.names() else 0.0
         motors[i] = (
-                variables["data:weights:propulsion:%s:motor:mass" % propulsion_id].value[0]
+                variables["data:weight:propulsion:%s:motor:mass" % propulsion_id].value[0]
                 * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:motor:mass" % propulsion_id in variables.names() else 0.0
+        ) if "data:weight:propulsion:%s:motor:mass" % propulsion_id in variables.names() else 0.0
         gearboxes[i] = (
-                variables["data:weights:propulsion:%s:gearbox:mass" % propulsion_id].value[0]
+                variables["data:weight:propulsion:%s:gearbox:mass" % propulsion_id].value[0]
                 * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:gearbox:mass" % propulsion_id in variables.names() else 0.0
+        ) if "data:weight:propulsion:%s:gearbox:mass" % propulsion_id in variables.names() else 0.0
         esc[i] = (
-                variables["data:weights:propulsion:%s:esc:mass" % propulsion_id].value[0]
+                variables["data:weight:propulsion:%s:esc:mass" % propulsion_id].value[0]
                 * variables["data:propulsion:%s:propeller:number" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:esc:mass" % propulsion_id in variables.names() else 0.0
+        ) if "data:weight:propulsion:%s:esc:mass" % propulsion_id in variables.names() else 0.0
         batteries[i] = (
-            variables["data:weights:propulsion:%s:battery:mass" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:battery:mass" % propulsion_id in variables.names() else 0.0
+            variables["data:weight:propulsion:%s:battery:mass" % propulsion_id].value[0]
+        ) if "data:weight:propulsion:%s:battery:mass" % propulsion_id in variables.names() else 0.0
         wires[i] = (
-            variables["data:weights:propulsion:%s:wires:mass" % propulsion_id].value[0]
-        ) if "data:weights:propulsion:%s:wires:mass" % propulsion_id in variables.names() else 0.0
+            variables["data:weight:propulsion:%s:wires:mass" % propulsion_id].value[0]
+        ) if "data:weight:propulsion:%s:wires:mass" % propulsion_id in variables.names() else 0.0
 
         propulsion[i] = propellers[i] + motors[i] + gearboxes[i] + esc[i] + batteries[i] + wires[i]
         propulsions += propulsion[i]
 
     # AIRFRAME
     body = (
-        variables["data:weights:airframe:body:mass"].value[0]
-        if "data:weights:airframe:body:mass" in variables.names()
+        variables["data:weight:airframe:body:mass"].value[0]
+        if "data:weight:airframe:body:mass" in variables.names()
         else 0.0
     )
     arms = (
-        variables["data:weights:airframe:arms:mass"].value[0]
-        if "data:weights:airframe:arms:mass" in variables.names()
+        variables["data:weight:airframe:arms:mass"].value[0]
+        if "data:weight:airframe:arms:mass" in variables.names()
         else 0.0
     )
     wing = (
-        variables["data:weights:airframe:wing:mass"].value[0]
-        if "data:weights:airframe:wing:mass" in variables.names()
+        variables["data:weight:airframe:wing:mass"].value[0]
+        if "data:weight:airframe:wing:mass" in variables.names()
         else 0.0
     )
     fuselage = (
-        variables["data:weights:airframe:fuselage:mass"].value[0]
-        if "data:weights:airframe:fuselage:mass" in variables.names()
+        variables["data:weight:airframe:fuselage:mass"].value[0]
+        if "data:weight:airframe:fuselage:mass" in variables.names()
         else 0.0
     )
     htail = (
-        variables["data:weights:airframe:tail:horizontal:mass"].value[0]
-        if "data:weights:airframe:tail:horizontal:mass" in variables.names()
+        variables["data:weight:airframe:tail:horizontal:mass"].value[0]
+        if "data:weight:airframe:tail:horizontal:mass" in variables.names()
         else 0.0
     )
     vtail = (
-        variables["data:weights:airframe:tail:vertical:mass"].value[0]
-        if "data:weights:airframe:tail:vertical:mass" in variables.names()
+        variables["data:weight:airframe:tail:vertical:mass"].value[0]
+        if "data:weight:airframe:tail:vertical:mass" in variables.names()
         else 0.0
     )
     airframe = body + arms + wing + fuselage + htail + vtail
 
     # PAYLOAD
-    payload = variables["data:scenarios:payload:mass"].value[0]
+    payload = variables["mission:sizing:payload:mass"].value[0]
 
     # FUEL MISSION (not used yet. May be useful for hydrogen)
     fuel_mission = 0
 
     # MTOW
-    MTOW = variables["data:weights:mtow"].value[0]
+    MTOW = variables["data:weight:mtow"].value[0]
 
     if round(MTOW, 6) == round(propulsions + airframe + payload + fuel_mission, 6):
         MTOW = propulsions + airframe + payload + fuel_mission
 
     # DISPLAYED NAMES AND VALUES
-    if gearboxes == 0:
-        weight_labels = [
-            "MTOW",
-            "Payload",
-            "Battery",
-            "esc",
-            "Motors",
-            "Propellers",
-            "Cables",
-            "Structure",
-        ]
-        weight_values = [
-            MTOW,
-            payload,
-            battery,
-            esc,
-            motors,
-            propellers,
-            wires,
-            airframe,
-        ]
-    else:
-        weight_labels = [
-            "MTOW",
-            "Payload",
-            "Battery",
-            "esc",
-            "Motors",
-            "Gearboxes",
-            "Propellers",
-            "Cables",
-            "Structure",
-        ]
-        weight_values = [
-            MTOW,
-            payload,
-            battery,
-            esc,
-            motors,
-            gearboxes,
-            propellers,
-            wires,
-            structure,
-        ]
+    weight_labels = [
+        "Total",
+        "Payload",
+        "Battery",
+        "ESC",
+        "Motors",
+        # "Gearboxes",
+        "Propellers",
+        "Wires",
+        "Airframe",
+    ]
+    weight_values = [
+        MTOW,
+        payload,
+        np.sum(batteries),
+        np.sum(esc),
+        np.sum(motors),
+        # np.sum(gearboxes),
+        np.sum(propellers),
+        np.sum(wires),
+        np.sum(airframe),
+    ]
 
     if fig is None:
         fig = go.Figure()
@@ -514,11 +492,16 @@ def mass_breakdown_bar_plot_drone(
     # Same color for each drone configuration
     i = len(fig.data)
     fig.add_trace(
-        go.Bar(name=name, x=weight_labels, y=weight_values, marker_color=COLS[i]),
+        go.Bar(name=name,
+               x=weight_labels,
+               y=weight_values,
+               marker_color=COLS[i],
+               error_y=dict(type='data', array=error_y)),
     )
 
     fig.update_layout(margin=dict(t=80, l=0, r=0, b=0), title_text="Mass Breakdown", title_x=0.5)
     fig.update_layout(yaxis_title="Mass [kg]")
+    fig.update_layout(xaxis={'categoryorder':'total descending'})
 
     return fig
 
@@ -551,7 +534,7 @@ def multirotor_geometry_plot(
     N_pro_arm = variables["data:geometry:arms:prop_per_arm"].value[0]  # [-]
     D_pro = variables["data:propulsion:%s:propeller:diameter" % MR_PROPULSION].value[0]  # [m]
     Vol_bat = variables["data:propulsion:%s:battery:volume" % MR_PROPULSION].value[0] * 0.000001  # [m**3]
-    Lmot = variables["data:propulsion:%s:motor:length:estimated" % MR_PROPULSION].value[
+    L_mot = variables["data:propulsion:%s:motor:length:estimated" % MR_PROPULSION].value[
         0
     ]  # [m] TODO: get length from catalogues too
 
@@ -601,18 +584,18 @@ def multirotor_geometry_plot(
         y_arms = np.concatenate((y_arms, y_arm))
 
         # Motors
-        # Lhd = 0.25 * Lmot  # [m]
+        # Lhd = 0.25 * L_mot  # [m]
         # Dhd = 0.25 * 2.54  # [m] this shaft diameter is commonly used along the series of APC MR propellers
-        Dmot = 0.7 * Lmot  # [m] geometric ratio used for AXI 2208, 2212, 2217
+        D_mot = 0.7 * L_mot  # [m] geometric ratio used for AXI 2208, 2212, 2217
         fig.add_shape(
             dict(
                 type="circle",
                 line=dict(color=COLS[k], width=3),
                 fillcolor=COLS[k],
-                x0=arm_length * np.cos(sep_angle) - Dmot / 2,
-                y0=arm_length * np.sin(sep_angle) - Dmot / 2,
-                x1=arm_length * np.cos(sep_angle) + Dmot / 2,
-                y1=arm_length * np.sin(sep_angle) + Dmot / 2,
+                x0=arm_length * np.cos(sep_angle) - D_mot / 2,
+                y0=arm_length * np.sin(sep_angle) - D_mot / 2,
+                x1=arm_length * np.cos(sep_angle) + D_mot / 2,
+                y1=arm_length * np.sin(sep_angle) + D_mot / 2,
             )
         )
 

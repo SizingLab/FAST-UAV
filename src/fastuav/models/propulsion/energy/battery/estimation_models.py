@@ -13,6 +13,22 @@ class BatteryEstimationModels(om.Group):
     """
 
     def setup(self):
+        # add_subsystem_with_deviation(
+        #     self,
+        #     "energy",
+        #     Energy(),
+        #     uncertain_outputs={"data:propulsion:battery:energy:estimated": "kJ"},
+        # )
+
+        add_subsystem_with_deviation(
+            self,
+            "power",
+            Power(),
+            uncertain_outputs={"data:propulsion:battery:power:estimated": "W"},
+        )
+
+        self.add_subsystem("capacity", Capacity(), promotes=["*"])
+
         add_subsystem_with_deviation(
             self,
             "max_current",
@@ -24,7 +40,7 @@ class BatteryEstimationModels(om.Group):
             self,
             "weight",
             Weight(),
-            uncertain_outputs={"data:weights:propulsion:battery:mass:estimated": "kg"},
+            uncertain_outputs={"data:weight:propulsion:battery:mass:estimated": "kg"},
         )
 
         self.add_subsystem("geometry", Geometry(), promotes=["*"])
@@ -44,6 +60,109 @@ class BatteryEstimationModels(om.Group):
         )
 
 
+class Energy(om.ExplicitComponent):
+    """
+    Computes battery energy
+    """
+
+    def setup(self):
+        self.add_input("data:propulsion:battery:power:estimated", val=np.nan, units="W")
+        self.add_input("data:propulsion:battery:current:max:reference", val=np.nan, units="A")
+        self.add_input("data:propulsion:battery:voltage:reference", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:energy:reference", val=np.nan, units="kJ")
+        self.add_output("data:propulsion:battery:energy:estimated", units="kJ")
+
+    def setup_partials(self):
+        # Finite difference all partials.
+        self.declare_partials("*", "*", method="fd")
+
+    def compute(self, inputs, outputs):
+        P_bat_max = inputs["data:propulsion:battery:power:estimated"]
+        U_bat_ref = inputs["data:propulsion:battery:voltage:reference"]
+        I_bat_max_ref = inputs["data:propulsion:battery:current:max:reference"]
+        E_bat_ref = inputs["data:propulsion:battery:energy:reference"]
+
+        E_bat = E_bat_ref * P_bat_max / (U_bat_ref * I_bat_max_ref)  # [kJ]
+
+        outputs["data:propulsion:battery:energy:estimated"] = E_bat
+
+
+class Power(om.ExplicitComponent):
+    """
+    Computes battery power
+    """
+
+    def setup(self):
+        self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
+        self.add_input("data:propulsion:battery:current:max:reference", val=np.nan, units="A")
+        self.add_input("data:propulsion:battery:voltage:reference", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:energy:reference", val=np.nan, units="kJ")
+        self.add_output("data:propulsion:battery:power:estimated", units="W")
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        E_bat = inputs["data:propulsion:battery:energy:estimated"]
+        E_bat_ref = inputs["data:propulsion:battery:energy:reference"]
+        U_bat_ref = inputs["data:propulsion:battery:voltage:reference"]
+        I_bat_max_ref = inputs["data:propulsion:battery:current:max:reference"]
+
+        P_bat_max = (U_bat_ref * I_bat_max_ref) * E_bat / E_bat_ref  # [W]
+
+        outputs["data:propulsion:battery:power:estimated"] = P_bat_max
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        E_bat = inputs["data:propulsion:battery:energy:estimated"]
+        E_bat_ref = inputs["data:propulsion:battery:energy:reference"]
+        U_bat_ref = inputs["data:propulsion:battery:voltage:reference"]
+        I_bat_max_ref = inputs["data:propulsion:battery:current:max:reference"]
+
+        partials["data:propulsion:battery:power:estimated",
+                 "data:propulsion:battery:energy:estimated"] = (U_bat_ref * I_bat_max_ref) / E_bat_ref
+
+        partials["data:propulsion:battery:power:estimated",
+                 "data:propulsion:battery:energy:reference"] = - (U_bat_ref * I_bat_max_ref) * E_bat / E_bat_ref ** 2
+
+        partials["data:propulsion:battery:power:estimated",
+                 "data:propulsion:battery:voltage:reference"] = I_bat_max_ref * E_bat / E_bat_ref
+
+        partials["data:propulsion:battery:power:estimated",
+                 "data:propulsion:battery:current:max:reference"] = U_bat_ref * E_bat / E_bat_ref
+
+
+class Capacity(om.ExplicitComponent):
+    """
+    Computes battery capacity
+    """
+
+    def setup(self):
+        self.add_input("data:propulsion:battery:voltage:estimated", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
+        self.add_output("data:propulsion:battery:capacity:estimated", units="kA*s")
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        U_bat = inputs["data:propulsion:battery:voltage:estimated"]
+        E_bat = inputs["data:propulsion:battery:energy:estimated"]
+
+        C_bat = E_bat / U_bat  # [kA*s]
+
+        outputs["data:propulsion:battery:capacity:estimated"] = C_bat
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        U_bat = inputs["data:propulsion:battery:voltage:estimated"]
+        E_bat = inputs["data:propulsion:battery:energy:estimated"]
+
+        partials["data:propulsion:battery:capacity:estimated",
+                 "data:propulsion:battery:voltage:estimated"] = - E_bat / U_bat ** 2
+
+        partials["data:propulsion:battery:capacity:estimated",
+                 "data:propulsion:battery:energy:estimated"] = 1 / U_bat
+
+
 class MaxCurrent(om.ExplicitComponent):
     """
     Computes battery maximum current
@@ -60,13 +179,13 @@ class MaxCurrent(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        Cbat_ref = inputs["data:propulsion:battery:capacity:reference"]
-        Imax_ref = inputs["data:propulsion:battery:current:max:reference"]
+        C_bat_ref = inputs["data:propulsion:battery:capacity:reference"]
+        I_bat_max_ref = inputs["data:propulsion:battery:current:max:reference"]
         C_bat = inputs["data:propulsion:battery:capacity:estimated"]
 
-        Imax = Imax_ref * C_bat / Cbat_ref  # [A] max current battery
+        I_bat_max = I_bat_max_ref * C_bat / C_bat_ref  # [A] max current battery
 
-        outputs["data:propulsion:battery:current:max:estimated"] = Imax
+        outputs["data:propulsion:battery:current:max:estimated"] = I_bat_max
 
 
 class Weight(om.ExplicitComponent):
@@ -76,39 +195,39 @@ class Weight(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
-        self.add_input("data:weights:propulsion:battery:mass:reference", val=np.nan, units="kg")
+        self.add_input("data:weight:propulsion:battery:mass:reference", val=np.nan, units="kg")
         self.add_input("data:propulsion:battery:energy:reference", val=np.nan, units="kJ")
-        self.add_output("data:weights:propulsion:battery:mass:estimated", units="kg")
+        self.add_output("data:weight:propulsion:battery:mass:estimated", units="kg")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        Ebat = inputs["data:propulsion:battery:energy:estimated"]
-        Mbat_ref = inputs["data:weights:propulsion:battery:mass:reference"]
-        Ebat_ref = inputs["data:propulsion:battery:energy:reference"]
+        E_bat = inputs["data:propulsion:battery:energy:estimated"]
+        m_bat_ref = inputs["data:weight:propulsion:battery:mass:reference"]
+        E_bat_ref = inputs["data:propulsion:battery:energy:reference"]
 
-        Mbat = Mbat_ref * Ebat / Ebat_ref  # [kg] estimated battery mass
+        m_bat = m_bat_ref * E_bat / E_bat_ref  # [kg] estimated battery mass
 
-        outputs["data:weights:propulsion:battery:mass:estimated"] = Mbat
+        outputs["data:weight:propulsion:battery:mass:estimated"] = m_bat
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        Ebat = inputs["data:propulsion:battery:energy:estimated"]
-        Mbat_ref = inputs["data:weights:propulsion:battery:mass:reference"]
-        Ebat_ref = inputs["data:propulsion:battery:energy:reference"]
+        E_bat = inputs["data:propulsion:battery:energy:estimated"]
+        m_bat_ref = inputs["data:weight:propulsion:battery:mass:reference"]
+        E_bat_ref = inputs["data:propulsion:battery:energy:reference"]
 
         partials[
-            "data:weights:propulsion:battery:mass:estimated",
+            "data:weight:propulsion:battery:mass:estimated",
             "data:propulsion:battery:energy:estimated"
-        ] = Mbat_ref / Ebat_ref
+        ] = m_bat_ref / E_bat_ref
         partials[
-            "data:weights:propulsion:battery:mass:estimated",
-            "data:weights:propulsion:battery:mass:reference"
-        ] = Ebat / Ebat_ref
+            "data:weight:propulsion:battery:mass:estimated",
+            "data:weight:propulsion:battery:mass:reference"
+        ] = E_bat / E_bat_ref
         partials[
-            "data:weights:propulsion:battery:mass:estimated",
+            "data:weight:propulsion:battery:mass:estimated",
             "data:propulsion:battery:energy:reference"
-        ] = - Mbat_ref * Ebat / Ebat_ref ** 2
+        ] = - m_bat_ref * E_bat / E_bat_ref ** 2
 
 
 class Geometry(om.ExplicitComponent):
@@ -130,13 +249,13 @@ class Geometry(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         C_bat = inputs["data:propulsion:battery:capacity:estimated"]
-        V_bat = inputs["data:propulsion:battery:voltage:estimated"]
-        Cbat_ref = inputs["data:propulsion:battery:capacity:reference"]
-        Vbat_ref = inputs["data:propulsion:battery:voltage:reference"]
+        U_bat = inputs["data:propulsion:battery:voltage:estimated"]
+        C_bat_ref = inputs["data:propulsion:battery:capacity:reference"]
+        U_bat_ref = inputs["data:propulsion:battery:voltage:reference"]
         Volbat_ref = inputs["data:propulsion:battery:volume:reference"]
 
         Vol_bat = Volbat_ref * (
-            C_bat * V_bat / (Cbat_ref * Vbat_ref)
+            C_bat * U_bat / (C_bat_ref * U_bat_ref)
         )  # [cm**3] Volume of the battery (estimated)
 
         outputs["data:propulsion:battery:volume:estimated"] = Vol_bat
@@ -184,3 +303,37 @@ class ESCEfficiency(om.ExplicitComponent):
         eta = eta_ref
 
         outputs["data:propulsion:esc:efficiency:estimated"] = eta
+
+
+class Energy2(om.ExplicitComponent):
+    """
+    Computes battery energy from capacity and voltage
+    """
+
+    def setup(self):
+        self.add_input("data:propulsion:battery:voltage:estimated", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:capacity:estimated", val=np.nan, units="kA*s")
+        self.add_output("data:propulsion:battery:energy:estimated", units="kJ")
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        U_bat = inputs["data:propulsion:battery:voltage:estimated"]
+        C_bat = inputs["data:propulsion:battery:capacity:estimated"]
+
+        E_bat = C_bat * U_bat  # [kJ] total energy stored
+
+        outputs["data:propulsion:battery:energy:estimated"] = E_bat
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        U_bat = inputs["data:propulsion:battery:voltage:estimated"]
+        C_bat = inputs["data:propulsion:battery:capacity:estimated"]
+
+        partials[
+            "data:propulsion:battery:energy:estimated", "data:propulsion:battery:voltage:estimated"
+        ] = C_bat
+
+        partials[
+            "data:propulsion:battery:energy:estimated", "data:propulsion:battery:capacity:estimated"
+        ] = U_bat

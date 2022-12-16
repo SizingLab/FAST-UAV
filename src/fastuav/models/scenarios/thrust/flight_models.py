@@ -36,7 +36,7 @@ class MultirotorFlightModel:
         return lift
 
     @staticmethod
-    def get_angle_of_attack(Mtotal, V, RoC, S_front, S_top, C_D, C_L0, rho_air):
+    def get_angle_of_attack(m_uav, V, RoC, S_front, S_top, C_D, C_L0, rho_air):
         """
         Computes angle of attack to maintain flight path
         """
@@ -45,7 +45,7 @@ class MultirotorFlightModel:
         def func(x):
             drag = MultirotorFlightModel.get_drag(V, x, S_front, S_top, C_D, rho_air)  # [N] drag
             lift = MultirotorFlightModel.get_lift(V, x, S_top, C_L0, rho_air)  # [N] lift
-            weight = Mtotal * g  # [N] weight
+            weight = m_uav * g  # [N] weight
             res = np.tan(abs(x - theta)) - (drag * np.cos(theta) + lift * np.sin(theta)) / (
                 weight + drag * np.sin(theta) - lift * np.cos(theta)
             )  # [-] equilibrium residual
@@ -55,12 +55,12 @@ class MultirotorFlightModel:
         return alpha
 
     @staticmethod
-    def get_thrust(Mtotal, V, RoC, alpha, S_front, S_top, C_D, C_L0, rho_air):
+    def get_thrust(m_uav, V, RoC, alpha, S_front, S_top, C_D, C_L0, rho_air):
         """
         Computes thrust to maintain flight path
         """
         theta = np.arcsin(RoC / V)  # [rad] flight path angle
-        weight = Mtotal * g  # [N] weight
+        weight = m_uav * g  # [N] weight
         lift = MultirotorFlightModel.get_lift(V, alpha, S_top, C_L0, rho_air)  # [N] lift
         drag = MultirotorFlightModel.get_drag(V, alpha, S_front, S_top, C_D, rho_air)  # [N] drag
         thrust = (
@@ -86,7 +86,7 @@ class FixedwingFlightModel:
         return alpha
 
     @staticmethod
-    def get_thrust(Mtotal, V, RoC, WS, K, CD0, rho_air):
+    def get_thrust(m_uav, V, RoC, WS, K, CD0, rho_air):
         """
         Computes thrust to maintain flight path
         """
@@ -94,5 +94,5 @@ class FixedwingFlightModel:
         TW = (
                 RoC / V + q * CD0 / WS + K / q * WS
         )  # thrust-to-weight ratio in climb conditions [-]
-        thrust = TW * Mtotal * g  # [N] total thrust requirement
+        thrust = TW * m_uav * g  # [N] total thrust requirement
         return thrust

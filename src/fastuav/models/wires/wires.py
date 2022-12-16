@@ -128,51 +128,51 @@ class Weight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:weights:propulsion:wires:density:reference", val=np.nan, units="kg/m")
+        self.add_input("data:weight:propulsion:wires:density:reference", val=np.nan, units="kg/m")
         self.add_input("data:propulsion:wires:radius:reference", val=np.nan, units="m")
         self.add_input("data:propulsion:wires:radius", val=np.nan, units="m")
         self.add_input("data:propulsion:wires:number", val=np.nan, units=None)
         self.add_input("data:propulsion:wires:length", val=np.nan, units="m")
-        self.add_output("data:weights:propulsion:wires:density", units="kg/m")
-        self.add_output("data:weights:propulsion:wires:mass", units="kg")
+        self.add_output("data:weight:propulsion:wires:density", units="kg/m")
+        self.add_output("data:weight:propulsion:wires:mass", units="kg")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        mu_ref = inputs["data:weights:propulsion:wires:density:reference"]  # [kg/m] linear mass of reference cable
+        mu_ref = inputs["data:weight:propulsion:wires:density:reference"]  # [kg/m] linear mass of reference cable
         r_ref = inputs["data:propulsion:wires:radius:reference"]  # [m] radius of reference wire
         r = inputs["data:propulsion:wires:radius"]
         N_wir = inputs["data:propulsion:wires:number"]
         L_wir = inputs["data:propulsion:wires:length"]
 
         mu = mu_ref * (r / r_ref) ** 2  # [kg/m] linear mass of cable
-        M = mu * L_wir * N_wir  # [kg] mass of wires
+        m_wir = mu * L_wir * N_wir  # [kg] mass of wires
 
-        outputs["data:weights:propulsion:wires:density"] = mu
-        outputs["data:weights:propulsion:wires:mass"] = M
+        outputs["data:weight:propulsion:wires:density"] = mu
+        outputs["data:weight:propulsion:wires:mass"] = m_wir
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        mu_ref = inputs["data:weights:propulsion:wires:density:reference"]  # [kg/m] linear mass of reference cable
+        mu_ref = inputs["data:weight:propulsion:wires:density:reference"]  # [kg/m] linear mass of reference cable
         r_ref = inputs["data:propulsion:wires:radius:reference"]  # [m] radius of reference wire
         r = inputs["data:propulsion:wires:radius"]
         N_wir = inputs["data:propulsion:wires:number"]
         L_wir = inputs["data:propulsion:wires:length"]
         mu = mu_ref * (r / r_ref) ** 2
 
-        partials["data:weights:propulsion:wires:density",
+        partials["data:weight:propulsion:wires:density",
                  "data:propulsion:wires:radius"] = 2 * mu_ref / r_ref ** 2 * r
-        partials["data:weights:propulsion:wires:density",
-                 "data:weights:propulsion:wires:density:reference"] = (r / r_ref) ** 2
-        partials["data:weights:propulsion:wires:density",
+        partials["data:weight:propulsion:wires:density",
+                 "data:weight:propulsion:wires:density:reference"] = (r / r_ref) ** 2
+        partials["data:weight:propulsion:wires:density",
                  "data:propulsion:wires:radius:reference"] = -2 * mu_ref * r ** 2 / r_ref ** 3
-        partials["data:weights:propulsion:wires:mass",
+        partials["data:weight:propulsion:wires:mass",
                  "data:propulsion:wires:radius"] = 2 * mu_ref / r_ref ** 2 * r * L_wir * N_wir
-        partials["data:weights:propulsion:wires:mass",
-                 "data:weights:propulsion:wires:density:reference"] = (r / r_ref) ** 2 * L_wir * N_wir
-        partials["data:weights:propulsion:wires:mass",
+        partials["data:weight:propulsion:wires:mass",
+                 "data:weight:propulsion:wires:density:reference"] = (r / r_ref) ** 2 * L_wir * N_wir
+        partials["data:weight:propulsion:wires:mass",
                  "data:propulsion:wires:radius:reference"] = -2 * mu_ref * r ** 2 / r_ref ** 3 * L_wir * N_wir
-        partials["data:weights:propulsion:wires:mass",
+        partials["data:weight:propulsion:wires:mass",
                  "data:propulsion:wires:number"] = mu * L_wir
-        partials["data:weights:propulsion:wires:mass",
+        partials["data:weight:propulsion:wires:mass",
                  "data:propulsion:wires:length"] = mu * N_wir

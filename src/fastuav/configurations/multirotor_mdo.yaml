@@ -1,4 +1,4 @@
-title: Multirotor Drone Optimal Design
+title: Multirotor Drone MDO
 
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders:
@@ -39,7 +39,7 @@ optimization:
     design_variables:
     
         ## GLOBAL ##
-      - name: data:weights:mtow:k # over estimation coefficient on the load mass
+      - name: data:weight:mtow:k # over estimation coefficient on the load mass
         upper: 40.0
         lower: 1.0
         
@@ -68,15 +68,19 @@ optimization:
         lower: 0.1
         upper: 10.0
 
-      - name: data:propulsion:multirotor:battery:capacity:k # over estimation coefficient on the battery load mass
-        lower: 0.01
-        upper: 60.0
+      - name: data:propulsion:multirotor:battery:energy:k # over estimation coefficient on the battery energy
+        lower: 0.1
+        upper: 20.0
         
       - name: data:propulsion:multirotor:battery:voltage:k # over estimation coefficient on the battery voltage
         lower: 1.0
         upper: 10.0
 
       - name: data:propulsion:multirotor:esc:power:k # over estimation coefficient on the ESC power
+        lower: 1.0
+        upper: 15.0
+        
+      - name: data:propulsion:multirotor:esc:voltage:k # over estimation coefficient on the ESC voltage
         lower: 1.0
         upper: 15.0
         
@@ -93,11 +97,11 @@ optimization:
     constraints:
     
         ## GLOBAL ##
-      - name: data:weights:mtow:guess:constraint # Mass consistency
+      - name: data:weight:mtow:guess:constraint # Mass consistency
         lower: 0.0
 
-      - name: data:weights:mtow:requirement:constraint # MTOW requirement
-        lower: 0.0
+      #- name: data:weight:mtow:requirement:constraint # MTOW requirement
+      #  lower: 0.0
         
         ## PROPULSION ##
       - name: data:propulsion:multirotor:propeller:constraints:airspeed:climb  # climb speed requirement
@@ -114,14 +118,20 @@ optimization:
       - name: data:propulsion:multirotor:propeller:constraints:rpm:cruise  # propeller rpm in cruise
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:torque:climb  # motor torque in climb (transient)
+      - name: data:propulsion:multirotor:motor:constraints:torque:climb  # motor torque in climb
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:torque:hover  # steady motor torque in hover (steady)
+      - name: data:propulsion:multirotor:motor:constraints:torque:hover  # motor torque in hover
         lower: 0.0
         
-      - name: data:propulsion:multirotor:motor:constraints:torque:cruise  # steady motor torque in cruise (steady)
+      - name: data:propulsion:multirotor:motor:constraints:torque:cruise  # motor torque in cruise
         lower: 0.0
+        
+      #- name: data:propulsion:multirotor:motor:constraints:speed:constant:min  # min bound for Kv w.r.t. Tmax (to match commercially available components)
+      #  lower: 0.0
+        
+      #- name: data:propulsion:multirotor:motor:constraints:speed:constant:max  # max bound for Kv w.r.t. Tmax (to match commercially available components)
+      #  lower: 0.0
       
       - name: data:propulsion:multirotor:battery:constraints:power:takeoff  # battery power at takeoff
         lower: 0.0
@@ -137,14 +147,23 @@ optimization:
 
       - name: data:propulsion:multirotor:battery:constraints:voltage:cruise  # battery voltage in cruise
         lower: 0.0
+        
+      #- name: data:propulsion:multirotor:battery:constraints:voltage:min  # min bound for voltage w.r.t. power (to match commercially available components)
+      #  lower: 0.0
+        
+      #- name: data:propulsion:multirotor:battery:constraints:voltage:max  # max bound for voltage w.r.t. power (to match commercially available components)
+      #  lower: 0.0
       
       - name: data:propulsion:multirotor:esc:constraints:power:climb  # ESC power in climb
         lower: 0.0
         
       - name: data:propulsion:multirotor:esc:constraints:power:cruise  # ESC power in cruise
         lower: 0.0
-
-      - name: data:propulsion:multirotor:esc:constraints:voltage  # ESC voltage
+        
+      - name: data:propulsion:multirotor:esc:constraints:voltage:min  # min bound for voltage w.r.t. power (to match commercially available components)
+        lower: 0.0
+        
+      - name: data:propulsion:multirotor:esc:constraints:voltage:max  # max bound for voltage w.r.t. power (to match commercially available components)
         lower: 0.0
       
         ## MISSION ##
@@ -154,7 +173,7 @@ optimization:
       
     objective:
       # MASS MINIMIZATION
-      - name: data:weights:mtow
+      - name: data:weight:mtow
         scaler: 1e-1
 
       # ENERGY MINIMIZATION

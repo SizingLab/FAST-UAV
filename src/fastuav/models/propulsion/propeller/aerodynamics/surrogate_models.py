@@ -3,7 +3,7 @@ Propeller surrogate models describing the propeller's aerodynamics performance.
 """
 
 import numpy as np
-from fastuav.utils.constants import MR_PROPULSION, FW_PROPULSION
+# from scipy.optimize import fsolve
 
 
 class PropellerAerodynamicsModel:
@@ -18,145 +18,158 @@ class PropellerAerodynamicsModel:
         Cp = Power / (air_density * rotation_speed ^ 3 * diameter ^ 5)
 
     The functions are defined as static method that can be called from anywhere without instantiating the class:
-    >> C_t, C_p = PropellerAerodynamicsModel.aero_coefficients_incidence(beta, J, alpha)
-
-    It is also possible to add a deviation to the model's outputs.
-    To do so, simply setup this model in an OpenMDAO group using the "add_model_deviation" function defined
-    in "fastuav.utils.uncertainty".
+    >> c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_incidence(beta, J, alpha)
     """
 
-    # Model deviations (for uncertainty purpose only)
-    init_uncertain_parameters = {
-        "uncertainty:propeller:aerodynamics:CT:static:abs": 0.0,
-        "uncertainty:propeller:aerodynamics:CP:static:abs": 0.0,
-        "uncertainty:propeller:aerodynamics:CT:axial:abs": 0.0,
-        "uncertainty:propeller:aerodynamics:CP:axial:abs": 0.0,
-        "uncertainty:propeller:aerodynamics:CT:incidence:abs": 0.0,
-        "uncertainty:propeller:aerodynamics:CP:incidence:abs": 0.0,
-        "uncertainty:propeller:aerodynamics:CT:static:rel": 0.0,
-        "uncertainty:propeller:aerodynamics:CP:static:rel": 0.0,
-        "uncertainty:propeller:aerodynamics:CT:axial:rel": 0.0,
-        "uncertainty:propeller:aerodynamics:CP:axial:rel": 0.0,
-        "uncertainty:propeller:aerodynamics:CT:incidence:rel": 0.0,
-        "uncertainty:propeller:aerodynamics:CP:incidence:rel": 0.0,
-    }
-    uncertain_parameters = init_uncertain_parameters.copy()
-
     @staticmethod
-    def aero_coefficients_static(beta, propulsion_id: str = None):
+    def aero_coefficients_static(beta,
+                                 ct_model: np.array = np.array([4.27e-02, 1.44e-01]),
+                                 cp_model: np.array = np.array([-1.48e-03, 9.72e-02])):
         """
         Compute the thrust and power coefficient in static conditions (zero advance ratio)
+
+        Parameters
+        ----------
+        beta: pitch-to-diameter ratio (-)
+        ct_model: np.array
+                Array of model parameters for the static thrust coefficient.
+                ct = ct_model[0] + ct_model[1] * beta
+        cp_model: np.array
+                Array of model parameters for the static power coefficient.
+                cp = cp_model[0] + cp_model[1] * beta
+
+        Returns
+        -------
+        c_t_static: static thrust coefficient (-)
+        c_p_static: static power coefficient (-)
         """
-        C_t_static, C_p_static = .0, .0
-        if propulsion_id == MR_PROPULSION:  # Multi-rotor propellers (APC)
-            C_t_static = 4.27e-02 + 1.44e-01 * beta  # thrust coefficient in static
-            C_p_static = -1.48e-03 + 9.72e-02 * beta  # power coefficient in static
+        c_t_static = ct_model[0] + ct_model[1] * beta  # thrust coefficient in static
+        c_p_static = cp_model[0] + cp_model[1] * beta  # power coefficient in static
 
-        elif propulsion_id == FW_PROPULSION:  # TODO: add static performances for thin electric APC propellers
-            C_t_static = 4.27e-02 + 1.44e-01 * beta  # thrust coefficient in static
-            C_p_static = -1.48e-03 + 9.72e-02 * beta  # power coefficient in static
-
-        # Deviations (for uncertainty purpose)
-        delta = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CT:static:abs"
-        ]
-        eps = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CT:static:rel"
-        ]
-        C_t_static = C_t_static * (1 + eps) + delta
-        delta = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CP:static:abs"
-        ]
-        eps = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CP:static:rel"
-        ]
-        C_p_static = C_p_static * (1 + eps) + delta
-
-        return C_t_static, C_p_static
+        return c_t_static, c_p_static
 
     @staticmethod
-    def aero_coefficients_axial(beta, J, propulsion_id: str = None):
+    def aero_coefficients_axial(beta,
+                                J,
+                                ct_model: np.array = np.array(
+                                    [0.02791, 0.11867, 0.27334, - 0.28852, - 0.06543, - 0.23504, 0.02104, 0.0, 0.0, 0.18677]),
+                                cp_model: np.array = np.array(
+                                    [0.01813, - 0.06218, 0.35712, - 0.23774, 0.00343, - 0.1235, 0.0, 0.07549, 0.0, 0.0])):
         """
-        Computes the thrust and power coefficients in axial flight conditions (non-zero advance ratio, axial flow).
+        Compute the thrust and power coefficients in axial flight conditions (non-zero advance ratio, axial flow).
+
+        Parameters
+        ----------
+        beta: pitch-to-diameter ratio (-)
+        J: advance ratio V/nD (-)
+        ct_model: np.array
+                Array of model parameters for the axial thrust coefficient.
+                ct = ct_model[0] + ct_model[1] * beta + ct_model[1] * beta**2 + ...
+        cp_model: np.array
+                Array of model parameters for the axial power coefficient.
+                cp = cp_model[0] + cp_model[1] * beta + cp_model[1] * beta**2 + ...
+
+        Returns
+        -------
+        c_t_axial: axial thrust coefficient (-)
+        c_p_axial: axial power coefficient (-)
         """
-        C_t_axial, C_p_axial = .0, .0
-
-        if propulsion_id == MR_PROPULSION:  # Multi-rotor propellers (APC)
-            C_t_axial = (
-                0.02791
-               - 0.06543 * J
-               + 0.11867 * beta
-               + 0.27334 * beta**2
-               - 0.28852 * beta**3
-               + 0.02104 * J**3
-               - 0.23504 * J**2
-               + 0.18677 * beta * J**2
-            )
-            C_p_axial = (
-               0.01813
-               - 0.06218 * beta
-               + 0.00343 * J
-               + 0.35712 * beta**2
-               - 0.23774 * beta**3
-               + 0.07549 * beta * J
-               - 0.1235 * J**2
-            )
-
-        elif propulsion_id == FW_PROPULSION:  # Thin Electric propellers (APC pareto high thrust, high efficiency)
-            C_t_axial = 0.09613 - 0.26688 * J + 0.37102 * J * beta - 0.15240 * beta * J**2
-            C_p_axial = (
-                0.00440
-                - 0.03854 * beta**2
-                - 0.08185 * J**3
-                + 0.12568 * beta**2 * J
-                - 0.03864 * J
-                + 0.08432 * beta
-            )
-
-        # Deviations (for uncertainty purpose)
-        delta = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CT:axial:abs"
-        ]
-        eps = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CT:axial:rel"
-        ]
-        C_t_axial = C_t_axial * (1 + eps) + delta
-        delta = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CP:axial:abs"
-        ]
-        eps = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CP:axial:rel"
-        ]
-        C_p_axial = C_p_axial * (1 + eps) + delta
-
-        return max(1e-10, C_t_axial), max(1e-10, C_p_axial)
+        c_t_axial = (
+            ct_model[0]
+            + ct_model[1] * beta
+            + ct_model[2] * beta**2
+            + ct_model[3] * beta**3
+            + ct_model[4] * J
+            + ct_model[5] * J**2
+            + ct_model[6] * J**3
+            + ct_model[7] * beta * J
+            + ct_model[8] * beta**2 * J
+            + ct_model[9] * beta * J**2
+        )
+        c_p_axial = (
+            cp_model[0]
+            + cp_model[1] * beta
+            + cp_model[2] * beta**2
+            + cp_model[3] * beta**3
+            + cp_model[4] * J
+            + cp_model[5] * J**2
+            + cp_model[6] * J**3
+            + cp_model[7] * beta * J
+            + cp_model[8] * beta**2 * J
+            + cp_model[9] * beta * J**2
+        )
+        return max(1e-10, c_t_axial), max(1e-10, c_p_axial)
 
     @staticmethod
-    def aero_coefficients_incidence(beta, J, alpha, N_blades: int = 2, chord_to_radius=0.15, r_norm=0.75,
-                                    propulsion_id: str = None):
+    def aero_coefficients_incidence(beta,
+                                    J,
+                                    alpha,
+                                    n_blades: int = 2,
+                                    chord_to_radius: float = 0.15,
+                                    r_norm: float = 0.75,
+                                    ct_model: np.array = np.array(
+                                        [0.02791, 0.11867, 0.27334, - 0.28852, - 0.06543, - 0.23504, 0.02104, 0.0, 0.0, 0.18677,
+                                         0.197, 1.094]),
+                                    cp_model: np.array = np.array([
+                                        0.01813, - 0.06218, 0.35712, - 0.23774, 0.00343, - 0.1235, 0.0, 0.07549, 0.0, 0.0,
+                                        0.286, 0.993]),
+                                    ):
         """
         Generalized model to compute the thrust and power coefficient in any operating conditions, i.e. non-zero
         advance ratio and non-axial flow. The non-axial flow correction is based on the analytical model provided by
-        Y. Leng et al, "An Analytical Model For Propeller Aerodynamic Efforts At High Incidence", 2019.
-        Parameter alpha is the rotor disk angle of attack (equals pi/2 if fully axial flow).
+        Y. Leng et al., "An Analytical Model For Propeller Aerodynamic Efforts At High Incidence", 2019.
+
+        Parameters
+        ----------
+        beta: pitch-to-diameter ratio (-)
+        J: advance ratio V/nD (-)
+        alpha: rotor disk angle of attack (equals pi/2 if fully axial flow).
+        n_blades: number of blades of the propeller
+        chord_to_radius: chord to radius ratio at r_norm
+        r_norm: position of representative section in percentage radius (usually 0.75)
+        ct_model: np.array
+                The first n-2 scalars are the model parameters for the thrust coefficient:
+                ct = ct_model[0] + ct_model[1] * beta + ct_model[1] * beta**2 + ...
+                The n-1 and n scalars are the model parameters for the calculation of the zero-thrust advance ratio:
+                J0t = ct_model[-2] + ct_model[-1] * beta
+        cp_model: np.array
+                The first n-2 scalars are the model parameters for the power coefficient:
+                cp = cp_model[0] + cp_model[1] * beta + cp_model[1] * beta**2 + ...
+                The n-1 and n scalars are the model parameters for the calculation of the zero-power advance ratio:
+                J0p = cp_model[-2] + cp_model[-1] * beta
+
+        Returns
+        -------
+        c_t: thrust coefficient (-)
+        c_p: power coefficient (-)
         """
 
         # Parameters at zero incidence propeller angle (axial flight)
         J_axial = J * np.sin(alpha)
-        C_t_axial, C_p_axial = PropellerAerodynamicsModel.aero_coefficients_axial(beta,
+        c_t_axial, c_p_axial = PropellerAerodynamicsModel.aero_coefficients_axial(beta,
                                                                                   J_axial,
-                                                                                  propulsion_id=propulsion_id)
-        # Zero_thrust advance ratios in axial flight
-        J_0t_axial, J_0p_axial = .0, .0
-        if propulsion_id == MR_PROPULSION:  # Multi-rotor propellers (APC)
-            J_0t_axial = 0.197 + 1.094 * beta  # zero-thrust advance ratio
-            J_0p_axial = 0.286 + 0.993 * beta  # zero-power advance ratio
-        elif propulsion_id == FW_PROPULSION:  # APC thin electric propellers (APC pareto high thrust, high efficiency)
-            J_0t_axial = 0.21272 + 1.00040 * beta  # zero-thrust advance ratio
-            J_0p_axial = 0.20710 + 1.03642 * beta  # zero-power advance ratio
+                                                                                  ct_model=ct_model[:-2],
+                                                                                  cp_model=cp_model[:-2])
+        # Zero thrust advance ratios in axial flight
+
+        # 1) With solver
+        # func = lambda x: PropellerAerodynamicsModel.aero_coefficients_axial(beta,
+        #                                                                     x,
+        #                                                                     ct_model=ct_model,
+        #                                                                     cp_model=cp_model)[0]
+        # J_0t_axial = fsolve(func, [0.5])  # [-] solving for zero thrust advance ratio
+        # func = lambda x: PropellerAerodynamicsModel.aero_coefficients_axial(beta,
+        #                                                                     x,
+        #                                                                     ct_model=ct_model,
+        #                                                                     cp_model=cp_model)[1]
+        # J_0p_axial = fsolve(func, [0.5])  # [-] solving for zero power advance ratio
+
+        # 2) With provided model parameters
+        J_0t_axial = ct_model[-2] + ct_model[-1] * beta
+        J_0p_axial = cp_model[-2] + cp_model[-1] * beta
 
         # Solidity correction factor
-        sigma = N_blades * chord_to_radius / np.pi
+        sigma = n_blades * chord_to_radius / np.pi
         delta_t = delta_p = (
             3
             / 2
@@ -187,25 +200,9 @@ class PropellerAerodynamicsModel:
         )
 
         # thrust and power coefficients
-        C_t = C_t_axial * eta_t
-        C_p = C_p_axial * eta_p
+        c_t = c_t_axial * eta_t
+        c_p = c_p_axial * eta_p
 
-        # Deviations (for uncertainty purpose)
-        delta = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CT:incidence:abs"
-        ]
-        eps = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CT:incidence:rel"
-        ]
-        C_t = C_t * (1 + eps) + delta
-        delta = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CP:incidence:abs"
-        ]
-        eps = PropellerAerodynamicsModel.uncertain_parameters[
-            "uncertainty:propeller:aerodynamics:CP:incidence:rel"
-        ]
-        C_p = C_p * (1 + eps) + delta
-
-        return max(1e-10, C_t), max(
-            1e-10, C_p
+        return max(1e-10, c_t), max(
+            1e-10, c_p
         )  # set minimum value to avoid negative thrust or power
