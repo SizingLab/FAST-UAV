@@ -54,10 +54,10 @@ class MultirotorFlightModel:
             res = np.tan(abs(x - theta)) - (drag * np.cos(theta) + lift * np.sin(theta)) / (
                 weight + drag * np.sin(theta) - lift * np.cos(theta)
             )  # [-] equilibrium residual
-            return res
+            return res**2
 
         bnds = ((0.0, np.pi / 2),)
-        res = minimize(func, (np.pi/2), bounds=bnds, method='SLSQP')  # [rad] angle of attack
+        res = minimize(func, (np.pi/4), bounds=bnds, method='SLSQP')  # [rad] angle of attack
         alpha = res.x if res.success else np.pi/2
         return alpha
 
