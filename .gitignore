@@ -23,3 +23,5 @@
 /src/fastuav/notebooks/cases.sql
 /src/fastuav/configurations/cases.sql
 /src/fastuav/utils/postprocessing/old/*
+/dist/
+/src/fastuav.egg-info/

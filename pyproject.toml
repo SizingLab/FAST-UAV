@@ -49,6 +49,7 @@ scikit-learn = "^1.0.2"
 psutil = "*"
 kaleido = "0.2.1"
 SALib = "1.4.5"
+numpy = "1.23.5"
 
 [tool.poetry.extras]
 jupyterlab = ["jupyterlab"]
@@ -73,6 +74,12 @@ nbstripout = "^0.5.0"
 [tool.black]
 line-length = 100
 
+# For installing with 'poetry install' command.
+#[build-system]
+#requires = ["poetry>=0.12"]
+#build-backend = "poetry.masonry.api"
+
+# For installing with 'pip install -e .' command.
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"

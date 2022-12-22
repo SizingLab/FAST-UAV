@@ -5,24 +5,34 @@ FAST-UAV is a solution to perform optimal drone design with a multi-disciplinary
 
 Based on the [FAST-OAD](https://github.com/fast-aircraft-design/FAST-OAD) framework, it allows to easily switch between models to address different types of configurations. 
 
-Currently, FAST-UAV is bundled with analytical models for multirotor and fixed wing drones.
+Currently, FAST-UAV is bundled with analytical models for multirotor, fixed wing and hybrid-VTOL UAVs.
 
 Install
 -------
-It is recommended to install FAST-UAV in a virtual environment, using poetry.
+Download the zip file from Github and unzip it. Open an Anaconda Prompt terminal and cd to the recently unziped folder.
+
+You can then create a new conda environment by running:
 
 > ``` {.bash}
 > $ conda create -n fastuav python=3.8
 > $ conda activate fastuav
-> $ conda install poetry
-> $ poetry install
 > ```
+
+Then install the required dependencies:
+> ``` {.bash}
+> $ pip install -e .
+> ```
+
 
 Run
 -------
+Once FAST-UAV is installed, you can access the notebooks with Jupyter Lab:
 > ``` {.bash}
 > $ jupyter lab
 > ```
+
+Then navigate to the `src/fastuav/notebooks` directory.
+
 
 Publications
 ------------
@@ -33,6 +43,10 @@ Publications
 > F. Pollet, S. Delbecq, M. Budinger, and J.-M. Moschetta, ‘Design optimization of multirotor drones in cruise’, Sep. 2021.
 
 > S. Delbecq, M. Budinger, C. Coic, and N. Bartoli, ‘Trajectory and design optimization of multirotor drones with system simulation’, VIRTUAL EVENT, United States, Jan. 2021. doi: 10.2514/6.2021-0211.
+
+> J. Liscouet, F. Pollet, J. Jézégou, M. Budinger, S. Delbecq, and J.-M. Moschetta. “A Methodology to Integrate Reliability into the Conceptual Design of Safety-Critical Multirotor Unmanned Aerial Vehicles.” Aerospace Science and Technology, June 1, 2022, 107681. https://doi.org/10.1016/j.ast.2022.107681.
+
+> F. Pollet, S. Delbecq, M. Budinger, J.-M. Moschetta, and J. Liscouët. “A Common Framework for the Design Optimization of Fixed-Wing, Multicopter and VTOL UAV Configurations.” In 33rd Congress of the International Council of the Aeronautical Sciences. Stockholm, Sweden, 2022. https://hal.archives-ouvertes.fr/hal-03832115.
 
 > [DroneApp](https://github.com/SizingLab/droneapp-legacy) sizing tool
 
