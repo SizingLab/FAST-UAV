@@ -169,8 +169,7 @@ optimization:
         ## MISSION ##
       - name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
         lower: 0.0
-
-      
+        
     objective:
       # MASS MINIMIZATION
       - name: data:weight:mtow
