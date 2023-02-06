@@ -15,12 +15,12 @@ FAST - Copyright (c) 2016 ONERA ISAE.
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from fastoad.module_management.service_registry import RegisterOpenMDAOSystem
 
 
-@RegisterOpenMDAOSystem("fastuav.plugin.sample_discipline")
+@oad.RegisterOpenMDAOSystem("fastuav.plugin.sample_discipline")
 class SampleDiscipline(om.ExplicitComponent):
     """
     Sample discipline to give an example of how to register a custom module.
