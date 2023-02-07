@@ -50,6 +50,8 @@ psutil = "*"
 kaleido = "0.2.1"
 SALib = "1.4.5"
 numpy = "1.23.5"
+brightway2 = "^2.3"
+lca-algebraic = "1.0.5"
 
 [tool.poetry.extras]
 jupyterlab = ["jupyterlab"]
