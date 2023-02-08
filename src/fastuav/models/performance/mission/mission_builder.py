@@ -52,8 +52,7 @@ class MissionBuilder(om.Group):
                                                          propulsion_id_dict=propulsion_id_dict),
                                         promotes=["*"])
 
-            # Add constraint for sizing the battery capacity / energy to complete the sizing mission
-            #if is_sizing:
+            # Add constraint for sizing the battery capacity / energy to complete the mission
             mission_group.add_subsystem("constraints",
                                         MissionConstraints(mission_name=mission_name,
                                                            propulsion_id_dict=propulsion_id_dict),
