@@ -21,6 +21,7 @@ DOC Controllability Computation Module - Concordia University, Robin Warren
 
 import openmdao.api as om
 import numpy as np
+" import matlab.engine "
 from fastoad.module_management.service_registry import RegisterOpenMDAOSystem
 
 

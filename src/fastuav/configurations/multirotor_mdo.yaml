@@ -31,6 +31,8 @@ model:
         missions:
             id: fastuav.performance.mission
             file_path: ../../missions/missions_multirotor.yaml
+    Control:
+        id: fastuav.plugin.DOC
 
 
 # This section is needed only if optimization process is run
