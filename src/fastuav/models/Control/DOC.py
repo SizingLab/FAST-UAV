@@ -21,9 +21,9 @@ DOC Controllability Computation Module - Concordia University, Robin Warren
 
 import openmdao.api as om
 import numpy as np
-" import matlab.engine "
+import matlab.engine
+"requires matlab API installation from matlab 2022b"
 from fastoad.module_management.service_registry import RegisterOpenMDAOSystem
-
 
 @RegisterOpenMDAOSystem("fastuav.plugin.DOC")
 class SampleDiscipline(om.ExplicitComponent):
@@ -37,4 +37,6 @@ class SampleDiscipline(om.ExplicitComponent):
         self.add_output("sample_output", units="kg")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        outputs["sample_output"] = 2.0 * inputs["sample_input"]
+        eng = matlab.engine.start_matlab()
+        outputs["sample_output"] = eng.doc_multicopter(0,4,6,0.28,2,0.03,0.015,inputs["sample_input"],2)
+        eng.quit()
