@@ -7,7 +7,7 @@ function DOC=doc_multicopter(coaxial, rotors, fmax, d, M_uav, M_motor, M_prop, T
     arguments
         coaxial
         rotors
-        fmax double
+        fmax  double
         d double
         M_uav double
         M_motor double

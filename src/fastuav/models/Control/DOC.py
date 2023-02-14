@@ -24,6 +24,7 @@ import numpy as np
 import matlab.engine
 "requires matlab API installation from matlab 2022b"
 from fastoad.module_management.service_registry import RegisterOpenMDAOSystem
+#from fastuav.models.Control import doc_multicopter
 
 @RegisterOpenMDAOSystem("fastuav.plugin.DOC")
 class SampleDiscipline(om.ExplicitComponent):
@@ -32,11 +33,22 @@ class SampleDiscipline(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("sample_input", val=np.nan, units="kg")
+        self.add_input("sample input", val=0, units="kg")
+        #self.add_input("2", val=4, units="kg")
+        #self.add_input("3", val=1, units="kg")
+        #self.add_input("4", val=1, units="kg")
+        #self.add_input("5", val=1, units="kg")
+        #self.add_input("6", val=1, units="kg")
+        #self.add_input("7", val=1, units="kg")
+        #self.add_input("8", val=1, units="kg")
 
         self.add_output("sample_output", units="kg")
 
-    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        # self.engine = matlab.engine.start_matlab()
+
+    def compute(self, inputs, outputs):
         eng = matlab.engine.start_matlab()
-        outputs["sample_output"] = eng.doc_multicopter(0,4,6,0.28,2,0.03,0.015,inputs["sample_input"],2)
+        DOC = eng.doc_multicopter(0,4,6,0.28,2,0.03,0.015,1,2)
+        #eng.simple_script(nargout=0)
+        outputs["sample_output"] = DOC
         eng.quit()
