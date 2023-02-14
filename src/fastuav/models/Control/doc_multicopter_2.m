@@ -1,20 +1,20 @@
 % Klein, George, Robert E. Lindberg, and Richard W. Longman.
-% “Computation of a Degree of Controllability via System Discretization.�?
+% “Computation of a Degree of Controllability via System Discretization.�?
 % Journal of Guidance, Control, and Dynamics 5,
 % no. 6 (November 1982): 583–88. https://doi.org/10.2514/3.19793.
 
 function DOC=doc_multicopter(coaxial, rotors, fmax, d, M_uav, M_motor, M_prop, T, N) 
-    arguments
-        coaxial
-        rotors
-        fmax  double
-        d double
-        M_uav double
-        M_motor double
-        M_prop double
-        T double
-        N double
-    end
+     arguments
+         coaxial double
+         rotors double
+         fmax  double
+         d double
+         M_uav double
+         M_motor double
+         M_prop double
+         T double
+         N double
+     end
     %clear all; clc;
     %format long;
     % Multicopter Example 1----------------------------------------------------

@@ -33,22 +33,23 @@ class SampleDiscipline(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("sample input", val=0, units="kg")
-        #self.add_input("2", val=4, units="kg")
-        #self.add_input("3", val=1, units="kg")
-        #self.add_input("4", val=1, units="kg")
-        #self.add_input("5", val=1, units="kg")
-        #self.add_input("6", val=1, units="kg")
-        #self.add_input("7", val=1, units="kg")
-        #self.add_input("8", val=1, units="kg")
+        self.add_input("Coaxiality", val=0, units="kg")
+        self.add_input("RotorNumber", val=4, units="kg")
+        self.add_input("Force", val=6, units="N")
+        self.add_input("Distance", val=0.24, units="kg")
+        self.add_input("TotalMass", val=2, units="kg")
+        self.add_input("MotorMass", val=0.03, units="kg")
+        self.add_input("PropellerMass", val=0.015, units="kg")
+        self.add_input("Time", val=1, units="s")
+        self.add_input("TimeSteps", val=2, units="s")
 
         self.add_output("sample_output", units="kg")
 
         # self.engine = matlab.engine.start_matlab()
 
-    def compute(self, inputs, outputs):
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         eng = matlab.engine.start_matlab()
-        DOC = eng.doc_multicopter(0,4,6,0.28,2,0.03,0.015,1,2)
+        DOC = eng.doc_multicopter_2(inputs["Coaxiality"], inputs["RotorNumber"], inputs["Force"], inputs["Distance"], inputs["TotalMass"], inputs["MotorMass"], inputs["PropellerMass"], inputs["Time"], inputs["TimeSteps"])
         #eng.simple_script(nargout=0)
-        outputs["sample_output"] = DOC
+        outputs["sample_output"] = 2
         eng.quit()
