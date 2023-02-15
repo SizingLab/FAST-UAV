@@ -48,8 +48,18 @@ class SampleDiscipline(om.ExplicitComponent):
         # self.engine = matlab.engine.start_matlab()
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        coaxiality = inputs["Coaxiality"]
+        RotorNumber = inputs["RotorNumber"]
+        Force = inputs["Force"]
+        Distance = inputs["Distance"]
+        TotalMass = inputs["TotalMass"]
+        MotorMass = inputs["MotorMass"]
+        PropellerMass = inputs["PropellerMass"]
+        Time = inputs["Time"]
+        TimeSteps = inputs["TimeSteps"]
+
         eng = matlab.engine.start_matlab()
-        DOC = eng.doc_multicopter_2(inputs["Coaxiality"], inputs["RotorNumber"], inputs["Force"], inputs["Distance"], inputs["TotalMass"], inputs["MotorMass"], inputs["PropellerMass"], inputs["Time"], inputs["TimeSteps"])
+        DOC = eng.doc_multicopter_2(coaxiality[0], RotorNumber[0], Force[0], Distance[0], TotalMass[0], MotorMass[0], PropellerMass[0], Time[0], TimeSteps[0])
         #eng.simple_script(nargout=0)
-        outputs["sample_output"] = 2
+        outputs["sample_output"] = DOC
         eng.quit()
