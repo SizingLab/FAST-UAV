@@ -37,30 +37,34 @@ class SampleDiscipline(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("Coaxiality", val=0, units="kg")
-        self.add_input("RotorNumber", val=4, units="kg")
-        self.add_input("Force", val=6, units="N")
-        self.add_input("Distance", val=0.24, units="kg")
-        self.add_input("TotalMass", val=2, units="kg")
-        self.add_input("MotorMass", val=0.03, units="kg")
-        self.add_input("PropellerMass", val=0.015, units="kg")
-        self.add_input("Time", val=1, units="s")
-        self.add_input("TimeSteps", val=2, units="s")
+        self.add_input("data:propulsion:multirotor:propeller:is_coaxial", units=None)
+        self.add_input("data:propulsion:multirotor:propeller:number", units=None)
+        self.add_input("data:propulsion:multirotor:propeller:thrust:takeoff", units="N")
+        self.add_input("data:geometry:arms:length", units="m")
+        self.add_input("data:weights:mtow", units="kg")
+        self.add_input("data:weights:propulsion:multirotor:motor:mass", units="kg")
+        self.add_input("data:weights:propulsion:multirotor:propeller:mass", units="kg")
+        self.add_input("data:propulsion:control:recovery_time", val=1, units="s")
+        self.add_input("data:propulsion:control:DOC_time_steps", val=2, units=None)
 
-        self.add_output("sample_output", units="kg")
+        self.add_output("data:propulsion:degree_of_controllability", units=None)
+
+    def setup_partials(self):
+        # Finite difference all partials.
+        self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         "Initialization"
         lapse1 = time.time()
-        coaxial=inputs["Coaxiality"]
-        rotors=inputs["RotorNumber"]
-        fmax=inputs["Force"]
-        d=inputs["Distance"]
-        M=inputs["TotalMass"]
-        M_motor=inputs["MotorMass"]
-        M_prop=inputs["PropellerMass"]
-        T=inputs["Time"]
-        N=int(inputs["TimeSteps"])
+        coaxial=int((inputs["data:propulsion:multirotor:propeller:is_coaxial"]))
+        rotors=int(inputs["data:propulsion:multirotor:propeller:number"])
+        fmax=inputs["data:propulsion:multirotor:propeller:thrust:takeoff"]
+        d=inputs["data:geometry:arms:length"]
+        M=inputs["data:weights:mtow"]
+        M_motor=inputs["data:weights:propulsion:multirotor:motor:mass"]
+        M_prop=inputs["data:weights:propulsion:multirotor:propeller:mass"]
+        T=inputs["data:propulsion:control:recovery_time"]
+        N=int(inputs["data:propulsion:control:DOC_time_steps"])
         j = 0.1
         Grav = np.array([-M * 9.81, 0, 0, 0])
         M_center = M - rotors * (M_motor + M_prop)
@@ -68,7 +72,6 @@ class SampleDiscipline(om.ExplicitComponent):
         # T=1
         # N=2
         dT = T / N
-
         "Determination of Multirotor Configuration"
         if coaxial == 1:
             if rotors == 8:
@@ -234,4 +237,4 @@ class SampleDiscipline(om.ExplicitComponent):
         DOC = min(dL)
         lapse2 = time.time()
         print("Computation Time is ", (lapse2 - lapse1))
-        outputs["sample_output"]=DOC
+        outputs["data:propulsion:degree_of_controllability"]=DOC

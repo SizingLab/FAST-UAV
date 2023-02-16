@@ -148,7 +148,11 @@ optimization:
 
       - name: data:propulsion:multirotor:esc:constraints:voltage  # ESC voltage
         lower: 0.0
-      
+
+      ## CONTROL ##
+      - name: data:propulsion:degree_of_controllability  # Degree of Controllability
+        lower: 0.0
+
         ## MISSION ##
       - name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
         lower: 0.0
@@ -158,6 +162,10 @@ optimization:
       # MASS MINIMIZATION
       - name: data:weights:mtow
         scaler: 1e-1
+
+      # DOC MAXIMIZATION
+      #- name: data:propulsion:degree_of_controllability
+        #scaler: 1e-3
 
       # ENERGY MINIMIZATION
       #- name: mission:sizing:energy
