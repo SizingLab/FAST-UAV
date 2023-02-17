@@ -6,7 +6,6 @@ import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 import brightway2 as bw
-from bw2data.parameters import DatabaseParameter
 import lca_algebraic as lcalg
 import re
 from fastuav.exceptions import FastLcaProjectDoesNotExist, \
@@ -27,7 +26,7 @@ class LCA(om.Group):
         # Declare options
         self.options.declare("project", default=DEFAULT_PROJECT, types=str)
         self.options.declare("database", default=DEFAULT_ECOINVENT, types=str)
-        self.options.declare("model", default="model", values=["model", "normalized_model"])
+        self.options.declare("model", default="model", types=str)
         self.options.declare("methods",
                              default=DEFAULT_METHOD,
                              types=list)
@@ -74,24 +73,19 @@ class LCAmodel(om.ExplicitComponent):
 
     def initialize(self):
         # Attributes
-        self.parameters = dict()  # dictionary of {parameter_name: parameter_object}
+        self.parameters = dict()  # dictionary of {parameter_name: parameter_object} to store all parameters
 
         # Declare options
         self.options.declare("project", default=DEFAULT_PROJECT, types=str)
         self.options.declare("database", default=DEFAULT_ECOINVENT, types=str)
         self.options.declare("model", default="model", values=["model", "normalized_model"])
-        self.options.declare("parameters", default=dict(), types=dict)
+        self.options.declare("parameters", default=dict(), types=dict)  # for storing non-float parameters
 
         # Setup project
         self.setup_project()
 
         # Declare parameters for LCA
         self.declare_parameters()
-
-        # Non-float parameters are declared as options (cannot be passed as variables with add_output method)
-        for name, parameter in self.parameters.items():
-            if parameter.type != 'float':
-                self.options.declare(name, default=parameter.default, values=parameter.values)
 
         # Define foreground activities
         self.declare_foreground_activities()
@@ -117,9 +111,9 @@ class LCAmodel(om.ExplicitComponent):
 
         # LCA parameters
         for name, object in self.parameters.items():  # loop through parameters defined in initialize() method
-            if object.type == 'float':  # get float parameters
+            if object.type == 'float':  # add float parameters as outputs
                 self.add_output(PARAM_VARIABLE_KEY + name, val=np.nan, units=None)  # add them as outputs
-            else:
+            else:  # add non-float parameters as options
                 self.options["parameters"][name] = object.default
 
     def setup_partials(self):
@@ -140,12 +134,9 @@ class LCAmodel(om.ExplicitComponent):
 
         # special case for model normalized by n_cycles * distance * payload
         if self.options["model"] == "normalized_model":
-            if n_cycles == 0:
-                n_cycles = 1e-9
-            if mission_distance == 0:
-                mission_distance = 1e-9
-            if mass_payload == 0:
-                mass_payload = 1e-9
+            n_cycles = max(n_cycles, 1e-9)
+            mission_distance = max(mission_distance, 1e-9)
+            mass_payload = max(mass_payload, 1e-9)
 
         # set values for lca parameters (only for float parameters;
         # non-float parameters are automatically declared as options)
@@ -508,7 +499,6 @@ class LCAcalc(om.ExplicitComponent):
             if PARAM_VARIABLE_KEY in key and not np.isnan(value):
                 name = re.split(PARAM_VARIABLE_KEY, key)[-1]
                 parameters[name] = value
-
         # methods
         methods = self.methods
 
