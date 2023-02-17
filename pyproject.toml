@@ -52,6 +52,8 @@ SALib = "1.4.5"
 numpy = "1.23.5"
 brightway2 = "^2.3"
 lca-algebraic = "1.0.5"
+networkx = "*"
+pyvis = "*"
 
 [tool.poetry.extras]
 jupyterlab = ["jupyterlab"]

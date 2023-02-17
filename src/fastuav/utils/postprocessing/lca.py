@@ -5,9 +5,11 @@ from fastoad.io import VariableIO
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from fastuav.constants import RESULTS_VARIABLE_KEY, MODEL_KEY
+from fastuav.constants import RESULTS_VARIABLE_KEY, MODEL_KEY, USER_DB
 import lca_algebraic as lcalg
 import brightway2 as bw
+from sympy.parsing.sympy_parser import parse_expr
+from pyvis.network import Network
 
 
 def lca_sun_plot(file_path: str, file_formatter=None):
@@ -151,3 +153,81 @@ def LCAMonteCarlo(model, methods, n_runs, **params):
         scores_array.append(scores)
 
     return scores_array
+
+
+def recursive_activities(act):
+    """Traverse tree of sub-activities of a given activity, until background database is reached."""
+    activities = []
+    units = []
+    parents = []
+    exchanges = []
+    levels = []
+
+    def _recursive_activities(act, activities, units, parents, exchanges, levels, parent: str = "", exc: dict = {},
+                              level: int = 0):
+        # if act.as_dict()['database'] != USER_DB: # uncomment here if you only want foreground activities
+        #    return
+        name = act.as_dict()['name']
+        unit = act.as_dict()['unit']
+        loc = act.as_dict()['location']
+        if loc != 'GLO':
+            name += f'\n({loc})'
+        exchange = _getAmountOrFormula(exc)
+        activities.append(name)
+        units.append(unit)
+        parents.append(parent)
+        exchanges.append(exchange)
+        levels.append(level)
+        if act.as_dict()['database'] != USER_DB:  # we stop AFTER reaching the first level of background activities
+            return
+        for exc in act.technosphere():
+            _recursive_activities(exc.input, activities, units, parents, exchanges, levels, parent=name, exc=exc,
+                                  level=level + 1)
+        return
+
+    def _getAmountOrFormula(ex):
+        """ Return either a fixed float value or an expression for the amount of this exchange"""
+        if 'formula' in ex:
+            return parse_expr(ex['formula'])
+        elif 'amount' in ex:
+            return ex['amount']
+        return ""
+
+    _recursive_activities(act, activities, units, parents, exchanges, levels)
+    data = {'activity': activities, 'unit': units, 'parent': parents, 'exchange': exchanges, 'level': levels}
+    df = pd.DataFrame(data, index=activities)
+    return df
+
+
+def graph_activities():
+    """
+    Plots an interactive tree to visualize the activities and exchanges declared in the LCA module.
+    """
+    model = lcalg.getActByCode(USER_DB, MODEL_KEY)
+    df = recursive_activities(model)
+
+    net = Network(notebook=True, directed=True, layout=True)
+
+    activities = df['activity']
+    parents = df['parent']
+    amounts = df['exchange']
+    levels = df['level']
+
+    edge_data = zip(activities, parents, amounts, levels)
+
+    for e in edge_data:
+        src = e[0]
+        dst = e[1]
+        w = e[2]
+        n = e[3]
+
+        if dst == "":
+            continue
+
+        net.add_node(src, src, title=src, level=n + 1, group=n + 1, shape='box')
+        net.add_node(dst, dst, title=dst, level=n, group=n, shape='box')
+        net.add_edge(src, dst, label=str(w))
+
+    net.set_edge_smooth('vertical')
+    net.toggle_physics(False)
+    return net

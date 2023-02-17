@@ -568,7 +568,7 @@ class LCAcalc(om.ExplicitComponent):
         act_dict = dict()
 
         def _recursive_activities(act, act_dict, act_path: str = ""):
-            if act.as_dict()['database'] != 'Foreground DB':
+            if act.as_dict()['database'] != USER_DB:
                 return
             act_path = act_path + ":" + act.as_dict()['name'].replace(" ", "_")
             act_dict[act_path] = act
