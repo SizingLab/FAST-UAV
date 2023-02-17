@@ -33,9 +33,13 @@ model:
             file_path: ../../missions/missions_multirotor.yaml
     lca:
         id: fastuav.plugin.lca
-        #methods: [('ReCiPe 2016 v1.03, midpoint (E)', 'climate change', 'global warming potential (GWP1000)')]
-        elec_switch_param: "eu"
-        functional_unit: "kg.km"
+        project: fastuav
+        database: ecoinvent 3.8_cutoff_ecoSpold02
+        model: model # normalized_model
+        methods:
+            - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
+            - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
+        elec_switch_param: "fr"
 
 
 # This section is needed only if optimization process is run
@@ -177,12 +181,12 @@ optimization:
         
     objective:
       # GWP MINIMIZATION
-      - name: ReCiPe_2016_v1_03:_midpoint_E:climate_change:global_warming_potential_GWP1000
-        scaler: 1e-5
+      #- name: ReCiPe_2016_v1_03:_midpoint_E:climate_change:global_warming_potential_GWP1000
+      #  scaler: 1e-5
     
       # MASS MINIMIZATION
-      #- name: data:weight:mtow
-      #  scaler: 1e-1
+      - name: data:weight:mtow
+        scaler: 1e-1
 
       # ENERGY MINIMIZATION
       #- name: mission:sizing:energy
