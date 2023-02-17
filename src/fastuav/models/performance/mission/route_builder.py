@@ -3,7 +3,7 @@ Route generator.
 """
 import openmdao.api as om
 import numpy as np
-from fastuav.utils.constants import *
+from fastuav.constants import *
 from fastuav.models.performance.mission.phase_builder import PhaseBuilder
 
 

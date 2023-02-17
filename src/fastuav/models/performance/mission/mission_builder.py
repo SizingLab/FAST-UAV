@@ -5,7 +5,7 @@ import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 from itertools import chain
-from fastuav.utils.constants import *
+from fastuav.constants import *
 from fastuav.models.performance.mission.mission_definition.schema import MissionDefinition
 from fastuav.models.performance.mission.route_builder import RouteBuilder
 

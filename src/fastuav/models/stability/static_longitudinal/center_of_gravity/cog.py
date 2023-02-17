@@ -5,7 +5,7 @@ import openmdao.api as om
 import numpy as np
 from fastuav.models.stability.static_longitudinal.center_of_gravity.components.cog_airframe import CoG_airframe
 from fastuav.models.stability.static_longitudinal.center_of_gravity.components.cog_propulsion import CoG_propulsion_FW, CoG_propulsion_MR
-from fastuav.utils.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
 
 
 class CenterOfGravity(om.Group):

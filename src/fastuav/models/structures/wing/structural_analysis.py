@@ -4,7 +4,7 @@ Structural analysis for the wing
 
 import openmdao.api as om
 import numpy as np
-from fastuav.utils.constants import MR_PROPULSION
+from fastuav.constants import MR_PROPULSION
 
 
 class WingStructuralAnalysisModels:

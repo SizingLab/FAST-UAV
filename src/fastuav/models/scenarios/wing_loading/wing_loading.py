@@ -6,7 +6,7 @@ import numpy as np
 import openmdao.api as om
 import logging
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
-from fastuav.utils.constants import FW_PROPULSION
+from fastuav.constants import FW_PROPULSION
 from stdatm import AtmosphereSI
 
 _LOGGER = logging.getLogger(__name__)  # Logger for this module

@@ -13,7 +13,7 @@ from fastuav.models.propulsion.propeller.performance_analysis import PropellerPe
 from fastuav.models.propulsion.propeller.aerodynamics.surrogate_models import PropellerAerodynamicsModel
 from fastuav.models.propulsion.motor.performance_analysis import MotorPerformanceModel
 from fastuav.models.propulsion.esc.performance_analysis import ESCPerformanceModel
-from fastuav.utils.constants import MR_PROPULSION, FW_PROPULSION
+from fastuav.constants import MR_PROPULSION, FW_PROPULSION
 
 
 class FlightPerformanceModel:

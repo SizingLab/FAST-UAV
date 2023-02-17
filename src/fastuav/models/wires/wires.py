@@ -5,7 +5,7 @@ Wires are used to connect the battery to the ESCs, and the ESCs to the motors.
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from fastuav.utils.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
 from fastuav.utils.configurations_versatility import promote_and_rename
 
 

@@ -21,7 +21,7 @@ import plotly.graph_objects as go
 from fastoad.io import VariableIO
 from fastoad.openmdao.variables import VariableList
 from openmdao.utils.units import convert_units
-from fastuav.utils.constants import PROPULSION_ID_LIST, MR_PROPULSION
+from fastuav.constants import PROPULSION_ID_LIST, MR_PROPULSION
 
 COLS = plotly.colors.DEFAULT_PLOTLY_COLORS
 

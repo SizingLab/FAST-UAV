@@ -3,7 +3,7 @@ Module containing the center of gravity calculations for all components.
 """
 import openmdao.api as om
 import numpy as np
-from fastuav.utils.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
 
 
 class CoG_airframe(om.Group):

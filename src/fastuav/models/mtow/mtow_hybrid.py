@@ -3,7 +3,7 @@ MTOW for hybrid (fixed wing VTOL) UAVs
 """
 
 import fastoad.api as oad
-from fastuav.utils.constants import FW_PROPULSION, MR_PROPULSION
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.models.mtow.mtow import MTOW
 
 

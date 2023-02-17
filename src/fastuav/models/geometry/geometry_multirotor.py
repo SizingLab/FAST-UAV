@@ -4,7 +4,7 @@ Multirotor Airframe Geometry
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from fastuav.utils.constants import MR_PROPULSION
+from fastuav.constants import MR_PROPULSION
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.geometry.multirotor")

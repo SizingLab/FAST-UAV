@@ -4,7 +4,7 @@ Calculations of the maximum range and endurance based on the sizing scenarios pa
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
-from fastuav.utils.constants import MR_PROPULSION, FW_PROPULSION, PROPULSION_ID_LIST, HOVER_TAG, CRUISE_TAG
+from fastuav.constants import MR_PROPULSION, FW_PROPULSION, PROPULSION_ID_LIST, HOVER_TAG, CRUISE_TAG
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.performance.endurance.multirotor")

@@ -8,7 +8,7 @@ from fastuav.utils.uncertainty import (
     add_subsystem_with_deviation,
 )
 from fastuav.models.aerodynamics.aerodynamics_fixedwing import WingParasiticDrag, TailParasiticDrag, FuselageParasiticDrag, ParasiticDragConstraint, MaxLiftToDrag
-from fastuav.utils.constants import MR_PROPULSION
+from fastuav.constants import MR_PROPULSION
 
 
 class StoppedPropellersAerodynamicsModel:
