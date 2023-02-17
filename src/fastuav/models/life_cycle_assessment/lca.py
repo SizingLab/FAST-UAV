@@ -33,7 +33,7 @@ class LCA(om.Group):
                              types=list)
 
         # model specific parameters
-        self.options.declare("elec_switch_param", default="eu", values=["eu", "fr", "us"])
+        self.options.declare("parameters", default=dict(), types=dict)  # for storing non-float parameters
 
     def setup(self):
         self.add_subsystem("model",
@@ -54,13 +54,12 @@ class LCA(om.Group):
         for key in meta.keys():
             self.calculation.add_input(key, shape_by_conn=True, val=np.nan, units=None)
 
-        # Copy options (for enum LCA parameters)
-        for key1, value1 in self.model.options.items():  # find options of 'model'
-            default_value = value1
-            for key2, value2 in self.options.items():  # if option is also declared in parent group then get its value
-                if key1 == key2:
-                    default_value = value2
-            self.calculation.options.declare(key1, default=default_value)  # declare option for 'calculation'
+        # Copy options (for non-float LCA parameters)
+        parameters = self.model.options["parameters"]
+        for key in parameters.keys():
+            if key in self.options["parameters"].keys():
+                parameters[key] = self.options["parameters"][key]
+        self.calculation.options["parameters"] = parameters
 
         # Promote variables and declare partials
         self.promotes('calculation', any=['*'])
@@ -81,6 +80,7 @@ class LCAmodel(om.ExplicitComponent):
         self.options.declare("project", default=DEFAULT_PROJECT, types=str)
         self.options.declare("database", default=DEFAULT_ECOINVENT, types=str)
         self.options.declare("model", default="model", values=["model", "normalized_model"])
+        self.options.declare("parameters", default=dict(), types=dict)
 
         # Setup project
         self.setup_project()
@@ -119,6 +119,8 @@ class LCAmodel(om.ExplicitComponent):
         for name, object in self.parameters.items():  # loop through parameters defined in initialize() method
             if object.type == 'float':  # get float parameters
                 self.add_output(PARAM_VARIABLE_KEY + name, val=np.nan, units=None)  # add them as outputs
+            else:
+                self.options["parameters"][name] = object.default
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="fd")
@@ -462,8 +464,7 @@ class LCAcalc(om.ExplicitComponent):
         self.activities = dict()
 
         # parameters
-        self.authorized_parameters = list()  # list of declared parameters
-        self.parameters = dict()  # dictionary of {parameter_name: parameter_value}
+        self.options.declare("parameters", default=dict(), types=dict)  # dictionary for storing non-float parameters
 
         # methods
         self.methods = list()
@@ -479,8 +480,7 @@ class LCAcalc(om.ExplicitComponent):
         self.activities = self.recursive_activities(self.model)
 
         # parameters
-        self.authorized_parameters = [p.name for p in DatabaseParameter.select() if p.database == USER_DB]
-        # list of parameters set as outputs in LCAmodel are added as inputs with configure() method of parent group.
+        # list of parameters is retrieved from LCAmodel with configure() method of parent group.
 
         # methods
         self.methods = [eval(m) for m in self.options["methods"]]
@@ -503,15 +503,11 @@ class LCAcalc(om.ExplicitComponent):
         model = self.model
 
         # parameters
-        parameters = self.parameters  # dictionary of parameters
+        parameters = self.options["parameters"]  # initialized with non-float parameters
         for key, value in inputs.items():  # add float parameters
             if PARAM_VARIABLE_KEY in key and not np.isnan(value):
                 name = re.split(PARAM_VARIABLE_KEY, key)[-1]
-                if name in self.authorized_parameters:  # check lca parameter exist (i.e., declared in LCAmodel)
-                    parameters[name] = value
-        for key, value in self.options.items():  # add non-float parameters
-            if key in '\t'.join(self.authorized_parameters):  # search in substrings (substring necessary for enumParam)
-                parameters[key] = value
+                parameters[name] = value
 
         # methods
         methods = self.methods

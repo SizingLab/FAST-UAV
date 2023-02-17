@@ -39,7 +39,7 @@ model:
         methods:
             - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
             - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
-        elec_switch_param: "fr"
+        parameters: {"elec_switch_param": "fr"}  # non-float parameters for lca are declared here
 
 
 # This section is needed only if optimization process is run
