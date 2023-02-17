@@ -7,7 +7,7 @@ from scipy.constants import g
 import openmdao.api as om
 from stdatm import AtmosphereSI
 from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
-from fastuav.utils.constants import FW_PROPULSION, MR_PROPULSION
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 
 
 class MultirotorCruiseThrust(om.ExplicitComponent):

@@ -9,7 +9,7 @@ from fastuav.models.propulsion.motor.motor import Motor
 from fastuav.models.propulsion.gearbox.gearbox import Gearbox, NoGearbox
 from fastuav.models.propulsion.energy.battery.battery import Battery
 from fastuav.models.propulsion.esc.esc import ESC
-from fastuav.utils.constants import FW_PROPULSION, MR_PROPULSION
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.utils.configurations_versatility import promote_and_rename
 
 

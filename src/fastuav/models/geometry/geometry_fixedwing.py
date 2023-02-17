@@ -5,7 +5,7 @@ import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 from scipy.constants import g
-from fastuav.utils.constants import FW_PROPULSION, PROPULSION_ID_LIST
+from fastuav.constants import FW_PROPULSION, PROPULSION_ID_LIST
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.geometry.fixedwing")

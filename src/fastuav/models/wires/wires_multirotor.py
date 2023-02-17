@@ -2,7 +2,7 @@
 Multirotor wires
 """
 import fastoad.api as oad
-from fastuav.utils.constants import MR_PROPULSION
+from fastuav.constants import MR_PROPULSION
 from fastuav.models.wires.wires import Wires
 
 

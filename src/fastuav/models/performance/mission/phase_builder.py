@@ -3,7 +3,7 @@ Flight Phase generator.
 """
 import openmdao.api as om
 import numpy as np
-from fastuav.utils.constants import MR_PROPULSION, FW_PROPULSION, PROPULSION_ID_LIST, HOVER_TAG, CLIMB_TAG, CRUISE_TAG, PHASE_TAGS_LIST
+from fastuav.constants import MR_PROPULSION, FW_PROPULSION, PROPULSION_ID_LIST, HOVER_TAG, CLIMB_TAG, CRUISE_TAG, PHASE_TAGS_LIST
 from fastuav.models.performance.mission.flight_performance import FlightPerformanceModel
 
 

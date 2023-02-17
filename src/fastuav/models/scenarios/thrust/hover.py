@@ -5,7 +5,7 @@ Hover scenarios
 import numpy as np
 from scipy.constants import g
 import openmdao.api as om
-from fastuav.utils.constants import MR_PROPULSION, FW_PROPULSION
+from fastuav.constants import MR_PROPULSION, FW_PROPULSION
 
 
 class HoverThrust(om.ExplicitComponent):

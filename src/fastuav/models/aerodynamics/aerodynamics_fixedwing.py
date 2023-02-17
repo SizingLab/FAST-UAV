@@ -7,7 +7,7 @@ import numpy as np
 from fastuav.utils.uncertainty import (
     add_subsystem_with_deviation,
 )
-from fastuav.utils.constants import FW_PROPULSION
+from fastuav.constants import FW_PROPULSION
 from stdatm import AtmosphereSI
 
 

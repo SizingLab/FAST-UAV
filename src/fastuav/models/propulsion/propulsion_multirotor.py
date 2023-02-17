@@ -3,7 +3,7 @@ Multirotor propulsion system
 """
 
 import fastoad.api as oad
-from fastuav.utils.constants import MR_PROPULSION
+from fastuav.constants import MR_PROPULSION
 from fastuav.models.propulsion.propulsion import Propulsion
 
 
