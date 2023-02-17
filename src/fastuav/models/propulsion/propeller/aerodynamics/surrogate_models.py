@@ -170,7 +170,7 @@ class PropellerAerodynamicsModel:
 
         # Solidity correction factor
         sigma = n_blades * chord_to_radius / np.pi
-        pitch_angle = np.atan(beta / 0.7 / np.pi)
+        pitch_angle = np.arctan(beta / 0.7 / np.pi)
         delta_t = delta_p = (
             3
             / 2
