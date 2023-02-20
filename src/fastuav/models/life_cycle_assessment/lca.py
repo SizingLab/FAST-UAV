@@ -26,7 +26,7 @@ class LCA(om.Group):
         # Declare options
         self.options.declare("project", default=DEFAULT_PROJECT, types=str)
         self.options.declare("database", default=DEFAULT_ECOINVENT, types=str)
-        self.options.declare("model", default="lifetime", types=str)
+        self.options.declare("model", default="kg.km", types=str)
         self.options.declare("methods",
                              default=DEFAULT_METHOD,
                              types=list)
@@ -78,7 +78,7 @@ class LCAmodel(om.ExplicitComponent):
         # Declare options
         self.options.declare("project", default=DEFAULT_PROJECT, types=str)
         self.options.declare("database", default=DEFAULT_ECOINVENT, types=str)
-        self.options.declare("model", default="lifetime", values=["lifetime", "kg.km", "kg.h"])
+        self.options.declare("model", default="kg.km", values=["kg.km", "kg.h"])
         self.options.declare("parameters", default=dict(), types=dict)  # for storing non-float parameters
 
     def setup(self):
@@ -134,13 +134,12 @@ class LCAmodel(om.ExplicitComponent):
         mass_controllers = inputs["data:weight:propulsion:multirotor:esc:mass"] * N_pro  # [kg]
         mass_airframe = inputs["data:weight:airframe:body:mass"] + inputs["data:weight:airframe:arms:mass"]  # [kg]
 
-        # special case for normalized models (avoid division by zero)
-        if self.options["model"] in ("kg.km", "kg.h"):
-            eps = np.array([1e-9])
-            n_cycles = max(n_cycles, eps)
-            mission_distance = max(mission_distance, eps)
-            mission_duration = max(mission_duration, eps)
-            mass_payload = max(mass_payload, eps)
+        # Data manipulation for normalized models (avoid division by zero)
+        eps = np.array([1e-9])
+        n_cycles = max(n_cycles, eps)
+        mission_distance = max(mission_distance, eps)
+        mission_duration = max(mission_duration, eps)
+        mass_payload = max(mass_payload, eps)
 
         # set values for lca parameters (only for float parameters;
         # non-float parameters are automatically declared as options)
@@ -400,51 +399,40 @@ class LCAmodel(om.ExplicitComponent):
         # Define model
         model_select = self.options["model"]
 
-        if model_select == "lifetime":  # impacts over UAV's lifetime
+        # Impacts over UAV's lifetime
+        intermediate_model = lcalg.newActivity(
+            USER_DB,
+            "model",
+            "uav lifetime",
+            exchanges={
+                production: 1.0,
+                operation: 1.0,
+            })
+
+        # Normalize the impacts
+        if model_select == "kg.km":  # 1 kg payload on 1 km
+            # functional value to normalize
+            functional_value = self._get_param('n_cycles') * self._get_param('mission_distance') * self._get_param(
+                'mass_payload')
             lcalg.newActivity(
                 USER_DB,
-                MODEL_KEY,  # Name of the model
-                "uav lifetime",  # Functional Unit: one uav on its entire lifetime
+                MODEL_KEY,
+                "kg.km",  # functional unit: one kg payload carried on one km
                 exchanges={
-                    production: 1.0,  # Reference the activity we just created
-                    operation: 1.0,
+                    intermediate_model: 1 / functional_value
                 })
 
-        else:
-            # Impacts over UAV's lifetime
-            intermediate_model = lcalg.newActivity(
+        elif model_select == "kg.h":  # 1 kg payload during 1 hour
+            # functional value to normalize
+            functional_value = self._get_param('n_cycles') * self._get_param('mission_duration') * self._get_param(
+                'mass_payload')
+            lcalg.newActivity(
                 USER_DB,
-                "intermediate_model",
-                "uav lifetime",
+                MODEL_KEY,
+                "kg.km",  # functional unit: one kg payload carried during one hour
                 exchanges={
-                    production: 1.0,
-                    operation: 1.0,
+                    intermediate_model: 1 / functional_value
                 })
-
-            # Normalize the impacts
-            if model_select == "kg.km":  # 1 kg payload on 1 km
-                # functional value to normalize
-                functional_value = self._get_param('n_cycles') * self._get_param('mission_distance') * self._get_param(
-                    'mass_payload')
-                lcalg.newActivity(
-                    USER_DB,
-                    MODEL_KEY,
-                    "kg.km",  # functional unit: one kg payload carried on one km
-                    exchanges={
-                        intermediate_model: 1 / functional_value
-                    })
-
-            elif model_select == "kg.h":  # 1 kg payload during 1 hour
-                # functional value to normalize
-                functional_value = self._get_param('n_cycles') * self._get_param('mission_duration') * self._get_param(
-                    'mass_payload')
-                lcalg.newActivity(
-                    USER_DB,
-                    MODEL_KEY,
-                    "kg.km",  # functional unit: one kg payload carried during one hour
-                    exchanges={
-                        intermediate_model: 1 / functional_value
-                    })
 
     def _add_param(self, param):
         """Add a parameter to the parameters dictionary."""
@@ -511,9 +499,12 @@ class LCAcalc(om.ExplicitComponent):
         for m in self.methods:
             m_name = self.method_label_formatting(m)
             # m_unit = bw.Method(m).metadata['unit']  # method unit
+            # units.add_unit(m_unit, "kg")
             m_unit = None  # methods units are not recognized by OpenMDAO (e.g. kg S04-eq)
             for path in self.activities.keys():
-                self.add_output(RESULTS_VARIABLE_KEY + m_name + path, units=m_unit)
+                self.add_output(RESULTS_VARIABLE_KEY + m_name + path,
+                                units=m_unit,
+                                desc=bw.Method(m).metadata['unit'] + "/FU")
 
     # def setup_partials(self):
     #     Declared in configure method of parent group

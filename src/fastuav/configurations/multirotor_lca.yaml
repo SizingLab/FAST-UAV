@@ -38,7 +38,11 @@ model:
         model: "kg.h" # lifetime # kg.km
         methods:
             - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
-            - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
+            - "('CML v4.8 2016 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
+            - "('IPCC 2021 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
+            - "('IPCC 2013 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
+            - "('TRACI v2.1 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
         parameters: {"elec_switch_param": "fr"}  # non-float parameters for lca are declared here
 
 
