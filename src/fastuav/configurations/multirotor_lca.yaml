@@ -35,7 +35,7 @@ model:
         id: fastuav.plugin.lca
         project: fastuav
         database: ecoinvent 3.8_cutoff_ecoSpold02
-        model: model # normalized_model
+        model: "kg.h" # lifetime # kg.km
         methods:
             - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
             - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
