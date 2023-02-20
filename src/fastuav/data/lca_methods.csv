@@ -1,0 +1,763 @@
+,,,description,filename,unit,abbreviation,num_cfs
+CML v4.8 2016 no LT,acidification no LT,"acidification (incl. fate, average Europe total, A&B) no LT",,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,cml-v48-2016-no-ltaa.9326888b5dfc8ad763461e87dc5a0a9e,21
+CML v4.8 2016 no LT,climate change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,cml-v48-2016-no-ltcg.ef26e472ac5329eeba834f793ba181a9,149
+CML v4.8 2016 no LT,ecotoxicity: freshwater no LT,freshwater aquatic ecotoxicity (FAETP inf) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",cml-v48-2016-no-ltef.7bcf2b54b0276df08edfbd557353fcec,692
+CML v4.8 2016 no LT,ecotoxicity: marine no LT,marine aquatic ecotoxicity (MAETP inf) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",cml-v48-2016-no-ltem.a0375eb8cf5f50184aec734447fceb07,692
+CML v4.8 2016 no LT,ecotoxicity: terrestrial no LT,terrestrial ecotoxicity (TETP inf) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",cml-v48-2016-no-ltet.6cdf31823baa518ac55b3a552853e260,692
+CML v4.8 2016 no LT,energy resources: non-renewable no LT,abiotic depletion potential (ADP): fossil fuels no LT,,LCIA_Implementation_3.9.xlsx,megajoule,cml-v48-2016-no-ltea.e5a75f64df67c7a7d83e4165deef7bfc,5
+CML v4.8 2016 no LT,eutrophication no LT,eutrophication (fate not incl.) no LT,,LCIA_Implementation_3.9.xlsx,kg PO4-Eq,cml-v48-2016-no-ltee.0760034aaafd25e8435d412d66977108,73
+CML v4.8 2016 no LT,human toxicity no LT,human toxicity (HTP inf) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",cml-v48-2016-no-lthh.b4f403b8130c01a5348b7f43fc782454,686
+CML v4.8 2016 no LT,material resources: metals/minerals no LT,abiotic depletion potential (ADP): elements (ultimate reserves) no LT,,LCIA_Implementation_3.9.xlsx,kg Sb-Eq,cml-v48-2016-no-ltma.05c512de653374fa57d4c1b96105aaa4,129
+CML v4.8 2016 no LT,ozone depletion no LT,ozone layer depletion (ODP steady state) no LT,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,cml-v48-2016-no-ltoo.d43247522eec852758c4dc227e9773e9,64
+CML v4.8 2016 no LT,photochemical oxidant formation no LT,photochemical oxidation (high NOx) no LT,,LCIA_Implementation_3.9.xlsx,kg ethylene-Eq,cml-v48-2016-no-ltpp.654348e86b17aa314d1324a109a9defe,252
+CML v4.8 2016,acidification,"acidification (incl. fate, average Europe total, A&B)",,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,cml-v48-2016aa.dabb63ec4fa65348da4d153bee4888b2,26
+CML v4.8 2016,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,cml-v48-2016cg.231d6e8f8b1c199a47182515eba4032e,185
+CML v4.8 2016,ecotoxicity: freshwater,freshwater aquatic ecotoxicity (FAETP inf),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",cml-v48-2016ef.803983b018c3cc9559cabea0ee94323f,800
+CML v4.8 2016,ecotoxicity: marine,marine aquatic ecotoxicity (MAETP inf),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",cml-v48-2016em.b558064bea27501547a2577a72680581,800
+CML v4.8 2016,ecotoxicity: terrestrial,terrestrial ecotoxicity (TETP inf),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",cml-v48-2016et.58a9c4f9714f0591bc0ed845bbf010a5,800
+CML v4.8 2016,energy resources: non-renewable,abiotic depletion potential (ADP): fossil fuels,,LCIA_Implementation_3.9.xlsx,megajoule,cml-v48-2016ea.48bc7aa078213d04df81ded6e6235e42,5
+CML v4.8 2016,eutrophication,eutrophication (fate not incl.),,LCIA_Implementation_3.9.xlsx,kg PO4-Eq,cml-v48-2016ee.8bb7e032343e9753f1863befc58e7244,87
+CML v4.8 2016,human toxicity,human toxicity (HTP inf),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",cml-v48-2016hh.726cf7a04a5fc77b79782aa999e27899,796
+CML v4.8 2016,material resources: metals/minerals,abiotic depletion potential (ADP): elements (ultimate reserves),,LCIA_Implementation_3.9.xlsx,kg Sb-Eq,cml-v48-2016ma.6d864f84e736749817c5887d65a92588,129
+CML v4.8 2016,ozone depletion,ozone layer depletion (ODP steady state),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,cml-v48-2016oo.1c9d75a11947940de4b45037a96f3d91,80
+CML v4.8 2016,photochemical oxidant formation,photochemical oxidation (high NOx),,LCIA_Implementation_3.9.xlsx,kg ethylene-Eq,cml-v48-2016pp.c31c567e0da047f9bf8e6859ccbc2bed,314
+Crustal Scarcity Indicator 2020,material resources: metals/minerals,crustal scarcity potential (CSP),,LCIA_Implementation_3.9.xlsx,kg Si-Eq,crustal-scarcity-indicator-2020mc.9abeae126e151c80ad0f3b56584a5dc2,216
+Cumulative Energy Demand (CED),energy resources: non-renewable,energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.711b20dfef4a9a07a4f4ad88500d1bfb,8
+Cumulative Energy Demand (CED),"energy resources: non-renewable, biomass",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.3f25cbc26fbb68a36a95da2c84b8621d,1
+Cumulative Energy Demand (CED),"energy resources: non-renewable, fossil",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.86ace9d80d465a7b866bc23257271425,6
+Cumulative Energy Demand (CED),"energy resources: non-renewable, nuclear",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.54e1efe53242dc8f8a56c6f2c9f7e804,1
+Cumulative Energy Demand (CED),energy resources: renewable,energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.acf98354aa38c0bed0fb32591f7e739f,5
+Cumulative Energy Demand (CED),"energy resources: renewable, biomass",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.099420d32fa3457841724aba87ff2d19,1
+Cumulative Energy Demand (CED),"energy resources: renewable, geothermal",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.733c853d4635303b8ae6fb5e91cac347,1
+Cumulative Energy Demand (CED),"energy resources: renewable, geothermal, solar, wind",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.cf2069e2e31e1939a43785f274858b25,3
+Cumulative Energy Demand (CED),"energy resources: renewable, solar",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.a3a892cb2e66b300694baa65d5b69a10,1
+Cumulative Energy Demand (CED),"energy resources: renewable, water",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.644df24de258bc9ee29f2585ce58ef14,1
+Cumulative Energy Demand (CED),"energy resources: renewable, wind",energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedee.964354bfebfe841b8ce610d30fcb7754,1
+Cumulative Energy Demand (CED),total,energy content (HHV),,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-energy-demand-cedte.a9b5eb5934dd1f9719796c9625f25a11,13
+Cumulative Exergy Demand (CExD),energy resources: non-renewable,exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.0197d93d4b059cf876e1a60b66c8c5c8,8
+Cumulative Exergy Demand (CExD),"energy resources: non-renewable, biomass",exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.be8cf42249a429dc80a1fafee57647d3,1
+Cumulative Exergy Demand (CExD),"energy resources: non-renewable, fossil",exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.76fc755d65adfde1eed99f0ffb7ef1d7,6
+Cumulative Exergy Demand (CExD),"energy resources: non-renewable, nuclear",exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.caf2532bfc51c7fedc1ae3bc158753ca,1
+Cumulative Exergy Demand (CExD),energy resources: renewable,exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.f0a781d1ce4a81a4bbd98620a1af04da,4
+Cumulative Exergy Demand (CExD),"energy resources: renewable, biomass",exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.588afeab0a58bda19bc8a07d220fcd8d,1
+Cumulative Exergy Demand (CExD),"energy resources: renewable, solar",exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.58fd123e12ffa46b119990b0a4876cad,1
+Cumulative Exergy Demand (CExD),"energy resources: renewable, water",exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.53298df826a3488803918149220867fd,1
+Cumulative Exergy Demand (CExD),"energy resources: renewable, wind",exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdee.d2702e4e4fa3d85909c5b71fe6d895aa,1
+Cumulative Exergy Demand (CExD),material resources,exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdme.a65dc18e8101a6fd9c673cfa21162d40,154
+Cumulative Exergy Demand (CExD),material resources: metals,exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdme.afff450c9432587837b7e28c0ea99e4a,102
+Cumulative Exergy Demand (CExD),material resources: minerals,exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdme.634d919c05bc8facb839456695a6fc0a,46
+Cumulative Exergy Demand (CExD),material resources: water,exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdme.14bfea4e66e8855949f6ab42d136bd7e,6
+Cumulative Exergy Demand (CExD),total,exergy content,,LCIA_Implementation_3.9.xlsx,MJ-Eq,cumulative-exergy-demand-cexdte.8f791c3f233ad6e89f980b0d7da94e61,166
+Ecological Footprint,CO2,global hectares,,LCIA_Implementation_3.9.xlsx,square meter-year,ecological-footprintcg.e69eeec4f580cf816cae45ab8037c8c6,14
+Ecological Footprint,land occupation,global hectares,,LCIA_Implementation_3.9.xlsx,square meter-year,ecological-footprintlg.c415fc7f002516e45df68ce23a4a8ae7,58
+Ecological Footprint,nuclear,global hectares,,LCIA_Implementation_3.9.xlsx,square meter-year,ecological-footprintng.ab19c3d3fc932f42730ede6a3641ca93,1
+Ecological Footprint,total,global hectares,,LCIA_Implementation_3.9.xlsx,square meter-year,ecological-footprinttg.bdd2051db9549757f39bd94bb8f204fb,73
+Ecological Scarcity 2021 no LT,climate change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltcg.5fed5371a2597d8bf9d4500ba4097dbd,97
+Ecological Scarcity 2021 no LT,emissions to air no LT,air pollutants and PM no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltea.9578cb096d21959e63f7dcc2d6618bd2,355
+Ecological Scarcity 2021 no LT,emissions to air no LT,carcinogenic substances into air no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltec.abcd43ba80d20d8827603334581e8191,50
+Ecological Scarcity 2021 no LT,emissions to air no LT,heavy metals into air no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-lteh.070e41be91ab6eadba03d340ba294edd,32
+Ecological Scarcity 2021 no LT,emissions to air no LT,radioactive substances into air no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-lter.39175a57f51b9671380b1681be3423dc,96
+Ecological Scarcity 2021 no LT,emissions to soil no LT,heavy metals into soil no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-lteh.1802903d6f6d565c71e1d4ee29003b80,23
+Ecological Scarcity 2021 no LT,emissions to soil no LT,pesticides into soil no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltep.da653e11a8b992ab8120ba967a602772,368
+Ecological Scarcity 2021 no LT,emissions to water no LT,heavy metals into water no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-lteh.e65d9c7b6462c7f9c0157e1b822fe475,36
+Ecological Scarcity 2021 no LT,emissions to water no LT,POP into water no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltep.ee24bf1f121cdd1bb5b4173308fa5011,32
+Ecological Scarcity 2021 no LT,emissions to water no LT,radioactive substances into water no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-lter.82a31674be04442d131327a9338336f0,47
+Ecological Scarcity 2021 no LT,emissions to water no LT,water pollutants no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltew.29f7d1bf0b1dd4a05f0cdef4a9d07d20,88
+Ecological Scarcity 2021 no LT,energy resources no LT,energy resources no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltee.f6ea1b1c1be48f740530c6fc80c7ab66,12
+Ecological Scarcity 2021 no LT,land use no LT,land use no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltll.991821781ef418d2245c22545c13efe3,38
+Ecological Scarcity 2021 no LT,mineral resources no LT,mineral resources no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltmm.90ae9634e1695f43c26ea0178b39b908,175
+Ecological Scarcity 2021 no LT,natural resources no LT,biotic resources no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltnb.7284df48004455ec0286810a1e673744,2
+Ecological Scarcity 2021 no LT,ozone depletion no LT,ozone depletion no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltoo.d4b3b6fc455245ccb8d68c19841a4e83,64
+Ecological Scarcity 2021 no LT,total no LT,UBP no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-lttu.015438c50e28a194cbe20e867da8f86b,1519
+Ecological Scarcity 2021 no LT,waste disposal no LT,radioactive waste to deposit no LT,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltwr.c886d34dd8757066aeb0edc9b977df73,2
+Ecological Scarcity 2021 no LT,waste disposal no LT,"waste, non radioactive no LT",,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltww.d8b7414ecde65be765634f19652cd9ce,3
+Ecological Scarcity 2021 no LT,water use no LT,"water resources, evaporated no LT",,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021-no-ltww.12429b821c53c06459b5802610ff3d60,4
+Ecological Scarcity 2021,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021cg.0191976dad749779438feb5440d77faa,120
+Ecological Scarcity 2021,emissions to air,air pollutants and PM,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ea.bf636c0d3448e65da201690b6c6106e1,443
+Ecological Scarcity 2021,emissions to air,carcinogenic substances into air,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ec.145782caf869b292a1359aea7d839408,61
+Ecological Scarcity 2021,emissions to air,heavy metals into air,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021eh.93e19195e52b84b077f775a2845c3176,40
+Ecological Scarcity 2021,emissions to air,radioactive substances into air,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021er.0b570004d4f0ef90b8f6ed6b3061cb62,120
+Ecological Scarcity 2021,emissions to soil,heavy metals into soil,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021eh.a233c441da56d1751862745da57de916,23
+Ecological Scarcity 2021,emissions to soil,pesticides into soil,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ep.441fb128158bec419a9312ad8328ba42,368
+Ecological Scarcity 2021,emissions to water,heavy metals into water,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021eh.83dde213e4aa68455aeb3e040e7f5ffd,36
+Ecological Scarcity 2021,emissions to water,POP into water,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ep.16dbecad9be49e55d6c5093a7b30cb21,32
+Ecological Scarcity 2021,emissions to water,radioactive substances into water,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021er.13ae49cc0abed41828fffc8ce7447ae0,47
+Ecological Scarcity 2021,emissions to water,water pollutants,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ew.a524369d0ec3002615179126e0cac589,88
+Ecological Scarcity 2021,energy resources,energy resources,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ee.f87d5afbae43e6ceb531ee1bc367e2f3,12
+Ecological Scarcity 2021,land use,land use,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ll.5783051ccc8c379274ade82b39690f98,38
+Ecological Scarcity 2021,mineral resources,mineral resources,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021mm.e4a0e67507faa7eebfb99ac0cf17d11f,175
+Ecological Scarcity 2021,natural resources,biotic resources,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021nb.1636d7049012034a8d181138d60ea774,2
+Ecological Scarcity 2021,ozone depletion,ozone depletion,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021oo.652bebe8b33b5fdb3f043f772ae085f6,80
+Ecological Scarcity 2021,total,UBP,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021tu.2c03db9656a2a6750535e3de37dff59e,1691
+Ecological Scarcity 2021,waste disposal,radioactive waste to deposit,,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021wr.8cc70a8b35a4824eb8f6627ee56b09cc,2
+Ecological Scarcity 2021,waste disposal,"waste, non radioactive",,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ww.96a39dd6fab003dba15ea84a2945680d,4
+Ecological Scarcity 2021,water use,"water resources, evaporated",,LCIA_Implementation_3.9.xlsx,UBP,ecological-scarcity-2021ww.3b893208745dbdf8ea0f7d02f1f0c14f,5
+Ecosystem Damage Potential,land occupation,ecosystem damage potential,,LCIA_Implementation_3.9.xlsx,points,ecosystem-damage-potentialle.af9873e29b4ef1c35aa02c114c4cdbe8,55
+Ecosystem Damage Potential,land transformation,ecosystem damage potential,,LCIA_Implementation_3.9.xlsx,points,ecosystem-damage-potentialle.4a837e63244195bca182c623ca7f9327,110
+Ecosystem Damage Potential,total,ecosystem damage potential,,LCIA_Implementation_3.9.xlsx,points,ecosystem-damage-potentialte.2237ccc1b3fc347f6633ba83fc0795e4,165
+EDIP 2003 no LT,acidification no LT,acidification no LT,,LCIA_Implementation_3.9.xlsx,square meter,edip-2003-no-ltaa.83e68c5a1f8ddf51cb0db07b86699beb,31
+EDIP 2003 no LT,ecotoxicity no LT,"acute, in water no LT",,LCIA_Implementation_3.9.xlsx,m3 water,edip-2003-no-ltea.37f477f5b80527b0406bc6ac9c9b18f8,215
+EDIP 2003 no LT,ecotoxicity no LT,"chronic, in soil no LT",,LCIA_Implementation_3.9.xlsx,m3 soil,edip-2003-no-ltec.588eaf6920a1aa4e71a6de144adb2971,391
+EDIP 2003 no LT,ecotoxicity no LT,"chronic, in water no LT",,LCIA_Implementation_3.9.xlsx,m3 water,edip-2003-no-ltec.963224837e02ebaa3828dd58f5649526,394
+EDIP 2003 no LT,ecotoxicity no LT,in sewage treatment plants no LT,,LCIA_Implementation_3.9.xlsx,m3 waste water,edip-2003-no-ltei.443b58f494ecc2ab143621e88da19930,151
+EDIP 2003 no LT,eutrophication no LT,combined potential no LT,,LCIA_Implementation_3.9.xlsx,kg NO3-,edip-2003-no-ltec.0083996d765f2b0bf5213398c637a7c8,100
+EDIP 2003 no LT,eutrophication no LT,separate N potential no LT,,LCIA_Implementation_3.9.xlsx,kg N,edip-2003-no-ltes.559041e01d5d681f1df56a974f2b78e1,64
+EDIP 2003 no LT,eutrophication no LT,separate P potential no LT,,LCIA_Implementation_3.9.xlsx,kg P,edip-2003-no-ltes.ef8f2d47f872f61cec2f979372f0435b,16
+EDIP 2003 no LT,eutrophication no LT,terrestrial eutrophication no LT,,LCIA_Implementation_3.9.xlsx,square meter,edip-2003-no-ltet.220fee9d70ad2c595db69591586fd5f9,8
+EDIP 2003 no LT,global warming no LT,GWP 100a no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,edip-2003-no-ltgg.792b1b2f7367c2c985cc8756be1a21fb,474
+EDIP 2003 no LT,global warming no LT,GWP 20a no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,edip-2003-no-ltgg.6659c2b22e7cd94e3db6f0717fa9713c,474
+EDIP 2003 no LT,global warming no LT,GWP 500a no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,edip-2003-no-ltgg.1615cdccbb02887cc4835efbfa5c1c24,474
+EDIP 2003 no LT,human toxicity no LT,via air no LT,,LCIA_Implementation_3.9.xlsx,m3 air,edip-2003-no-lthv.30f1c10b59e68bae503fe9735dcbf481,370
+EDIP 2003 no LT,human toxicity no LT,via soil no LT,,LCIA_Implementation_3.9.xlsx,m3 soil,edip-2003-no-lthv.ea49344131ec98499dfe5ad341f0b999,391
+EDIP 2003 no LT,human toxicity no LT,via surface water no LT,,LCIA_Implementation_3.9.xlsx,m3 water,edip-2003-no-lthv.607e1845667b23c4350987c160a99da4,453
+EDIP 2003 no LT,land filling no LT,bulk waste no LT,,LCIA_Implementation_3.9.xlsx,kg waste,edip-2003-no-ltlb.5a6e7d29d0277ecc4b900f32f226d536,3
+EDIP 2003 no LT,land filling no LT,hazardous waste no LT,,LCIA_Implementation_3.9.xlsx,kg waste,edip-2003-no-ltlh.2a9ff5e179eb0f5ba8bdcdbf799c437b,1
+EDIP 2003 no LT,land filling no LT,radioactive waste no LT,,LCIA_Implementation_3.9.xlsx,kg waste,edip-2003-no-ltlr.2bb58f712cc7f61e3a0b2bc6df9459a5,2
+EDIP 2003 no LT,land filling no LT,slag and ashes no LT,,LCIA_Implementation_3.9.xlsx,kg waste,edip-2003-no-ltls.87f0dd2196081d60f226411a31ef44ee,1
+EDIP 2003 no LT,non-renewable resources no LT,aluminium no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltna.defde8d5bc4d5e2f2dd4afb62abd9ec3,2
+EDIP 2003 no LT,non-renewable resources no LT,antimony no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltna.267516d0f6bcf86fe6751906ca81ab5e,2
+EDIP 2003 no LT,non-renewable resources no LT,brown coal no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnb.6e84f9a0672061a3bff9627f1fccea13,1
+EDIP 2003 no LT,non-renewable resources no LT,cadmium no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnc.059e4244f6a65890897176b59a997528,2
+EDIP 2003 no LT,non-renewable resources no LT,cerium no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnc.0b5b3e1af08bf76e7db02ac7b8cda254,2
+EDIP 2003 no LT,non-renewable resources no LT,coal no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnc.6ea5983ff20c16cb61284ebfc6943e04,1
+EDIP 2003 no LT,non-renewable resources no LT,cobalt no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnc.fcd1b4c2fa1da4f9f2bebb42fde62da0,1
+EDIP 2003 no LT,non-renewable resources no LT,copper no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnc.35201cd38243408c0aaf173ced08167d,12
+EDIP 2003 no LT,non-renewable resources no LT,gold no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltng.240cb41538d30611bd3be65415fdea9e,10
+EDIP 2003 no LT,non-renewable resources no LT,iron no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltni.2e691b3597902e8244605f17d1b2be7b,2
+EDIP 2003 no LT,non-renewable resources no LT,lanthanum no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnl.bf3d05dc12d44cc4dd636ca79f1e334d,2
+EDIP 2003 no LT,non-renewable resources no LT,lead no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnl.10ad4bd7458976f43e28022879a36b4c,3
+EDIP 2003 no LT,non-renewable resources no LT,manganese no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnm.d3a261791c7280cb1dc0b5713f643bf7,3
+EDIP 2003 no LT,non-renewable resources no LT,mercury no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnm.3030d732647e6816d7e1029d45d10f61,2
+EDIP 2003 no LT,non-renewable resources no LT,molybdenum no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnm.11bb4a6864b1e3a0071b8a6ef600a21e,8
+EDIP 2003 no LT,non-renewable resources no LT,natural gas no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnn.f5e99e59ebe78c08dbb30b38aabffe04,2
+EDIP 2003 no LT,non-renewable resources no LT,nickel no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnn.def1b8c35d6b90e181addba3b3f170d1,5
+EDIP 2003 no LT,non-renewable resources no LT,oil no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltno.181f5260b4b7142bb27758ac39536f3a,1
+EDIP 2003 no LT,non-renewable resources no LT,palladium no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnp.d4811edb21786f07d3c02ec5df29cf8e,3
+EDIP 2003 no LT,non-renewable resources no LT,platinum no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnp.4c1535f1b0bbc1d7d525bf00cc5346b7,3
+EDIP 2003 no LT,non-renewable resources no LT,silver no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltns.7230d0dfbf46c421676ddaedf36deb7b,8
+EDIP 2003 no LT,non-renewable resources no LT,tantalum no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnt.c4917354efa6be485f465fea67b14810,2
+EDIP 2003 no LT,non-renewable resources no LT,tin no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnt.591c62dfc053212ba1562dd2c2bbda2f,2
+EDIP 2003 no LT,non-renewable resources no LT,zinc no LT,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003-no-ltnz.2c00cd0a25e23784a0765db656fb3496,3
+EDIP 2003 no LT,photochemical ozone formation no LT,impacts on human health no LT,,LCIA_Implementation_3.9.xlsx,person.ppm.h,edip-2003-no-ltpi.92eefecb9f60266c3d4fe7c70abc31e6,410
+EDIP 2003 no LT,photochemical ozone formation no LT,impacts on vegetation no LT,,LCIA_Implementation_3.9.xlsx,m2.ppm.h,edip-2003-no-ltpi.7bfe61020743e03187725fdf05a84eac,430
+EDIP 2003 no LT,renewable resources no LT,wood no LT,,LCIA_Implementation_3.9.xlsx,cubic meter,edip-2003-no-ltrw.3d761555b928ea40dd8df7f19c72c8f2,4
+EDIP 2003 no LT,stratospheric ozone depletion no LT,ODP total no LT,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,edip-2003-no-ltso.14f616451a536fc3938ee0ba5ae7b682,64
+EDIP 2003,acidification,acidification,,LCIA_Implementation_3.9.xlsx,square meter,edip-2003aa.6b8b9606a80fc028d478b3e229eab4c3,39
+EDIP 2003,ecotoxicity,"acute, in water",,LCIA_Implementation_3.9.xlsx,m3 water,edip-2003ea.2f45db6d47d6db4279070735500b8ba9,245
+EDIP 2003,ecotoxicity,"chronic, in soil",,LCIA_Implementation_3.9.xlsx,m3 soil,edip-2003ec.17a0e31ba6219373396527b124c8cfcd,451
+EDIP 2003,ecotoxicity,"chronic, in water",,LCIA_Implementation_3.9.xlsx,m3 water,edip-2003ec.1451f287f6eacab4c2f8d92fb056fd43,492
+EDIP 2003,ecotoxicity,in sewage treatment plants,,LCIA_Implementation_3.9.xlsx,m3 waste water,edip-2003ei.c31bda407b67a9f72b155d8fabb071f9,166
+EDIP 2003,eutrophication,combined potential,,LCIA_Implementation_3.9.xlsx,kg NO3-,edip-2003ec.f60cde875f6704e2778e818d15712968,123
+EDIP 2003,eutrophication,separate N potential,,LCIA_Implementation_3.9.xlsx,kg N,edip-2003es.c4c03ff562355e01083a95d2d967b289,79
+EDIP 2003,eutrophication,separate P potential,,LCIA_Implementation_3.9.xlsx,kg P,edip-2003es.e59a69ae39558daf0f569a00e9581ee7,19
+EDIP 2003,eutrophication,terrestrial eutrophication,,LCIA_Implementation_3.9.xlsx,square meter,edip-2003et.8e9c868635529e27d7dbd94441f36485,10
+EDIP 2003,global warming,GWP 100a,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,edip-2003gg.6abfbb89d15b5d2e4922ab33bc4606b9,593
+EDIP 2003,global warming,GWP 20a,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,edip-2003gg.3b23be607e2293a0d1ffdad6fb8c041c,593
+EDIP 2003,global warming,GWP 500a,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,edip-2003gg.bc2bbac09b04f7da1a6261c202c2f36a,593
+EDIP 2003,human toxicity,via air,,LCIA_Implementation_3.9.xlsx,m3 air,edip-2003hv.f469842a48a850d2b3245e114c79b79d,452
+EDIP 2003,human toxicity,via soil,,LCIA_Implementation_3.9.xlsx,m3 soil,edip-2003hv.242a94c9f2886c18c664c809813c4f9e,464
+EDIP 2003,human toxicity,via surface water,,LCIA_Implementation_3.9.xlsx,m3 water,edip-2003hv.07524ff334ee03215054a960c9292c98,566
+EDIP 2003,land filling,bulk waste,,LCIA_Implementation_3.9.xlsx,kg waste,edip-2003lb.29ec84644b9d587533b52497cb1dfcc1,3
+EDIP 2003,land filling,hazardous waste,,LCIA_Implementation_3.9.xlsx,kg waste,edip-2003lh.51585c98486c91b36850203d08747e74,1
+EDIP 2003,land filling,radioactive waste,,LCIA_Implementation_3.9.xlsx,kg waste,edip-2003lr.072544103bb400b6b490424bb0ba6e1b,2
+EDIP 2003,land filling,slag and ashes,,LCIA_Implementation_3.9.xlsx,kg waste,edip-2003ls.06ee42a7131620be9c370199890b1b13,1
+EDIP 2003,non-renewable resources,aluminium,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003na.aba2e43d45e9c96fcbed9dc03eb3fdcb,2
+EDIP 2003,non-renewable resources,antimony,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003na.83e1722439ab2bdb54412bea1b7a0698,2
+EDIP 2003,non-renewable resources,brown coal,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nb.51ba18c83860051f77e8dc4b47a61470,1
+EDIP 2003,non-renewable resources,cadmium,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nc.97e34413cdc0fdb99457285925eef5bd,2
+EDIP 2003,non-renewable resources,cerium,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nc.18cc0bcb7464ed5d9a2bfa3a556e33c6,2
+EDIP 2003,non-renewable resources,coal,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nc.47df3b75a9bbf8729d28f584389fd720,1
+EDIP 2003,non-renewable resources,cobalt,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nc.0fb3ef238af5e2b104b81caab9609a37,1
+EDIP 2003,non-renewable resources,copper,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nc.fe13cdb84bb5be536f9f5aa0fdeedaf4,12
+EDIP 2003,non-renewable resources,gold,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003ng.a8994b88c153ad065182f7e6cf1a7166,10
+EDIP 2003,non-renewable resources,iron,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003ni.f92d226f51a0dbb103b879a04510188d,2
+EDIP 2003,non-renewable resources,lanthanum,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nl.eca49c208075ccc8645694bcd5fffa6c,2
+EDIP 2003,non-renewable resources,lead,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nl.f773c5d68f401d1cf00338cfd572cf3c,3
+EDIP 2003,non-renewable resources,manganese,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nm.78c9c0e1889f08f59aa0907a055f3e25,3
+EDIP 2003,non-renewable resources,mercury,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nm.fd0adb07e97c46473081977738d63938,2
+EDIP 2003,non-renewable resources,molybdenum,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nm.c88af42ee46d51dd3da8433db5a7bbdd,8
+EDIP 2003,non-renewable resources,natural gas,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nn.35e03be4e570fbacb0f0562720378673,2
+EDIP 2003,non-renewable resources,nickel,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nn.eea05d5d59148990d83aedbe6aaafa1b,5
+EDIP 2003,non-renewable resources,oil,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003no.92de4e0f5e34a88e8d70071eca465d6b,1
+EDIP 2003,non-renewable resources,palladium,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003np.ac6b9f61240af75991d709c400f0f8fa,3
+EDIP 2003,non-renewable resources,platinum,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003np.8a46fdb40b5006209e97e88b02efe86c,3
+EDIP 2003,non-renewable resources,silver,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003ns.6f5a5253e999fb99ba1ad9e3dce41729,8
+EDIP 2003,non-renewable resources,tantalum,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nt.9081744f855702d88d75d86db6440f8e,2
+EDIP 2003,non-renewable resources,tin,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nt.21395b107256ba12f9e836f47e6e499b,2
+EDIP 2003,non-renewable resources,zinc,,LCIA_Implementation_3.9.xlsx,kilogram,edip-2003nz.dbfebcde65f68ed9d749f1b22a2127d6,3
+EDIP 2003,photochemical ozone formation,impacts on human health,,LCIA_Implementation_3.9.xlsx,person.ppm.h,edip-2003pi.afce0a82119a4065c2b0d988078c1691,513
+EDIP 2003,photochemical ozone formation,impacts on vegetation,,LCIA_Implementation_3.9.xlsx,m2.ppm.h,edip-2003pi.8ed3ef1aa959abc8122a49e2d8b2be52,538
+EDIP 2003,renewable resources,wood,,LCIA_Implementation_3.9.xlsx,cubic meter,edip-2003rw.2a78a9214d071965e36d479f163249de,4
+EDIP 2003,stratospheric ozone depletion,ODP total,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,edip-2003so.863feb3b7678d7f6654ed10a1ca7c6fc,80
+EF v3.0 no LT,acidification no LT,accumulated exceedance (AE) no LT,,LCIA_Implementation_3.9.xlsx,mol H+-Eq,ef-v30-no-ltaa.89504dec5adb27b149fbb2f8fff0f43f,18
+EF v3.0 no LT,climate change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30-no-ltcg.ba81474170e9e879cf9c8b0812a1b77b,159
+EF v3.0 no LT,climate change: biogenic no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30-no-ltcg.f87fe6700e3b667e85e6093c85962d47,4
+EF v3.0 no LT,climate change: fossil no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30-no-ltcg.df79bbe4212aebf801b0a12b55656349,139
+EF v3.0 no LT,climate change: land use and land use change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30-no-ltcg.e0b4c646ca9e0c4e30582c8baa6c7b25,16
+EF v3.0 no LT,ecotoxicity: freshwater no LT,comparative toxic unit for ecosystems (CTUe) no LT,,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30-no-ltec.6caca60b6d76bba8c12b0558684d7cb7,2482
+EF v3.0 no LT,"ecotoxicity: freshwater, inorganics no LT",comparative toxic unit for ecosystems (CTUe) no LT,,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30-no-ltec.0bd61e2b4d7963a4971cbc4c0a73d45c,272
+EF v3.0 no LT,"ecotoxicity: freshwater, metals no LT",comparative toxic unit for ecosystems (CTUe) no LT,,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30-no-ltec.29420aa7e421f0216a4bd15e0f61638e,362
+EF v3.0 no LT,"ecotoxicity: freshwater, organics no LT",comparative toxic unit for ecosystems (CTUe) no LT,,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30-no-ltec.ae787d3ccd56984a24f1f2c55e9486b1,1848
+EF v3.0 no LT,energy resources: non-renewable no LT,abiotic depletion potential (ADP): fossil fuels no LT,,LCIA_Implementation_3.9.xlsx,"MJ, net calorific value",ef-v30-no-ltea.b2a216e5a1479592c97b561a80579097,7
+EF v3.0 no LT,eutrophication: freshwater no LT,fraction of nutrients reaching freshwater end compartment (P) no LT,,LCIA_Implementation_3.9.xlsx,kg P-Eq,ef-v30-no-ltef.2c5dcb4b58afb98b91edfe338c520e8b,11
+EF v3.0 no LT,eutrophication: marine no LT,fraction of nutrients reaching marine end compartment (N) no LT,,LCIA_Implementation_3.9.xlsx,kg N-Eq,ef-v30-no-ltef.b0d77391ac1c65323d2437b7b341a337,29
+EF v3.0 no LT,eutrophication: terrestrial no LT,accumulated exceedance (AE) no LT,,LCIA_Implementation_3.9.xlsx,mol N-Eq,ef-v30-no-ltea.4e8ee4c02b5d41e3c1b2dac355752ac4,13
+EF v3.0 no LT,human toxicity: carcinogenic no LT,comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-no-lthc.4e383bb28ad42e1a509b62d6dcdc5b21,478
+EF v3.0 no LT,"human toxicity: carcinogenic, inorganics no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-no-lthc.2de62b628f70c14ca13b7c55ee1f5cbf,4
+EF v3.0 no LT,"human toxicity: carcinogenic, metals no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-no-lthc.53effddb9c9e84a0148ff5c91efd79b7,92
+EF v3.0 no LT,"human toxicity: carcinogenic, organics no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-no-lthc.48fb29ce72b1163c8693e46326402fa0,382
+EF v3.0 no LT,human toxicity: non-carcinogenic no LT,comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-no-lthc.def940c3fbb0789553f2b362fa61853f,2057
+EF v3.0 no LT,"human toxicity: non-carcinogenic, inorganics no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-no-lthc.ce347fd5a3f789cf1208dae425935b6c,195
+EF v3.0 no LT,"human toxicity: non-carcinogenic, metals no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-no-lthc.654b1e1e70332647b232897d15445d42,270
+EF v3.0 no LT,"human toxicity: non-carcinogenic, organics no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-no-lthc.abd5e65cb0074fd3aa2dd33c80b68ead,1597
+EF v3.0 no LT,ionising radiation: human health no LT,human exposure efficiency relative to u235 no LT,,LCIA_Implementation_3.9.xlsx,kBq U235-Eq,ef-v30-no-ltih.4a8344c526fabfda610c9179e703d222,156
+EF v3.0 no LT,land use no LT,soil quality index no LT,,LCIA_Implementation_3.9.xlsx,dimensionless,ef-v30-no-ltls.3938dde54ad56f79c85c1013a3983c8c,155
+EF v3.0 no LT,material resources: metals/minerals no LT,abiotic depletion potential (ADP): elements (ultimate reserves) no LT,,LCIA_Implementation_3.9.xlsx,kg Sb-Eq,ef-v30-no-ltma.1613a0a7bd476ef82b3b3f12836b502f,148
+EF v3.0 no LT,ozone depletion no LT,ozone depletion potential (ODP) no LT,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,ef-v30-no-ltoo.bb0448c930bc5071a7fc85d9937a2c10,60
+EF v3.0 no LT,particulate matter formation no LT,impact on human health no LT,,LCIA_Implementation_3.9.xlsx,disease incidence,ef-v30-no-ltpi.b3355933ba4a5dc4bf50ed9010aa8f67,21
+EF v3.0 no LT,photochemical oxidant formation: human health no LT,tropospheric ozone concentration increase no LT,,LCIA_Implementation_3.9.xlsx,kg NMVOC-Eq,ef-v30-no-ltpt.a6dac43bc8a8384e26ecb463fe7de966,250
+EF v3.0 no LT,water use no LT,user deprivation potential (deprivation-weighted water consumption) no LT,,LCIA_Implementation_3.9.xlsx,m3 world eq. deprived,ef-v30-no-ltwu.c30012d63a9eb713eb173308163b259a,4
+EF v3.0,acidification,accumulated exceedance (AE),,LCIA_Implementation_3.9.xlsx,mol H+-Eq,ef-v30aa.bc63365a59e28af2f9ab3c8b43f0ff3b,21
+EF v3.0,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30cg.fc91b07ab84331932f3a5fff158a99d6,198
+EF v3.0,climate change: biogenic,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30cg.0b12705baa32e4a9480703bdfe6a7c9b,5
+EF v3.0,climate change: fossil,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30cg.bf997449c7b4e93176cd0d4cb32966dd,174
+EF v3.0,climate change: land use and land use change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30cg.b585a3e5fdfacfd23de3b27dcc609bca,19
+EF v3.0,ecotoxicity: freshwater,comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30ec.1f10702b4f1a96f3b001933a96f82376,2482
+EF v3.0,"ecotoxicity: freshwater, inorganics",comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30ec.31517739b9957b8651c6e9984eb966ab,272
+EF v3.0,"ecotoxicity: freshwater, metals",comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30ec.ddf84bf4e8c70997d5a8eb15c5e774a0,362
+EF v3.0,"ecotoxicity: freshwater, organics",comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30ec.7bc584a02f719115aaa27c6ef3652591,1848
+EF v3.0,energy resources: non-renewable,abiotic depletion potential (ADP): fossil fuels,,LCIA_Implementation_3.9.xlsx,"MJ, net calorific value",ef-v30ea.0cd38b874d1078f73fdd42d342018ce9,7
+EF v3.0,eutrophication: freshwater,fraction of nutrients reaching freshwater end compartment (P),,LCIA_Implementation_3.9.xlsx,kg P-Eq,ef-v30ef.e2da9993d64f45a5c2469a28d58770be,13
+EF v3.0,eutrophication: marine,fraction of nutrients reaching marine end compartment (N),,LCIA_Implementation_3.9.xlsx,kg N-Eq,ef-v30ef.257bab5abc0ac68cbf881345d7f4d216,36
+EF v3.0,eutrophication: terrestrial,accumulated exceedance (AE),,LCIA_Implementation_3.9.xlsx,mol N-Eq,ef-v30ea.88102410a0a8a7b96065aadbaa4d903e,16
+EF v3.0,human toxicity: carcinogenic,comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30hc.7f9911f1a3357763fbb470ff446b3ad3,478
+EF v3.0,"human toxicity: carcinogenic, inorganics",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30hc.28da446d9ac748a6b693dc4e3ef8b4b6,4
+EF v3.0,"human toxicity: carcinogenic, metals",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30hc.d368d25001515847b4626d90d4f52e9e,92
+EF v3.0,"human toxicity: carcinogenic, organics",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30hc.545cce2217f5c17d646465a1f77b626b,382
+EF v3.0,human toxicity: non-carcinogenic,comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30hc.edbe219f8da59f1246ad7172adcc9bd8,2057
+EF v3.0,"human toxicity: non-carcinogenic, inorganics",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30hc.a17bdbd8893590cd7965105a2fb0bacc,195
+EF v3.0,"human toxicity: non-carcinogenic, metals",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30hc.d2f17a20e0a23629727771f7471706e3,270
+EF v3.0,"human toxicity: non-carcinogenic, organics",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30hc.ea2fdf9988e430505b9622056f2d38e2,1597
+EF v3.0,ionising radiation: human health,human exposure efficiency relative to u235,,LCIA_Implementation_3.9.xlsx,kBq U235-Eq,ef-v30ih.c448704a7fe4e093f19d127b65f664b2,195
+EF v3.0,land use,soil quality index,,LCIA_Implementation_3.9.xlsx,dimensionless,ef-v30ls.8c9c1ca2ad5c69fd5a489c7b8e5cc6a5,155
+EF v3.0,material resources: metals/minerals,abiotic depletion potential (ADP): elements (ultimate reserves),,LCIA_Implementation_3.9.xlsx,kg Sb-Eq,ef-v30ma.f98bbf57c80a1a8051cb4be3fdcef343,148
+EF v3.0,ozone depletion,ozone depletion potential (ODP),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,ef-v30oo.c57d1293fde5d8985580f091e2985f25,75
+EF v3.0,particulate matter formation,impact on human health,,LCIA_Implementation_3.9.xlsx,disease incidence,ef-v30pi.e84324654a70645b984a777d5550627d,27
+EF v3.0,photochemical oxidant formation: human health,tropospheric ozone concentration increase,,LCIA_Implementation_3.9.xlsx,kg NMVOC-Eq,ef-v30pt.764c8d6d08f40d8d36ee8b28987abb12,311
+EF v3.0,water use,user deprivation potential (deprivation-weighted water consumption),,LCIA_Implementation_3.9.xlsx,m3 world eq. deprived,ef-v30wu.2041cdbbda531c8da8275ae88de50185,5
+EF v3.1 no LT,acidification no LT,accumulated exceedance (AE) no LT,,LCIA_Implementation_3.9.xlsx,mol H+-Eq,ef-v31-no-ltaa.549beb1e182803cc772b2c3237d6ba68,18
+EF v3.1 no LT,climate change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31-no-ltcg.fe655fe5ddc1d5833e66d936a2f07317,181
+EF v3.1 no LT,climate change: biogenic no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31-no-ltcg.8cd6f28db387a3623858517d9ef10661,4
+EF v3.1 no LT,climate change: fossil no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31-no-ltcg.13b9e38bfc7a64dcf0b5f426e2598746,165
+EF v3.1 no LT,climate change: land use and land use change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31-no-ltcg.d7cd409ea36523af0f5c0d4c070c9ca1,12
+EF v3.1 no LT,ecotoxicity: freshwater no LT,comparative toxic unit for ecosystems (CTUe) no LT,,LCIA_Implementation_3.9.xlsx,CTUe,ef-v31-no-ltec.ca16a97f1c1c6b72f05f407735da9c94,2474
+EF v3.1 no LT,"ecotoxicity: freshwater, inorganics no LT",comparative toxic unit for ecosystems (CTUe) no LT,,LCIA_Implementation_3.9.xlsx,CTUe,ef-v31-no-ltec.9acf06a0466d4e96a48b1626f8c57e94,616
+EF v3.1 no LT,"ecotoxicity: freshwater, organics no LT",comparative toxic unit for ecosystems (CTUe) no LT,,LCIA_Implementation_3.9.xlsx,CTUe,ef-v31-no-ltec.83489f1620ca3f021fd43f02697f62ca,1858
+EF v3.1 no LT,energy resources: non-renewable no LT,abiotic depletion potential (ADP): fossil fuels no LT,,LCIA_Implementation_3.9.xlsx,"MJ, net calorific value",ef-v31-no-ltea.26d412b159cadb7fc4e3e66e19d572a5,7
+EF v3.1 no LT,eutrophication: freshwater no LT,fraction of nutrients reaching freshwater end compartment (P) no LT,,LCIA_Implementation_3.9.xlsx,kg P-Eq,ef-v31-no-ltef.472e602c7b552cfc31d2ba8268449a3b,11
+EF v3.1 no LT,eutrophication: marine no LT,fraction of nutrients reaching marine end compartment (N) no LT,,LCIA_Implementation_3.9.xlsx,kg N-Eq,ef-v31-no-ltef.5a267d674a5d2c7a7f299ba63b0d41ea,29
+EF v3.1 no LT,eutrophication: terrestrial no LT,accumulated exceedance (AE) no LT,,LCIA_Implementation_3.9.xlsx,mol N-Eq,ef-v31-no-ltea.4bd2fce21732d256f011d795d8fa4a2d,13
+EF v3.1 no LT,human toxicity: carcinogenic no LT,comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31-no-lthc.eca9327b6cd47f85b526892290b2fdf2,479
+EF v3.1 no LT,"human toxicity: carcinogenic, inorganics no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31-no-lthc.0bd3111e6ba6d53b00488fc84d18fb10,96
+EF v3.1 no LT,"human toxicity: carcinogenic, organics no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31-no-lthc.6745b378b1a94f33b48f219ab2bd099a,383
+EF v3.1 no LT,human toxicity: non-carcinogenic no LT,comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31-no-lthc.1536477bba9fb806190d3f746d04abde,2026
+EF v3.1 no LT,"human toxicity: non-carcinogenic, inorganics no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31-no-lthc.626be3bc72a0bb1e44ecf466d3a40663,420
+EF v3.1 no LT,"human toxicity: non-carcinogenic, organics no LT",comparative toxic unit for human (CTUh) no LT,,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31-no-lthc.7581f972a8bdb39e1bdc6fb57130a4fa,1606
+EF v3.1 no LT,ionising radiation: human health no LT,human exposure efficiency relative to u235 no LT,,LCIA_Implementation_3.9.xlsx,kBq U235-Eq,ef-v31-no-ltih.1e4a673ba20aad1f94aae50cbd5e3ed0,156
+EF v3.1 no LT,land use no LT,soil quality index no LT,,LCIA_Implementation_3.9.xlsx,dimensionless,ef-v31-no-ltls.5ea1635c4588e7dd7d5df3778009845b,155
+EF v3.1 no LT,material resources: metals/minerals no LT,abiotic depletion potential (ADP): elements (ultimate reserves) no LT,,LCIA_Implementation_3.9.xlsx,kg Sb-Eq,ef-v31-no-ltma.4e3dae13631d440d5aa38a63a3d024c5,148
+EF v3.1 no LT,ozone depletion no LT,ozone depletion potential (ODP) no LT,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,ef-v31-no-ltoo.7bc5bbd1b873d0e481cf0c660b2cdef6,60
+EF v3.1 no LT,particulate matter formation no LT,impact on human health no LT,,LCIA_Implementation_3.9.xlsx,disease incidence,ef-v31-no-ltpi.e2717f9ada4df0afec63384ff3b681d7,21
+EF v3.1 no LT,photochemical oxidant formation: human health no LT,tropospheric ozone concentration increase no LT,,LCIA_Implementation_3.9.xlsx,kg NMVOC-Eq,ef-v31-no-ltpt.e474f8e888890de593b40c40a06c5451,250
+EF v3.1 no LT,water use no LT,user deprivation potential (deprivation-weighted water consumption) no LT,,LCIA_Implementation_3.9.xlsx,m3 world eq. deprived,ef-v31-no-ltwu.f8a0e4eddf63fcc0870d2ee590adaf8f,4
+EF v3.1,acidification,accumulated exceedance (AE),,LCIA_Implementation_3.9.xlsx,mol H+-Eq,ef-v31aa.3561cd671a473310747f754fe860108c,22
+EF v3.1,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31cg.1c397559135d78f19a1915a0ca4f626a,223
+EF v3.1,climate change: biogenic,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31cg.a709ef67df83f4dc46415ed8f4bf30fc,5
+EF v3.1,climate change: fossil,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31cg.5a41d0cb0834ca96503051836e34f145,204
+EF v3.1,climate change: land use and land use change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31cg.9bcefb126c208e865d34ca72c54b3b0c,14
+EF v3.1,ecotoxicity: freshwater,comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v31ec.2b1bb91ef6b650e3a6e7f85f6f38e48c,2474
+EF v3.1,"ecotoxicity: freshwater, inorganics",comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v31ec.c35b23fa611c0ee9ef0195e29a5e76c4,616
+EF v3.1,"ecotoxicity: freshwater, organics",comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v31ec.7738317ea31d521f4447bb94aeb2cd45,1858
+EF v3.1,energy resources: non-renewable,abiotic depletion potential (ADP): fossil fuels,,LCIA_Implementation_3.9.xlsx,"MJ, net calorific value",ef-v31ea.41ac072e6f84d10be5190f984e74e66d,7
+EF v3.1,eutrophication: freshwater,fraction of nutrients reaching freshwater end compartment (P),,LCIA_Implementation_3.9.xlsx,kg P-Eq,ef-v31ef.5f477386ad531bc81b206ca5adb1457d,13
+EF v3.1,eutrophication: marine,fraction of nutrients reaching marine end compartment (N),,LCIA_Implementation_3.9.xlsx,kg N-Eq,ef-v31ef.f6f366fc261423655cb0db33db455bde,36
+EF v3.1,eutrophication: terrestrial,accumulated exceedance (AE),,LCIA_Implementation_3.9.xlsx,mol N-Eq,ef-v31ea.adee3b8b785857db474610ba0047cbbf,16
+EF v3.1,human toxicity: carcinogenic,comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31hc.77a0dbe5412ce259b5d1bd3992f46dc1,479
+EF v3.1,"human toxicity: carcinogenic, inorganics",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31hc.94c6f8dc07777f697a06318e91c8a0a9,96
+EF v3.1,"human toxicity: carcinogenic, organics",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31hc.00159ba9d800c4e53ab6a9ddce13fb85,383
+EF v3.1,human toxicity: non-carcinogenic,comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31hc.6f73a9f1feeb701a48cce837f6bc0213,2026
+EF v3.1,"human toxicity: non-carcinogenic, inorganics",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31hc.29cc12fc6b3243d9c7d9875bb026176f,420
+EF v3.1,"human toxicity: non-carcinogenic, organics",comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31hc.d9b80db5bb1c8da39bcc53ade737565d,1606
+EF v3.1,ionising radiation: human health,human exposure efficiency relative to u235,,LCIA_Implementation_3.9.xlsx,kBq U235-Eq,ef-v31ih.c22f21736047064490b9631c7fa2cb34,195
+EF v3.1,land use,soil quality index,,LCIA_Implementation_3.9.xlsx,dimensionless,ef-v31ls.e6192af00690c5bc296f45e80359ae4b,155
+EF v3.1,material resources: metals/minerals,abiotic depletion potential (ADP): elements (ultimate reserves),,LCIA_Implementation_3.9.xlsx,kg Sb-Eq,ef-v31ma.458aa6cb6d9335c9da89015af4afe157,148
+EF v3.1,ozone depletion,ozone depletion potential (ODP),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,ef-v31oo.24ecf0ac9220dda9512c1face21d9a36,75
+EF v3.1,particulate matter formation,impact on human health,,LCIA_Implementation_3.9.xlsx,disease incidence,ef-v31pi.0cb770785d5846f9cda6a8e070907b1c,27
+EF v3.1,photochemical oxidant formation: human health,tropospheric ozone concentration increase,,LCIA_Implementation_3.9.xlsx,kg NMVOC-Eq,ef-v31pt.95555b6153df96f07ec8b068a49d2479,311
+EF v3.1,water use,user deprivation potential (deprivation-weighted water consumption),,LCIA_Implementation_3.9.xlsx,m3 world eq. deprived,ef-v31wu.c06e898cc1acad11272faed515ba1aab,5
+EPS 2020d no LT,emissions to air no LT,monetary impact value no LT,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020d-no-ltem.4577957ce3993b6ef5ecec59165ba067,457
+EPS 2020d no LT,emissions to soil no LT,monetary impact value no LT,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020d-no-ltem.b6dfb1b8d550e1df6c5908a654f705f0,181
+EPS 2020d no LT,emissions to water no LT,monetary impact value no LT,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020d-no-ltem.26adfb2dd63f5adca3ac6398b38e0ec8,20
+EPS 2020d no LT,"energy resources: non-renewable, fossil no LT",monetary impact value no LT,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020d-no-ltem.328f56b21a3556d77f72c81f28b92233,5
+EPS 2020d no LT,land use no LT,monetary impact value no LT,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020d-no-ltlm.b214c321fa503026188cb59d42673f4e,40
+EPS 2020d no LT,material resources: metals no LT,monetary impact value no LT,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020d-no-ltmm.e3c55689d3e5f84b4e7b39c7e3a2dbcd,163
+EPS 2020d no LT,total no LT,monetary impact value no LT,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020d-no-lttm.f0d0a882a6bd9a3dd336a353112641df,866
+EPS 2020d,emissions to air,monetary impact value,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020dem.255f6e504266150e51390151efde054a,569
+EPS 2020d,emissions to soil,monetary impact value,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020dem.f893031a044b07ca2f81514e13406b04,181
+EPS 2020d,emissions to water,monetary impact value,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020dem.b631ce764aeea8eb62bae6c5b7725c01,26
+EPS 2020d,"energy resources: non-renewable, fossil",monetary impact value,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020dem.bafd1081b842e05731617a1eff49e68c,5
+EPS 2020d,land use,monetary impact value,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020dlm.47149f37732ca197b3c40c8245ce1051,40
+EPS 2020d,material resources: metals,monetary impact value,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020dmm.4f9215b17109c9eb624b21492fc054f2,163
+EPS 2020d,total,monetary impact value,,LCIA_Implementation_3.9.xlsx,EUR 2018,eps-2020dtm.03af962e76a765029aa255a5fccdba4e,984
+IMPACT 2002+ (Endpoint),climate change,climate change,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointcc.f0d6dcda47644cda5050030be792b6fd,175
+IMPACT 2002+ (Endpoint),climate change,total,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointct.3f19cdcdf090de2d0b708c8702a20041,175
+IMPACT 2002+ (Endpoint),ecosystem quality,aquatic ecotoxicity,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointea.3528f9e611ec6df35c8e02267168eb27,650
+IMPACT 2002+ (Endpoint),ecosystem quality,land occupation,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointel.3b415badb76b57adb75dd8bc1a4f3418,30
+IMPACT 2002+ (Endpoint),ecosystem quality,terrestrial acidification & nutrification,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointet.1c0f6708cea62a071c2e398e4bb765d4,19
+IMPACT 2002+ (Endpoint),ecosystem quality,terrestrial ecotoxicity,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointet.b055ea3aad5eb5431ffe8a1fa7c5843d,636
+IMPACT 2002+ (Endpoint),ecosystem quality,total,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointet.111c7ce8cd86bea5380aa3a9a8b86395,695
+IMPACT 2002+ (Endpoint),human health,human toxicity,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointhh.ffa523d6335d033ec7ddce66e320038a,607
+IMPACT 2002+ (Endpoint),human health,ionising radiation,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointhi.afe994d64357c62b7cede2a5e223466d,150
+IMPACT 2002+ (Endpoint),human health,ozone layer depletion,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointho.96c838f8b1e680a3b2fb2cb69f3ec80e,94
+IMPACT 2002+ (Endpoint),human health,photochemical oxidation,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointhp.dbc3e58707994c17b05d6cc6b2fd6487,234
+IMPACT 2002+ (Endpoint),human health,respiratory effects (inorganics),,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointhr.90b50af31fcbbbed6d447c1421d7c922,28
+IMPACT 2002+ (Endpoint),human health,total,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointht.aa7f68ff055e79af3b11fc57781b1395,974
+IMPACT 2002+ (Endpoint),resources,mineral extraction,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointrm.2a62e344efd63e7d8a88004ee751eac0,43
+IMPACT 2002+ (Endpoint),resources,non-renewable energy,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointrn.f3273f82440331986ebbbfa23a6337ea,7
+IMPACT 2002+ (Endpoint),resources,total,,LCIA_Implementation_3.9.xlsx,points,impact-2002-endpointrt.cd2032014f12c2867e487944fdef6041,50
+IMPACT 2002+ (Midpoint),ecosystem quality,aquatic acidification,,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,impact-2002-midpointea.bb9825e73c45486ed66f67f980f82fda,42
+IMPACT 2002+ (Midpoint),ecosystem quality,aquatic eutrophication,,LCIA_Implementation_3.9.xlsx,kg PO4-Eq,impact-2002-midpointea.579a86138ce6a6996c0cf0dc5c717738,22
+IPCC 2013 no LT,climate change no LT,global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2013-no-ltcg.fa193e734b7afee063e964dc40da5d10,167
+IPCC 2013 no LT,climate change no LT,global temperature change potential (GTP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2013-no-ltcg.28b959dec3a0a56e127cb4ecc710f788,167
+IPCC 2013 no LT,climate change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2013-no-ltcg.7962c33963a1191f21e7488df1f998cd,167
+IPCC 2013 no LT,climate change no LT,global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2013-no-ltcg.ce1fb1bc85e81fb623eab70d3e2dbf87,167
+IPCC 2013,climate change,global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2013cg.bd6645f9563344b11278a5f5ce91b738,207
+IPCC 2013,climate change,global temperature change potential (GTP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2013cg.7da3269307b445abf2ddf1070fff2794,207
+IPCC 2013,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2013cg.c44286db43e989e224357edf263706ce,207
+IPCC 2013,climate change,global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2013cg.5113c3190025c8c9ee99fb76edab1783,207
+IPCC 2021 no LT,climate change no LT,global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.e41cc06ec6f7b8f37c927d653cb09e9e,182
+IPCC 2021 no LT,climate change no LT,global temperature change potential (GTP50) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.cfd6af4cc2aded5f0e39e733dbdea05e,182
+IPCC 2021 no LT,climate change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.dc34e719fc41ee3be541d4e36e95cfd8,182
+IPCC 2021 no LT,climate change no LT,global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.14f35b69b78ce274f1f597afb97e0ff5,182
+IPCC 2021 no LT,climate change no LT,global warming potential (GWP500) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.f5801c599a812146709ca388dd5acd86,182
+IPCC 2021 no LT,climate change: biogenic no LT,global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.e1dfea1f954939a48accf67f0e2d63c7,4
+IPCC 2021 no LT,climate change: biogenic no LT,global temperature change potential (GTP50) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.c911c686fe0dd0ee021026165e29d54f,4
+IPCC 2021 no LT,climate change: biogenic no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.348ee7f7e99e16ff411234f48afa05ae,4
+IPCC 2021 no LT,climate change: biogenic no LT,global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.aaae2be9ee7651c9236e6ed3b5a3ac9d,4
+IPCC 2021 no LT,climate change: biogenic no LT,global warming potential (GWP500) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.9b09a2c35d382debb615c2e05c5db9c2,4
+IPCC 2021 no LT,"climate change: biogenic, including SLCFs no LT",global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.afb9acca8c9c723cdf808d96d3ebbe9a,8
+IPCC 2021 no LT,"climate change: biogenic, including SLCFs no LT",global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.5a695263b3a57cac0bb2fff4c89c7d60,8
+IPCC 2021 no LT,"climate change: biogenic, including SLCFs no LT",global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.7e46ba24f096d63a1d9f31fb806b0638,8
+IPCC 2021 no LT,climate change: fossil no LT,global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.dc8cbe72dd6e0f39049d0343089923d9,166
+IPCC 2021 no LT,climate change: fossil no LT,global temperature change potential (GTP50) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.625aca60255e183a3b872d8409807a5b,166
+IPCC 2021 no LT,climate change: fossil no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.416c178df2cfd4ba2bbb59b36921c2ed,166
+IPCC 2021 no LT,climate change: fossil no LT,global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.5aaf07fe8be2e4a61649104241a6e1e0,166
+IPCC 2021 no LT,climate change: fossil no LT,global warming potential (GWP500) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.7adcce515a0316f221f2f9146428115d,166
+IPCC 2021 no LT,"climate change: fossil, including SLCFs no LT",global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.020a2990fd6f4fab8ba8cd06cb1e695c,172
+IPCC 2021 no LT,"climate change: fossil, including SLCFs no LT",global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.3193d049c6e9a855f68d80a9aa3c8a69,172
+IPCC 2021 no LT,"climate change: fossil, including SLCFs no LT",global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.12e84c54b519075504a0846b64434f40,172
+IPCC 2021 no LT,climate change: including SLCFs no LT,global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.bb434df1bbe3fabf5faa52276112758c,196
+IPCC 2021 no LT,climate change: including SLCFs no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.d9b035afe1e3ab26e7ddad34a1c1df66,196
+IPCC 2021 no LT,climate change: including SLCFs no LT,global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.009f9f5a431eba0d8247658700f06be6,196
+IPCC 2021 no LT,climate change: land use no LT,global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.316e437af00cc290c1d1c1a9a99f1f39,12
+IPCC 2021 no LT,climate change: land use no LT,global temperature change potential (GTP50) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.1e47a35349234b6c71118409933d93b0,12
+IPCC 2021 no LT,climate change: land use no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.40fba7022367e38214dafd11ad4030c1,12
+IPCC 2021 no LT,climate change: land use no LT,global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.f189d45b97142b7201c6108c162e7f89,12
+IPCC 2021 no LT,climate change: land use no LT,global warming potential (GWP500) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.21a287501e33679953be2fda500f3ae1,12
+IPCC 2021 no LT,"climate change: land use, including SLCFs no LT",global temperature change potential (GTP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.943cc9e984ba1e88ed51e48fffbb2848,16
+IPCC 2021 no LT,"climate change: land use, including SLCFs no LT",global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.0b901bb162dea7f282c3ed2899192275,16
+IPCC 2021 no LT,"climate change: land use, including SLCFs no LT",global warming potential (GWP20) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021-no-ltcg.b0dcf03b4151a85df212d6d382d7d35b,16
+IPCC 2021,climate change,global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.12a79f55a637ff8ebed2e39766dfdc5b,226
+IPCC 2021,climate change,global temperature change potential (GTP50),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.73e0916dcb7080b3cb3a37ca502e842e,226
+IPCC 2021,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.7f3bec1f3f63e5211c9815c52a5f928c,226
+IPCC 2021,climate change,global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.b3ccb42d23e6035cfd79bc7b56019f8d,226
+IPCC 2021,climate change,global warming potential (GWP500),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.c675eb58c914ba81d2cf1f33e2131fe5,226
+IPCC 2021,climate change: biogenic,global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.ad282d55d0c45c203ea903a4ec3362bb,5
+IPCC 2021,climate change: biogenic,global temperature change potential (GTP50),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.ebb21df3f6ec1f83bf0c5952dfaec029,5
+IPCC 2021,climate change: biogenic,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.53430e09e305748933330bd00b612547,5
+IPCC 2021,climate change: biogenic,global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.bef6605ce518d3ce23bcb497dfa7e0ee,5
+IPCC 2021,climate change: biogenic,global warming potential (GWP500),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.41991af349aa89ed6c0a83145fb485e6,5
+IPCC 2021,"climate change: biogenic, including SLCFs",global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.7cfe288acaf65626826328b0ca132f07,10
+IPCC 2021,"climate change: biogenic, including SLCFs",global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.9f7ec27db9910054c0528b9ec840f61f,10
+IPCC 2021,"climate change: biogenic, including SLCFs",global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.63c435e05dae56c5eebd7bda035a0743,10
+IPCC 2021,climate change: fossil,global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.788fe9d31835af49e8e08207170c803a,207
+IPCC 2021,climate change: fossil,global temperature change potential (GTP50),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.19e6d5aeabaca876bbb57efa1821280d,207
+IPCC 2021,climate change: fossil,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.b7e40ada75432fee257e97a013cc0869,207
+IPCC 2021,climate change: fossil,global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.b9e870abe2c4e118cc7f5f02e6446216,207
+IPCC 2021,climate change: fossil,global warming potential (GWP500),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.42ad09355ddb1fb681a9b65ada8a626e,207
+IPCC 2021,"climate change: fossil, including SLCFs",global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.73213d1e84536f135bf76a19c5460178,214
+IPCC 2021,"climate change: fossil, including SLCFs",global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.cf3bb42032224d171f3d623a52d2986f,214
+IPCC 2021,"climate change: fossil, including SLCFs",global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.5968b712ba36bc4a298c5e1b36e0e2c1,214
+IPCC 2021,climate change: including SLCFs,global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.27eb4e64bcbc2eb97397615b0252f117,243
+IPCC 2021,climate change: including SLCFs,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.86cd92fcabe8ce220026e22ca6a19733,243
+IPCC 2021,climate change: including SLCFs,global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.7a55ba179884f81593a13ef5d5f39247,243
+IPCC 2021,climate change: land use,global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.059f40104ed537f5f26e95372470a097,14
+IPCC 2021,climate change: land use,global temperature change potential (GTP50),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.8164294a7add3a803bf78bdabca196f9,14
+IPCC 2021,climate change: land use,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.9302b5a601986188b8a084ad84feb860,14
+IPCC 2021,climate change: land use,global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.a87a40a1cb8c95d7efe543fa554dfa30,14
+IPCC 2021,climate change: land use,global warming potential (GWP500),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.f1b989d33f8d9ae3bd7cc5f61f5932d7,14
+IPCC 2021,"climate change: land use, including SLCFs",global temperature change potential (GTP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.c49d968e47bdb93f50b88ac445f9e6b9,19
+IPCC 2021,"climate change: land use, including SLCFs",global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.b037fbb21c77feda6da5fe523c2c1ebf,19
+IPCC 2021,"climate change: land use, including SLCFs",global warming potential (GWP20),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ipcc-2021cg.bd5908fca218b3fb9bcdb2db54d3f35e,19
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,acidification: terrestrial no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltea.8fe55da06e7fe1fed83ef9abec3ead2a,24
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,climate change: freshwater ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltec.010a3c7eeb3aaaea61d1d48f95945347,131
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,climate change: terrestrial ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltec.44cb5f153f6dc76962bd8131813464ac,131
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,ecotoxicity: freshwater no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltee.23bd6946e531a7e6e838a094417963bf,1538
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,ecotoxicity: marine no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltee.d855a7a3bbf7d989c2d8166b3d907895,1538
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,ecotoxicity: terrestrial no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltee.f8bbf6803cd30913caad1f3f31ca2108,1535
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,eutrophication: freshwater no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltee.bcbcd5a7fb70f05b9346102fa4e41da1,11
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,eutrophication: marine no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltee.528b4438bd3da751b6b38a787cdd7ab5,18
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,land use no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltel.c6d3a74f076ca024dda0553ad888eb13,51
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,photochemical oxidant formation: terrestrial ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltep.3f431f818f94f9c20188c0ff7c17b8e6,162
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,water use: aquatic ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltew.3b9c0722eadc240d1ad480b4830b86c8,4
+"ReCiPe 2016 v1.03, endpoint (E) no LT",ecosystem quality no LT,water use: terrestrial ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltew.9a87debab9acdec798bed53fb45f364b,4
+"ReCiPe 2016 v1.03, endpoint (E) no LT",human health no LT,climate change: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-lthc.f3996676d809868b1ff68af93bffdc69,131
+"ReCiPe 2016 v1.03, endpoint (E) no LT",human health no LT,human toxicity: carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-lthh.9beefb83e1bda7fe22bfd0f8ce3ddf40,453
+"ReCiPe 2016 v1.03, endpoint (E) no LT",human health no LT,human toxicity: non-carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-lthh.e7303fff6251bf138e144b56239f8340,1034
+"ReCiPe 2016 v1.03, endpoint (E) no LT",human health no LT,ionising radiation no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-lthi.58f2614c3f9dc2d249d22d8e603937b8,203
+"ReCiPe 2016 v1.03, endpoint (E) no LT",human health no LT,ozone depletion no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-ltho.7fc17468c7611c4093a5132fb461e258,50
+"ReCiPe 2016 v1.03, endpoint (E) no LT",human health no LT,particulate matter formation no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-lthp.a4acc2de5455519211cb205d3476aaf5,26
+"ReCiPe 2016 v1.03, endpoint (E) no LT",human health no LT,photochemical oxidant formation: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-lthp.802cfbd9faf5f23a11806fdc7920d76a,162
+"ReCiPe 2016 v1.03, endpoint (E) no LT",human health no LT,water use: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-lthw.9367e8a2486edc42c7123e27eee3de88,4
+"ReCiPe 2016 v1.03, endpoint (E) no LT",natural resources no LT,"energy resources: non-renewable, fossil no LT",,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-e-no-ltne.d11cc384b9d5156baf2d0c2146b49988,6
+"ReCiPe 2016 v1.03, endpoint (E) no LT",natural resources no LT,material resources: metals/minerals no LT,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-e-no-ltnm.adb48904fe108eb287429ce657aaf4a5,149
+"ReCiPe 2016 v1.03, endpoint (E) no LT",total: ecosystem quality no LT,ecosystem quality no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-e-no-ltte.3be6c082aa99f73aca346ef91d3cc780,1819
+"ReCiPe 2016 v1.03, endpoint (E) no LT",total: human health no LT,human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-e-no-ltth.d158a109eff65d801a52b80eb9a7f249,1539
+"ReCiPe 2016 v1.03, endpoint (E) no LT",total: natural resources no LT,natural resources no LT,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-e-no-lttn.261a09c1d697df88ff5b35db9eaffcde,159
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,acidification: terrestrial,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eea.fdde1681653a45c6db5fee280f61824e,29
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,climate change: freshwater ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eec.6918c6484ee124dd4547f08e7297de1d,155
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,climate change: terrestrial ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eec.d4fec82621ac30fb9e86fc639ad42cc2,155
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,ecotoxicity: freshwater,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eee.7b81eb4479357b1b01731a5bb32e9e2e,1760
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,ecotoxicity: marine,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eee.40bbcc29f70d258b947b7fbd7af67d8f,1760
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,ecotoxicity: terrestrial,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eee.a5ac565ac133da9b095fd547e8ef2148,1757
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,eutrophication: freshwater,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eee.39265e898bb1e1d47b9888d117c76ec5,13
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,eutrophication: marine,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eee.14e6857940d2d44cd8b31a5685b395b7,22
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,land use,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eel.d25f4773e74a5e1628b90c03ffc8c3e9,51
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,photochemical oxidant formation: terrestrial ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eep.fbfa9bf2b15ed268e1b6ca524dc9fb42,178
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,water use: aquatic ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eew.73d9d34fbde0639c7e6f5f4c4b03a5d1,5
+"ReCiPe 2016 v1.03, endpoint (E)",ecosystem quality,water use: terrestrial ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-eew.10bde0b817aa1d9c3328afc94b0ce026,5
+"ReCiPe 2016 v1.03, endpoint (E)",human health,climate change: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ehc.4d912443e239a7d831844cdfad692440,155
+"ReCiPe 2016 v1.03, endpoint (E)",human health,human toxicity: carcinogenic,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ehh.1c7e7eacb466f318405ee8d707e88d06,542
+"ReCiPe 2016 v1.03, endpoint (E)",human health,human toxicity: non-carcinogenic,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ehh.520a1b6b7e44d5365208b5ec28daff66,1184
+"ReCiPe 2016 v1.03, endpoint (E)",human health,ionising radiation,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ehi.0a3912f94ed0e116e85519be1f9c350d,253
+"ReCiPe 2016 v1.03, endpoint (E)",human health,ozone depletion,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-eho.720a346fb2e9d0e1b300386a0621f2b4,57
+"ReCiPe 2016 v1.03, endpoint (E)",human health,particulate matter formation,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ehp.23fab9348227293fccdb5084b429793d,32
+"ReCiPe 2016 v1.03, endpoint (E)",human health,photochemical oxidant formation: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ehp.f235cb113e1e1ea00d1a794aaf3f5a74,178
+"ReCiPe 2016 v1.03, endpoint (E)",human health,water use: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ehw.764a7a580f23577c240c76c3719dae41,5
+"ReCiPe 2016 v1.03, endpoint (E)",natural resources,"energy resources: non-renewable, fossil",,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-ene.889d0b6aa9347d17321a9f9869b5928a,6
+"ReCiPe 2016 v1.03, endpoint (E)",natural resources,material resources: metals/minerals,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-enm.2b3a2fb1e5ad09e54b513cc8f2a32b09,149
+"ReCiPe 2016 v1.03, endpoint (E)",total: ecosystem quality,ecosystem quality,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-ete.a6b212f0b832b38918060ea628c37bc9,2091
+"ReCiPe 2016 v1.03, endpoint (E)",total: human health,human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-eth.36793640a1b40f7ea79a24eab1d7e2b1,1803
+"ReCiPe 2016 v1.03, endpoint (E)",total: natural resources,natural resources,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-etn.a16ced15e6c6fe3354ad38e5cadec2ae,160
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,acidification: terrestrial no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltea.44cc02ff0928093f42a8098afb242116,24
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,climate change: freshwater ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltec.74aa7e38628afa34d2a9532c39425a98,131
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,climate change: terrestrial ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltec.45a98e980cdee7d8123b0f769ea1a2f7,131
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,ecotoxicity: freshwater no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltee.a6392b0837bf7db564fb7fe72350f451,1538
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,ecotoxicity: marine no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltee.a5c16ef1f8096c7b879da310e172cf59,1538
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,ecotoxicity: terrestrial no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltee.81370bb7be986d09347386cd1c172cdd,1535
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,eutrophication: freshwater no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltee.766e3e00161ebc13cb0d1e57f6d49535,11
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,eutrophication: marine no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltee.1037d6bad0b576c06f7d7ca722e45db0,18
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,land use no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltel.86d560e3cdc118610451146c905debee,51
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,photochemical oxidant formation: terrestrial ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltep.da05ec991466ff2f9e6ec9f5c510e5a1,162
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,water use: aquatic ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltew.32995ac2c9984eb7b188fbc602c8197d,4
+"ReCiPe 2016 v1.03, endpoint (H) no LT",ecosystem quality no LT,water use: terrestrial ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltew.d25994c52d4ca1e8221984565da4b8a5,4
+"ReCiPe 2016 v1.03, endpoint (H) no LT",human health no LT,climate change: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-lthc.563f0afe455b7501782e171fda657545,131
+"ReCiPe 2016 v1.03, endpoint (H) no LT",human health no LT,human toxicity: carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-lthh.4aabf821599032329bb42288909c48f0,453
+"ReCiPe 2016 v1.03, endpoint (H) no LT",human health no LT,human toxicity: non-carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-lthh.d96092c3c495c63fca477375d446a563,1034
+"ReCiPe 2016 v1.03, endpoint (H) no LT",human health no LT,ionising radiation no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-lthi.11bd27ddafc05dc01ba6de067c7cde1e,149
+"ReCiPe 2016 v1.03, endpoint (H) no LT",human health no LT,ozone depletion no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-ltho.9b2b4b7a738790f5507b1f82d2b19c36,50
+"ReCiPe 2016 v1.03, endpoint (H) no LT",human health no LT,particulate matter formation no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-lthp.4b3564e32822ae823ce95d0c50f1b7be,26
+"ReCiPe 2016 v1.03, endpoint (H) no LT",human health no LT,photochemical oxidant formation: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-lthp.681cec75c69b968160d46b0b1d1d84c6,162
+"ReCiPe 2016 v1.03, endpoint (H) no LT",human health no LT,water use: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-lthw.0f6d9038f5f5177f813e441419402eda,4
+"ReCiPe 2016 v1.03, endpoint (H) no LT",natural resources no LT,"energy resources: non-renewable, fossil no LT",,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-h-no-ltne.3dcc64291e52b4a8ad5e9864a5eca597,4
+"ReCiPe 2016 v1.03, endpoint (H) no LT",natural resources no LT,material resources: metals/minerals no LT,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-h-no-ltnm.66529443066520590b91b422343c8de1,149
+"ReCiPe 2016 v1.03, endpoint (H) no LT",total: ecosystem quality no LT,ecosystem quality no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-h-no-ltte.b73939cca401cbacc0950f4b539683bf,1819
+"ReCiPe 2016 v1.03, endpoint (H) no LT",total: human health no LT,human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-h-no-ltth.b5bca553f159404d4880a1175a9bd80c,1485
+"ReCiPe 2016 v1.03, endpoint (H) no LT",total: natural resources no LT,natural resources no LT,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-h-no-lttn.8007dac1fef619f36b5fdbdf2bf03166,157
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,acidification: terrestrial,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hea.f7ce1a1e3ceed2c677c298717e4eef98,29
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,climate change: freshwater ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hec.831d0a8f5262889e034403d00aeb8e11,155
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,climate change: terrestrial ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hec.f4cd6a33ea66ff996bf47370ed16e312,155
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,ecotoxicity: freshwater,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hee.b287f88bb5f1fff26f43108425e4b8ad,1760
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,ecotoxicity: marine,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hee.33ad145855e11f877e79935ab26317e0,1760
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,ecotoxicity: terrestrial,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hee.c1b57599b250666934346f6c5140c329,1757
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,eutrophication: freshwater,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hee.ba60a981ecfa1e7bd14548638371c375,13
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,eutrophication: marine,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hee.eb3384e8c2c67a192cb41bf17bb9ab3e,22
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,land use,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hel.ff0f977c69b453c8aea5471ba7b6064c,51
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,photochemical oxidant formation: terrestrial ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hep.0a5ec1bfd0fcc016e2aed45047d8eb05,178
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,water use: aquatic ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hew.62ba466ed2ced6e4562695748599c14c,5
+"ReCiPe 2016 v1.03, endpoint (H)",ecosystem quality,water use: terrestrial ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hew.f3096a31d819af9b3ccd57f49ce8f1b8,5
+"ReCiPe 2016 v1.03, endpoint (H)",human health,climate change: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hhc.3b03e37527bf981cab002fd01da6fa57,155
+"ReCiPe 2016 v1.03, endpoint (H)",human health,human toxicity: carcinogenic,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hhh.8820ffadaca1122dddcd29f66ea5c277,542
+"ReCiPe 2016 v1.03, endpoint (H)",human health,human toxicity: non-carcinogenic,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hhh.50906bbe0a06110e4faa5be54bf95dd3,1184
+"ReCiPe 2016 v1.03, endpoint (H)",human health,ionising radiation,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hhi.668effd556e2b2fa9c65794ac00db79d,186
+"ReCiPe 2016 v1.03, endpoint (H)",human health,ozone depletion,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hho.2bca4a8db16fec993fcd3009da8306ad,57
+"ReCiPe 2016 v1.03, endpoint (H)",human health,particulate matter formation,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hhp.b19c9e0cede145287eafd85ad6573c03,32
+"ReCiPe 2016 v1.03, endpoint (H)",human health,photochemical oxidant formation: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hhp.42100b85461df2a584a68f58dbea0c53,178
+"ReCiPe 2016 v1.03, endpoint (H)",human health,water use: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hhw.1e20e1b71a00ae0f68bd793fb95069a0,5
+"ReCiPe 2016 v1.03, endpoint (H)",natural resources,"energy resources: non-renewable, fossil",,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-hne.bf6445cf8597b36f704a2655641a42fa,4
+"ReCiPe 2016 v1.03, endpoint (H)",natural resources,material resources: metals/minerals,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-hnm.411e8f9b13621158a84d74132997862b,149
+"ReCiPe 2016 v1.03, endpoint (H)",total: ecosystem quality,ecosystem quality,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-hte.ce07c23072132d3e163569b5b5b18b21,2091
+"ReCiPe 2016 v1.03, endpoint (H)",total: human health,human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-hth.278be9bc69932938eb0613f39ff8cf2a,1736
+"ReCiPe 2016 v1.03, endpoint (H)",total: natural resources,natural resources,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-htn.e1f7f31172ff585a2d317f1af04965d5,158
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,acidification: terrestrial no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltea.0d18649cf00aa0b07962a4f617fec235,26
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,climate change: freshwater ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltec.44753501bee2d1b14fa9080dc2298071,131
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,climate change: terrestrial ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltec.56ed6df609e8f59d1f4fc91cced4807d,131
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,ecotoxicity: freshwater no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltee.aa6c6a58f8f3e062b891457893af6300,1234
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,ecotoxicity: marine no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltee.aebae76ed2b1560f7c9e901ff39d6561,1234
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,ecotoxicity: terrestrial no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltee.f595b1c3168e0da73af603b815c0f3b9,1231
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,eutrophication: freshwater no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltee.55f2d0fce37a21ed9eb1f3fffe5fc2b9,11
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,eutrophication: marine no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltee.b9493f3d7aa3d581e44a63d7b5afdcae,18
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,land use no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltel.f743cff63212f5bc0f9f0808df930f39,51
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,photochemical oxidant formation: terrestrial ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltep.85933ada1584035df9f1f83f73960675,168
+"ReCiPe 2016 v1.03, endpoint (I) no LT",ecosystem quality no LT,water use: aquatic ecosystems no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltew.b35b7994e99f5678b9e4737fb7bb133f,4
+"ReCiPe 2016 v1.03, endpoint (I) no LT",human health no LT,climate change: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-lthc.7cc2ec209674f1bceef7a1834b4f7868,131
+"ReCiPe 2016 v1.03, endpoint (I) no LT",human health no LT,human toxicity: carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-lthh.67cc97d33e53ed1a244ec88a0d11e954,274
+"ReCiPe 2016 v1.03, endpoint (I) no LT",human health no LT,human toxicity: non-carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-lthh.a33ac9fe6c846a4e50d68d64b24e002b,1034
+"ReCiPe 2016 v1.03, endpoint (I) no LT",human health no LT,ionising radiation no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-lthi.7e889f1b1031ba5e11ad1b420c97cb1f,145
+"ReCiPe 2016 v1.03, endpoint (I) no LT",human health no LT,ozone depletion no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-ltho.844015653f01f499eab39dd4c97f523a,50
+"ReCiPe 2016 v1.03, endpoint (I) no LT",human health no LT,particulate matter formation no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-lthp.9353b9c3b90538648f0a7f0c98af3aa4,4
+"ReCiPe 2016 v1.03, endpoint (I) no LT",human health no LT,photochemical oxidant formation: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-lthp.9cde8f0d75f7715460d5df63707ac0b9,168
+"ReCiPe 2016 v1.03, endpoint (I) no LT",human health no LT,water use: human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-lthw.ba2296c4493b69ec1de25cff0b5caf34,4
+"ReCiPe 2016 v1.03, endpoint (I) no LT",natural resources no LT,"energy resources: non-renewable, fossil no LT",,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-i-no-ltne.099824793e17bb55ab20f7594813c6db,4
+"ReCiPe 2016 v1.03, endpoint (I) no LT",natural resources no LT,material resources: metals/minerals no LT,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-i-no-ltnm.ec62ac8f0cfd73d5628f2d8add993cf2,149
+"ReCiPe 2016 v1.03, endpoint (I) no LT",total: ecosystem quality no LT,ecosystem quality no LT,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-i-no-ltte.1cfd0e5496502f6f9ceb03d20412bed1,1533
+"ReCiPe 2016 v1.03, endpoint (I) no LT",total: human health no LT,human health no LT,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-i-no-ltth.bdccc60bc8f4c1a91246fece6f042625,1435
+"ReCiPe 2016 v1.03, endpoint (I) no LT",total: natural resources no LT,natural resources no LT,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-i-no-lttn.8615eaf93773b30f1c6041d0327cbe77,153
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,acidification: terrestrial,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iea.74ec077a987f1b7858fd524e1b30bc8c,32
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,climate change: freshwater ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iec.d34ee269382038f2cc095a4c90b73935,155
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,climate change: terrestrial ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iec.44395c8f6bdcc30fc6ea67529f0e2a10,155
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,ecotoxicity: freshwater,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iee.0a48970bbd8b3c868e9e31d2b8abcdc1,1412
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,ecotoxicity: marine,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iee.0ca08e9700bc22a4d672bded6656d953,1412
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,ecotoxicity: terrestrial,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iee.8d0c6877929f485f65dc3b7d20cb7804,1409
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,eutrophication: freshwater,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iee.267f360d51090e7984169b38917b2359,13
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,eutrophication: marine,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iee.7ddaf5e261723881b80249c1af60958e,22
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,land use,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iel.41d8405c27d1a3d4ab3b1581d062ce9c,51
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,photochemical oxidant formation: terrestrial ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iep.7da88abc32ffa19b33ded2844f551cc9,187
+"ReCiPe 2016 v1.03, endpoint (I)",ecosystem quality,water use: aquatic ecosystems,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-iew.8f5098ceabe1db4abd909781037efa9c,5
+"ReCiPe 2016 v1.03, endpoint (I)",human health,climate change: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ihc.35cacc5fb4842468b5911f1c1e90bbd0,155
+"ReCiPe 2016 v1.03, endpoint (I)",human health,human toxicity: carcinogenic,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ihh.2fd3410899aeda67574795039d3ce0b5,332
+"ReCiPe 2016 v1.03, endpoint (I)",human health,human toxicity: non-carcinogenic,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ihh.1753fdb1118e29b45744c2f67a3bd9a2,1184
+"ReCiPe 2016 v1.03, endpoint (I)",human health,ionising radiation,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ihi.5a257e0f6d7804c1f9c1f54852fddf73,181
+"ReCiPe 2016 v1.03, endpoint (I)",human health,ozone depletion,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-iho.5492d25edd5f90f5e582042a9b30b739,57
+"ReCiPe 2016 v1.03, endpoint (I)",human health,particulate matter formation,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ihp.a2b70959afdc828a393a50c5e32d62c8,5
+"ReCiPe 2016 v1.03, endpoint (I)",human health,photochemical oxidant formation: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ihp.606a507e01309c7e43e241116cbe378d,187
+"ReCiPe 2016 v1.03, endpoint (I)",human health,water use: human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ihw.af33a177612b6756cdf9d48643721da4,5
+"ReCiPe 2016 v1.03, endpoint (I)",natural resources,"energy resources: non-renewable, fossil",,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-ine.b787b4f71b3c1746395f44cd763f41b0,4
+"ReCiPe 2016 v1.03, endpoint (I)",natural resources,material resources: metals/minerals,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-inm.1ed5b73965e42542ac1f7a8ade96b473,149
+"ReCiPe 2016 v1.03, endpoint (I)",total: ecosystem quality,ecosystem quality,,LCIA_Implementation_3.9.xlsx,species.yr,recipe-2016-v103-endpoint-ite.517082a9035adc6e5a021a8eb69dde4a,1765
+"ReCiPe 2016 v1.03, endpoint (I)",total: human health,human health,,LCIA_Implementation_3.9.xlsx,DALYs,recipe-2016-v103-endpoint-ith.4091c8c6471e6eb533702471456415ac,1677
+"ReCiPe 2016 v1.03, endpoint (I)",total: natural resources,natural resources,,LCIA_Implementation_3.9.xlsx,USD 2013,recipe-2016-v103-endpoint-itn.be584b3bc27f9593492468f4c684cf9c,153
+"ReCiPe 2016 v1.03, midpoint (E) no LT",acidification: terrestrial no LT,terrestrial acidification potential (TAP) no LT,,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,recipe-2016-v103-midpoint-e-no-ltat.92d12fac11fe0e283634978f881a62b3,24
+"ReCiPe 2016 v1.03, midpoint (E) no LT",climate change no LT,global warming potential (GWP1000) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,recipe-2016-v103-midpoint-e-no-ltcg.ecbc2f3832ec012d006b245ad2e7331e,131
+"ReCiPe 2016 v1.03, midpoint (E) no LT",ecotoxicity: freshwater no LT,freshwater ecotoxicity potential (FETP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-e-no-ltef.5b4926164608fa112bb44273d3755448,1538
+"ReCiPe 2016 v1.03, midpoint (E) no LT",ecotoxicity: marine no LT,marine ecotoxicity potential (METP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-e-no-ltem.4bfa19b91d5e0e6b465e554b43527ccd,1538
+"ReCiPe 2016 v1.03, midpoint (E) no LT",ecotoxicity: terrestrial no LT,terrestrial ecotoxicity potential (TETP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-e-no-ltet.1c6bfb8be70b6cd2478628b486fa8397,1535
+"ReCiPe 2016 v1.03, midpoint (E) no LT","energy resources: non-renewable, fossil no LT",fossil fuel potential (FFP) no LT,,LCIA_Implementation_3.9.xlsx,kg oil-Eq,recipe-2016-v103-midpoint-e-no-ltef.e4501ff70ae799400db8be85894cc64b,6
+"ReCiPe 2016 v1.03, midpoint (E) no LT",eutrophication: freshwater no LT,freshwater eutrophication potential (FEP) no LT,,LCIA_Implementation_3.9.xlsx,kg P-Eq,recipe-2016-v103-midpoint-e-no-ltef.1152fd6e31b4e7fddef32b06d075e77c,11
+"ReCiPe 2016 v1.03, midpoint (E) no LT",eutrophication: marine no LT,marine eutrophication potential (MEP) no LT,,LCIA_Implementation_3.9.xlsx,kg N-Eq,recipe-2016-v103-midpoint-e-no-ltem.2c3e157dc487c7b146a20204090fa2cc,18
+"ReCiPe 2016 v1.03, midpoint (E) no LT",human toxicity: carcinogenic no LT,human toxicity potential (HTPc) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-e-no-lthh.935e83bbbc1dce2dd7a2f28c52b23991,453
+"ReCiPe 2016 v1.03, midpoint (E) no LT",human toxicity: non-carcinogenic no LT,human toxicity potential (HTPnc) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-e-no-lthh.8011879c51a2eab528c43d23d02688e1,1034
+"ReCiPe 2016 v1.03, midpoint (E) no LT",ionising radiation no LT,ionising radiation potential (IRP) no LT,,LCIA_Implementation_3.9.xlsx,kg Co-60-Eq,recipe-2016-v103-midpoint-e-no-ltii.0fcc92f5f97ee9f7fbbf705b5caa6d4a,203
+"ReCiPe 2016 v1.03, midpoint (E) no LT",land use no LT,agricultural land occupation (LOP) no LT,,LCIA_Implementation_3.9.xlsx,m2*a crop-Eq,recipe-2016-v103-midpoint-e-no-ltla.35698b31a476f8b737264904ca972694,51
+"ReCiPe 2016 v1.03, midpoint (E) no LT",material resources: metals/minerals no LT,surplus ore potential (SOP) no LT,,LCIA_Implementation_3.9.xlsx,kg Cu-Eq,recipe-2016-v103-midpoint-e-no-ltms.3bd09723f8d6f36793eedbee94b78622,149
+"ReCiPe 2016 v1.03, midpoint (E) no LT",ozone depletion no LT,ozone depletion potential (ODPinfinite) no LT,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,recipe-2016-v103-midpoint-e-no-ltoo.8cec39b4fff47f251d0ccccd271bdb14,50
+"ReCiPe 2016 v1.03, midpoint (E) no LT",particulate matter formation no LT,particulate matter formation potential (PMFP) no LT,,LCIA_Implementation_3.9.xlsx,kg PM2.5-Eq,recipe-2016-v103-midpoint-e-no-ltpp.85f7852b197a2fe8466c5e64a7f9f77f,26
+"ReCiPe 2016 v1.03, midpoint (E) no LT",photochemical oxidant formation: human health no LT,photochemical oxidant formation potential: humans (HOFP) no LT,,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-e-no-ltpp.41e8ca854b2d2636fefea459e9f6aa72,162
+"ReCiPe 2016 v1.03, midpoint (E) no LT",photochemical oxidant formation: terrestrial ecosystems no LT,photochemical oxidant formation potential: ecosystems (EOFP) no LT,,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-e-no-ltpp.6a87411fa4b366e638192bc02e279a17,162
+"ReCiPe 2016 v1.03, midpoint (E) no LT",water use no LT,water consumption potential (WCP) no LT,,LCIA_Implementation_3.9.xlsx,cubic meter,recipe-2016-v103-midpoint-e-no-ltww.fbe05fe613b512c599d575fd5d1aaa56,4
+"ReCiPe 2016 v1.03, midpoint (E)",acidification: terrestrial,terrestrial acidification potential (TAP),,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,recipe-2016-v103-midpoint-eat.2a21ef015379730951670ebe34f7fbd9,29
+"ReCiPe 2016 v1.03, midpoint (E)",climate change,global warming potential (GWP1000),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,recipe-2016-v103-midpoint-ecg.daaeb194f731a118b1a141e7a1ae638b,155
+"ReCiPe 2016 v1.03, midpoint (E)",ecotoxicity: freshwater,freshwater ecotoxicity potential (FETP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-eef.a8a41025b0688ebc459f6b43c66a800c,1760
+"ReCiPe 2016 v1.03, midpoint (E)",ecotoxicity: marine,marine ecotoxicity potential (METP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-eem.59c941f1e7c3486bea2dedad3ec8a63c,1760
+"ReCiPe 2016 v1.03, midpoint (E)",ecotoxicity: terrestrial,terrestrial ecotoxicity potential (TETP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-eet.ba08e721ad1818050d82795f1c236b70,1757
+"ReCiPe 2016 v1.03, midpoint (E)","energy resources: non-renewable, fossil",fossil fuel potential (FFP),,LCIA_Implementation_3.9.xlsx,kg oil-Eq,recipe-2016-v103-midpoint-eef.0e13561e63c31d3356776c27de07b40c,6
+"ReCiPe 2016 v1.03, midpoint (E)",eutrophication: freshwater,freshwater eutrophication potential (FEP),,LCIA_Implementation_3.9.xlsx,kg P-Eq,recipe-2016-v103-midpoint-eef.3ab9856b1b8b8ce67fac4f77d3b182d4,13
+"ReCiPe 2016 v1.03, midpoint (E)",eutrophication: marine,marine eutrophication potential (MEP),,LCIA_Implementation_3.9.xlsx,kg N-Eq,recipe-2016-v103-midpoint-eem.5d165e22953bc4b45c361f6386b6e768,22
+"ReCiPe 2016 v1.03, midpoint (E)",human toxicity: carcinogenic,human toxicity potential (HTPc),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-ehh.71ea8d24331aa3fc8ccdb5b8ff4d9a00,542
+"ReCiPe 2016 v1.03, midpoint (E)",human toxicity: non-carcinogenic,human toxicity potential (HTPnc),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-ehh.5fc0154e1c3ca6d58d48d5b25fdb4de1,1184
+"ReCiPe 2016 v1.03, midpoint (E)",ionising radiation,ionising radiation potential (IRP),,LCIA_Implementation_3.9.xlsx,kg Co-60-Eq,recipe-2016-v103-midpoint-eii.74f923dd0c8ad0c1033c1bf3bd4f6fb7,253
+"ReCiPe 2016 v1.03, midpoint (E)",land use,agricultural land occupation (LOP),,LCIA_Implementation_3.9.xlsx,m2*a crop-Eq,recipe-2016-v103-midpoint-ela.193b0daa4531470e8b9e096a2273bbcb,51
+"ReCiPe 2016 v1.03, midpoint (E)",material resources: metals/minerals,surplus ore potential (SOP),,LCIA_Implementation_3.9.xlsx,kg Cu-Eq,recipe-2016-v103-midpoint-ems.eee3164fd3a09960a1473e8f9ff99005,149
+"ReCiPe 2016 v1.03, midpoint (E)",ozone depletion,ozone depletion potential (ODPinfinite),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,recipe-2016-v103-midpoint-eoo.93c6e99a9a6a070b1b62230250ee2615,57
+"ReCiPe 2016 v1.03, midpoint (E)",particulate matter formation,particulate matter formation potential (PMFP),,LCIA_Implementation_3.9.xlsx,kg PM2.5-Eq,recipe-2016-v103-midpoint-epp.0d5411530ce035415882a6259c96efe1,32
+"ReCiPe 2016 v1.03, midpoint (E)",photochemical oxidant formation: human health,photochemical oxidant formation potential: humans (HOFP),,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-epp.9913974612ea8ff4f413721b1a81055a,178
+"ReCiPe 2016 v1.03, midpoint (E)",photochemical oxidant formation: terrestrial ecosystems,photochemical oxidant formation potential: ecosystems (EOFP),,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-epp.423aaae8d6c44237029e8c3b596d95fa,178
+"ReCiPe 2016 v1.03, midpoint (E)",water use,water consumption potential (WCP),,LCIA_Implementation_3.9.xlsx,cubic meter,recipe-2016-v103-midpoint-eww.8a5aa8b37daa07e50e9c49383ee4445a,5
+"ReCiPe 2016 v1.03, midpoint (H) no LT",acidification: terrestrial no LT,terrestrial acidification potential (TAP) no LT,,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,recipe-2016-v103-midpoint-h-no-ltat.3df6918ef6b39f668e0ffcba73755602,24
+"ReCiPe 2016 v1.03, midpoint (H) no LT",climate change no LT,global warming potential (GWP1000) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,recipe-2016-v103-midpoint-h-no-ltcg.54ce8310473691d0b2e880fedfdaa143,127
+"ReCiPe 2016 v1.03, midpoint (H) no LT",ecotoxicity: freshwater no LT,freshwater ecotoxicity potential (FETP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-h-no-ltef.e8ca40aeecbfa9b61d608eabad3a02df,1538
+"ReCiPe 2016 v1.03, midpoint (H) no LT",ecotoxicity: marine no LT,marine ecotoxicity potential (METP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-h-no-ltem.8f224a196bcfb746b69749a4f689993e,1538
+"ReCiPe 2016 v1.03, midpoint (H) no LT",ecotoxicity: terrestrial no LT,terrestrial ecotoxicity potential (TETP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-h-no-ltet.77762c0a567dae1ba9efe5f1f80d5ba7,1535
+"ReCiPe 2016 v1.03, midpoint (H) no LT","energy resources: non-renewable, fossil no LT",fossil fuel potential (FFP) no LT,,LCIA_Implementation_3.9.xlsx,kg oil-Eq,recipe-2016-v103-midpoint-h-no-ltef.a3e557e46fe448760bf9820303806724,6
+"ReCiPe 2016 v1.03, midpoint (H) no LT",eutrophication: freshwater no LT,freshwater eutrophication potential (FEP) no LT,,LCIA_Implementation_3.9.xlsx,kg P-Eq,recipe-2016-v103-midpoint-h-no-ltef.555614f9c956d573d8f8d7af63dab378,11
+"ReCiPe 2016 v1.03, midpoint (H) no LT",eutrophication: marine no LT,marine eutrophication potential (MEP) no LT,,LCIA_Implementation_3.9.xlsx,kg N-Eq,recipe-2016-v103-midpoint-h-no-ltem.b0a6a8d2b02dc9f83522cecb7a51147b,18
+"ReCiPe 2016 v1.03, midpoint (H) no LT",human toxicity: carcinogenic no LT,human toxicity potential (HTPc) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-h-no-lthh.a3daea60d88a4a89babea60086d0cc9b,453
+"ReCiPe 2016 v1.03, midpoint (H) no LT",human toxicity: non-carcinogenic no LT,human toxicity potential (HTPnc) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-h-no-lthh.7e4b9e0c9326f975eae8e1502feea1a8,1034
+"ReCiPe 2016 v1.03, midpoint (H) no LT",ionising radiation no LT,ionising radiation potential (IRP) no LT,,LCIA_Implementation_3.9.xlsx,kg Co-60-Eq,recipe-2016-v103-midpoint-h-no-ltii.b7ab7bca8cb17d6281fd508b4b787c3e,149
+"ReCiPe 2016 v1.03, midpoint (H) no LT",land use no LT,agricultural land occupation (LOP) no LT,,LCIA_Implementation_3.9.xlsx,m2*a crop-Eq,recipe-2016-v103-midpoint-h-no-ltla.80eb25480bb89874813386095e00714f,51
+"ReCiPe 2016 v1.03, midpoint (H) no LT",material resources: metals/minerals no LT,surplus ore potential (SOP) no LT,,LCIA_Implementation_3.9.xlsx,kg Cu-Eq,recipe-2016-v103-midpoint-h-no-ltms.db53ef79984d8041a152a8c8168f5ed5,149
+"ReCiPe 2016 v1.03, midpoint (H) no LT",ozone depletion no LT,ozone depletion potential (ODPinfinite) no LT,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,recipe-2016-v103-midpoint-h-no-ltoo.daf8277b488fc78c34fdee7453c20b22,50
+"ReCiPe 2016 v1.03, midpoint (H) no LT",particulate matter formation no LT,particulate matter formation potential (PMFP) no LT,,LCIA_Implementation_3.9.xlsx,kg PM2.5-Eq,recipe-2016-v103-midpoint-h-no-ltpp.6ae32bd78e4ae759f8af4cc3e95236b3,26
+"ReCiPe 2016 v1.03, midpoint (H) no LT",photochemical oxidant formation: human health no LT,photochemical oxidant formation potential: humans (HOFP) no LT,,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-h-no-ltpp.b7a243a0e0d1af53a14e0825c676608d,162
+"ReCiPe 2016 v1.03, midpoint (H) no LT",photochemical oxidant formation: terrestrial ecosystems no LT,photochemical oxidant formation potential: ecosystems (EOFP) no LT,,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-h-no-ltpp.05c4a08dc05efc03fbebcb664641522e,162
+"ReCiPe 2016 v1.03, midpoint (H) no LT",water use no LT,water consumption potential (WCP) no LT,,LCIA_Implementation_3.9.xlsx,cubic meter,recipe-2016-v103-midpoint-h-no-ltww.e52e3ca79b837a6c290bd539f988ff69,4
+"ReCiPe 2016 v1.03, midpoint (H)",acidification: terrestrial,terrestrial acidification potential (TAP),,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,recipe-2016-v103-midpoint-hat.fc6c3c6183a2266aa81b27a9f29a6408,29
+"ReCiPe 2016 v1.03, midpoint (H)",climate change,global warming potential (GWP1000),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,recipe-2016-v103-midpoint-hcg.ada9dcc212b02b09bc1a78acd951df5b,151
+"ReCiPe 2016 v1.03, midpoint (H)",ecotoxicity: freshwater,freshwater ecotoxicity potential (FETP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-hef.b86d3dd1756e4006f595d7c074e50578,1760
+"ReCiPe 2016 v1.03, midpoint (H)",ecotoxicity: marine,marine ecotoxicity potential (METP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-hem.26fca9ae20d94086eebc6c764a891abb,1760
+"ReCiPe 2016 v1.03, midpoint (H)",ecotoxicity: terrestrial,terrestrial ecotoxicity potential (TETP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-het.4430e3003bcb6842f93337c12efe952f,1757
+"ReCiPe 2016 v1.03, midpoint (H)","energy resources: non-renewable, fossil",fossil fuel potential (FFP),,LCIA_Implementation_3.9.xlsx,kg oil-Eq,recipe-2016-v103-midpoint-hef.f1e2fc7b0a39111bf5d72bbf6d759aab,6
+"ReCiPe 2016 v1.03, midpoint (H)",eutrophication: freshwater,freshwater eutrophication potential (FEP),,LCIA_Implementation_3.9.xlsx,kg P-Eq,recipe-2016-v103-midpoint-hef.25258c28245fffc75e07506950fcf585,13
+"ReCiPe 2016 v1.03, midpoint (H)",eutrophication: marine,marine eutrophication potential (MEP),,LCIA_Implementation_3.9.xlsx,kg N-Eq,recipe-2016-v103-midpoint-hem.3299d071e43d09175feaea7214ffd845,22
+"ReCiPe 2016 v1.03, midpoint (H)",human toxicity: carcinogenic,human toxicity potential (HTPc),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-hhh.90a2294f139aef9ee2a64f0004787f41,542
+"ReCiPe 2016 v1.03, midpoint (H)",human toxicity: non-carcinogenic,human toxicity potential (HTPnc),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-hhh.b689809acb16926e066d23afb540f919,1184
+"ReCiPe 2016 v1.03, midpoint (H)",ionising radiation,ionising radiation potential (IRP),,LCIA_Implementation_3.9.xlsx,kg Co-60-Eq,recipe-2016-v103-midpoint-hii.2018e8cfecc04fd4989e7665e1b64718,186
+"ReCiPe 2016 v1.03, midpoint (H)",land use,agricultural land occupation (LOP),,LCIA_Implementation_3.9.xlsx,m2*a crop-Eq,recipe-2016-v103-midpoint-hla.0f1297018f5d1afdecf0c1e4bc8b062e,51
+"ReCiPe 2016 v1.03, midpoint (H)",material resources: metals/minerals,surplus ore potential (SOP),,LCIA_Implementation_3.9.xlsx,kg Cu-Eq,recipe-2016-v103-midpoint-hms.32bfe0dcb5a3f03a076d52d199a40553,149
+"ReCiPe 2016 v1.03, midpoint (H)",ozone depletion,ozone depletion potential (ODPinfinite),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,recipe-2016-v103-midpoint-hoo.14b4613900d66ec757b0afdad9ade603,57
+"ReCiPe 2016 v1.03, midpoint (H)",particulate matter formation,particulate matter formation potential (PMFP),,LCIA_Implementation_3.9.xlsx,kg PM2.5-Eq,recipe-2016-v103-midpoint-hpp.26f43fcda4d6d48bab8271688fca4b92,32
+"ReCiPe 2016 v1.03, midpoint (H)",photochemical oxidant formation: human health,photochemical oxidant formation potential: humans (HOFP),,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-hpp.f8350a0670e13197ad9bd26d1be7993a,178
+"ReCiPe 2016 v1.03, midpoint (H)",photochemical oxidant formation: terrestrial ecosystems,photochemical oxidant formation potential: ecosystems (EOFP),,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-hpp.4383a1cb9ad541ff895e43d055a0d262,178
+"ReCiPe 2016 v1.03, midpoint (H)",water use,water consumption potential (WCP),,LCIA_Implementation_3.9.xlsx,cubic meter,recipe-2016-v103-midpoint-hww.d486ca0032ef88c3481939b513949247,5
+"ReCiPe 2016 v1.03, midpoint (I) no LT",acidification: terrestrial no LT,terrestrial acidification potential (TAP) no LT,,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,recipe-2016-v103-midpoint-i-no-ltat.a716aef670ce495b3cc0e875501242b0,26
+"ReCiPe 2016 v1.03, midpoint (I) no LT",climate change no LT,global warming potential (GWP1000) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,recipe-2016-v103-midpoint-i-no-ltcg.f9c8a06c7dc616f212e1882cbda8e5f1,127
+"ReCiPe 2016 v1.03, midpoint (I) no LT",ecotoxicity: freshwater no LT,freshwater ecotoxicity potential (FETP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-i-no-ltef.3837c3147750b9513078c5381d16e5be,1234
+"ReCiPe 2016 v1.03, midpoint (I) no LT",ecotoxicity: marine no LT,marine ecotoxicity potential (METP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-i-no-ltem.820242d1dd4588e50fea2aaf3f451d1d,1234
+"ReCiPe 2016 v1.03, midpoint (I) no LT",ecotoxicity: terrestrial no LT,terrestrial ecotoxicity potential (TETP) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-i-no-ltet.524322c44685ee680fe7c664689dd956,1231
+"ReCiPe 2016 v1.03, midpoint (I) no LT","energy resources: non-renewable, fossil no LT",fossil fuel potential (FFP) no LT,,LCIA_Implementation_3.9.xlsx,kg oil-Eq,recipe-2016-v103-midpoint-i-no-ltef.716bebd87b5a0dc714525c3d2eede47c,6
+"ReCiPe 2016 v1.03, midpoint (I) no LT",eutrophication: freshwater no LT,freshwater eutrophication potential (FEP) no LT,,LCIA_Implementation_3.9.xlsx,kg P-Eq,recipe-2016-v103-midpoint-i-no-ltef.2101a21110bf41b9189c25d07851dd76,11
+"ReCiPe 2016 v1.03, midpoint (I) no LT",eutrophication: marine no LT,marine eutrophication potential (MEP) no LT,,LCIA_Implementation_3.9.xlsx,kg N-Eq,recipe-2016-v103-midpoint-i-no-ltem.099b13977270bd51e446c773704082a7,18
+"ReCiPe 2016 v1.03, midpoint (I) no LT",human toxicity: carcinogenic no LT,human toxicity potential (HTPc) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-i-no-lthh.26a01232e1875d79e90cf1630535addc,274
+"ReCiPe 2016 v1.03, midpoint (I) no LT",human toxicity: non-carcinogenic no LT,human toxicity potential (HTPnc) no LT,,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-i-no-lthh.7bed1d4ca79440a252f6edd33f6fc69b,1034
+"ReCiPe 2016 v1.03, midpoint (I) no LT",ionising radiation no LT,ionising radiation potential (IRP) no LT,,LCIA_Implementation_3.9.xlsx,kg Co-60-Eq,recipe-2016-v103-midpoint-i-no-ltii.d7f11d84b4362c915e19651def431f5e,145
+"ReCiPe 2016 v1.03, midpoint (I) no LT",land use no LT,agricultural land occupation (LOP) no LT,,LCIA_Implementation_3.9.xlsx,m2*a crop-Eq,recipe-2016-v103-midpoint-i-no-ltla.a7202fb5b867a449de30e3f4f1b83db4,51
+"ReCiPe 2016 v1.03, midpoint (I) no LT",material resources: metals/minerals no LT,surplus ore potential (SOP) no LT,,LCIA_Implementation_3.9.xlsx,kg Cu-Eq,recipe-2016-v103-midpoint-i-no-ltms.6e9292a5206e5e1533fac52e4389a512,149
+"ReCiPe 2016 v1.03, midpoint (I) no LT",ozone depletion no LT,ozone depletion potential (ODPinfinite) no LT,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,recipe-2016-v103-midpoint-i-no-ltoo.5f1bfac00845d142ab2ae9f287b76d19,50
+"ReCiPe 2016 v1.03, midpoint (I) no LT",particulate matter formation no LT,particulate matter formation potential (PMFP) no LT,,LCIA_Implementation_3.9.xlsx,kg PM2.5-Eq,recipe-2016-v103-midpoint-i-no-ltpp.f84860bb3745622ee5669e9c55855f4b,4
+"ReCiPe 2016 v1.03, midpoint (I) no LT",photochemical oxidant formation: human health no LT,photochemical oxidant formation potential: humans (HOFP) no LT,,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-i-no-ltpp.ebaa11952a6fafc00e22d2d136a6bf6e,168
+"ReCiPe 2016 v1.03, midpoint (I) no LT",photochemical oxidant formation: terrestrial ecosystems no LT,photochemical oxidant formation potential: ecosystems (EOFP) no LT,,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-i-no-ltpp.8dc07e2f5f700d4be40fa8c2348590a6,168
+"ReCiPe 2016 v1.03, midpoint (I) no LT",water use no LT,water consumption potential (WCP) no LT,,LCIA_Implementation_3.9.xlsx,cubic meter,recipe-2016-v103-midpoint-i-no-ltww.9868ba698180bd00c8fa955fa3b194b5,4
+"ReCiPe 2016 v1.03, midpoint (I)",acidification: terrestrial,terrestrial acidification potential (TAP),,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,recipe-2016-v103-midpoint-iat.62551e5cfcf4bb7095c4eb15bbe8e477,32
+"ReCiPe 2016 v1.03, midpoint (I)",climate change,global warming potential (GWP1000),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,recipe-2016-v103-midpoint-icg.b437c0e6053bb76139d62e12a43cfaac,151
+"ReCiPe 2016 v1.03, midpoint (I)",ecotoxicity: freshwater,freshwater ecotoxicity potential (FETP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-ief.a0e37060d9076dc1de43a5435f2f2f2d,1412
+"ReCiPe 2016 v1.03, midpoint (I)",ecotoxicity: marine,marine ecotoxicity potential (METP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-iem.986da9fb2ca3515834472b106162f37f,1412
+"ReCiPe 2016 v1.03, midpoint (I)",ecotoxicity: terrestrial,terrestrial ecotoxicity potential (TETP),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-iet.28523fe79162abe6d58bc48a85b7a8cc,1409
+"ReCiPe 2016 v1.03, midpoint (I)","energy resources: non-renewable, fossil",fossil fuel potential (FFP),,LCIA_Implementation_3.9.xlsx,kg oil-Eq,recipe-2016-v103-midpoint-ief.8032ce41feb8d39f096aa814f2b7369f,6
+"ReCiPe 2016 v1.03, midpoint (I)",eutrophication: freshwater,freshwater eutrophication potential (FEP),,LCIA_Implementation_3.9.xlsx,kg P-Eq,recipe-2016-v103-midpoint-ief.acf41bf43dde2a11896f077715a1a0ab,13
+"ReCiPe 2016 v1.03, midpoint (I)",eutrophication: marine,marine eutrophication potential (MEP),,LCIA_Implementation_3.9.xlsx,kg N-Eq,recipe-2016-v103-midpoint-iem.3e943a6ecd6456d3f54e3f73e6c98774,22
+"ReCiPe 2016 v1.03, midpoint (I)",human toxicity: carcinogenic,human toxicity potential (HTPc),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-ihh.264f28b4b12c55d34f62c40c4de8e610,332
+"ReCiPe 2016 v1.03, midpoint (I)",human toxicity: non-carcinogenic,human toxicity potential (HTPnc),,LCIA_Implementation_3.9.xlsx,"kg 1,4-DCB-Eq",recipe-2016-v103-midpoint-ihh.5ab4940c6237e5db3d2349f0dd89a89c,1184
+"ReCiPe 2016 v1.03, midpoint (I)",ionising radiation,ionising radiation potential (IRP),,LCIA_Implementation_3.9.xlsx,kg Co-60-Eq,recipe-2016-v103-midpoint-iii.41bfff5a509321849ea4e9067ae5b736,181
+"ReCiPe 2016 v1.03, midpoint (I)",land use,agricultural land occupation (LOP),,LCIA_Implementation_3.9.xlsx,m2*a crop-Eq,recipe-2016-v103-midpoint-ila.e5a920a56b7694c2d4bb049979589f08,51
+"ReCiPe 2016 v1.03, midpoint (I)",material resources: metals/minerals,surplus ore potential (SOP),,LCIA_Implementation_3.9.xlsx,kg Cu-Eq,recipe-2016-v103-midpoint-ims.14670b0ad1fe5f2e66d09d06326a2e85,149
+"ReCiPe 2016 v1.03, midpoint (I)",ozone depletion,ozone depletion potential (ODPinfinite),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,recipe-2016-v103-midpoint-ioo.4cd0c35d2161b087d4ab689eadc55a10,57
+"ReCiPe 2016 v1.03, midpoint (I)",particulate matter formation,particulate matter formation potential (PMFP),,LCIA_Implementation_3.9.xlsx,kg PM2.5-Eq,recipe-2016-v103-midpoint-ipp.9393ec6fecdf4171629b067b1c136e53,5
+"ReCiPe 2016 v1.03, midpoint (I)",photochemical oxidant formation: human health,photochemical oxidant formation potential: humans (HOFP),,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-ipp.7fa11f4ab09c805162dcf75985f57512,187
+"ReCiPe 2016 v1.03, midpoint (I)",photochemical oxidant formation: terrestrial ecosystems,photochemical oxidant formation potential: ecosystems (EOFP),,LCIA_Implementation_3.9.xlsx,kg NOx-Eq,recipe-2016-v103-midpoint-ipp.eca4487da224e8eeb87a57fb95692dcb,187
+"ReCiPe 2016 v1.03, midpoint (I)",water use,water consumption potential (WCP),,LCIA_Implementation_3.9.xlsx,cubic meter,recipe-2016-v103-midpoint-iww.ce150cc14ba2a96df2353e881afba66d,5
+"selected LCI results, additional",air,carbon monoxide,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalac.37c0e892c751e23fa851041aaf28a05f,15
+"selected LCI results, additional",air,lead,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalal.b6fe7981f6030853cdfbece395434142,5
+"selected LCI results, additional",air,methane,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalam.043286386cc999781dd8611ad596ebc9,15
+"selected LCI results, additional",air,N2O,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalan.3968922b768fa815689564871856e9bb,5
+"selected LCI results, additional",air,particulates,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalap.7ad0506b1b6be823c54cb8e4e528cc43,15
+"selected LCI results, additional",air,particulates >10 um,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalap.95d57b92d0d12f4821b53781a5c7753e,5
+"selected LCI results, additional",air,"particulates, >2.5 um and <10",,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalap.ff0e1e036cdd173090547565d958bc15,5
+"selected LCI results, additional",air,zinc,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalaz.0bb68b273b2d62dfc866e590dc5a4153,5
+"selected LCI results, additional","air, radioactive",actinides,,LCIA_Implementation_3.9.xlsx,kilo Becquerel,selected-lci-results-additionalaa.d1d45e378a6ced4a2b6306695f8b1f4b,90
+"selected LCI results, additional","air, radioactive",aerosole,,LCIA_Implementation_3.9.xlsx,kilo Becquerel,selected-lci-results-additionalaa.7b599a571aca17ffbf95a282c2759315,165
+"selected LCI results, additional","air, radioactive",noble gas,,LCIA_Implementation_3.9.xlsx,kilo Becquerel,selected-lci-results-additionalan.89093fe2379afe0e35d304a93e9bc127,80
+"selected LCI results, additional","air, radioactive",radon (+ radium),,LCIA_Implementation_3.9.xlsx,kilo Becquerel,selected-lci-results-additionalar.f1ed098277d8a145af7eff67ea0e2a45,20
+"selected LCI results, additional",resource,"carbon, biogenic, fixed",,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalrc.5cc1b07d998782a5f08d329fd535bbab,17
+"selected LCI results, additional",resource,water,,LCIA_Implementation_3.9.xlsx,cubic meter,selected-lci-results-additionalrw.f769a797c4871f3b04024e67604e155a,7
+"selected LCI results, additional",total,"heat, waste",,LCIA_Implementation_3.9.xlsx,megajoule,selected-lci-results-additionalth.3525bc599b402875e3ba2c1ac5a4f88c,14
+"selected LCI results, additional",total,"oils, unspecified",,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-results-additionalto.bb75d3618a21569dab0ddb97ca8b3029,13
+"selected LCI results, additional","water, radioactive",actinides,,LCIA_Implementation_3.9.xlsx,kilo Becquerel,selected-lci-results-additionalwa.7bf0390882a398598ca3f5c3d3ca5868,75
+"selected LCI results, additional","water, radioactive",nuclides,,LCIA_Implementation_3.9.xlsx,kilo Becquerel,selected-lci-results-additionalwn.bb4925f4a22aa9046d02e2f8d32782fd,200
+"selected LCI results, additional","water, radioactive",radium,,LCIA_Implementation_3.9.xlsx,kilo Becquerel,selected-lci-results-additionalwr.9e8bec44eb1cde4356b80995baeca118,15
+"selected LCI results, additional","water, radioactive",tritium,,LCIA_Implementation_3.9.xlsx,kilo Becquerel,selected-lci-results-additionalwt.6e9c58b4f02eefedf2367a7589f497fd,5
+selected LCI results,air,"CO2, fossil",,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-resultsac.93c24e1dd347ea5bd359fc7ce8ff26f8,11
+selected LCI results,air,nitrogen oxides,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-resultsan.f1af9828e6b0357199be72e8b3645aec,5
+selected LCI results,air,NMVOC,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-resultsan.c4a285e6d61e0ef340c192bf6ef7cc4f,732
+selected LCI results,air,"particulates, < 2.5 um",,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-resultsap.42b0b87f4d51358e017fc9471fb60f04,5
+selected LCI results,air,sulphur dioxide,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-resultsas.1a11fce06d1cd76ea690a5f4a38c4f1f,5
+selected LCI results,resource,land occupation,,LCIA_Implementation_3.9.xlsx,square meter-year,selected-lci-resultsrl.f35a95663b7745c1c6d89e835cedea06,58
+selected LCI results,soil,cadmium,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-resultssc.4f72bc4472dea1da6926889ff5d15a6f,4
+selected LCI results,water,BOD,,LCIA_Implementation_3.9.xlsx,kilogram,selected-lci-resultswb.f9259e6e206ecdfec8a0041eaaf79f19,5
+TRACI v2.1 no LT,acidification no LT,acidification potential (AP) no LT,,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,traci-v21-no-ltaa.48ce2ab0097b60554a7a7b15ddbea84b,40
+TRACI v2.1 no LT,climate change no LT,global warming potential (GWP100) no LT,,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,traci-v21-no-ltcg.24929020cad7c30f70be5c4b09a567c6,157
+TRACI v2.1 no LT,ecotoxicity: freshwater no LT,ecotoxicity: freshwater no LT,,LCIA_Implementation_3.9.xlsx,CTUe,traci-v21-no-ltee.b81c3a56ea71ea9fdbc7858c99742bca,1696
+TRACI v2.1 no LT,eutrophication no LT,eutrophication potential no LT,,LCIA_Implementation_3.9.xlsx,kg N-Eq,traci-v21-no-ltee.c046c67c249078abd60450e34c4c3e35,55
+TRACI v2.1 no LT,human toxicity: carcinogenic no LT,human toxicity: carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,CTUh,traci-v21-no-lthh.c7dc1b23b96b6b8f9d017ceb3a04d3e6,429
+TRACI v2.1 no LT,human toxicity: non-carcinogenic no LT,human toxicity: non-carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,CTUh,traci-v21-no-lthh.70bd294a613ed31f12277177ec05ffa1,1000
+TRACI v2.1 no LT,ozone depletion no LT,ozone depletion potential (ODP) no LT,,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,traci-v21-no-ltoo.3c29f078d02360705313cb17dd1f652d,76
+TRACI v2.1 no LT,particulate matter formation no LT,particulate matter formation potential (PMFP) no LT,,LCIA_Implementation_3.9.xlsx,PM2.5-Eq,traci-v21-no-ltpp.c40a77d6396e2b730e6aa06c05d52fbb,32
+TRACI v2.1 no LT,photochemical oxidant formation no LT,maximum incremental reactivity (MIR) no LT,,LCIA_Implementation_3.9.xlsx,kg O3-Eq,traci-v21-no-ltpm.9a2cb1a208c3ee51ac2458a05d5e42ad,384
+TRACI v2.1,acidification,acidification potential (AP),,LCIA_Implementation_3.9.xlsx,kg SO2-Eq,traci-v21aa.85160c632b08123ba630538a4749a1da,49
+TRACI v2.1,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,traci-v21cg.dd067ce06228b3166d99d484b9e58e67,195
+TRACI v2.1,ecotoxicity: freshwater,ecotoxicity: freshwater,,LCIA_Implementation_3.9.xlsx,CTUe,traci-v21ee.b58d40700555079c1b8ce5d18ce06a49,1933
+TRACI v2.1,eutrophication,eutrophication potential,,LCIA_Implementation_3.9.xlsx,kg N-Eq,traci-v21ee.64d99a675bc38da228bf01bc4f743c09,67
+TRACI v2.1,human toxicity: carcinogenic,human toxicity: carcinogenic,,LCIA_Implementation_3.9.xlsx,CTUh,traci-v21hh.8204be8ff2e8b468425f24990c5b85d0,512
+TRACI v2.1,human toxicity: non-carcinogenic,human toxicity: non-carcinogenic,,LCIA_Implementation_3.9.xlsx,CTUh,traci-v21hh.24809de3778695a47cbf2c8895cc3519,1139
+TRACI v2.1,ozone depletion,ozone depletion potential (ODP),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,traci-v21oo.0706f7e8c43cba628c1e12f871c4daf0,95
+TRACI v2.1,particulate matter formation,particulate matter formation potential (PMFP),,LCIA_Implementation_3.9.xlsx,PM2.5-Eq,traci-v21pp.820e7c3be8bb97e6d88e559c218ea103,40
+TRACI v2.1,photochemical oxidant formation,maximum incremental reactivity (MIR),,LCIA_Implementation_3.9.xlsx,kg O3-Eq,traci-v21pm.59f4b54fe3161b3bced56c5c2a03f6c3,477
+USEtox no LT,ecotoxicity no LT,total no LT,,LCIA_Implementation_3.9.xlsx,CTU,usetox-no-ltet.eec9574592e1b93f7caea6ba4f4e9ec0,1166
+USEtox no LT,human toxicity no LT,carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,CTU,usetox-no-lthc.b1250b082dbcc181cec6b228e7658541,369
+USEtox no LT,human toxicity no LT,non-carcinogenic no LT,,LCIA_Implementation_3.9.xlsx,CTU,usetox-no-lthn.1cb2041147db980d1d5df5e01fd39a8d,722
+USEtox no LT,human toxicity no LT,total no LT,,LCIA_Implementation_3.9.xlsx,CTU,usetox-no-ltht.5a8a9d61e7bdffd54d94efc571766557,792
+USEtox,ecotoxicity,total,,LCIA_Implementation_3.9.xlsx,CTU,usetoxet.e4677843b35d1a20e2b3b3950029b55e,1373
+USEtox,human toxicity,carcinogenic,,LCIA_Implementation_3.9.xlsx,CTU,usetoxhc.d385c2943e41c80977feee2c9cf3c9ff,448
+USEtox,human toxicity,non-carcinogenic,,LCIA_Implementation_3.9.xlsx,CTU,usetoxhn.27dd66de9a709720e828ab7766d26376,849
+USEtox,human toxicity,total,,LCIA_Implementation_3.9.xlsx,CTU,usetoxht.df53f56082df3fb0a4e999a00bcc7904,935
+EF v3.0 EN15804,acidification,accumulated exceedance (AE),,LCIA_Implementation_3.9.xlsx,mol H+-Eq,ef-v30-en15804aa.05f1d7aa808e3cae95010227efe4090b,21
+EF v3.0 EN15804,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30-en15804cg.63036b19415ef2d554f795723e0ba14b,205
+EF v3.0 EN15804,climate change: biogenic,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30-en15804cg.c09ceeb4b3a11ad630c4bd27b233a683,12
+EF v3.0 EN15804,climate change: fossil,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30-en15804cg.3f9a372c80db6f19f1317156f7e0f906,174
+EF v3.0 EN15804,climate change: land use and land use change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v30-en15804cg.f2b0fddbee1af89e5d0842f972168659,19
+EF v3.0 EN15804,ecotoxicity: freshwater,comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v30-en15804ec.0c72f454d1535ed9435672c6c23002f7,2482
+EF v3.0 EN15804,energy resources: non-renewable,abiotic depletion potential (ADP): fossil fuels,,LCIA_Implementation_3.9.xlsx,"MJ, net calorific value",ef-v30-en15804ea.852532e6951222ca6f11e950eb6fa84d,7
+EF v3.0 EN15804,eutrophication: freshwater,fraction of nutrients reaching freshwater end compartment (P),,LCIA_Implementation_3.9.xlsx,kg P-Eq,ef-v30-en15804ef.4eb18b0d899ade7c371be396522ad9db,13
+EF v3.0 EN15804,eutrophication: marine,fraction of nutrients reaching marine end compartment (N),,LCIA_Implementation_3.9.xlsx,kg N-Eq,ef-v30-en15804ef.e5c9f4af5ccef1c3b2a39efcd36d1a61,36
+EF v3.0 EN15804,eutrophication: terrestrial,accumulated exceedance (AE),,LCIA_Implementation_3.9.xlsx,mol N-Eq,ef-v30-en15804ea.8d6f82960e5f30691af153a2b0cc2dee,16
+EF v3.0 EN15804,human toxicity: carcinogenic,comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-en15804hc.895d179ad13f33112ad87cf4a2ac22e4,478
+EF v3.0 EN15804,human toxicity: non-carcinogenic,comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v30-en15804hc.b0bca3e5f5cfb441b729f93a280d00a1,2057
+EF v3.0 EN15804,ionising radiation: human health,human exposure efficiency relative to u235,,LCIA_Implementation_3.9.xlsx,kBq U235-Eq,ef-v30-en15804ih.74feba36ee1861c18aac395df76bfd5e,195
+EF v3.0 EN15804,land use,soil quality index,,LCIA_Implementation_3.9.xlsx,dimensionless,ef-v30-en15804ls.0a495ce67d29d498915e42111e97c957,155
+EF v3.0 EN15804,material resources: metals/minerals,abiotic depletion potential (ADP): elements (ultimate reserves),,LCIA_Implementation_3.9.xlsx,kg Sb-Eq,ef-v30-en15804ma.5de80100c07382d6cac5f963584b485f,148
+EF v3.0 EN15804,ozone depletion,ozone depletion potential (ODP),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,ef-v30-en15804oo.53c327671039f88f293f0f3b591aa46d,75
+EF v3.0 EN15804,particulate matter formation,impact on human health,,LCIA_Implementation_3.9.xlsx,disease incidence,ef-v30-en15804pi.cbf1a254540215111b5281eb18c088e0,27
+EF v3.0 EN15804,photochemical oxidant formation: human health,tropospheric ozone concentration increase,,LCIA_Implementation_3.9.xlsx,kg NMVOC-Eq,ef-v30-en15804pt.ba2d7950b7fd39c82f238c7fb4c71de2,311
+EF v3.0 EN15804,water use,user deprivation potential (deprivation-weighted water consumption),,LCIA_Implementation_3.9.xlsx,m3 world eq. deprived,ef-v30-en15804wu.51329e26f62e7f0119106a3378b53524,5
+EF v3.1 EN15804,acidification,accumulated exceedance (AE),,LCIA_Implementation_3.9.xlsx,mol H+-Eq,ef-v31-en15804aa.135223ef5be93cd5040075772d7d5d76,22
+EF v3.1 EN15804,climate change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31-en15804cg.6c8284396aeb7522ad52dd060c887bef,230
+EF v3.1 EN15804,climate change: biogenic,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31-en15804cg.b576180ea47e025cb3721ab34f8a4188,12
+EF v3.1 EN15804,climate change: fossil,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31-en15804cg.f2d6bc0804c0e79a9a07b2338fce3033,204
+EF v3.1 EN15804,climate change: land use and land use change,global warming potential (GWP100),,LCIA_Implementation_3.9.xlsx,kg CO2-Eq,ef-v31-en15804cg.04e1f893bd0be8f0419a5e2acb214707,14
+EF v3.1 EN15804,ecotoxicity: freshwater,comparative toxic unit for ecosystems (CTUe),,LCIA_Implementation_3.9.xlsx,CTUe,ef-v31-en15804ec.f3f6592735f6092c5590f3d415e1eca2,2474
+EF v3.1 EN15804,energy resources: non-renewable,abiotic depletion potential (ADP): fossil fuels,,LCIA_Implementation_3.9.xlsx,"MJ, net calorific value",ef-v31-en15804ea.abdd99aae5f9251f1b29b6ff8b482adc,7
+EF v3.1 EN15804,eutrophication: freshwater,fraction of nutrients reaching freshwater end compartment (P),,LCIA_Implementation_3.9.xlsx,kg P-Eq,ef-v31-en15804ef.86e607b30f0f7b19d51b64dc7df27097,13
+EF v3.1 EN15804,eutrophication: marine,fraction of nutrients reaching marine end compartment (N),,LCIA_Implementation_3.9.xlsx,kg N-Eq,ef-v31-en15804ef.3b2d87ff4b7da9a567660214e47f09f0,36
+EF v3.1 EN15804,eutrophication: terrestrial,accumulated exceedance (AE),,LCIA_Implementation_3.9.xlsx,mol N-Eq,ef-v31-en15804ea.9c3da60f051c2978c511edfb3b81a1da,16
+EF v3.1 EN15804,human toxicity: carcinogenic,comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31-en15804hc.379b26b972ec9166bb95834289b397d7,479
+EF v3.1 EN15804,human toxicity: non-carcinogenic,comparative toxic unit for human (CTUh),,LCIA_Implementation_3.9.xlsx,CTUh,ef-v31-en15804hc.4bd73ce925c51bb2e88cb59cadd4f50d,2026
+EF v3.1 EN15804,ionising radiation: human health,human exposure efficiency relative to u235,,LCIA_Implementation_3.9.xlsx,kBq U235-Eq,ef-v31-en15804ih.3221f3710ee15a5c39317332ee500bad,195
+EF v3.1 EN15804,land use,soil quality index,,LCIA_Implementation_3.9.xlsx,dimensionless,ef-v31-en15804ls.6e9e55ff72faca3fe00b073488f3d73f,155
+EF v3.1 EN15804,material resources: metals/minerals,abiotic depletion potential (ADP): elements (ultimate reserves),,LCIA_Implementation_3.9.xlsx,kg Sb-Eq,ef-v31-en15804ma.6cf69649658ad31dacbb6d58801340c6,148
+EF v3.1 EN15804,ozone depletion,ozone depletion potential (ODP),,LCIA_Implementation_3.9.xlsx,kg CFC-11-Eq,ef-v31-en15804oo.5a0f547d8364d437ab6e16f2bd67270d,75
+EF v3.1 EN15804,particulate matter formation,impact on human health,,LCIA_Implementation_3.9.xlsx,disease incidence,ef-v31-en15804pi.5bfeb7d5bb0388dfdcbd6356bd3cadc0,27
+EF v3.1 EN15804,photochemical oxidant formation: human health,tropospheric ozone concentration increase,,LCIA_Implementation_3.9.xlsx,kg NMVOC-Eq,ef-v31-en15804pt.67b8ec632c46760c4caa373e664dbba3,311
+EF v3.1 EN15804,water use,user deprivation potential (deprivation-weighted water consumption),,LCIA_Implementation_3.9.xlsx,m3 world eq. deprived,ef-v31-en15804wu.38effc1a3d2d9f3342346f4d334934d6,5
+EN15804,inventory indicators ISO21930,exported energy - electricity,,LCIA_Implementation_3.9.xlsx,megajoule,en15804ie.970de9b000374eb9343c760a1caa5b50,1
+EN15804,inventory indicators ISO21930,exported energy - heat,,LCIA_Implementation_3.9.xlsx,megajoule,en15804ie.7d8815bb9657f5f2f4bcb3bb68f7fa3a,1
+EN15804,inventory indicators ISO21930,hazardous waste disposed,,LCIA_Implementation_3.9.xlsx,kilogram,en15804ih.8f5a96eb458521330c12c65e9293019d,1
+EN15804,inventory indicators ISO21930,high-level radioactive waste disposed,,LCIA_Implementation_3.9.xlsx,kilogram,en15804ih.9d650bc0602608243f0dbcae1b832e6e,1
+EN15804,inventory indicators ISO21930,intermediate and low-level radioactive waste disposed,,LCIA_Implementation_3.9.xlsx,kilogram,en15804ii.697ea6a6a43cc6fff979bff0a250e86b,1
+EN15804,inventory indicators ISO21930,materials for energy recovery,,LCIA_Implementation_3.9.xlsx,kilogram,en15804im.afffcd81862b1304947711999bd23b45,1
+EN15804,inventory indicators ISO21930,materials for recycling,,LCIA_Implementation_3.9.xlsx,kilogram,en15804im.2b29daa0d4d692f72becd1dcf538f568,1
+EN15804,inventory indicators ISO21930,non-hazardous waste disposed,,LCIA_Implementation_3.9.xlsx,kilogram,en15804in.25b071db3f8d9fff724b8ce7e6424d82,1
+EN15804,inventory indicators ISO21930,recovered energy,,LCIA_Implementation_3.9.xlsx,megajoule,en15804ir.41c51e35ea25d6f7262198745ac8a62d,1
+EN15804,inventory indicators ISO21930,use of net fresh water,,LCIA_Implementation_3.9.xlsx,cubic meter,en15804iu.5e0d5ab5c46539ae55a7ff6448ebb13b,10
+EN15804,inventory indicators ISO21930,use of renewable secondary fuels,,LCIA_Implementation_3.9.xlsx,megajoule,en15804iu.82fc686c54d5ed64e287df03d0d3f2bb,1
+EN15804,inventory indicators ISO21930,use of secondary material,,LCIA_Implementation_3.9.xlsx,kilogram,en15804iu.ddf13e064cfc3383f2dc8f4416988c6b,1
+EN15804,inventory indicators ISO21930,Cumulative Energy Demand - renewable energy resources,,LCIA_Implementation_3.9.xlsx,megajoule,en15804ic.56214d1bc2a87b07f463df22e398dc79,5
+EN15804,inventory indicators ISO21930,Cumulative Energy Demand - non-renewable energy resources,,LCIA_Implementation_3.9.xlsx,megajoule,en15804ic.fc900d621e3151c6a49e6e6864b9b46c,9
