@@ -48,6 +48,7 @@ class SampleDiscipline(om.ExplicitComponent):
         self.add_input("data:propulsion:control:DOC_time_steps", val=2, units=None)
 
         self.add_output("data:propulsion:degree_of_controllability", units=None)
+        self.add_output("data:propulsion:control:DOC_and_Mass_Optimized_Value", units=None)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -118,7 +119,8 @@ class SampleDiscipline(om.ExplicitComponent):
                            [d, d / 2, -d / 2, -d, -d / 2, d / 2],
                            [j, -j, j, -j, j, -j]])
             maxinput = np.array([1, 1, 1, 1, 1, 1])
-            mininput = np.array([0, 0, 0, 0, 0, 0])
+            mininput = np.array([0, 0, 0, 0, 0, 0]) 
+            #mininput = np.array([-1, -1, -1, -1, -1, -1]) #Change to 0 when checking fixed pitch propeller
             Ixx = (M_center * 0.5 ** 2 / 4) + (M_center * 0.25 ** 2 / 12) + 4 * (
                         (M_prop + M_motor) * (np.sqrt(3) * d / 2) ** 2)
             Iyy = (M_center * 0.5 ** 2 / 4) + (M_center * 0.25 ** 2 / 12) + 2 * ((M_prop + M_motor) * (d ** 2)) + 4 * (
@@ -191,11 +193,14 @@ class SampleDiscipline(om.ExplicitComponent):
         K = -np.linalg.inv(np.linalg.matrix_power(G, N)) @ F
         "Failure Injection"
         Nbofrotors = mininput.size
-        for j in range(1, Nbofrotors + 1):
+        DOC_internal=np.ones(Nbofrotors)*100
+        for j in range(1, 2): #Nbofrotors + 1, Since testing revealed the DOC is the same no matter the rotor failure, to reduce computing time, only one will be computed
             print("Failure of rotor ", j, " out of ", Nbofrotors)
             if j != 1:
                 maxinput[j - 2] = 1
+                #mininput[j - 2] = -1 #Remove when not checking variable pitch
             maxinput[j - 1] = 0
+            #mininput[j - 1] = 0 #Remove when not checking variable pitch
             a = mininput + np.linalg.pinv(Bf) @ Grav
             b = fmax * maxinput + np.linalg.pinv(Bf) @ Grav
             average = (a + b) / 2
@@ -233,8 +238,15 @@ class SampleDiscipline(om.ExplicitComponent):
                 L = abs(xi.T @ xp)
                 dL[i - 1] = d - L
                 # print(dL)
-        print("Minimal Controllability is ", min(dL))
-        DOC = min(dL)
+            DOC_internal[j-1]=min(dL)
+        DOC = min(DOC_internal)
+        print("Minimal Controllability is ", DOC)
         lapse2 = time.time()
         print("Computation Time is ", (lapse2 - lapse1))
         outputs["data:propulsion:degree_of_controllability"]=DOC
+        if DOC < 0:
+            KDOC = 52000 #700
+        else:
+            KDOC=-52000 #-700 for case 1
+        KMass=1
+        outputs["data:propulsion:control:DOC_and_Mass_Optimized_Value"]=KDOC*np.power(DOC,2)+KMass*np.power(M,2)

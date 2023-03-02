@@ -8,7 +8,7 @@ input_file: ../workdir/problem_inputs.xml
 output_file: ../workdir/problem_outputs.xml
 
 # Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
-driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
+driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP') #tol=1e-9
 
 # Definition of OpenMDAO model
 model:
@@ -31,8 +31,8 @@ model:
         missions:
             id: fastuav.performance.mission
             file_path: ../../missions/missions_multirotor.yaml
-    Control:
-        id: fastuav.plugin.DOC
+    #Control:
+        #id: fastuav.plugin.DOC
 
 
 # This section is needed only if optimization process is run
@@ -150,8 +150,9 @@ optimization:
         lower: 0.0
 
       ## CONTROL ##
-      - name: data:propulsion:degree_of_controllability  # Degree of Controllability
-        lower: 0.0
+      #- name: data:propulsion:degree_of_controllability  # Degree of Controllability
+        #lower: 0.0
+        #upper: 0.01
 
         ## MISSION ##
       - name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
@@ -165,6 +166,10 @@ optimization:
 
       # DOC MAXIMIZATION
       #- name: data:propulsion:degree_of_controllability
+        #scaler: -1e-3
+
+      # DOC and Mass Optimization
+      #- name: data:propulsion:control:DOC_and_Mass_Optimized_Value
         #scaler: 1e-3
 
       # ENERGY MINIMIZATION

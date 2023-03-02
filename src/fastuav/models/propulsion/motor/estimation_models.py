@@ -189,6 +189,7 @@ class Weight(om.ExplicitComponent):
         self.add_input("data:propulsion:motor:torque:max:estimated", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:max:reference", val=np.nan, units="N*m")
         self.add_input("data:weights:propulsion:motor:mass:reference", val=np.nan, units="kg")
+        self.add_input("data:weights:propulsion:motor:k_thrust", val=1, units=None)
         self.add_output("data:weights:propulsion:motor:mass:estimated", units="kg")
 
     def setup_partials(self):
@@ -198,8 +199,9 @@ class Weight(om.ExplicitComponent):
         Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
         Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
         Mmot_ref = inputs["data:weights:propulsion:motor:mass:reference"]
+        K_thrust = inputs["data:weights:propulsion:motor:k_thrust"]
 
-        Mmot = Mmot_ref * (Tmot_max / Tmot_max_ref) ** (3 / 3.5)  # [kg] Motor mass (estimated)
+        Mmot = K_thrust * Mmot_ref * (Tmot_max / Tmot_max_ref) ** (3 / 3.5)  # [kg] Motor mass (estimated)
 
         outputs["data:weights:propulsion:motor:mass:estimated"] = Mmot
 
@@ -207,14 +209,15 @@ class Weight(om.ExplicitComponent):
         Tmot_max = inputs["data:propulsion:motor:torque:max:estimated"]
         Tmot_max_ref = inputs["data:propulsion:motor:torque:max:reference"]
         Mmot_ref = inputs["data:weights:propulsion:motor:mass:reference"]
+        K_thrust = inputs["data:weights:propulsion:motor:k_thrust"]
 
         partials["data:weights:propulsion:motor:mass:estimated",
                  "data:propulsion:motor:torque:max:estimated"
-        ] = (3 / 3.5) * Mmot_ref / Tmot_max_ref ** (3 / 3.5) * Tmot_max ** (-0.5 / 3.5)
+        ] = (3 / 3.5) * K_thrust * Mmot_ref / Tmot_max_ref ** (3 / 3.5) * Tmot_max ** (-0.5 / 3.5)
 
         partials["data:weights:propulsion:motor:mass:estimated",
                  "data:propulsion:motor:torque:max:reference"
-        ] = - (3 / 3.5) * Mmot_ref * Tmot_max ** (3 / 3.5) / Tmot_max_ref ** (6.5 / 3.5)
+        ] = - (3 / 3.5) *K_thrust* Mmot_ref * Tmot_max ** (3 / 3.5) / Tmot_max_ref ** (6.5 / 3.5)
 
         partials["data:weights:propulsion:motor:mass:estimated",
                  "data:weights:propulsion:motor:mass:reference"
