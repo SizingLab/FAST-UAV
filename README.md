@@ -24,9 +24,10 @@ Install
 > conda activate fastuav
 > ```
 
-4. Install the required dependencies:
+4. Install the required dependencies using [Poetry](https://python-poetry.org/docs/):
 > ``` {.bash}
-> pip install -e .
+> conda install poetry
+> poetry install
 > ```
 
 Run
