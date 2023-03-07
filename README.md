@@ -9,7 +9,11 @@ Currently, FAST-UAV is bundled with analytical models for multirotor, fixed wing
 
 Install
 -------
-Download the zip file from Github and unzip it. Open an Anaconda Prompt terminal and cd to the recently unziped folder.
+Download the zip file from Github and unzip it. Open an Anaconda Prompt terminal and navigate to the recently unziped folder.
+
+> ``` {.bash}
+> $ cd path/to/your/fastuav/folder
+> ```
 
 You can then create a new conda environment by running:
 
