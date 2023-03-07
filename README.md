@@ -17,7 +17,7 @@ Install
 > cd path/to/your/fastuav/folder
 > ```
 
-3. Create a new conda environment and activate it by running:
+3. Make sure you have the latest version of conda. Create a new conda environment and activate it by running:
 
 > ``` {.bash}
 > conda create -n fastuav python=3.8
