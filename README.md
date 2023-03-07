@@ -9,20 +9,22 @@ Currently, FAST-UAV is bundled with analytical models for multirotor, fixed wing
 
 Install
 -------
-Download the zip file from Github and unzip it. Open an Anaconda Prompt terminal and navigate to the recently unziped folder.
+1. Download the zip file from Github and unzip it. Alternatively, you can clone the repository with the `git clone` command.
+
+2. Open an Anaconda Prompt terminal and navigate to the recently unziped folder.
 
 > ``` {.bash}
 > $ cd path/to/your/fastuav/folder
 > ```
 
-Now, create a new conda environment and activate it by running:
+3. Create a new conda environment and activate it by running:
 
 > ``` {.bash}
 > $ conda create -n fastuav python=3.8
 > $ conda activate fastuav
 > ```
 
-Then install the required dependencies:
+4. Install the required dependencies:
 > ``` {.bash}
 > $ pip install -e .
 > ```
