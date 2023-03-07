@@ -15,7 +15,7 @@ Download the zip file from Github and unzip it. Open an Anaconda Prompt terminal
 > $ cd path/to/your/fastuav/folder
 > ```
 
-You can then create a new conda environment by running:
+Now, create a new conda environment and activate it by running:
 
 > ``` {.bash}
 > $ conda create -n fastuav python=3.8
@@ -27,7 +27,6 @@ Then install the required dependencies:
 > $ pip install -e .
 > ```
 
-
 Run
 -------
 Once FAST-UAV is installed, you can access the notebooks with Jupyter Lab:
@@ -36,6 +35,8 @@ Once FAST-UAV is installed, you can access the notebooks with Jupyter Lab:
 > ```
 
 Then navigate to the `src/fastuav/notebooks` directory.
+
+**Note**: Every time you will be working with FAST-UAV, you must first activate the conda environment with the `conda activate fastuav` command before opening the jupyter notebooks.
 
 
 Publications
