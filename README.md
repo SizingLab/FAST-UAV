@@ -26,7 +26,7 @@ Install
 
 4. Install the required dependencies using [Poetry](https://python-poetry.org/docs/):
 > ``` {.bash}
-> conda install poetry
+> conda install poetry-core=1.5.1
 > poetry install
 > ```
 
