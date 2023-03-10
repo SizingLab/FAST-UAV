@@ -106,6 +106,9 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     )
     airframe = body + arms + wing + fuselage + htail + vtail
 
+    # MISCELLANEOUS
+    misc = variables["data:weight:misc:mass"].value[0]
+
     # PAYLOAD
     payload = variables["mission:sizing:payload:mass"].value[0]
 
@@ -115,8 +118,8 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     # MTOW
     MTOW = variables["data:weight:mtow"].value[0]
 
-    if round(MTOW, 6) == round(propulsions + airframe + payload + fuel_mission, 6):
-        MTOW = propulsions + airframe + payload + fuel_mission
+    if round(MTOW, 6) == round(propulsions + airframe + misc + payload + fuel_mission, 6):
+        MTOW = propulsions + airframe + misc + payload + fuel_mission
 
     # DISPLAYED NAMES AND VALUES
     propellers_str = []
@@ -250,6 +253,15 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
         + "%)"
     )
 
+    misc_str = (
+            "Miscellaneous"
+            + "<br>"
+            + str("{0:.2f}".format(misc))
+            + " [kg] ("
+            + str(round(misc / MTOW * 100, 1))
+            + "%)"
+    )
+
     payload_str = (
         "Payload"
         + "<br>"
@@ -276,6 +288,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
               fuel_mission_str,
               propulsions_str,
               airframe_str,
+              misc_str,
               ]
     for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
         labels.extend(
@@ -297,6 +310,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
     )
 
     parents = ["",
+               MTOW_str,
                MTOW_str,
                MTOW_str,
                MTOW_str,
@@ -328,6 +342,7 @@ def mass_breakdown_sun_plot_drone(drone_file_path: str, file_formatter=None):
               fuel_mission,
               propulsions,
               airframe,
+              misc,
               ]
     for i, propulsion_id in enumerate(PROPULSION_ID_LIST):
         values.extend([
@@ -366,7 +381,7 @@ def mass_breakdown_bar_plot_drone(
     drone_file_path: str, name=None, fig=None, file_formatter=None, error_y=None,
 ) -> go.FigureWidget:
     """
-    DEPRECATED FOR NOW.
+    DEPRECATED.
 
     Returns a figure plot of the drone mass breakdown using bar plots.
     Different designs can be superposed by providing an existing fig.

@@ -51,6 +51,7 @@ kaleido = "0.2.1"
 SALib = "1.4.5"
 numpy = "1.23.5"
 brightway2 = "^2.3"
+bw2io = "0.8.8"  # compatibility with ecoinvent 3.9 only !!! For ecoinvent 3.8, switch to 0.8.7
 lca-algebraic = "1.0.5"
 networkx = "*"
 pyvis = "*"

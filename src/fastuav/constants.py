@@ -34,7 +34,7 @@ PHASE_TAGS_LIST = [TAKEOFF_TAG, CLIMB_TAG, CRUISE_TAG, HOVER_TAG]
 
 # Life Cycle Assessment
 DEFAULT_PROJECT = 'fastuav'
-DEFAULT_ECOINVENT = 'ecoinvent 3.8_cutoff_ecoSpold02'
+DEFAULT_ECOINVENT = 'ecoinvent 3.9_cutoff_ecoSpold02'
 USER_DB = 'Foreground DB'
 MODEL_KEY = 'model per UF'
 NORM_MODEL_KEY = 'normalized model'

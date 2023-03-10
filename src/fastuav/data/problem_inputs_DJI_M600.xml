@@ -1,9 +1,15 @@
 <FASTOAD_model>
+  <lca>
+    <mission>
+      <n_cycles is_input="True">2000.0</n_cycles>
+      <n_cycles_battery is_input="True">1000.0</n_cycles_battery>
+    </mission>
+  </lca>
   <mission>
     <sizing>
       <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
       <payload>
-        <mass units="kg" is_input="True">6.35<!--Design payload mass--></mass>
+        <mass units="kg" is_input="True">5.5<!--Design payload mass--></mass>
         <power>
           <multirotor units="W" is_input="True">0.0</multirotor>
         </power>
@@ -46,6 +52,9 @@
       <arms>
         <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
       </arms>
+      <misc>
+        <mass units="kg" is_input="True">0.85</mass>
+      </misc>
       <mtow>
         <k is_input="True">2.0<!--Oversizing coefficient on load mass--></k>
         <reference units="kg" is_input="True">1.4<!--Maximum Take Off Weight reference for scaling law--></reference>

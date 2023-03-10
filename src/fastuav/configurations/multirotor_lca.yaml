@@ -34,7 +34,7 @@ model:
     lca:
         id: fastuav.plugin.lca
         project: fastuav
-        database: ecoinvent 3.8_cutoff_ecoSpold02
+        database: ecoinvent 3.9_cutoff_ecoSpold02
         model: "kg.h" # lifetime # kg.km
         methods:
             - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
@@ -43,7 +43,7 @@ model:
             - "('IPCC 2013 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
             - "('TRACI v2.1 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
             #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
-        parameters: {"elec_switch_param": "fr"}  # non-float parameters for lca are declared here
+        parameters: {"elec_switch_param": "fr", "battery_type": "nmc_811"}  # non-float parameters for lca are declared here
 
 
 # This section is needed only if optimization process is run

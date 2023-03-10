@@ -8,6 +8,7 @@ import numpy as np
 import brightway2 as bw
 import lca_algebraic as lcalg
 import re
+from sympy import ceiling
 from fastuav.exceptions import FastLcaProjectDoesNotExist, \
     FastLcaDatabaseIsNotImported, \
     FastLcaMethodDoesNotExist, \
@@ -108,7 +109,8 @@ class LCAmodel(om.ExplicitComponent):
         self.add_input("data:weight:propulsion:multirotor:motor:mass", val=np.nan, units='kg')
         self.add_input("data:weight:propulsion:multirotor:propeller:mass", val=np.nan, units='kg')
         self.add_input("data:weight:propulsion:multirotor:esc:mass", val=np.nan, units='kg')
-        self.add_input("lca:mission:n_cycles", val=1000.0, units=None)
+        self.add_input("lca:mission:n_cycles", val=2000.0, units=None)
+        self.add_input("lca:mission:n_cycles_battery", val=1000.0, units=None)
 
         # LCA parameters
         for name, object in self.parameters.items():  # loop through parameters defined in initialize() method
@@ -123,6 +125,7 @@ class LCAmodel(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         # Parameters
         n_cycles = inputs["lca:mission:n_cycles"]
+        n_cycles_battery = inputs["lca:mission:n_cycles_battery"]
         mission_distance = inputs["mission:sizing:main_route:cruise:distance"] / 1000  # [km]
         mission_duration = inputs["mission:sizing:duration"] / 60  # [h]
         mass_payload = inputs["mission:sizing:payload:mass"]  # [kg]
@@ -145,6 +148,7 @@ class LCAmodel(om.ExplicitComponent):
         # non-float parameters are automatically declared as options)
         parameters_dict = {
             'n_cycles': n_cycles,
+            'n_cycles_battery': n_cycles_battery,
             'mission_distance': mission_distance,
             'mission_duration': mission_duration,
             'mission_energy': mission_energy,
@@ -196,8 +200,24 @@ class LCAmodel(om.ExplicitComponent):
             dbname=USER_DB  # we define the parameter in our own database
         ))
 
+        self._add_param(lcalg.newFloatParam(
+            'n_cycles_battery',
+            default=1.0,
+            min=0, max=10000,
+            description="maximum number of cycles for battery technology",
+            dbname=USER_DB
+        ))
+
         # Enum parameters are a facility to represent different options
         # and should be used with the 'newSwitchAct' method
+        self._add_param(lcalg.newEnumParam(
+            'battery_type',
+            values=["nmc_811", "nmc_111", "nca", "lfp", "nimh"],  # values this parameter can take
+            default="nmc_811",
+            description="battery technology",
+            dbname=USER_DB
+        ))
+
         self._add_param(lcalg.newEnumParam(
             'elec_switch_param',
             values=["us", "eu", "fr"],  # values this parameter can take
@@ -286,43 +306,42 @@ class LCAmodel(om.ExplicitComponent):
         with exchanges that can be parameterized.
         """
 
-        # References to some background activities
-        battery_li_ion = lcalg.findActivity(db_name='ecoinvent 3.8_cutoff_ecoSpold02',
-                                            code='3cff7e6ccbeae483942dfa12a93a5aec')  # [kg] Li-ion NMC 811 battery
-        motor_scooter = lcalg.findActivity(db_name='ecoinvent 3.8_cutoff_ecoSpold02',
-                                           code='910ad8e5f36aabe962d6bf1c07abff24')  # [kg] electric scooter motor
-        controller_scooter = lcalg.findActivity(db_name='ecoinvent 3.8_cutoff_ecoSpold02',
-                                                code='8c83fa62d7b2654a0bbc8313d13dc892')  # [kg] electric scooter controller
-        composite = lcalg.findActivity(db_name='ecoinvent 3.8_cutoff_ecoSpold02',
-                                       code='5f83b772ba1476f12d0b3ef634d4409b')  # [kg] CFRP
-        aluminium = lcalg.findActivity(db_name='ecoinvent 3.8_cutoff_ecoSpold02',
-                                       code='fa1a2d6fc65234a5a873c6776d8fd6fb')  # [kg] aluminium
-        electricity_eu = lcalg.findActivity(db_name='ecoinvent 3.8_cutoff_ecoSpold02',
-                                            code='5915aad8afe41b757f731b8a5ec5d60e')  # [kWh] Europe w/o Switzerland, Low voltage
-        electricity_us = lcalg.findActivity(db_name='ecoinvent 3.8_cutoff_ecoSpold02',
-                                            code='12e8a9953a2b09fa316106edc3b0e0da')  # [kWh] United States, Low voltage
-        electricity_fr = lcalg.findActivity(db_name='ecoinvent 3.8_cutoff_ecoSpold02',
-                                            code='ab9dc0c0cb4d12b5a1597fd4de0c88db')  # [kWh] France, Low voltage
+        db_ecoinvent = self.options["database"]
 
-        # Battery activity
-        battery = lcalg.newActivity(
-            USER_DB,  # we define foreground activities in our own database
-            "battery",  # Name of the activity
-            "kg",  # Unit
-            exchanges={  # We define exchanges as a dictionary of 'activity : amount'
-                battery_li_ion: 1.0,  # Amount can be a fixed value or a parameter (see higher-level activities)
-                # battery_li_ion: 0.5,  # for instance, we can have half Li-Ion batteries...
-                # battery_na_cl: 0.5,  # and half NaCl batteries
-            }
-        )
+        # References to some background activities
+        # All activities here are of market type (i.e., transports are taken into account)
+        battery_nmc_811 = lcalg.findActivity(db_name=db_ecoinvent,
+                                            code='52e3cdd70890530eada4fbcef2741406')  # [kg] Li-ion NMC 811 battery cell
+        battery_nmc_111 = lcalg.findActivity(db_name=db_ecoinvent,
+                                             code='742db99703644938601390debe4d348e')  # [kg] Li-ion NMC 111 battery cell
+        battery_nca = lcalg.findActivity(db_name=db_ecoinvent,
+                                            code='7b1eff2765339e62ffb98ad1cadd2698')  # [kg] Li-ion NCA battery cell
+        battery_lfp = lcalg.findActivity(db_name=db_ecoinvent,
+                                         code='f6036ad86fb205d8712754f2fac10a16')  # [kg] Li-ion LFP battery cell
+        battery_nimh = lcalg.findActivity(db_name=db_ecoinvent,
+                                            code='604a095c71d418d248cf5f4bef12f5c4')  # [kg] NiMH battery pack
+        motor_scooter = lcalg.findActivity(db_name=db_ecoinvent,
+                                           code='a9f8412fe79b4fe74771ddfbeebb3f98')  # [kg] electric scooter motor
+        controller_scooter = lcalg.findActivity(db_name=db_ecoinvent,
+                                                code='9afe5ffc45f1b043596a7901a59c98eb')  # [kg] electric scooter controller
+        composite = lcalg.findActivity(db_name=db_ecoinvent,
+                                       code='11cd946a783d8de6f814fc2f5c3b4782')  # [kg] CFRP
+        aluminium = lcalg.findActivity(db_name=db_ecoinvent,
+                                       code='fa3d4c4f880c2f0240b557a3dac1f9d7')  # [kg] aluminium section bar extrusion
+        electricity_eu = lcalg.findActivity(db_name=db_ecoinvent,
+                                            code='da20ff6f4e46c6268b3017121bd0b2f4')  # [kWh] Europe w/o Switzerland, Low voltage
+        electricity_us = lcalg.findActivity(db_name=db_ecoinvent,
+                                            code='04ddd164cec6d9ed96cfc299cab21124')  # [kWh] United States, Low voltage
+        electricity_fr = lcalg.findActivity(db_name=db_ecoinvent,
+                                            code='a950938cf39595b8de0977d1b289d69a')  # [kWh] France, Low voltage
 
         # Motor activity
         motor = lcalg.newActivity(
-            USER_DB,
-            "motor",
-            "kg",
+            USER_DB,  # we define foreground activities in our own database
+            "motor",  # Name of the activity
+            "kg",  # We define exchanges as a dictionary of 'activity : amount'
             exchanges={
-                motor_scooter: 1.0,
+                motor_scooter: 1.0,   # Amount can be a fixed value or a parameter
             }
         )
 
@@ -357,13 +376,54 @@ class LCAmodel(om.ExplicitComponent):
             }
         )
 
+        # Battery activity
+        # battery = lcalg.newActivity(
+        #     USER_DB,
+        #     "battery",
+        #     "kg",  # Unit
+        #     exchanges={
+        #         battery_nmc_811: 1.0,
+        #         # battery_nmc_811: 0.5,  # for instance, we can have half NMC 811 batteries...
+        #         # battery_nca: 0.5,  # and half NCA batteries
+        #     }
+        # )
+
+        # This is a switch activity. One may choose between different type of sub-activities (here, electricity mix)
+        battery = lcalg.newSwitchAct(
+            USER_DB,
+            "battery",
+            self._get_param('battery_type'),  # Switch parameter previously defined
+            {  # Dictionary of enum values / activities : {"switch_option": (activity, amount)}
+                "nmc_811": (
+                    battery_nmc_811,
+                    ceiling(self._get_param('n_cycles') / self._get_param('n_cycles_battery'))
+                ),
+                "nmc_111": (
+                    battery_nmc_111,
+                    ceiling(self._get_param('n_cycles') / self._get_param('n_cycles_battery'))
+                ),
+                "nca": (
+                    battery_nca,
+                    ceiling(self._get_param('n_cycles') / self._get_param('n_cycles_battery'))
+                ),
+                "lfp": (
+                    battery_lfp,
+                    ceiling(self._get_param('n_cycles') / self._get_param('n_cycles_battery'))
+                ),
+                "nimh": (
+                    battery_nimh,
+                    ceiling(self._get_param('n_cycles') / self._get_param('n_cycles_battery'))
+                ),
+            }
+        )
+
         # Production activity: assembly of the previously defined components
         lcalg.newActivity(
             USER_DB,
             "production",
             "uav",  # unit is one uav
             exchanges={  # we refer directly to the
-                battery: self._get_param('mass_batteries'),  # Amount is a parameter
+                battery: self._get_param('mass_batteries'),  # Amount is a formula
                 motor: self._get_param('mass_motors'),
                 airframe: self._get_param('mass_airframe'),
                 propeller: self._get_param('mass_propellers'),
@@ -429,7 +489,7 @@ class LCAmodel(om.ExplicitComponent):
             lcalg.newActivity(
                 USER_DB,
                 MODEL_KEY,
-                "kg.km",  # functional unit: one kg payload carried during one hour
+                "kg.h",  # functional unit: one kg payload carried during one hour
                 exchanges={
                     intermediate_model: 1 / functional_value
                 })
@@ -544,7 +604,7 @@ class LCAcalc(om.ExplicitComponent):
             # Outputs
             for m in res:
                 # get score for method m
-                score = res[m][0]
+                score = res[m][0]  # if a parameter is provided as a list of values, there will be several scores. For now we only get the first one.
                 # results from lca_algebraic does not use the same names as the input methods list...
                 end = m.find("[")  # TODO: mapping function to improve calculation time?
                 m_name = m[:end]

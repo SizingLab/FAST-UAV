@@ -274,10 +274,10 @@ def graph_activities(configuration_file_path: str):
         n = e[4]
         db = e[5]
 
-        if dst == "":
-            continue
-
         color = '#97c2fc' if db == USER_DB else 'lightgrey'
+        if dst == "":
+            net.add_node(src, desc, title=src, level=n + 1, shape='box', color=color)
+            continue
         net.add_node(src, desc, title=src, level=n + 1, shape='box', color=color)
         net.add_node(dst, dst, title=dst, level=n, shape='box')
         net.add_edge(src, dst, label=str(w))
