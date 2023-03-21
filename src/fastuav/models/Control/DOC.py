@@ -28,7 +28,6 @@ from fastoad.module_management.service_registry import RegisterOpenMDAOSystem
 from sympy import symbols, integrate, exp, Matrix
 from scipy.linalg import expm
 from itertools import combinations
-#from fastuav.models.Control import doc_multicopter
 
 @RegisterOpenMDAOSystem("fastuav.plugin.DOC")
 class SampleDiscipline(om.ExplicitComponent):
