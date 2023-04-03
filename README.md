@@ -17,16 +17,21 @@ Install
 > cd path/to/your/fastuav/folder
 > ```
 
-3. Make sure you have the latest version of conda. Create a new conda environment and activate it by running:
+3. If you haven't done so before, install [Poetry](https://python-poetry.org/docs/) using [pipx](https://pypa.github.io/pipx/):
+> ``` {.bash}
+> python -m pip install --user pipx
+> pipx install poetry==1.2.0
+> ```
+
+4. Create a new conda environment and activate it by running:
 
 > ``` {.bash}
 > conda create -n fastuav python=3.8
 > conda activate fastuav
 > ```
 
-4. Install the required dependencies using [Poetry](https://python-poetry.org/docs/):
+5. Install the required dependencies with [Poetry](https://python-poetry.org/docs/):
 > ``` {.bash}
-> conda install poetry-core=1.5.1
 > poetry install
 > ```
 
@@ -36,8 +41,9 @@ Once FAST-UAV is installed, you can access the notebooks with Jupyter Lab:
 > ``` {.bash}
 > jupyter lab
 > ```
+If this command is not found by Python, you can install Jupyter Lab with ```conda install -c conda-forge jupyterlab```.
 
-Then navigate to the `src/fastuav/notebooks` directory.
+Jupyter lab will open automatically in your browser. Then, navigate to the `src/fastuav/notebooks` directory and start with the first notebook.
 
 **Note**: Every time you will be working with FAST-UAV, you must first activate the conda environment with the `conda activate fastuav` command before opening the jupyter notebooks.
 
@@ -55,6 +61,8 @@ Publications
 > J. Liscouet, F. Pollet, J. Jézégou, M. Budinger, S. Delbecq, and J.-M. Moschetta. “A Methodology to Integrate Reliability into the Conceptual Design of Safety-Critical Multirotor Unmanned Aerial Vehicles.” Aerospace Science and Technology, June 1, 2022, 107681. https://doi.org/10.1016/j.ast.2022.107681.
 
 > F. Pollet, S. Delbecq, M. Budinger, J.-M. Moschetta, and J. Liscouët. “A Common Framework for the Design Optimization of Fixed-Wing, Multicopter and VTOL UAV Configurations.” In 33rd Congress of the International Council of the Aeronautical Sciences. Stockholm, Sweden, 2022. https://hal.archives-ouvertes.fr/hal-03832115.
+
+> F. Pollet, M. Budinger, S. Delbecq, J. -M. Moschetta, and J. Liscouët. “Quantifying and Mitigating Uncertainties in Design Optimization Including Off-the-Shelf Components: Application to an Electric Multirotor UAV.” Aerospace Science and Technology, May 1, 2023, 108179. https://doi.org/10.1016/j.ast.2023.108179.
 
 > [DroneApp](https://github.com/SizingLab/droneapp-legacy) sizing tool
 
