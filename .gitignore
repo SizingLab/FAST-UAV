@@ -26,3 +26,17 @@
 /dist/
 /src/fastuav.egg-info/
 /src/fastuav/notebooks/reports/
+/src/fastuav/data/problem_outputs_lca.xml
+/src/fastuav/data/problem_outputs_lca_mdo.xml
+/src/fastuav/data/lca_cycles_lfp_eu.csv
+/src/fastuav/data/lca_cycles_lfp_eu_endpoint.csv
+/src/fastuav/data/lca_cycles_lfp_fr.csv
+/src/fastuav/data/lca_cycles_lfp_fr_endpoint.csv
+/src/fastuav/data/lca_cycles_lfp_us.csv
+/src/fastuav/data/lca_cycles_lfp_us_endpoint.csv
+/src/fastuav/data/lca_cycles_nmc811_eu.csv
+/src/fastuav/data/lca_cycles_nmc811_eu_endpoint.csv
+/src/fastuav/data/lca_cycles_nmc811_fr.csv
+/src/fastuav/data/lca_cycles_nmc811_fr_endpoint.csv
+/src/fastuav/data/lca_cycles_nmc811_us.csv
+/src/fastuav/data/lca_cycles_nmc811_us_endpoint.csv

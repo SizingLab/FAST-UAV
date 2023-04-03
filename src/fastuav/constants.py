@@ -33,14 +33,14 @@ HOVER_TAG = "hover"
 PHASE_TAGS_LIST = [TAKEOFF_TAG, CLIMB_TAG, CRUISE_TAG, HOVER_TAG]
 
 # Life Cycle Assessment
-DEFAULT_PROJECT = 'fastuav'
-DEFAULT_ECOINVENT = 'ecoinvent 3.9_cutoff_ecoSpold02'
-USER_DB = 'Foreground DB'
-MODEL_KEY = 'model per UF'
-NORM_MODEL_KEY = 'normalized model'
-PARAM_VARIABLE_KEY = 'lca:parameters:'
-RESULTS_VARIABLE_KEY = 'lca:results:'
-DEFAULT_METHOD = [
+LCA_DEFAULT_PROJECT = 'fastuav'
+LCA_DEFAULT_ECOINVENT = 'ecoinvent 3.9_cutoff_ecoSpold02'
+LCA_USER_DB = 'Foreground DB'
+LCA_MODEL_KEY = 'model per FU'
+LCA_PARAM_KEY = 'lca:parameters:'
+LCA_RESULT_KEY = 'lca:results:'
+LCA_POSTPROCESS_KEY = 'lca:postprocessing:'
+LCA_DEFAULT_METHOD = [
     "('ReCiPe 2016 v1.03, midpoint (E) no LT', "
     "'climate change no LT', "
     "'global warming potential (GWP1000) no LT')",

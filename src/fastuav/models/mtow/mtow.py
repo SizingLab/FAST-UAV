@@ -196,7 +196,7 @@ class MtowConstraints(om.ExplicitComponent):
         m_uav = inputs["data:weight:mtow"]
         m_uav_guess = inputs["data:weight:mtow:guess"]
 
-        partials["data:weight:mtow:guess:constraint", "data:weight:mtow:guess",] = (
+        partials["data:weight:mtow:guess:constraint", "data:weight:mtow:guess"] = (
             1.0 / m_uav
         )
         partials["data:weight:mtow:guess:constraint", "data:weight:mtow"] = (

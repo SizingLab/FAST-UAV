@@ -3,7 +3,7 @@ API
 """
 import brightway2 as bw
 import lca_algebraic as lcalg
-from fastuav.constants import USER_DB, MODEL_KEY
+from fastuav.constants import LCA_USER_DB, LCA_MODEL_KEY
 
 
 def create_lca_project(project_name, db_path, db_name):
@@ -30,14 +30,14 @@ def create_lca_project(project_name, db_path, db_name):
     print(f'Available databases in project "{project_name}": \n {list(bw.databases)}')
 
 
-def get_lca_activities(db_name: str = USER_DB):
+def get_lca_activities(db_name: str = LCA_USER_DB):
     """Get all activities declared in a database."""
     return [act for act in bw.Database(db_name)]
 
 
-def get_lca_main_activity(db_name: str = USER_DB):
+def get_lca_main_activity(db_name: str = LCA_USER_DB):
     """Get the main activity (i.e., the top-level activity, or the model) declare in LCA module of FAST."""
-    return lcalg.getActByCode(db_name, MODEL_KEY)
+    return lcalg.getActByCode(db_name, LCA_MODEL_KEY)
 
 
 def list_lca_parameters():
