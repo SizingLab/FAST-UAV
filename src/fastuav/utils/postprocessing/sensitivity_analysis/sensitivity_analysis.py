@@ -39,7 +39,7 @@ SA_PATH = pth.join(
 )
 
 
-def doe_salib(
+def doe_fast(
     method_name: str,
     x_dict: dict,
     y_list: List[str],
@@ -48,15 +48,20 @@ def doe_salib(
     calc_second_order: bool = True,
 ) -> pd.DataFrame:
     """
-    DoE for Sobol-Saltelli 2002 Method or Morris method.
+    DoE function for FAST-UAV problems.
+    Various generators are available:
+        - Uniform generator provided by pyDOE2 and included in OpenMDAO
+        - Latin Hypercube generator provided by OpenMDAO
+        - Generator for Sobol-Saltelli 2002 method provided by SALib
+        - Generator for Morris method provided by SALib
     If an optimization problem is declared in the configuration file,
-    a nested optimization (sub-problem) is run (e.g. to ensure system consistency at each simulation).
+    a nested optimization (sub-problem) is run (e.g. to ensure system optimality and/or consistency at each simulation).
 
-    :param method_name: 'Sobol' or 'Morris'
-    :param x_dict: inputs dictionary {input_name: distribution_law}
-    :param y_list: list of problem outputs
+    :param method_name: 'uniform', 'lhs', 'Sobol' or 'Morris'
+    :param x_dict: inputs dictionary {input_name: [dist_parameter_1, dist_parameter_2, distribution_type]}
+    :param y_list: list of problem outputs to record
     :param conf_file: configuration file for the problem
-    :param ns: number of samples (Sobol) or trajectories (Morris)
+    :param ns: number of samples (Uniform and Sobol) or trajectories (Morris)
     :param calc_second_order: calculate second order indices (Sobol)
 
     :return: dataframe of the monte carlo simulation results
@@ -64,7 +69,7 @@ def doe_salib(
 
     class SubProbComp(om.ExplicitComponent):
         """
-        Sub-problem component for nested optimization to ensure system consistency.
+        Sub-problem component for nested optimization (e.g., to ensure system consistency).
         """
 
         def initialize(self):
@@ -76,9 +81,10 @@ def doe_salib(
             # create a sub-problem to use later in the compute
             # sub_conf = oad.FASTOADProblemConfigurator(conf_file)
             conf = self.options["conf"]
-            prob = conf.get_problem(read_inputs=True)
+            prob = conf.get_problem(read_inputs=True)  # get conf file (design variables, objective, driver...)
 
-            # UNCOMMENT THESE LINES IF USING CMA-ES Driver for solving sub-problem  # TODO: automatically detect use of CMA-ES driver
+            # UNCOMMENT THESE LINES IF USING CMA-ES Driver for solving sub-problem
+            # TODO: automatically detect use of CMA-ES driver
             # driver = prob.driver = CMAESDriver()
             # driver.CMAOptions['tolfunhist'] = 1e-4
             # driver.CMAOptions['popsize'] = 100
@@ -154,13 +160,27 @@ def doe_salib(
         dists.append(dist)
 
     # Setup driver
-    if method_name == "Sobol":
+    if method_name == "uniform":
+        prob.driver = om.DOEDriver(
+            om.UniformGenerator(
+                num_samples=ns
+                # distribution type has no effect here: all distributions will be uniform
+            )
+        )
+    elif method_name == "lhs":
+        prob.driver = om.DOEDriver(
+            om.LatinHypercubeGenerator(
+                samples=ns
+                # distribution type has no effect here: all distributions will be uniform
+            )
+        )
+    elif method_name == "Sobol":
         prob.driver = SalibDOEDriver(
             sa_method_name=method_name,
             sa_doe_options={"n_samples": ns, "calc_second_order": calc_second_order},
             distributions=dists,
         )
-    if method_name == "Morris":
+    elif method_name == "Morris":
         prob.driver = SalibDOEDriver(
             sa_method_name="Morris",
             sa_doe_options={"n_trajs": ns},
@@ -186,10 +206,11 @@ def doe_salib(
     cases = cr.list_cases("driver", out_stream=None)
     for case in cases:
         values = cr.get_case(case).outputs
-        df = df.append(values, ignore_index=True)
+        # df = df.append(values, ignore_index=True)
+        df = pd.concat([df, pd.DataFrame(values)], ignore_index=True)
 
-    for i in df.columns:
-        df[i] = df[i].apply(lambda x: x[0])
+    # for i in df.columns:
+    #     df[i] = df[i].apply(lambda x: x[0])
 
     # Print number of optimization failures
     fail_count = (
@@ -729,7 +750,7 @@ def sobol_analysis(conf_file, data_file):
         # Monte Carlo with Saltelli's sampling
         ns = int(samples.value)  # number of samples to generate
         second_order = second_order_box.value  # boolean for second order Sobol' indices calculation
-        df = doe_salib("Sobol", x_dict, y_list, conf_file, ns, second_order)
+        df = doe_fast("Sobol", x_dict, y_list, conf_file, ns, second_order)
 
         # Perform Sobol' analysis and update charts
         outputbox.observe(update_sobol, names="value")  # enable to change the output to visualize
@@ -1231,7 +1252,7 @@ def morris_analysis(conf_file, data_file):
 
         # Run DoEs
         nt = int(samples.value)  # number of trajectories for morris method
-        df = doe_salib("Morris", x_dict, y_list, conf_file, nt)
+        df = doe_fast("Morris", x_dict, y_list, conf_file, nt)
 
         # Perform method of Morris on results and update charts
         outputbox.observe(update_morris, names="value")  # enable to change the output to visualize
