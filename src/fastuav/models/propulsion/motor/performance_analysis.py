@@ -35,6 +35,13 @@ class MotorPerformanceModel:
         P_mot_el = U_mot * I_mot  # [W] electrical power
         return P_mot_el
 
+    @staticmethod
+    def efficiency(U_mot, I_mot, T_mot, W_mot):
+        P_mot_el = U_mot * I_mot
+        P_mot_mech = T_mot * W_mot
+        eta_mot = P_mot_mech / P_mot_el
+        return eta_mot
+
 
 class MotorPerformanceGroup(om.Group):
     """
@@ -63,6 +70,7 @@ class MotorPerformance(om.Group):
         self.add_subsystem("current", MotorCurrent(scenario=scenario), promotes=["*"])
         self.add_subsystem("voltage", MotorVoltage(scenario=scenario), promotes=["*"])
         self.add_subsystem("power", MotorPower(scenario=scenario), promotes=["*"])
+        self.add_subsystem("efficiency", MotorEfficiency(scenario=scenario), promotes=["*"])
 
 
 class MotorTorque(om.ExplicitComponent):
@@ -284,3 +292,57 @@ class MotorPower(om.ExplicitComponent):
         partials["data:propulsion:motor:power:%s" % scenario,
                  "data:propulsion:motor:current:%s" % scenario
         ] = U_mot
+
+
+class MotorEfficiency(om.ExplicitComponent):
+    """
+    Computes motor efficiency under given flight scenario
+    """
+
+    def initialize(self):
+        self.options.declare("scenario", default=None, values=["takeoff", "climb", "hover", "cruise"])
+
+    def setup(self):
+        scenario = self.options["scenario"]
+        self.add_input("data:propulsion:motor:voltage:%s" % scenario, val=np.nan, units="V")
+        self.add_input("data:propulsion:motor:current:%s" % scenario, val=np.nan, units="A")
+        self.add_input("data:propulsion:motor:torque:%s" % scenario, val=np.nan, units="N*m")
+        self.add_input("data:propulsion:motor:speed:%s" % scenario, val=np.nan, units="rad/s")
+        self.add_output("data:propulsion:motor:efficiency:%s" % scenario, units=None)
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        scenario = self.options["scenario"]
+        U_mot = inputs["data:propulsion:motor:voltage:%s" % scenario]
+        I_mot = inputs["data:propulsion:motor:current:%s" % scenario]
+        T_mot = inputs["data:propulsion:motor:torque:%s" % scenario]
+        W_mot = inputs["data:propulsion:motor:speed:%s" % scenario]
+
+        eta_mot = MotorPerformanceModel.efficiency(U_mot, I_mot, T_mot, W_mot)  # [-] efficiency
+
+        outputs["data:propulsion:motor:efficiency:%s" % scenario] = eta_mot
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        scenario = self.options["scenario"]
+        U_mot = inputs["data:propulsion:motor:voltage:%s" % scenario]
+        I_mot = inputs["data:propulsion:motor:current:%s" % scenario]
+        T_mot = inputs["data:propulsion:motor:torque:%s" % scenario]
+        W_mot = inputs["data:propulsion:motor:speed:%s" % scenario]
+
+        partials["data:propulsion:motor:efficiency:%s" % scenario,
+                 "data:propulsion:motor:voltage:%s" % scenario
+        ] = - T_mot * W_mot / (U_mot**2 * I_mot)
+
+        partials["data:propulsion:motor:efficiency:%s" % scenario,
+                 "data:propulsion:motor:voltage:%s" % scenario
+        ] = - T_mot * W_mot / (U_mot * I_mot**2)
+
+        partials["data:propulsion:motor:efficiency:%s" % scenario,
+                 "data:propulsion:motor:torque:%s" % scenario
+        ] = W_mot / (U_mot * I_mot)
+
+        partials["data:propulsion:motor:efficiency:%s" % scenario,
+                 "data:propulsion:motor:speed:%s" % scenario
+        ] = T_mot / (U_mot * I_mot)

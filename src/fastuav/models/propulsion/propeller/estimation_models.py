@@ -35,6 +35,8 @@ class PropellerEstimationModels(om.Group):
             uncertain_outputs={"data:weight:propulsion:propeller:mass:estimated": "kg"},
         )
 
+        self.add_subsystem("figure_of_merit", FigureOfMerit(), promotes=["*"])
+
 
 class Diameter(om.ExplicitComponent):
     """
@@ -100,5 +102,35 @@ class Weight(om.ExplicitComponent):
         m_pro = m_pro_ref * (Dpro / Dpro_ref) ** 3  # [kg] Propeller mass
 
         outputs["data:weight:propulsion:propeller:mass:estimated"] = m_pro
+
+
+class FigureOfMerit(om.ExplicitComponent):
+    """
+    Computes figure of merit of propeller.
+    """
+
+    def setup(self):
+        self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Ct:model:static:estimated", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Cp:model:static:estimated", shape_by_conn=True, val=np.nan, units=None)
+        self.add_output("data:propulsion:propeller:FoM:estimated", units=None)
+
+    def setup_partials(self):
+        # Finite difference all partials.
+        self.declare_partials("*", "*", method="fd")
+
+    def compute(self, inputs, outputs):
+        beta = inputs["data:propulsion:propeller:beta:estimated"]
+        ct_model = inputs["data:propulsion:propeller:Ct:model:static:estimated"]
+        cp_model = inputs["data:propulsion:propeller:Cp:model:static:estimated"]
+
+        c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_static(beta,
+                                                                       ct_model=ct_model,
+                                                                       cp_model=cp_model)
+
+        FoM = c_t ** (3/2) / c_p
+
+        outputs["data:propulsion:propeller:FoM:estimated"] = FoM
+
 
 
