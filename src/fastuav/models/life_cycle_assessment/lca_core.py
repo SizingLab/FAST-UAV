@@ -7,13 +7,15 @@ import numpy as np
 import brightway2 as bw
 import lca_algebraic as lcalg
 import re
-from sympy import ceiling
+import sympy as sym
 from fastuav.exceptions import FastLcaProjectDoesNotExist, \
     FastLcaDatabaseIsNotImported, \
     FastLcaMethodDoesNotExist, \
     FastLcaParameterNotDeclared
 from fastuav.constants import LCA_DEFAULT_PROJECT, LCA_DEFAULT_ECOINVENT, LCA_USER_DB, LCA_MODEL_KEY, \
-    LCA_PARAM_KEY, LCA_RESULT_KEY, LCA_DEFAULT_METHOD
+    LCA_PARAM_KEY, LCA_CHARACTERIZATION_KEY, LCA_DEFAULT_METHOD, SIZING_MISSION_TAG, LCA_FUNCTIONAL_UNITS_LIST, \
+    LCA_DEFAULT_FUNCTIONAL_UNIT, LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY, LCA_FACTOR_KEY, LCA_WEIGHTED_SINGLE_SCORE_KEY, \
+    LCA_AGGREGATION_KEY
 
 
 class LCAcore(om.Group):
@@ -25,47 +27,72 @@ class LCAcore(om.Group):
         # Declare options
         self.options.declare("project", default=LCA_DEFAULT_PROJECT, types=str)
         self.options.declare("database", default=LCA_DEFAULT_ECOINVENT, types=str)
-        self.options.declare("model", default="kg.km", types=str)
-        self.options.declare("methods",
-                             default=LCA_DEFAULT_METHOD,
-                             types=list)
+        self.options.declare("functional_unit", default=LCA_DEFAULT_FUNCTIONAL_UNIT, types=str)
+        self.options.declare("methods", default=LCA_DEFAULT_METHOD, types=list)
+        self.options.declare("normalization", default=False, types=bool)
+        self.options.declare("weighting", default=False, types=bool)
+        self.options.declare("max_level_processes", default=10, types=int)
 
         # FAST-UAV model specific parameters
         self.options.declare("parameters", default=dict(), types=dict)  # for storing non-float parameters
 
         # FAST-UAV specific option for selecting mission to evaluate
-        self.options.declare("mission", default="sizing", types=str)
+        self.options.declare("mission", default=SIZING_MISSION_TAG, types=str)
 
     def setup(self):
+        # LCA MODEL
         self.add_subsystem("model",
-                           LCAmodel(project=self.options["project"],
-                                    database=self.options["database"],
-                                    model=self.options["model"],
-                                    mission=self.options["mission"]),
+                           Model(project=self.options["project"],
+                                 database=self.options["database"],
+                                 functional_unit=self.options["functional_unit"],
+                                 mission=self.options["mission"]),
                            promotes=["*"])
-        self.add_subsystem("calculation", LCAcalc(methods=self.options["methods"]))
-        # promote for 'calculation' component is done in configure() method
+
+        # CHARACTERIZATION
+        self.add_subsystem("characterization",
+                           Characterization(methods=self.options["methods"],
+                                            max_level_processes=self.options["max_level_processes"])
+                           # promote for these subsystems is done in configure() method
+                           )
+
+        # NORMALIZATION
+        if self.options["weighting"] or self.options["normalization"]:
+            self.add_subsystem("normalization",
+                               Normalization(methods=self.options["methods"],
+                                             max_level_processes=self.options["max_level_processes"]),
+                               promotes=["*"])
+
+        # WEIGHTING AND AGGREGATION
+        if self.options["weighting"]:
+            self.add_subsystem("weighting",
+                               Weighting(methods=self.options["methods"],
+                                         max_level_processes=self.options["max_level_processes"]),
+                               promotes=["*"])
+            self.add_subsystem("aggregation",
+                               Aggregation(methods=self.options["methods"],
+                                           max_level_processes=self.options["max_level_processes"]),
+                               promotes=["*"])
 
     def configure(self):
         """
-        Set inputs and options for `calculation` component by copying `model` outputs and options.
+        Set inputs and options for characterization module by copying `model` outputs and options.
         Configure() method from the containing group is necessary to get access to `model` metadata after Setup().
         """
 
-        # Add LCA parameters declared in 'model' to 'calculation',
+        # Add LCA parameters declared in the LCA model to the characterization module,
         # either as inputs (float parameters) or options (str parameters)
         for name, object in self.model.parameters.items():
             if object.type == 'float':  # add float parameters as inputs to calculation module
-                self.calculation.add_input(LCA_PARAM_KEY + name, val=np.nan, units=None)
+                self.characterization.add_input(LCA_PARAM_KEY + name, val=np.nan, units=None)
             elif name in self.options["parameters"].keys():  # add non-float parameters as options
-                self.calculation.options["parameters"][name] = self.options["parameters"][name]
+                self.characterization.options["parameters"][name] = self.options["parameters"][name]
 
         # Promote variables and declare partials
-        self.promotes('calculation', any=['*'])
-        self.calculation.declare_partials("*", "*", method="fd")
+        self.promotes("characterization", any=['*'])
+        self.characterization.declare_partials("*", "*", method="exact")
 
 
-class LCAmodel(om.ExplicitComponent):
+class Model(om.ExplicitComponent):
     """
     This OpenMDAO component implements an LCA model using brightway2 and lca_algebraic librairies.
     It creates an LCA model and sets the LCA parameters for further parametric LCA calculation.
@@ -78,8 +105,8 @@ class LCAmodel(om.ExplicitComponent):
         # Declare options
         self.options.declare("project", default=LCA_DEFAULT_PROJECT, types=str)
         self.options.declare("database", default=LCA_DEFAULT_ECOINVENT, types=str)
-        self.options.declare("model", default="kg.km", values=["kg.km", "kg.h", "lifetime"])
-        self.options.declare("mission", default="sizing", types=str)
+        self.options.declare("functional_unit", default=LCA_DEFAULT_FUNCTIONAL_UNIT, values=LCA_FUNCTIONAL_UNITS_LIST)
+        self.options.declare("mission", default=SIZING_MISSION_TAG, types=str)
 
     def setup(self):
         # Setup project
@@ -183,6 +210,8 @@ class LCAmodel(om.ExplicitComponent):
         # Reset project parameters for clean state
         lcalg.resetParams()
 
+        return True
+
     def declare_parameters(self):
         """
         Declare parameters for the parametric LCA
@@ -205,11 +234,19 @@ class LCAmodel(om.ExplicitComponent):
             dbname=LCA_USER_DB
         ))
 
+        self._add_param(lcalg.newFloatParam(
+            'battery_recycling_share',
+            default=0.0,
+            min=0.0, max=1.0,
+            description="share of battery that is recycled",
+            dbname=LCA_USER_DB
+        ))
+
         # Enum parameters are a facility to represent different options
         # and should be used with the 'newSwitchAct' method
         self._add_param(lcalg.newEnumParam(
             'battery_type',
-            values=["nmc_811", "nmc_111", "nca", "lfp", "nimh"],  # values this parameter can take
+            values=["nmc_811", "nmc_111", "nca", "lfp", "nimh", "si_nmc_811"],  # values this parameter can take
             default="nmc_811",
             description="battery technology",
             dbname=LCA_USER_DB
@@ -305,22 +342,15 @@ class LCAmodel(om.ExplicitComponent):
 
         db_ecoinvent = self.options["database"]
 
-        # References to some background activities
-        # All activities here are of market type (i.e., transports are taken into account)
-        battery_nmc_811 = lcalg.findActivity(db_name=db_ecoinvent,
-                                            code='52e3cdd70890530eada4fbcef2741406')  # [kg] Li-ion NMC 811 battery cell
-        battery_nmc_111 = lcalg.findActivity(db_name=db_ecoinvent,
-                                             code='742db99703644938601390debe4d348e')  # [kg] Li-ion NMC 111 battery cell
-        battery_nca = lcalg.findActivity(db_name=db_ecoinvent,
-                                            code='7b1eff2765339e62ffb98ad1cadd2698')  # [kg] Li-ion NCA battery cell
-        battery_lfp = lcalg.findActivity(db_name=db_ecoinvent,
-                                         code='f6036ad86fb205d8712754f2fac10a16')  # [kg] Li-ion LFP battery cell
-        battery_nimh = lcalg.findActivity(db_name=db_ecoinvent,
-                                            code='604a095c71d418d248cf5f4bef12f5c4')  # [kg] NiMH battery pack
+        ### References to some background activities
         motor_scooter = lcalg.findActivity(db_name=db_ecoinvent,
                                            code='a9f8412fe79b4fe74771ddfbeebb3f98')  # [kg] electric scooter motor
         controller_scooter = lcalg.findActivity(db_name=db_ecoinvent,
                                                 code='9afe5ffc45f1b043596a7901a59c98eb')  # [kg] electric scooter controller
+        transistor_igbt = lcalg.findActivity(db_name=db_ecoinvent,
+                                             code='ec5357459a8277ad58908d6ceca6fee2')  # [kg] IGBT transistor
+        printed_wiring_board = lcalg.findActivity(db_name=db_ecoinvent,
+                                                  code='cc35723610fe4baece243288133a3ff1')  # [kg] printed wiring board, for power supply unit, desktop computer, Pb free
         composite = lcalg.findActivity(db_name=db_ecoinvent,
                                        code='11cd946a783d8de6f814fc2f5c3b4782')  # [kg] CFRP
         aluminium = lcalg.findActivity(db_name=db_ecoinvent,
@@ -331,38 +361,63 @@ class LCAmodel(om.ExplicitComponent):
                                             code='04ddd164cec6d9ed96cfc299cab21124')  # [kWh] United States, Low voltage
         electricity_fr = lcalg.findActivity(db_name=db_ecoinvent,
                                             code='a950938cf39595b8de0977d1b289d69a')  # [kWh] France, Low voltage
+        battery_nmc_811 = lcalg.findActivity(db_name=db_ecoinvent,
+                                             code='52e3cdd70890530eada4fbcef2741406')  # [kg] Li-ion NMC 811 battery cell
+        battery_nmc_111 = lcalg.findActivity(db_name=db_ecoinvent,
+                                             code='742db99703644938601390debe4d348e')  # [kg] Li-ion NMC 111 battery cell
+        battery_nca = lcalg.findActivity(db_name=db_ecoinvent,
+                                         code='7b1eff2765339e62ffb98ad1cadd2698')  # [kg] Li-ion NCA battery cell
+        battery_lfp = lcalg.findActivity(db_name=db_ecoinvent,
+                                         code='f6036ad86fb205d8712754f2fac10a16')  # [kg] Li-ion LFP battery cell
+        battery_nimh = lcalg.findActivity(db_name=db_ecoinvent,
+                                          code='604a095c71d418d248cf5f4bef12f5c4')  # [kg] NiMH battery pack
+        silicon_powder = lcalg.findActivity(db_name=db_ecoinvent,
+                                             code='83058091453a6152de2cbe7425e2cd4c')  # [kg] silicon, solar grade
+        medium_voltage_electricity = lcalg.findActivity(db_name=db_ecoinvent,
+                                                        code='48e589b2cea58ab594265ee58ce56015')  # [kWh] medium voltage China
+        anode_graphite = lcalg.findActivity(db_name=db_ecoinvent,
+                                            code='e13a71404f616d4166a76ecc603cc71c')  # [kg] anode, silicon coated graphite, NMC811
+        battery_cell_g_nmc = lcalg.findActivity(db_name=db_ecoinvent,
+                                                code='ecef71e2f1b5d874f97e3ee912abaf1b')  # [kg] G/NMC battery cell
+        market_battery_cell_g_nmc = lcalg.findActivity(db_name=db_ecoinvent,
+                                                       code='52e3cdd70890530eada4fbcef2741406')  # [kg] market for G/NMC battery cell
+        used_battery = lcalg.findActivity(db_name=db_ecoinvent,
+                                          code='82ebcdf42e8512cbe00151dda6210d29')  # [kg] Used li-ion battery
 
-        # Motor activity
+
+        ### Motor activity
         motor = lcalg.newActivity(
             LCA_USER_DB,  # we define foreground activities in our own database
-            "motor",  # Name of the activity
+            "motors",  # Name of the activity
             "kg",  # We define exchanges as a dictionary of 'activity : amount'
             exchanges={
                 motor_scooter: 1.0,   # Amount can be a fixed value or a parameter
             }
         )
 
-        # ESC activity
+        ### ESC activity
         controller = lcalg.newActivity(
             LCA_USER_DB,
-            "controller",
+            "controllers",
             "kg",
             exchanges={
                 controller_scooter: 1.0,
+                # printed_wiring_board : 1.0
+                # transistor_igbt: 1.0
             }
         )
 
-        # Propeller activity
+        ### Propeller activity
         propeller = lcalg.newActivity(
             LCA_USER_DB,
-            "propeller",
+            "propellers",
             "kg",
             exchanges={
                 composite: 1.0,
             }
         )
 
-        # Airframe activity
+        ### Airframe activity
         airframe = lcalg.newActivity(
             LCA_USER_DB,
             "airframe",
@@ -373,44 +428,81 @@ class LCAmodel(om.ExplicitComponent):
             }
         )
 
-        # Battery activity
-        # battery = lcalg.newActivity(
-        #     USER_DB,
-        #     "battery",
-        #     "kg",  # Unit
-        #     exchanges={
-        #         battery_nmc_811: 1.0,
-        #         # battery_nmc_811: 0.5,  # for instance, we can have half NMC 811 batteries...
-        #         # battery_nca: 0.5,  # and half NCA batteries
-        #     }
-        # )
+        ### Battery activity
 
-        # This is a switch activity. One may choose between different type of sub-activities (here, electricity mix)
-        battery = lcalg.newSwitchAct(
+        # Create activity for Si/NMC battery
+        # Reference:
+        # Li, Bingbing, Xianfeng Gao, Jianyang Li, and Chris Yuan.
+        # “Life Cycle Environmental Impact of High-Capacity Lithium Ion Battery
+        # with Silicon Nanowires Anode for Electric Vehicles.”
+        # Environmental Science & Technology 48, no. 5 (March 4, 2014): 3047–55. https://doi.org/10.1021/es4037786.
+        silicon_nanowire = lcalg.newActivity(
             LCA_USER_DB,
-            "battery",
+            "silicon_nanowire",
+            "kg",
+            exchanges={
+                silicon_powder: 5.0,  # kg
+                medium_voltage_electricity: 1.3,  # [kWh]
+            }
+        )
+        # Create new activity for silicon-based anode, derived from graphite-based anode
+        anode_silicon = lcalg.copyActivity(
+            LCA_USER_DB,
+            anode_graphite,  # Initial activity : won't be altered
+            "anode_silicon_nanowire")  # New name
+        anode_silicon.updateExchanges({
+            "synthetic graphite, battery grade": 0.0,  # remove graphite
+        })
+        anode_silicon.addExchanges({silicon_nanowire: 0.92})  # add silicon nanowire
+        # Create new activity for Si/NMC811 battery cell, derived from G/NMC cell
+        battery_cell_si_nmc = lcalg.copyActivity(
+            LCA_USER_DB,
+            battery_cell_g_nmc,
+            "battery_cell_silicon_NMC811")
+        battery_cell_si_nmc.updateExchanges({
+            'anode, silicon coated graphite, for Li-ion battery': 0.0,  # remove graphite-based anode
+        })
+        battery_cell_si_nmc.addExchanges({anode_silicon: 0.2181})  # add silicon-based anode
+        # Create new activity for MARKET for Si/NMC battery cell, derived from market for G/NMC cell
+        market_battery_cell_si_nmc = lcalg.copyActivity(
+            LCA_USER_DB,
+            market_battery_cell_g_nmc,
+            "market_battery_cell_silicon_NMC811")
+        market_battery_cell_si_nmc.updateExchanges({
+            'battery cell*#CN': 0.0,
+            'battery cell*#RoW': 0.0,
+        })
+        market_battery_cell_si_nmc.addExchanges({battery_cell_si_nmc: 1.0})
+
+        # Top battery activity (with option for selecting battery type)
+        battery_production = lcalg.newSwitchAct(  # This is a switch activity to choose between different type of sub-activities (here, battery type)
+            LCA_USER_DB,
+            "battery_production",
             self._get_param('battery_type'),  # Switch parameter previously defined
             {  # Dictionary of enum values / activities : {"switch_option": (activity, amount)}
-                "nmc_811": (
-                    battery_nmc_811,
-                    ceiling(self._get_param('n_cycles_uav') / self._get_param('n_cycles_battery'))
-                ),
-                "nmc_111": (
-                    battery_nmc_111,
-                    ceiling(self._get_param('n_cycles_uav') / self._get_param('n_cycles_battery'))
-                ),
-                "nca": (
-                    battery_nca,
-                    ceiling(self._get_param('n_cycles_uav') / self._get_param('n_cycles_battery'))
-                ),
-                "lfp": (
-                    battery_lfp,
-                    ceiling(self._get_param('n_cycles_uav') / self._get_param('n_cycles_battery'))
-                ),
-                "nimh": (
-                    battery_nimh,
-                    ceiling(self._get_param('n_cycles_uav') / self._get_param('n_cycles_battery'))
-                ),
+                "nmc_811": battery_nmc_811,
+                "nmc_111": battery_nmc_111,
+                "nca": battery_nca,
+                "lfp": battery_lfp,
+                "nimh": battery_nimh,
+                "si_nmc_811": market_battery_cell_si_nmc,
+            }
+        )
+        battery_recycling = lcalg.newActivity(
+            LCA_USER_DB,
+            "battery_recycling",
+            "kg",
+            exchanges={
+                used_battery: self._get_param('battery_recycling_share')
+            }
+        )
+        battery = lcalg.newActivity(
+            LCA_USER_DB,
+            "batteries",
+            "kg",
+            exchanges={
+                battery_production: 1.0,
+                battery_recycling: 1.0
             }
         )
 
@@ -419,8 +511,8 @@ class LCAmodel(om.ExplicitComponent):
             LCA_USER_DB,
             "production",
             "uav",  # unit is one uav
-            exchanges={  # we refer directly to the
-                battery: self._get_param('mass_batteries'),  # Amount is a formula
+            exchanges={
+                battery: self._get_param('mass_batteries') * sym.ceiling(self._get_param('n_cycles_uav') / self._get_param('n_cycles_battery')),  # Amount is a formula
                 motor: self._get_param('mass_motors'),
                 airframe: self._get_param('mass_airframe'),
                 propeller: self._get_param('mass_propellers'),
@@ -435,12 +527,9 @@ class LCAmodel(om.ExplicitComponent):
             "operation",
             self._get_param('elec_switch_param'),  # Switch parameter previously defined
             {  # Dictionary of enum values / activities
-                "us": (electricity_us,
-                       self._get_param('n_cycles_uav') * self._get_param('mission_energy')),
-                "eu": (electricity_eu,
-                       self._get_param('n_cycles_uav') * self._get_param('mission_energy')),
-                "fr": (electricity_fr,
-                       self._get_param('n_cycles_uav') * self._get_param('mission_energy')),
+                "us": electricity_us,
+                "eu": electricity_eu,
+                "fr": electricity_fr,
             }
         )
 
@@ -454,16 +543,16 @@ class LCAmodel(om.ExplicitComponent):
         operation = lcalg.getActByCode(LCA_USER_DB, "operation")
 
         # Define model
-        model_select = self.options["model"]
+        model_select = self.options["functional_unit"]
 
         if model_select == "kg.km":  # 1 kg payload on 1 km
             intermediate_model = lcalg.newActivity(  # Impacts over UAV's lifetime
                 LCA_USER_DB,
-                "model",
+                "functional_unit",
                 "uav lifetime",
                 exchanges={
                     production: 1.0,
-                    operation: 1.0,
+                    operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
                 })
             functional_value = self._get_param('n_cycles_uav') * self._get_param('mission_distance') * self._get_param(
                 'mass_payload')
@@ -478,11 +567,11 @@ class LCAmodel(om.ExplicitComponent):
         elif model_select == "kg.h":  # 1 kg payload during 1 hour
             intermediate_model = lcalg.newActivity(  # Impacts over UAV's lifetime
                 LCA_USER_DB,
-                "model",
+                "functional_unit",
                 "uav lifetime",
                 exchanges={
                     production: 1.0,
-                    operation: 1.0,
+                    operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
                 })
             functional_value = self._get_param('n_cycles_uav') * self._get_param('mission_duration') * self._get_param(
                 'mass_payload')
@@ -501,7 +590,7 @@ class LCAmodel(om.ExplicitComponent):
                 "uav lifetime",
                 exchanges={
                     production: 1.0,
-                    operation: 1.0,
+                    operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
                 })
 
     def _add_param(self, param):
@@ -529,7 +618,7 @@ class LCAmodel(om.ExplicitComponent):
                 outputs[LCA_PARAM_KEY + key] = value
 
 
-class LCAcalc(om.ExplicitComponent):
+class Characterization(om.ExplicitComponent):
     """
     This OpenMDAO component achieves a life cycle inventory (LCI) and a life cycle impact assessment (LCIA)
     for the provided model, parameters and methods.
@@ -551,12 +640,18 @@ class LCAcalc(om.ExplicitComponent):
                              default=LCA_DEFAULT_METHOD,
                              types=list)
 
+        # option for maximum level of activities to explore in the process tree
+        self.options.declare("max_level_processes", default=10, types=int)
+
+        # symbolic expressions of LCA: used for providing analytical partials
+        self.exprs_dict = dict()
+
     def setup(self):
         # model
         self.model = lcalg.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
 
         # sub activities in model
-        self.activities = self.recursive_activities(self.model)
+        self.activities = self.recursive_activities(self.model, max_level=self.options['max_level_processes'])
 
         # parameters
         # list of parameters is retrieved from LCAmodel with configure() method of parent group.
@@ -566,51 +661,37 @@ class LCAcalc(om.ExplicitComponent):
         self.assert_methods(self.methods)  # check methods exist in brightway project
         self.set_method_labels(self.methods)  # some formatting for labels in lca_algebraic library
 
-        # outputs: LCA scores
-        for m in self.methods:
-            m_name = self.method_label_formatting(m)
-            # m_unit = bw.Method(m).metadata['unit']  # method unit
-            # units.add_unit(m_unit, "kg")
-            m_unit = None  # methods units are not recognized by OpenMDAO (e.g. kg S04-eq)
-            for path in self.activities.keys():
-                self.add_output(LCA_RESULT_KEY + m_name + path,
-                                units=m_unit,
+        # outputs
+        for path in self.activities.keys():
+            for m in self.methods:
+                m_name = self.method_label_formatting(m)
+
+                # characterized score
+                self.add_output(LCA_CHARACTERIZATION_KEY + m_name + path,
+                                units=None,  # LCA units not supported by OpenMDAO so set in description
                                 desc=bw.Method(m).metadata['unit'] + "/FU")
 
     # def setup_partials(self):
     #     Declared in configure method of parent group
 
     def compute(self, inputs, outputs):
-        # model
-        model = self.model
-
         # parameters
-        parameters = self.options["parameters"]  # initialized with non-float parameters
-        for key, value in inputs.items():  # add float parameters
+        parameters = self.options["parameters"]  # initialized with non-float parameters provided as options
+        for key, value in inputs.items():  # add float parameters provided as inputs
             if LCA_PARAM_KEY in key and not np.isnan(value):
                 name = re.split(LCA_PARAM_KEY, key)[-1]
                 parameters[name] = value
-        # methods
-        methods = self.methods
 
         # LCA calculations (first call may be time-consuming but next calls are faster thanks to cache)
         activities = self.activities  # get all activities and sub activities in model
         for path, act in activities.items():
-            if act == model:
-                extract_activities = None
-            else:
-                extract_activities = [act]
-            res = lcalg.multiLCAAlgebric(
-                model,  # The model
-                methods,  # Impact categories / methods
-
-                # List of sub activities to consider
-                extract_activities=extract_activities,
-
-                # Parameters of the model
-                **parameters
-            )
+            res = self.compute_lca(extract_activities=act,
+                                   parameters=parameters)  # parametric LCA
             res.index.values[0] = act['name']
+
+            # storing symbolic expression for future use (e.g. analytical derivatives calculation)
+            if act not in self.exprs_dict:  # TODO: add option to disable this storage (e.g. only if analytical_derivatives)
+                self.exprs_dict[act] = self.lca_model_expression(extract_activities=act)
 
             # Outputs
             for m in res:
@@ -620,7 +701,88 @@ class LCAcalc(om.ExplicitComponent):
                 end = m.find("[")  # TODO: mapping function to improve calculation time?
                 m_name = m[:end]
                 # set output value
-                outputs[LCA_RESULT_KEY + m_name + path] = score
+                outputs[LCA_CHARACTERIZATION_KEY + m_name + path] = score
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        # inputs: float parameters
+        parameters = dict()
+        for key, value in inputs.items():  # add float parameters provided as inputs
+            if LCA_PARAM_KEY in key and not np.isnan(value):
+                name = re.split(LCA_PARAM_KEY, key)[-1]
+                parameters[name] = value
+
+        # partials
+        for path, act in self.activities.items():
+            for m in self.methods:
+                m_name = self.method_label_formatting(m)
+                output_name = LCA_CHARACTERIZATION_KEY + m_name + path
+                for param_name in parameters.keys():
+                    input_name = LCA_PARAM_KEY + param_name
+                    partials[output_name,
+                             input_name] = self.partials_lca(param_name, m_name, parameters, act)
+
+    def partials_lca(self, input_param, output_method, parameters, activity):
+        """
+        returns the partial derivative of a method's result with respect to a parameter.
+        """
+        # Dictionnary of algebraic LCA expressions
+        exprs_dict = self.exprs_dict
+
+        # Sub-dictionnary of expressions for a given activity
+        exprs = exprs_dict[activity]
+
+        # Expression for a given method
+        expr = exprs[output_method]
+
+        # replace functions that has no well-defined derivatives
+        expr_simplified = expr.replace(sym.ceiling, lambda x: x)  # here we replace ceiling function by identity
+
+        # differentiate expression
+        derivative = sym.diff(expr_simplified, input_param)
+
+        # expand enumParams --> 'elec_switch_param': 'eu' becomes 'elec_switch_param_us' : 0, 'elec_switch_param_eu': 1
+        new_params = {name: value for name, value in lcalg.params._completeParamValues(parameters).items()}
+
+        # evaluate derivative
+        res = derivative.evalf(subs=new_params)
+
+        return res
+
+    def compute_lca(self, extract_activities, parameters=None):
+        """
+        Main LCIA calculation method.
+        """
+        if extract_activities == self.model:
+            extract_activities = None
+        else:
+            extract_activities = [extract_activities]
+
+        if parameters is None:
+            parameters = {}
+
+        res = lcalg.multiLCAAlgebric(
+            self.model,  # The model
+            self.methods,  # Impact categories / methods
+
+            # List of sub activities to consider
+            extract_activities=extract_activities,
+
+            # Parameters of the model
+            **parameters
+        )
+        return res
+
+    def lca_model_expression(self, extract_activities=None):
+        """
+        computes algebraic expressions corresponding to a model for each method
+        """
+        exprs = dict()
+        with lcalg.params.DbContext(self.model):
+            exprs_list, _ = lcalg.lca._modelToExpr(self.model, self.methods, extract_activities=extract_activities)
+        for i, method in enumerate(self.methods):
+            m_name = self.method_label_formatting(method)
+            exprs[m_name] = exprs_list[i]
+        return exprs
 
     @staticmethod
     def assert_methods(methods):
@@ -638,7 +800,7 @@ class LCAcalc(om.ExplicitComponent):
         """
         dict_labels = {}
         for m in methods:
-            dict_labels[m] = LCAcalc.method_label_formatting(m)
+            dict_labels[m] = Characterization.method_label_formatting(m)
         lcalg.set_custom_impact_labels(dict_labels)
 
     @staticmethod
@@ -648,24 +810,214 @@ class LCAcalc(om.ExplicitComponent):
         """
         new_name = [
             s.replace(':', '-').replace('.', '_').replace(',', ':').replace(' ', '_').replace('(', '').replace(')',
-                                                                                                               '')
+                                                                                                               '').replace('/', '_')
             for s in method_name]  # replace invalid characters
         new_name = ':'.join(['%s'] * len(new_name)) % tuple(new_name)  # concatenate method specifications
         return new_name
 
     @staticmethod
-    def recursive_activities(act):
+    def recursive_activities(act, max_level: int = 10):
         """Traverse tree of sub-activities of a given activity, until background database is reached."""
         act_dict = dict()
 
-        def _recursive_activities(act, act_dict, act_path: str = ""):
-            if act.as_dict()['database'] != LCA_USER_DB:
+        def _recursive_activities(act, act_dict, act_path: str = "", level: int = 0, max_level: int = 10):
+            if act.as_dict()['database'] != LCA_USER_DB or level > max_level:
                 return
             act_path = act_path + ":" + act.as_dict()['name'].replace(" ", "_")
             act_dict[act_path] = act
             for exc in act.technosphere():
-                _recursive_activities(exc.input, act_dict, act_path)
+                _recursive_activities(exc.input, act_dict, act_path, level=level+1, max_level=max_level)
             return
 
-        _recursive_activities(act, act_dict)
+        _recursive_activities(act, act_dict, level=0, max_level=max_level)
         return act_dict
+
+
+class Normalization(om.ExplicitComponent):
+    """
+    Normalization of the LCIA results.
+    """
+
+    def initialize(self):
+        # model
+        self.model = None
+
+        # sub activities in model
+        self.activities = dict()
+
+        # methods
+        self.methods = list()
+        self.options.declare("methods",
+                             default=LCA_DEFAULT_METHOD,
+                             types=list)
+
+        # option for maximum level of activities to explore in the process tree
+        self.options.declare("max_level_processes", default=10, types=int)
+
+    def setup(self):
+        # model
+        self.model = lcalg.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
+
+        # sub activities in model
+        self.activities = Characterization.recursive_activities(self.model, max_level=self.options['max_level_processes'])
+
+        # methods
+        self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
+
+        # inputs
+        for m_name in self.methods:
+            self.add_input(LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY,  # normalization factors
+                           val=np.nan,
+                           units=None)
+
+            for path in self.activities.keys():
+                self.add_input(LCA_CHARACTERIZATION_KEY + m_name + path,  # characterized scores
+                               val=np.nan,
+                               units=None)
+                self.add_output(LCA_NORMALIZATION_KEY + m_name + path,  # normalized scores for each activity
+                                units=None)
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        for m_name in self.methods:
+            method_factor = inputs[LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY]
+            for path in self.activities.keys():
+                score = inputs[LCA_CHARACTERIZATION_KEY + m_name + path]
+                normalized_score = score / method_factor
+                outputs[LCA_NORMALIZATION_KEY + m_name + path] = normalized_score
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        for m_name in self.methods:
+            method_factor = inputs[LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY]
+            for path in self.activities.keys():
+                score = inputs[LCA_CHARACTERIZATION_KEY + m_name + path]
+                partials[LCA_NORMALIZATION_KEY + m_name + path,
+                         LCA_CHARACTERIZATION_KEY + m_name + path] = 1 / method_factor
+                partials[LCA_NORMALIZATION_KEY + m_name + path,
+                         LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY] = - score / method_factor ** 2
+
+
+class Weighting(om.ExplicitComponent):
+    """
+    Weighting of the LCIA results.
+    """
+
+    def initialize(self):
+        # model
+        self.model = None
+
+        # sub activities in model
+        self.activities = dict()
+
+        # methods
+        self.methods = list()
+        self.options.declare("methods",
+                             default=LCA_DEFAULT_METHOD,
+                             types=list)
+
+        # option for maximum level of activities to explore in the process tree
+        self.options.declare("max_level_processes", default=10, types=int)
+
+    def setup(self):
+        # model
+        self.model = lcalg.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
+
+        # sub activities in model
+        self.activities = Characterization.recursive_activities(self.model, max_level=self.options['max_level_processes'])
+
+        # methods
+        self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
+
+        # inputs
+        for m_name in self.methods:
+            self.add_input(LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY,  # weighting factors
+                           val=np.nan,
+                           units=None)
+
+            for path in self.activities.keys():
+                self.add_input(LCA_NORMALIZATION_KEY + m_name + path,  # normalized scores
+                               val=np.nan,
+                               units=None)
+                self.add_output(LCA_WEIGHTING_KEY + m_name + path,  # weighted scores for each activity
+                                units=None)
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        for path in self.activities.keys():
+            # aggregated_score = 0.0
+            for m_name in self.methods:
+                normalized_score = inputs[LCA_NORMALIZATION_KEY + m_name + path]
+                method_weight = inputs[LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY]
+                weighted_score = normalized_score * method_weight
+                outputs[LCA_WEIGHTING_KEY + m_name + path] = weighted_score
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        for path in self.activities.keys():
+            for m_name in self.methods:
+                normalized_score = inputs[LCA_NORMALIZATION_KEY + m_name + path]
+                method_weight = inputs[LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY]
+                partials[LCA_WEIGHTING_KEY + m_name + path, LCA_NORMALIZATION_KEY + m_name + path] = method_weight
+                partials[LCA_WEIGHTING_KEY + m_name + path, LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY] = normalized_score
+
+
+class Aggregation(om.ExplicitComponent):
+    """
+    Aggregation of the LCIA results.
+    """
+
+    def initialize(self):
+        # model
+        self.model = None
+
+        # sub activities in model
+        self.activities = dict()
+
+        # methods
+        self.methods = list()
+        self.options.declare("methods",
+                             default=LCA_DEFAULT_METHOD,
+                             types=list)
+
+        # option for maximum level of activities to explore in the process tree
+        self.options.declare("max_level_processes", default=10, types=int)
+
+    def setup(self):
+        # model
+        self.model = lcalg.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
+
+        # sub activities in model
+        self.activities = Characterization.recursive_activities(self.model, max_level=self.options['max_level_processes'])
+
+        # methods
+        self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
+
+        # inputs
+        for m_name in self.methods:
+            for path in self.activities.keys():
+                self.add_input(LCA_WEIGHTING_KEY + m_name + path,  # weighted scores for each activity
+                               val=np.nan,
+                               units=None)
+
+        for path in self.activities.keys():
+            self.add_output(LCA_AGGREGATION_KEY + LCA_WEIGHTED_SINGLE_SCORE_KEY + path,  # aggregated scores
+                            units=None,
+                            desc='points')
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        # aggregated_score = 0.0
+        for path in self.activities.keys():
+            aggregated_score = sum([inputs[LCA_WEIGHTING_KEY + m_name + path] for m_name in self.methods])
+            outputs[LCA_AGGREGATION_KEY + LCA_WEIGHTED_SINGLE_SCORE_KEY + path] = aggregated_score
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        for path in self.activities.keys():
+            for m_name in self.methods:
+                partials[LCA_AGGREGATION_KEY + LCA_WEIGHTED_SINGLE_SCORE_KEY + path,
+                         LCA_WEIGHTING_KEY + m_name + path] = 1.0

@@ -7,87 +7,45 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
-from fastuav.constants import LCA_RESULT_KEY, LCA_MODEL_KEY, LCA_USER_DB, LCA_POSTPROCESS_KEY
+from fastuav.constants import LCA_CHARACTERIZATION_KEY, LCA_MODEL_KEY, LCA_USER_DB, LCA_POSTPROCESS_KEY, \
+    LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY, LCA_FACTOR_KEY, LCA_AGGREGATION_KEY
 import lca_algebraic as lcalg
 import brightway2 as bw
 from sympy.parsing.sympy_parser import parse_expr
 from pyvis.network import Network
+import time
+import numpy as np
 
 
-def lca_sun_plot(file_path: str, file_formatter=None):
+def lca_plot(file_path: str, result_step: str = 'characterization', filter_option: str = 'default',
+             filter_level: int = 1, percent: bool = True,
+             file_formatter=None):
     """
-    Returns sunburst figures with the contributions of each activity and for each impact.
+    Returns a plot with the contributions of each activity and for each impact method.
     """
+
     # file containing variables and their values
     variables = VariableIO(file_path, file_formatter).read()
 
     # identifier for lca top-level model
     model_key = LCA_MODEL_KEY.replace(" ", "_")
 
-    # look for method names
-    methods = {}
-    for variable in variables:
-        name = variable.name
-        if LCA_RESULT_KEY not in name:
-            continue
-        method_name = name.split(LCA_RESULT_KEY)[-1].split(":" + model_key)[0]
-        unit = variable.description  # units for methods are stored in description column rather than units (not handled by openMDAO units object)
-        methods[method_name] = unit
-
-    fig = make_subplots(rows=1,
-                        cols=len(methods),
-                        specs=[[{"type": "sunburst"} for i in range(len(methods))]],
-                        subplot_titles=list(m.split(':')[0].replace("_", " ") + "<br>" + m.split(':')[-1].replace("_", " ") + f'<br>[{methods[m]}]' for m in methods.keys()))
-
-    for i, (method, unit) in enumerate(methods.items()):
-        labels = []
-        parents = []
-        values = []
-        for variable in variables.names():  # get activities and their parents
-            if LCA_RESULT_KEY not in variable or method not in variable:
-                continue
-            end = variable.find(":" + model_key)
-            full_name = variable[end:]
-            name_split = full_name.split(":")
-            name = name_split[-1]
-            parent_name = name_split[-2]
-            value = variables[variable].value[0]
-            labels.append(name)
-            parents.append(parent_name)
-            values.append(value)
-
-        trace = go.Sunburst(
-            labels=labels,
-            parents=parents,
-            values=values,
-            branchvalues="total",
-            textinfo='label+percent parent',
-        )
-        fig.add_trace(trace, row=1, col=i + 1)
-
-    # layout and figure production
-    fig.update_layout(margin=dict(t=80.0, l=0, r=0, b=0))
-
-    return fig
-
-
-def lca_bar_plot(file_path: str, normalize: bool = True, file_formatter=None):
-    """
-    Returns a bar plot with the contributions of each activity and for each impact.
-    """
-    # file containing variables and their values
-    variables = VariableIO(file_path, file_formatter).read()
-
-    # identifier for lca top-level model
-    model_key = LCA_MODEL_KEY.replace(" ", "_")
+    # Results to plot : characterization, normalization, weighting or aggregation
+    result_steps_dict = {
+        'characterization': LCA_CHARACTERIZATION_KEY,
+        'normalization': LCA_NORMALIZATION_KEY,
+        'weighting': LCA_WEIGHTING_KEY,
+        'aggregation': LCA_AGGREGATION_KEY
+    }
+    RESULTS_KEY = result_steps_dict[result_step]
 
     # look for method names
     methods = {}
     for variable in variables:
         name = variable.name
-        if LCA_RESULT_KEY not in name:
+        if RESULTS_KEY not in name or LCA_FACTOR_KEY in name:
             continue
-        method_name = name.split(LCA_RESULT_KEY)[-1].split(":" + model_key)[0]
+        method_name = name.split(RESULTS_KEY)[-1].split(":" + model_key)[0]
         unit = variable.description  # units for methods are stored in description column rather than units (not handled by openMDAO units object)
         methods[method_name] = unit
 
@@ -95,59 +53,100 @@ def lca_bar_plot(file_path: str, normalize: bool = True, file_formatter=None):
     for method, unit in methods.items():
         scores_dict = dict()
         for variable in variables.names():  # get all children activities
-            if LCA_RESULT_KEY not in variable or method not in variable:
+            if RESULTS_KEY not in variable or method not in variable or LCA_FACTOR_KEY in variable:
                 continue
             end = variable.find(":" + model_key)
-            full_name = variable[end:]
+            full_name = variable[end + 1:]
             value = variables[variable].value[0]
             scores_dict[full_name] = [value]
 
-        df2 = pd.DataFrame(scores_dict, index=[
-            method.split(':')[0].replace("_", " ") + "<br>" + method.split(':')[-1].replace("_",
-                                                                                            " ") + f'<br>[{unit}]']).transpose()
+        unit_str = f'<br>[{unit}]' if unit != '' else ''
+        df2 = pd.DataFrame(scores_dict,
+                           index=[method.replace("_", " ").replace(':', '<br>') + unit_str]).transpose()
+
         df = pd.concat([df, df2], axis=1, ignore_index=False)
 
-    # keep only elementary activities
-    for full_name in df.index.values:
-        name_split = full_name.rsplit(":", 1)  # split name
-        parent = name_split[0]
-        # name = name_split[-1]
-        if parent in df.index.values:
-            df = df.drop(parent)
+    # Normalize values if asked
+    if percent is True:
+        # df = df / df.sum()  # normalize impacts (sum for each impact = 1)
+        df = df / df.loc[model_key]
 
-    # plot bar chart
-    if normalize is True:
-        df = df / df.sum()  # normalize impacts (sum for each impact = 1)
+    # Filter activities to display depending on their level in the flows diagram
+    if filter_option == 'exact':  # select activities corresponding exactly to a given level in the flows diagram
+        df['level'] = df.index.map(lambda row: row.count(":"))  # calculate level for each activity
+        df = df[df.level == filter_level]  # select only activities corresponding to one level
+        df = df.drop('level', axis=1)  # delete 'level' column as we don't need it anymore
+
+    elif filter_option == 'last':  # select only leaves of the foreground flows diagram (last activities before background)
+        df['level'] = df.index.map(lambda row: row.count(":"))  # calculate level for each activity
+        for full_name in df.index.values:
+            name_split = full_name.rsplit(":", 1)  # split name
+            parent = name_split[0]
+            # name = name_split[-1]
+            if parent in df.index.values and filter_level != 0:
+                # if level == 0 and df.loc[parent].level != 0:
+                df = df.drop(parent)
+        df = df.drop('level', axis=1)  # delete 'level' column as we don't need it anymore
+
+    else:  # default option: filter the flows diagram to remove branches (activities) higher than a given level, and retain only leaves of the filtered tree
+        df['level'] = df.index.map(lambda row: row.count(":"))  # calculate level for each activity
+        df = df[df.level <= filter_level]  # filter flows diagram to retain only activities below the given level
+        # keep only last activities (leaves of the flows diagram)
+        for full_name in df.index.values:
+            name_split = full_name.rsplit(":", 1)  # split name
+            parent = name_split[0]
+            if parent in df.index.values and filter_level != 0:
+                df = df.drop(parent)
+        df = df.drop('level', axis=1)  # delete 'level' column as we don't need it anymore
+
+    # plots
     data = []
-    x = df.columns.values
-    for name in df.index.values:
-        row = df.loc[df.index == name]
-        y = [row[method][0] for method in x]
+    x = df.columns.values  # each column correspond to an impact assessment method
 
-        trace = go.Bar(
-            name=name.split(':')[-1],  # short name
-            x=x,
-            y=y,
-        )
-        data.append(trace)
+    if len(x) == 1:  # only one method is assessed, so pie chart is better for visualization
+        labels = [name.split(':')[-1] for name in df.index.values]
+        values = [df.loc[df.index == name][x[0]][0] for name in df.index.values]
+        pie = go.Pie(name=x[0],
+                     labels=labels,
+                     values=values,
+                     hole=.5,
+                     textinfo='label+percent',
+                     insidetextorientation='radial'
+                     )
+        data.append(pie)
+
+    else:  # results from multiple method should be plotted --> bar plot provides better visualization
+        for name in df.index.values:
+            row = df.loc[df.index == name]
+            y = [row[method][0] for method in x]
+
+            trace = go.Bar(
+                name=name.split(':')[-1],  # short name
+                x=x,
+                y=y,
+            )
+
+            data.append(trace)
 
     fig = go.Figure(data=data)
 
     # layout and figure production
-    fig.update_layout(barmode='stack',
+    fig.update_layout(barmode='relative',  # for bar plots only
                       title="Life Cycle Impact Assessment Results",
                       yaxis=dict(title='Score'),
                       margin=dict(t=80.0, l=0, r=0, b=0),
-                      xaxis_tickangle=0)
-    if normalize is True:
-        fig.update_layout(yaxis=dict(tickformat=".0%", title='Normalized Score'))
+                      xaxis_tickangle=-90)
+    if percent is True:
+        fig.update_layout(yaxis=dict(tickformat=".0%", title='Percent Score'))
 
     return fig
 
 
-def lca_specific_contributions_sunburst(file_path: str, file_formatter=None):
+def lca_sun_plot(file_path: str, filter_level: int = 1, file_formatter=None):
     """
     Returns sunburst figures with the contributions of each activity and for each impact.
+    DEPRECATED.
+    TO BE UPGRADED FOR NORMALIZATION AND WEIGHTING SCORES.
     """
     # file containing variables and their values
     variables = VariableIO(file_path, file_formatter).read()
@@ -159,43 +158,54 @@ def lca_specific_contributions_sunburst(file_path: str, file_formatter=None):
     methods = {}
     for variable in variables:
         name = variable.name
-        if LCA_POSTPROCESS_KEY not in name:
+        if LCA_CHARACTERIZATION_KEY not in name:
             continue
-        method_name = name.split(LCA_POSTPROCESS_KEY)[-1].split(":" + model_key)[0]
+        method_name = name.split(LCA_CHARACTERIZATION_KEY)[-1].split(":" + model_key)[0]
         unit = variable.description  # units for methods are stored in description column rather than units (not handled by openMDAO units object)
         methods[method_name] = unit
 
     fig = make_subplots(rows=1,
                         cols=len(methods),
                         specs=[[{"type": "sunburst"} for i in range(len(methods))]],
-                        subplot_titles=list(m.split(':')[0].replace("_", " ") + "<br>" + m.split(':')[-1].replace("_", " ") for m in methods.keys()))
+                        subplot_titles=list(m.split(':')[0].replace("_", " ") + "<br>" + m.split(':')[-1].replace("_",
+                                                                                                                  " ") + f'<br>[{methods[m]}]'
+                                            for m in methods.keys()))
 
     for i, (method, unit) in enumerate(methods.items()):
-        ids = []
         labels = []
         parents = []
         values = []
+        levels = []
+        negative_value = False  # True if there is a negative score in the activities
         for variable in variables.names():  # get activities and their parents
-            if LCA_POSTPROCESS_KEY not in variable or method not in variable:
+            if LCA_CHARACTERIZATION_KEY not in variable or method not in variable:
                 continue
             end = variable.find(":" + model_key)
             full_name = variable[end:]
             name_split = full_name.split(":")
-            ide = (name_split[-2], name_split[-1])
             name = name_split[-1]
-            parent_name = (name_split[-3], name_split[-2])
+            parent_name = name_split[-2]
             value = variables[variable].value[0]
-            ids.append(ide)
+            if value < 0:  # negative values cannot be displayed on a sunburst plot
+                negative_value = True
+                continue
             labels.append(name)
             parents.append(parent_name)
             values.append(value)
 
+        if negative_value:
+            print(
+                "Activity %s has negative LCA score for method %s. Discarding from sunburst plot and switching to 'remainder' option." % (
+                name, method))
+            branchvalues = "remainder"
+        else:
+            branchvalues = "total"
+
         trace = go.Sunburst(
-            ids = ids,
             labels=labels,
             parents=parents,
             values=values,
-            branchvalues="total",
+            branchvalues=branchvalues,
             textinfo='label+percent parent',
         )
         fig.add_trace(trace, row=1, col=i + 1)
@@ -206,14 +216,14 @@ def lca_specific_contributions_sunburst(file_path: str, file_formatter=None):
     return fig
 
 
-def lca_specific_contributions(file_path: str, plot_type: str = None, file_formatter=None):
+def lca_specific_contributions(file_path: str, result_step: str = 'characterization', file_formatter=None):
     """
     Returns sunbursts, bar plots, or ternary plots with the contributions of each activity and for each impact.
     """
 
-    if plot_type == 'sunburst':
-        figs = [lca_specific_contributions_sunburst(file_path, file_formatter)]
-        return figs
+    #if plot_type == 'sunburst':
+    #    figs = [lca_specific_contributions_sunburst(file_path, file_formatter)]
+    #    return figs
 
     # file containing variables and their values
     variables = VariableIO(file_path, file_formatter).read()
@@ -221,13 +231,22 @@ def lca_specific_contributions(file_path: str, plot_type: str = None, file_forma
     # identifier for lca top-level model
     model_key = LCA_MODEL_KEY.replace(" ", "_")
 
+    # Results to plot : characterization, normalization, weighting or aggregation
+    result_steps_dict = {
+        'characterization': LCA_CHARACTERIZATION_KEY,
+        'normalization': LCA_NORMALIZATION_KEY,
+        'weighting': LCA_WEIGHTING_KEY,
+        'aggregation': LCA_AGGREGATION_KEY
+    }
+    RESULTS_KEY = LCA_POSTPROCESS_KEY + result_steps_dict[result_step].split(':', 1)[-1]
+
     # look for method names
     methods = {}
     for variable in variables:
         name = variable.name
-        if LCA_POSTPROCESS_KEY not in name:
+        if RESULTS_KEY not in name:
             continue
-        method_name = name.split(LCA_POSTPROCESS_KEY)[-1].split(":" + model_key)[0]
+        method_name = name.split(RESULTS_KEY)[-1].split(":" + model_key)[0]
         unit = variable.description  # units for methods are stored in description column rather than units (not handled by openMDAO units object)
         methods[method_name] = unit
 
@@ -240,7 +259,7 @@ def lca_specific_contributions(file_path: str, plot_type: str = None, file_forma
         parents = []
         values = []
         for variable in variables.names():  # get activities and their parents
-            if LCA_POSTPROCESS_KEY not in variable or method not in variable:
+            if RESULTS_KEY not in variable or method not in variable:
                 continue
             end = variable.find(":" + model_key)
             full_name = variable[end:]
@@ -285,12 +304,15 @@ def lca_specific_contributions(file_path: str, plot_type: str = None, file_forma
                 row=1, col=2,
             )
 
+        unit_str = f'<br>[{unit}]' if unit != '' else ''
         fig.update_layout(
-            title=method.split(':')[0].replace("_", " ") + " - " + method.split(':')[-1].replace("_", " "),
+            title=method.replace("_", " ").replace(":", "<br>"),
+            # method.split(':')[0].replace("_", " ") + " - " + method.split(':')[-1].replace("_", " "),
             title_x=0.5,
+            title_y=0.95,
             barmode='stack',
             xaxis={'categoryorder': 'total descending'},
-            yaxis={'title': 'Score'},
+            yaxis={'title': 'Score ' + unit_str},
             ternary={
                 'sum': 1,
                 'aaxis_title': 'Mass',
@@ -302,19 +324,81 @@ def lca_specific_contributions(file_path: str, plot_type: str = None, file_forma
             legend=dict(itemsizing='constant'),
         )
 
-        if plot_type == "bar":
-            figs.append(fig_bar)
-        elif plot_type == "ternary":
-            figs.append(fig_ternary)
-        else:
-            figs.append(fig)
+        #if plot_type == "bar":
+        #    figs.append(fig_bar)
+        #elif plot_type == "ternary":
+        #    figs.append(fig_ternary)
+        #else:
+        figs.append(fig)
 
     return figs
 
 
-def LCAMonteCarlo(model, methods, n_runs, **params):
+def lca_specific_contributions_sunburst(file_path: str, file_formatter=None):
     """
-    Does Monte Carlo simulations to assess uncertainty on the impact categories.
+    Returns sunburst figures with the contributions of each activity and for each impact.
+    DEPRECATED. TO BE UPDATED FOR NORMALIZATION, WEIGHTING AND AGGREGATION RESULTS.
+    """
+    # file containing variables and their values
+    variables = VariableIO(file_path, file_formatter).read()
+
+    # identifier for lca top-level model
+    model_key = LCA_MODEL_KEY.replace(" ", "_")
+
+    # look for method names
+    methods = {}
+    for variable in variables:
+        name = variable.name
+        if LCA_POSTPROCESS_KEY not in name:
+            continue
+        method_name = name.split(LCA_POSTPROCESS_KEY)[-1].split(":" + model_key)[0]
+        unit = variable.description  # units for methods are stored in description column rather than units (not handled by openMDAO units object)
+        methods[method_name] = unit
+
+    fig = make_subplots(rows=1,
+                        cols=len(methods),
+                        specs=[[{"type": "sunburst"} for i in range(len(methods))]],
+                        subplot_titles=list(m.replace("_", " ").replace(':', '<br>') for m in methods.keys()))
+
+    for i, (method, unit) in enumerate(methods.items()):
+        ids = []
+        labels = []
+        parents = []
+        values = []
+        for variable in variables.names():  # get activities and their parents
+            if LCA_POSTPROCESS_KEY not in variable or method not in variable:
+                continue
+            end = variable.find(":" + model_key)
+            full_name = variable[end:]
+            name_split = full_name.split(":")
+            ide = (name_split[-2], name_split[-1])
+            name = name_split[-1]
+            parent_name = (name_split[-3], name_split[-2])
+            value = variables[variable].value[0]
+            ids.append(ide)
+            labels.append(name)
+            parents.append(parent_name)
+            values.append(value)
+
+        trace = go.Sunburst(
+            ids = ids,
+            labels=labels,
+            parents=parents,
+            values=values,
+            branchvalues="total",
+            textinfo='label+percent parent',
+        )
+        fig.add_trace(trace, row=1, col=i + 1)
+
+    # layout and figure production
+    fig.update_layout(margin=dict(t=80.0, l=0, r=0, b=0))
+
+    return fig
+
+
+def lca_monte_carlo(model, methods, n_runs, cfs_uncertainty: bool = False, **params,):
+    """
+    Run Monte Carlo simulations to assess uncertainty on the impact categories.
     Input uncertainties are embedded in EcoInvent activities.
     Parameters used in the parametric study are frozen.
     """
@@ -328,13 +412,52 @@ def LCAMonteCarlo(model, methods, n_runs, **params):
         lcalg.freezeParams(db, **params)  # freeze parameters
 
     # Monte Carlo for each impact category with vanilla brightway
-    scores_array = []
-    for method in methods:
-        mc = bw.MonteCarloLCA({model: 1}, method)  # MC on inventory uncertainties (background db)
-        scores = [next(mc) for _ in range(n_runs)]
-        scores_array.append(scores)
+    scores_dict = {}
+    functional_unit = {model: 1}
 
-    return scores_array
+    if cfs_uncertainty:  # uncertainty on impact methods --> MC must be run for each impact
+        start_time = time.time()
+        for method in methods:
+            print("### Running Monte Carlo for method " + str(method) + " ###")
+            mc = bw.MonteCarloLCA(functional_unit, method)  # MC on inventory uncertainties (background db)
+            scores = [next(mc) for _ in range(n_runs)]
+            scores_dict[method] = scores
+            end_time = time.time()
+            print("Elapsed time: %.2f seconds" % (end_time - start_time))
+
+    else:  # TODO: automatically detect if impact method contains uncertain characterization factors
+        def multiImpactMonteCarloLCA(functional_unit, list_methods, iterations):
+            """
+            https://github.com/maximikos/Brightway2_Intro/blob/master/BW2_tutorial.ipynb
+            """
+            # Step 1
+            MC_lca = bw.MonteCarloLCA(functional_unit)
+            MC_lca.lci()
+            # Step 2
+            C_matrices = {}
+            scores_dict = {}
+            # Step 3
+            for method in list_methods:
+                MC_lca.switch_method(method)
+                C_matrices[method] = MC_lca.characterization_matrix
+                scores_dict[method] = []
+            # Step 4
+            #results = np.empty((len(list_methods), iterations))
+            # Step 5
+            for iteration in range(iterations):
+                next(MC_lca)
+                for method_index, method in enumerate(list_methods):
+                    score = (C_matrices[method] * MC_lca.inventory).sum()
+                    # results[method_index, iteration] = score
+                    scores_dict[method].append(score)
+            return scores_dict
+
+        print("### Running Multi-Impacts Monte Carlo (warning: uncertainty restricted to LCI) ###")
+        scores_dict = multiImpactMonteCarloLCA(functional_unit, methods, n_runs)
+
+    df = pd.DataFrame.from_dict(scores_dict, orient='columns')
+
+    return df
 
 
 def recursive_activities(act):

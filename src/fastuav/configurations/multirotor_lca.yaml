@@ -16,18 +16,21 @@ model:
         id: fastuav.plugin.lca.multirotor
         project: fastuav
         database: ecoinvent 3.9_cutoff_ecoSpold02
-        model: "lifetime" # lifetime # kg.km # kg.h
-        methods:
-            - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
+        functional_unit: "lifetime" # lifetime # kg.km # kg.h
+        #methods:
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
             #- "('CML v4.8 2016 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
             #- "('IPCC 2021 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
             #- "('IPCC 2013 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
             #- "('TRACI v2.1 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
-            - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
-            - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'water use no LT', 'water consumption potential (WCP) no LT')"
-            - "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'material resources: metals/minerals no LT', 'surplus ore potential (SOP) no LT')"
-        parameters: {"elec_switch_param": "eu", "battery_type": "lfp"}  # non-float parameters for lca are declared here
-        mission: "operational"
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'water use no LT', 'water consumption potential (WCP) no LT')"
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'material resources: metals/minerals no LT', 'surplus ore potential (SOP) no LT')"
+        normalization: True
+        weighting: True
+        parameters: {"elec_switch_param": "eu", "battery_type": "nmc_811"}  # non-float parameters for lca are declared here
+        mission: "operational"  # mission to assess
+        postprocessing_multirotor: True
 
 
 

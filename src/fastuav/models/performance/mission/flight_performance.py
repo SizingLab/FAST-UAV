@@ -5,7 +5,7 @@ based on the individual models defined in each discipline.
 
 import numpy as np
 from scipy.constants import g
-from scipy.optimize import brentq
+from scipy.optimize import brentq, newton
 from stdatm import AtmosphereSI
 from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel, FixedwingFlightModel
 from fastuav.models.propulsion.energy.battery.performance_analysis import BatteryPerformanceModel
@@ -218,11 +218,15 @@ class FlightPerformanceModel:
                                                                                          self.propeller_angle_of_attack,
                                                                                          ct_model=self.propeller_ct_model,
                                                                                          cp_model=self.propeller_cp_model)
-                res = x - self.airspeed * np.sqrt(
-                    self.air_density * self.propeller_diameter ** 2 * propeller_ct / self.thrust_per_propeller)
+                #res = x - self.airspeed * np.sqrt(
+                #    self.air_density * self.propeller_diameter ** 2 * propeller_ct / self.thrust_per_propeller)
+                res = x**2 - self.airspeed ** 2 * self.air_density * self.propeller_diameter ** 2 * propeller_ct / self.thrust_per_propeller
                 return res
 
-            self._advance_ratio = brentq(func, 0.0, 3.0) if self.airspeed > 0 else 0.0  # [-] solving for advance ratio
+            try:
+                self._advance_ratio = brentq(func, 0.0, 3.0) if self.airspeed > 0 else 0.0  # [-] solving for advance ratio
+            except:
+                self._advance_ratio = newton(func, 0.0) if self.airspeed > 0 else 0.0  # [-] solving for advance ratio
         return self._advance_ratio
 
     @property

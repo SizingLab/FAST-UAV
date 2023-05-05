@@ -40,3 +40,11 @@
 /src/fastuav/data/lca_cycles_nmc811_fr_endpoint.csv
 /src/fastuav/data/lca_cycles_nmc811_us.csv
 /src/fastuav/data/lca_cycles_nmc811_us_endpoint.csv
+/src/fastuav/data/lca_cycles_si_nmc_eu.csv
+/src/fastuav/data/lca_cycles_si_nmc_eu_endpoint.csv
+/src/fastuav/data/lca_cycles_si_nmc_fr.csv
+/src/fastuav/data/lca_cycles_si_nmc_fr_endpoint.csv
+/src/fastuav/data/lca_cycles_si_nmc_us.csv
+/src/fastuav/data/lca_cycles_si_nmc_us_endpoint.csv
+/src/fastuav/data/lca/LiFe/
+/src/fastuav/data/lca/NMC811/
