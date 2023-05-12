@@ -12,9 +12,6 @@ For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 import contextlib
 import os
 import os.path as pth
-
-# from openmdao_drivers.cmaes_driver import CMAESDriver
-
 from fastuav.utils.drivers.salib_doe_driver import SalibDOEDriver
 import fastoad.api as oad
 from fastoad.io.variable_io import DataFile
@@ -26,6 +23,8 @@ import plotly.graph_objects as go
 from SALib.analyze import sobol, morris
 from typing import List
 from plotly.validators.scatter.marker import SymbolValidator
+import itertools
+# from openmdao_drivers.cmaes_driver import CMAESDriver
 
 SA_PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
@@ -50,6 +49,7 @@ def doe_fast(
     """
     DoE function for FAST-UAV problems.
     Various generators are available:
+        - List generator that reads cases from a provided list of DOE cases
         - Uniform generator provided by pyDOE2 and included in OpenMDAO
         - Latin Hypercube generator provided by OpenMDAO
         - Generator for Sobol-Saltelli 2002 method provided by SALib
@@ -160,6 +160,16 @@ def doe_fast(
         dists.append(dist)
 
     # Setup driver
+    if method_name == "list":
+        # generate all combinations from values in the dict of parameters
+        keys, values = zip(*x_dict.items())
+        permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
+        case_list = [[(key, val) for key, val in permut_dict.items()] for permut_dict in permutations_dicts]
+        prob.driver = om.DOEDriver(
+            om.ListGenerator(
+                data=case_list
+            )
+        )
     if method_name == "uniform":
         prob.driver = om.DOEDriver(
             om.UniformGenerator(
