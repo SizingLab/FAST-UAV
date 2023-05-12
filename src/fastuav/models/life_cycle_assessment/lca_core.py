@@ -33,6 +33,9 @@ class LCAcore(om.Group):
         self.options.declare("weighting", default=False, types=bool)
         self.options.declare("max_level_processes", default=10, types=int)
 
+        # Computation options for optimization
+        self.options.declare("analytical_derivatives", default=True, types=bool)
+
         # FAST-UAV model specific parameters
         self.options.declare("parameters", default=dict(), types=dict)  # for storing non-float parameters
 
@@ -89,7 +92,10 @@ class LCAcore(om.Group):
 
         # Promote variables and declare partials
         self.promotes("characterization", any=['*'])
-        self.characterization.declare_partials("*", "*", method="exact")
+        if self.options['analytical_derivatives']:
+            self.characterization.declare_partials("*", "*", method="exact")
+        else:
+            self.characterization.declare_partials("*", "*", method="fd")
 
 
 class Model(om.ExplicitComponent):
@@ -129,7 +135,7 @@ class Model(om.ExplicitComponent):
         self.add_input("mission:%s:distance" % mission_name, val=np.nan, units='m')
         self.add_input("mission:%s:duration" % mission_name, val=np.nan, units='min')
         self.add_input("mission:%s:energy" % mission_name, val=np.nan, units='kJ')
-        self.add_input("mission:sizing:payload:mass", val=np.nan, units='kg')  # specify operational mission payload?
+        self.add_input("mission:sizing:payload:mass", val=np.nan, units='kg')  # TODO: specify operational mission payload?
         self.add_input("data:weight:propulsion:multirotor:battery:mass", val=np.nan, units='kg')
         self.add_input("data:weight:airframe:arms:mass", val=np.nan, units='kg')
         self.add_input("data:weight:airframe:body:mass", val=np.nan, units='kg')
@@ -151,7 +157,7 @@ class Model(om.ExplicitComponent):
         self.add_output(LCA_PARAM_KEY + 'mass_airframe', val=np.nan, units=None)
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         # The compute method is used here to set lca parameters' values
@@ -184,6 +190,32 @@ class Model(om.ExplicitComponent):
         outputs[LCA_PARAM_KEY + 'mass_controllers'] = mass_controllers
         outputs[LCA_PARAM_KEY + 'mass_batteries'] = mass_batteries
         outputs[LCA_PARAM_KEY + 'mass_airframe'] = mass_airframe
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        mission_name = self.options["mission"]
+
+        partials[LCA_PARAM_KEY + 'mission_distance', "mission:%s:distance" % mission_name] = 1 / 1000
+        partials[LCA_PARAM_KEY + 'mission_duration', "mission:%s:duration" % mission_name] = 1 / 60
+        partials[LCA_PARAM_KEY + 'mission_energy',
+                 "data:propulsion:multirotor:battery:efficiency"] = inputs["mission:%s:energy" % mission_name] / 3600
+        partials[LCA_PARAM_KEY + 'mission_energy',
+                 "mission:%s:energy" % mission_name] = inputs["data:propulsion:multirotor:battery:efficiency"] / 3600
+        partials[LCA_PARAM_KEY + 'mass_payload', "mission:sizing:payload:mass"] = 1.0
+        partials[LCA_PARAM_KEY + 'mass_motors',
+                 "data:weight:propulsion:multirotor:motor:mass"] = inputs["data:propulsion:multirotor:propeller:number"]
+        partials[LCA_PARAM_KEY + 'mass_motors',
+                 "data:propulsion:multirotor:propeller:number"] = inputs["data:weight:propulsion:multirotor:motor:mass"]
+        partials[LCA_PARAM_KEY + 'mass_propellers',
+                 "data:weight:propulsion:multirotor:propeller:mass"] = inputs["data:propulsion:multirotor:propeller:number"]
+        partials[LCA_PARAM_KEY + 'mass_propellers',
+                 "data:propulsion:multirotor:propeller:number"] = inputs["data:weight:propulsion:multirotor:propeller:mass"]
+        partials[LCA_PARAM_KEY + 'mass_controllers',
+                 "data:weight:propulsion:multirotor:esc:mass"] = inputs["data:propulsion:multirotor:propeller:number"]
+        partials[LCA_PARAM_KEY + 'mass_controllers',
+                 "data:propulsion:multirotor:propeller:number"] = inputs["data:weight:propulsion:multirotor:esc:mass"]
+        partials[LCA_PARAM_KEY + 'mass_batteries', "data:weight:propulsion:multirotor:battery:mass"] = 1.0
+        partials[LCA_PARAM_KEY + 'mass_airframe', "data:weight:airframe:body:mass"] = 1.0
+        partials[LCA_PARAM_KEY + 'mass_airframe', "data:weight:airframe:arms:mass"] = 1.0
 
     def setup_project(self):
         """
@@ -704,8 +736,8 @@ class Characterization(om.ExplicitComponent):
                 outputs[LCA_CHARACTERIZATION_KEY + m_name + path] = score
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        # inputs: float parameters
-        parameters = dict()
+        # Parameters dictionary
+        parameters = self.options["parameters"]  # initialized with non-float parameters provided as options
         for key, value in inputs.items():  # add float parameters provided as inputs
             if LCA_PARAM_KEY in key and not np.isnan(value):
                 name = re.split(LCA_PARAM_KEY, key)[-1]
@@ -716,8 +748,11 @@ class Characterization(om.ExplicitComponent):
             for m in self.methods:
                 m_name = self.method_label_formatting(m)
                 output_name = LCA_CHARACTERIZATION_KEY + m_name + path
-                for param_name in parameters.keys():
-                    input_name = LCA_PARAM_KEY + param_name
+                for input_name in inputs.keys():
+                #for param_name in parameters.keys():
+                #    if param_name in inputs.keys():
+                #        input_name = LCA_PARAM_KEY + param_name
+                    param_name = re.split(LCA_PARAM_KEY, input_name)[-1]
                     partials[output_name,
                              input_name] = self.partials_lca(param_name, m_name, parameters, act)
 
@@ -725,10 +760,10 @@ class Characterization(om.ExplicitComponent):
         """
         returns the partial derivative of a method's result with respect to a parameter.
         """
-        # Dictionnary of algebraic LCA expressions
+        # Dictionary of algebraic LCA expressions
         exprs_dict = self.exprs_dict
 
-        # Sub-dictionnary of expressions for a given activity
+        # Sub-dictionary of expressions for a given activity
         exprs = exprs_dict[activity]
 
         # Expression for a given method
@@ -742,9 +777,18 @@ class Characterization(om.ExplicitComponent):
 
         # expand enumParams --> 'elec_switch_param': 'eu' becomes 'elec_switch_param_us' : 0, 'elec_switch_param_eu': 1
         new_params = {name: value for name, value in lcalg.params._completeParamValues(parameters).items()}
+        for key, val in new_params.items():
+            if isinstance(val, np.ndarray):
+                new_params[key] = val[0]
+
+        #print(input_param, output_method)
+        #print(new_params)
+        #print(derivative)
 
         # evaluate derivative
         res = derivative.evalf(subs=new_params)
+
+        #print(res)
 
         return res
 
@@ -777,6 +821,10 @@ class Characterization(om.ExplicitComponent):
         computes algebraic expressions corresponding to a model for each method
         """
         exprs = dict()
+        if extract_activities == self.model:
+            extract_activities = None
+        else:
+            extract_activities = [extract_activities]
         with lcalg.params.DbContext(self.model):
             exprs_list, _ = lcalg.lca._modelToExpr(self.model, self.methods, extract_activities=extract_activities)
         for i, method in enumerate(self.methods):
@@ -996,13 +1044,11 @@ class Aggregation(om.ExplicitComponent):
         self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
 
         # inputs
-        for m_name in self.methods:
-            for path in self.activities.keys():
+        for path in self.activities.keys():
+            for m_name in self.methods:
                 self.add_input(LCA_WEIGHTING_KEY + m_name + path,  # weighted scores for each activity
                                val=np.nan,
                                units=None)
-
-        for path in self.activities.keys():
             self.add_output(LCA_AGGREGATION_KEY + LCA_WEIGHTED_SINGLE_SCORE_KEY + path,  # aggregated scores
                             units=None,
                             desc='points')

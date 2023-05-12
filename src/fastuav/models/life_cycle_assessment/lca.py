@@ -26,6 +26,9 @@ class LCAmultirotor(om.Group):
         self.options.declare("weighting", default=False, types=bool)
         self.options.declare("max_level_processes", default=10, types=int)
 
+        # Computation options for optimization
+        self.options.declare("analytical_derivatives", default=True, types=bool)
+
         # FAST-UAV model specific parameters
         self.options.declare("parameters", default=dict(), types=dict)  # for storing non-float parameters
 
@@ -44,6 +47,7 @@ class LCAmultirotor(om.Group):
                                    normalization=self.options["normalization"],
                                    weighting=self.options["weighting"],
                                    max_level_processes=self.options["max_level_processes"],
+                                   analytical_derivatives=self.options["analytical_derivatives"],
                                    parameters=self.options["parameters"],
                                    mission=self.options["mission"]
                                    ),
