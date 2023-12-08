@@ -19,9 +19,9 @@ class AirframeAerodynamicsModel:
     @staticmethod
     def friction_flatplate(V_air, L, nu_air, a_air):
         re = V_air * L / nu_air  # Reynolds number [-]
-        mach = V_air / a_air  # mach number [-]
+        # mach = V_air / a_air  # mach number [-]
         cf_turb = 0.455 / (
-            np.log10(re) ** 2.58 * (1 + 0.144 * mach**2) ** 0.65
+            np.log10(re) ** 2.58 #* (1 + 0.144 * mach**2) ** (-0.65)
         )  # flat-plate skin friction [-]
         return cf_turb
 
@@ -117,9 +117,8 @@ class WingParasiticDrag(om.ExplicitComponent):
         cf_wing = AirframeAerodynamicsModel.friction_flatplate(V_cruise, c_MAC_w, nu_air, a_air)
 
         # Form drag factor
-        FF_w = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4) * (
-            1.34 * (V_cruise / a_air) ** 0.18
-        )
+        FF_w = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4)
+        # * (1.34 * (V_cruise / a_air) ** 0.18)  # compressibility effects
 
         # Wetted area
         S_wet_w = 2 * S_w

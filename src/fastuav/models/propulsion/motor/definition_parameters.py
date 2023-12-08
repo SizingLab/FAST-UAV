@@ -94,7 +94,7 @@ class VelocityConstant(om.ExplicitComponent):
         P_pro_to = inputs["data:propulsion:propeller:power:takeoff"]
         k_speed_mot = inputs["data:propulsion:motor:speed:k"]
 
-        #TODO: replace U_bat_guess by Kv_hat from data
+        # TODO: replace W_mot_to / U_bat_guess by Kv_hat = 41.59 T_nom ** (-0.35)  (datasheet regression)
         W_mot_to = W_pro_to * N_red  # [rad/s] Motor take-off speed
         U_bat_guess = 1.84 * P_pro_to ** 0.36  # [V] battery voltage estimation
         Kv = k_speed_mot * W_mot_to / U_bat_guess  # [rad/V/s]

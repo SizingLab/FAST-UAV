@@ -1,6 +1,5 @@
 """
 UAV flight models for thrust calculations - static methods definition.
-(Unused in current version of FAST-UAV).
 """
 
 import numpy as np

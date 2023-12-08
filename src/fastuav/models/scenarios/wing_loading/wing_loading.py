@@ -127,7 +127,7 @@ class WingLoadingSelection(om.ExplicitComponent):
 
         WS = (
             k_WS * WS_stall
-        )  # [N/m**2] wing loading selection from cruise requirement with under-sizing coefficient
+        )  # [N/m**2] wing loading selection from stall requirement with under-sizing coefficient
 
         outputs["data:geometry:wing:loading"] = WS
 

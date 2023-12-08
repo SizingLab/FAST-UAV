@@ -55,7 +55,6 @@ class SpecificComponentContributions(om.ExplicitComponent):
         self.add_input("data:propulsion:multirotor:esc:efficiency", val=np.nan, units=None)
         self.add_input("data:propulsion:multirotor:battery:efficiency", val=np.nan, units=None)
 
-        self.add_input("data:propulsion:multirotor:battery:power:cruise", val=np.nan, units="W")
         self.add_input("data:aerodynamics:multirotor:CD0", val=np.nan, units=None)
         self.add_input("data:propulsion:multirotor:propeller:AoA:cruise", val=np.nan, units='rad')
         self.add_input("data:geometry:projected_area:top", val=np.nan, units='m**2')
@@ -65,8 +64,11 @@ class SpecificComponentContributions(om.ExplicitComponent):
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input("mission:sizing:dISA", val=np.nan, units='K')
 
+        # Taylor approximation error
+        self.add_output(LCA_POSTPROCESS_KEY + 'taylor_approx:rel_error', units=None)
+
         # impact assessment methods
-        model_name = self.model_name = ":model_per_FU" if self.options["functional_unit"] == "lifetime" else ":model_per_FU:model" # TODO: find a generic way of doing this
+        model_name = self.model_name = ":model_per_FU"  #if self.options["functional_unit"] == "lifetime" else ":model_per_FU:model" # FIXME: check no error for different functional units
         method_names = self.method_names = [Characterization.method_label_formatting(eval(m)) for m in
                                             self.options["methods"]]
 
@@ -101,7 +103,6 @@ class SpecificComponentContributions(om.ExplicitComponent):
                 self.add_output(postprocessing_path + ":propellers:mass", units=None)
                 self.add_output(postprocessing_path + ":airframe:mass", units=None)
                 self.add_output(postprocessing_path + ":payload:mass", units=None)
-                self.add_output(postprocessing_path + ":misc:mass", units=None)
 
                 self.add_output(postprocessing_path + ":batteries:efficiency", units=None)
                 self.add_output(postprocessing_path + ":controllers:efficiency", units=None)
@@ -115,7 +116,6 @@ class SpecificComponentContributions(om.ExplicitComponent):
                 self.add_output(postprocessing_path + ":propellers", units=None)
                 self.add_output(postprocessing_path + ":airframe", units=None)
                 self.add_output(postprocessing_path + ":payload", units=None)
-                self.add_output(postprocessing_path + ":misc", units=None)
 
                 self.add_output(postprocessing_path, units=None)
 
@@ -126,8 +126,7 @@ class SpecificComponentContributions(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         # INPUTS
         # Masses
-        m_pay = inputs["mission:sizing:payload:mass"]  # [kg]
-        m_misc = inputs["data:weight:misc:mass"]  # [kg]
+        m_pay = inputs["mission:sizing:payload:mass"] + inputs["data:weight:misc:mass"]  # [kg]
         m_bat = inputs["data:weight:propulsion:multirotor:battery:mass"]  # [kg]
         N_pro = inputs["data:propulsion:multirotor:propeller:number"]
         m_mot = inputs["data:weight:propulsion:multirotor:motor:mass"] * N_pro  # [kg]
@@ -141,10 +140,8 @@ class SpecificComponentContributions(om.ExplicitComponent):
         eta_mot = inputs["data:propulsion:multirotor:motor:efficiency:cruise"]  # [-] motor efficiency
         eta_esc = inputs["data:propulsion:multirotor:esc:efficiency"]  # [-] ESC efficiency
         eta_bat = inputs["data:propulsion:multirotor:battery:efficiency"]  # [-] battery efficiency
+        eta_array = [eta_pro, eta_mot, eta_esc, eta_bat]
         eta_tot = eta_pro * eta_mot * eta_esc * eta_bat  # [-] total efficiency for propulsion system
-
-        # Power at battery (before heat losses)
-        P = inputs["data:propulsion:multirotor:battery:power:cruise"] / eta_bat  # [W]
 
         # Aerodynamics
         C_D = inputs["data:aerodynamics:multirotor:CD0"]  # [-] drag coefficient for the UAV
@@ -165,51 +162,69 @@ class SpecificComponentContributions(om.ExplicitComponent):
         rho_air = atm.density  # [kg/m3] air density
 
         # INTERMEDIATE CALCULATIONS
-        A = 2 * g ** 2 * m_tot / (np.pi * rho_air * v_inf * d_pro ** 2 * N_pro)
-
+        A = 2 * g ** 2 / (np.pi * rho_air * v_inf * d_pro ** 2 * N_pro)
         B_1 = 0.5 * rho_air * S * v_inf ** 3
         B_2 = B_1 * S / (np.pi * d_pro ** 2 * N_pro)
+        P_ideal = A * m_tot ** 2 + B_1 * C_D + B_2 * C_D ** 2
+        P = P_ideal / eta_tot
 
-        P_ideal = A * m_tot + B_1 * C_D + B_2 * C_D ** 2
-        eta_array = [eta_pro, eta_mot, eta_esc, eta_bat]
-        C = (1 / eta_tot - 1) * P_ideal / np.sum([(1 / eta - 1) for eta in eta_array])
+        # POWER DECOMPOSITION
+        # Payload
+        P_0 = A * m_pay ** 2
 
-        # CORRECTION FACTOR
-        corr_fact = eta_tot * P / P_ideal
-        A = A * corr_fact
-        B_1 = B_1 * corr_fact
-        B_2 = B_2 * corr_fact
-        C = C * corr_fact
+        # Aerodynamics
+        P_aero_frame = B_1 * C_D + B_2 * C_D ** 2 + 0.5 * B_1 * C_D * np.sum([(1 - eta) for eta in eta_array])
 
-        # CONTRIBUTIONS (for each impact method and each step of the impact assessment: characterization, normalization, weighting)
+        # Masses
+        P_mass_bat = A * m_bat * (m_pay + m_tot + 0.5 * m_pay * np.sum([(1 - eta) for eta in eta_array]))
+        P_mass_esc = A * m_esc * (m_pay + m_tot + 0.5 * m_pay * np.sum([(1 - eta) for eta in eta_array]))
+        P_mass_mot = A * m_mot * (m_pay + m_tot + 0.5 * m_pay * np.sum([(1 - eta) for eta in eta_array]))
+        P_mass_pro = A * m_pro * (m_pay + m_tot + 0.5 * m_pay * np.sum([(1 - eta) for eta in eta_array]))
+        P_mass_frame = A * m_frame * (m_pay + m_tot + 0.5 * m_pay * np.sum([(1 - eta) for eta in eta_array]))
+
+        # Efficiencies
+        P_eff_bat = A * m_pay ** 2 * (1 - eta_bat) * (
+                2 - eta_bat + np.sum([(1 - eta) for eta in eta_array]) + m_tot / m_pay) + 0.5 * B_1 * (
+                            1 - eta_bat)
+        P_eff_esc = A * m_pay ** 2 * (1 - eta_esc) * (
+                2 - eta_esc + np.sum([(1 - eta) for eta in eta_array]) + m_tot / m_pay) + 0.5 * B_1 * (
+                            1 - eta_esc)
+        P_eff_mot = A * m_pay ** 2 * (1 - eta_mot) * (
+                2 - eta_mot + np.sum([(1 - eta) for eta in eta_array]) + m_tot / m_pay) + 0.5 * B_1 * (
+                            1 - eta_mot)
+        P_eff_pro = A * m_pay ** 2 * (1 - eta_pro) * (
+                2 - eta_pro + np.sum([(1 - eta) for eta in eta_array]) + m_tot / m_pay) + 0.5 * B_1 * (
+                            1 - eta_pro)
+
+        # Compare approximation with actual power
+        P_mass = P_mass_bat + P_mass_esc + P_mass_mot + P_mass_pro + P_mass_frame
+        P_eff = P_eff_bat + P_eff_esc + P_eff_mot + P_eff_pro
+        P_approx = P_0 + P_mass + P_aero_frame + P_eff
+        power_rel_error = (P - P_approx) / P  # [-]
+        outputs[LCA_POSTPROCESS_KEY + 'taylor_approx:rel_error'] = power_rel_error
+
+        # For each impact method and each step of the impact assessment: characterization, normalization, weighting
         results_dict = self.results_dict
         model_name = self.model_name
         for result_key, result_methods in results_dict.items():
             for m_name in result_methods:
                 result_path = result_key + m_name + model_name
 
-                # CONTRIBUTIONS TO ENERGY CONSUMPTION
+                # ENVIRONMENTAL IMPACTS - OPERATION
                 EI_operation = inputs[result_path + ":operation"]
+                EI_0 = P_0 / P_approx * EI_operation
+                EI_mass_bat = P_mass_bat / P_approx * EI_operation
+                EI_mass_esc = P_mass_esc / P_approx * EI_operation
+                EI_mass_mot = P_mass_mot / P_approx * EI_operation
+                EI_mass_pro = P_mass_pro / P_approx * EI_operation
+                EI_mass_frame = P_mass_frame / P_approx * EI_operation
+                EI_aero_frame = P_aero_frame / P_approx * EI_operation
+                EI_eff_bat = P_eff_bat / P_approx * EI_operation
+                EI_eff_esc = P_eff_esc / P_approx * EI_operation
+                EI_eff_mot = P_eff_mot / P_approx * EI_operation
+                EI_eff_pro = P_eff_pro / P_approx * EI_operation
 
-                # Masses
-                EI_mass_bat = A / P * EI_operation * m_bat
-                EI_mass_esc = A / P * EI_operation * m_esc
-                EI_mass_mot = A / P * EI_operation * m_mot
-                EI_mass_pro = A / P * EI_operation * m_pro
-                EI_mass_frame = A / P * EI_operation * m_frame
-                EI_mass_pay = A / P * EI_operation * m_pay  # the payload mass is also responsible for energy consumption!
-                EI_mass_misc = A / P * EI_operation * m_misc
-
-                # Aerodynamics
-                EI_aero_frame = (B_1 * C_D + B_2 * C_D ** 2) / P * EI_operation
-
-                # Efficiencies
-                EI_eff_bat = C / P * EI_operation * (1 - eta_bat) / eta_bat
-                EI_eff_esc = C / P * EI_operation * (1 - eta_esc) / eta_esc
-                EI_eff_mot = C / P * EI_operation * (1 - eta_mot) / eta_mot
-                EI_eff_pro = C / P * EI_operation * (1 - eta_pro) / eta_pro
-
-                # MANUFACTURING
+                # ENVIRONMENTAL IMPACTS - MANUFACTURING
                 EI_manuf_bat = inputs[result_path + ":production:batteries"]
                 EI_manuf_esc = inputs[result_path + ":production:controllers"]
                 EI_manuf_mot = inputs[result_path + ":production:motors"]
@@ -222,11 +237,10 @@ class SpecificComponentContributions(om.ExplicitComponent):
                 EI_mot = EI_mass_mot + EI_eff_mot + EI_manuf_mot
                 EI_pro = EI_mass_pro + EI_eff_pro + EI_manuf_pro
                 EI_frame = EI_mass_frame + EI_aero_frame + EI_manuf_frame
-                EI_pay = EI_mass_pay
-                EI_misc = EI_mass_misc
+                EI_pay = EI_0
 
                 # TOTAL
-                EI_tot = EI_bat + EI_esc + EI_mot + EI_pro + EI_frame + EI_pay + EI_misc
+                EI_tot = EI_bat + EI_esc + EI_mot + EI_pro + EI_frame + EI_pay
 
                 # set output values
                 postprocessing_path = LCA_POSTPROCESS_KEY + result_key.split(':', 1)[-1] + m_name + model_name
@@ -242,8 +256,7 @@ class SpecificComponentContributions(om.ExplicitComponent):
                 outputs[postprocessing_path + ":motors:mass"] = EI_mass_mot
                 outputs[postprocessing_path + ":propellers:mass"] = EI_mass_pro
                 outputs[postprocessing_path + ":airframe:mass"] = EI_mass_frame
-                outputs[postprocessing_path + ":payload:mass"] = EI_mass_pay
-                outputs[postprocessing_path + ":misc:mass"] = EI_mass_misc
+                outputs[postprocessing_path + ":payload:mass"] = EI_pay
 
                 outputs[postprocessing_path + ":batteries:efficiency"] = EI_eff_bat
                 outputs[postprocessing_path + ":controllers:efficiency"] = EI_eff_esc
@@ -257,6 +270,6 @@ class SpecificComponentContributions(om.ExplicitComponent):
                 outputs[postprocessing_path + ":propellers"] = EI_pro
                 outputs[postprocessing_path + ":airframe"] = EI_frame
                 outputs[postprocessing_path + ":payload"] = EI_pay
-                outputs[postprocessing_path + ":misc"] = EI_misc
 
                 outputs[postprocessing_path] = EI_tot
+

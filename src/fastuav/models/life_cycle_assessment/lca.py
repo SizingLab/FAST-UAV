@@ -5,7 +5,7 @@ Module for Life Cycle Assessment.
 import fastoad.api as oad
 import openmdao.api as om
 from fastuav.constants import LCA_DEFAULT_PROJECT, LCA_DEFAULT_ECOINVENT, LCA_DEFAULT_METHOD, SIZING_MISSION_TAG, \
-    LCA_DEFAULT_FUNCTIONAL_UNIT, LCA_FUNCTIONAL_UNITS_LIST
+    LCA_DEFAULT_FUNCTIONAL_UNIT
 from fastuav.models.life_cycle_assessment.lca_core import LCAcore
 from fastuav.models.life_cycle_assessment.lca_postprocessing import SpecificComponentContributions
 

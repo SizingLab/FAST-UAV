@@ -49,3 +49,4 @@
 /src/fastuav/data/lca/LiFe/
 /src/fastuav/data/lca/NMC811/
 /src/fastuav/notebooks/output_file.pdf
+/src/fastuav/models/life_cycle_assessment/lca_postprocessing_deprecated.py

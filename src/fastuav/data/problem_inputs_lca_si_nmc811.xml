@@ -82,13 +82,11 @@
             <factor is_input="True">11468.7086407597</factor>
           </user_deprivation_potential_deprivation-weighted_water_consumption>
         </water_use>
-        <material_resources-_metals>
-          <minerals>
-            <abiotic_depletion_potential_ADP-_elements_ultimate_reserves>
-              <factor is_input="True">1.0</factor>
-            </abiotic_depletion_potential_ADP-_elements_ultimate_reserves>
-          </minerals>
-        </material_resources-_metals>
+        <material_resources-_metals_minerals>
+          <abiotic_depletion_potential_ADP-_elements_ultimate_reserves>
+            <factor is_input="True">0.0636402782259556</factor>
+          </abiotic_depletion_potential_ADP-_elements_ultimate_reserves>
+        </material_resources-_metals_minerals>
       </EF_v3_1>
     </normalization>
     <weighting>
@@ -168,13 +166,11 @@
             <factor is_input="True">0.0851</factor>
           </user_deprivation_potential_deprivation-weighted_water_consumption>
         </water_use>
-        <material_resources-_metals>
-          <minerals>
-            <abiotic_depletion_potential_ADP-_elements_ultimate_reserves>
-              <factor is_input="True">0.0755</factor>
-            </abiotic_depletion_potential_ADP-_elements_ultimate_reserves>
-          </minerals>
-        </material_resources-_metals>
+        <material_resources-_metals_minerals>
+          <abiotic_depletion_potential_ADP-_elements_ultimate_reserves>
+            <factor is_input="True">0.0755</factor>
+          </abiotic_depletion_potential_ADP-_elements_ultimate_reserves>
+        </material_resources-_metals_minerals>
       </EF_v3_1>
     </weighting>
   </lca>
@@ -399,6 +395,7 @@
           </Ct>
         </propeller>
         <battery>
+          <efficiency is_input="True">0.85</efficiency>
           <capacity>
             <reference units="A*s" is_input="True">12240.0</reference>
           </capacity>

@@ -2,6 +2,7 @@
 LCA models and calculations.
 """
 
+# import time
 import openmdao.api as om
 import numpy as np
 import brightway2 as bw
@@ -162,11 +163,11 @@ class Model(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         # The compute method is used here to set lca parameters' values
         mission_name = self.options["mission"]
-        mission_distance = inputs["mission:%s:distance" % mission_name] / 1000  # [km]
+        mission_distance = inputs["mission:%s:distance" % mission_name] / 1000  # [km]  # TODO: select distance of a single route?
         mission_duration = inputs["mission:%s:duration" % mission_name] / 60  # [h]
         mass_payload = inputs["mission:sizing:payload:mass"]  # [kg]
-        mission_energy = inputs["data:propulsion:multirotor:battery:efficiency"] * inputs[
-            "mission:%s:energy" % mission_name] / 3600  # [kWh]
+        mission_energy = inputs["mission:%s:energy" % mission_name] / 3600 / inputs[
+            "data:propulsion:multirotor:battery:efficiency"]  # power at grid [kWh]
         mass_batteries = inputs["data:weight:propulsion:multirotor:battery:mass"]  # [kg]
         N_pro = inputs["data:propulsion:multirotor:propeller:number"]
         mass_motors = inputs["data:weight:propulsion:multirotor:motor:mass"] * N_pro  # [kg]
@@ -197,9 +198,9 @@ class Model(om.ExplicitComponent):
         partials[LCA_PARAM_KEY + 'mission_distance', "mission:%s:distance" % mission_name] = 1 / 1000
         partials[LCA_PARAM_KEY + 'mission_duration', "mission:%s:duration" % mission_name] = 1 / 60
         partials[LCA_PARAM_KEY + 'mission_energy',
-                 "data:propulsion:multirotor:battery:efficiency"] = inputs["mission:%s:energy" % mission_name] / 3600
+                 "data:propulsion:multirotor:battery:efficiency"] = - inputs["mission:%s:energy" % mission_name] / 3600 / inputs["data:propulsion:multirotor:battery:efficiency"] ** 2
         partials[LCA_PARAM_KEY + 'mission_energy',
-                 "mission:%s:energy" % mission_name] = inputs["data:propulsion:multirotor:battery:efficiency"] / 3600
+                 "mission:%s:energy" % mission_name] = 1 / 3600 / inputs["data:propulsion:multirotor:battery:efficiency"]
         partials[LCA_PARAM_KEY + 'mass_payload', "mission:sizing:payload:mass"] = 1.0
         partials[LCA_PARAM_KEY + 'mass_motors',
                  "data:weight:propulsion:multirotor:motor:mass"] = inputs["data:propulsion:multirotor:propeller:number"]
@@ -576,54 +577,71 @@ class Model(om.ExplicitComponent):
 
         # Define model
         model_select = self.options["functional_unit"]
-
+        functional_value = 1.0
         if model_select == "kg.km":  # 1 kg payload on 1 km
-            intermediate_model = lcalg.newActivity(  # Impacts over UAV's lifetime
-                LCA_USER_DB,
-                "functional_unit",
-                "uav lifetime",
-                exchanges={
-                    production: 1.0,
-                    operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
-                })
             functional_value = self._get_param('n_cycles_uav') * self._get_param('mission_distance') * self._get_param(
-                'mass_payload')
-            lcalg.newActivity(
-                LCA_USER_DB,
-                LCA_MODEL_KEY,
-                model_select,
-                exchanges={
-                    intermediate_model: 1 / functional_value  # normalize by functional value
-                })
-
+                         'mass_payload')
         elif model_select == "kg.h":  # 1 kg payload during 1 hour
-            intermediate_model = lcalg.newActivity(  # Impacts over UAV's lifetime
-                LCA_USER_DB,
-                "functional_unit",
-                "uav lifetime",
-                exchanges={
-                    production: 1.0,
-                    operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
-                })
             functional_value = self._get_param('n_cycles_uav') * self._get_param('mission_duration') * self._get_param(
-                'mass_payload')
-            lcalg.newActivity(
-                LCA_USER_DB,
-                LCA_MODEL_KEY,
-                model_select,
-                exchanges={
-                    intermediate_model: 1 / functional_value  # normalize by functional value
-                })
+                         'mass_payload')
+        elif model_select == "lifetime":  # UAV's lifetime
+            functional_value = 1.0
+        lcalg.newActivity(  # Impacts over UAV's lifetime
+            LCA_USER_DB,
+            LCA_MODEL_KEY,
+            model_select,
+            exchanges={
+                production: 1.0 / functional_value,
+                operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy') / functional_value,
+            })
 
-        elif model_select == "lifetime":
-            lcalg.newActivity(  # Impacts over UAV's lifetime
-                LCA_USER_DB,
-                LCA_MODEL_KEY,
-                "uav lifetime",
-                exchanges={
-                    production: 1.0,
-                    operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
-                })
+            # if model_select == "kg.km":  # 1 kg payload on 1 km
+        #     intermediate_model = lcalg.newActivity(  # Impacts over UAV's lifetime
+        #         LCA_USER_DB,
+        #         "functional_unit",
+        #         "uav lifetime",
+        #         exchanges={
+        #             production: 1.0,
+        #             operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
+        #         })
+        #     functional_value = self._get_param('n_cycles_uav') * self._get_param('mission_distance') * self._get_param(
+        #         'mass_payload')
+        #     lcalg.newActivity(
+        #         LCA_USER_DB,
+        #         LCA_MODEL_KEY,
+        #         model_select,
+        #         exchanges={
+        #             intermediate_model: 1 / functional_value  # normalize by functional value
+        #         })
+        #
+        # elif model_select == "kg.h":  # 1 kg payload during 1 hour
+        #     intermediate_model = lcalg.newActivity(  # Impacts over UAV's lifetime
+        #         LCA_USER_DB,
+        #         "functional_unit",
+        #         "uav lifetime",
+        #         exchanges={
+        #             production: 1.0,
+        #             operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
+        #         })
+        #     functional_value = self._get_param('n_cycles_uav') * self._get_param('mission_duration') * self._get_param(
+        #         'mass_payload')
+        #     lcalg.newActivity(
+        #         LCA_USER_DB,
+        #         LCA_MODEL_KEY,
+        #         model_select,
+        #         exchanges={
+        #             intermediate_model: 1 / functional_value  # normalize by functional value
+        #         })
+        #
+        # elif model_select == "lifetime":
+        #    lcalg.newActivity(  # Impacts over UAV's lifetime
+        #        LCA_USER_DB,
+        #        LCA_MODEL_KEY,
+        #        "uav lifetime",
+        #        exchanges={
+        #            production: 1.0,
+        #            operation: self._get_param('n_cycles_uav') * self._get_param('mission_energy'),
+        #        })
 
     def _add_param(self, param):
         """Add a parameter to the parameters dictionary."""
@@ -707,6 +725,9 @@ class Characterization(om.ExplicitComponent):
     #     Declared in configure method of parent group
 
     def compute(self, inputs, outputs):
+
+        #start_time = time.time()
+
         # parameters
         parameters = self.options["parameters"]  # initialized with non-float parameters provided as options
         for key, value in inputs.items():  # add float parameters provided as inputs
@@ -735,6 +756,9 @@ class Characterization(om.ExplicitComponent):
                 # set output value
                 outputs[LCA_CHARACTERIZATION_KEY + m_name + path] = score
 
+        #elapsed_time = time.time() - start_time
+        #print(elapsed_time)
+
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         # Parameters dictionary
         parameters = self.options["parameters"]  # initialized with non-float parameters provided as options
@@ -749,9 +773,6 @@ class Characterization(om.ExplicitComponent):
                 m_name = self.method_label_formatting(m)
                 output_name = LCA_CHARACTERIZATION_KEY + m_name + path
                 for input_name in inputs.keys():
-                #for param_name in parameters.keys():
-                #    if param_name in inputs.keys():
-                #        input_name = LCA_PARAM_KEY + param_name
                     param_name = re.split(LCA_PARAM_KEY, input_name)[-1]
                     partials[output_name,
                              input_name] = self.partials_lca(param_name, m_name, parameters, act)
@@ -760,6 +781,8 @@ class Characterization(om.ExplicitComponent):
         """
         returns the partial derivative of a method's result with respect to a parameter.
         """
+        # TODO: compute derivative expressions at initialization to avoid systematic differentiation of sympy expression.
+
         # Dictionary of algebraic LCA expressions
         exprs_dict = self.exprs_dict
 
@@ -781,14 +804,8 @@ class Characterization(om.ExplicitComponent):
             if isinstance(val, np.ndarray):
                 new_params[key] = val[0]
 
-        #print(input_param, output_method)
-        #print(new_params)
-        #print(derivative)
-
         # evaluate derivative
         res = derivative.evalf(subs=new_params)
-
-        #print(res)
 
         return res
 

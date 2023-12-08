@@ -3,8 +3,8 @@ Driver for running model on design of experiments cases using Salib sampling met
 Original driver was implemented by Onera (openmdao_extensions library).
 This version offers the capability of generating alternate sampling distributions (i.e. other than uniform).
 """
-import numpy as np
 
+import numpy as np
 from openmdao.api import DOEDriver, OptionsDictionary
 from openmdao.drivers.doe_generators import DOEGenerator
 

@@ -14,7 +14,6 @@ import brightway2 as bw
 from sympy.parsing.sympy_parser import parse_expr
 from pyvis.network import Network
 import time
-import numpy as np
 
 
 def lca_plot(file_path: str, result_step: str = 'characterization', filter_option: str = 'default',
@@ -53,7 +52,7 @@ def lca_plot(file_path: str, result_step: str = 'characterization', filter_optio
     for method, unit in methods.items():
         scores_dict = dict()
         for variable in variables.names():  # get all children activities
-            if RESULTS_KEY not in variable or method not in variable or LCA_FACTOR_KEY in variable:
+            if RESULTS_KEY not in variable or method not in variable or LCA_FACTOR_KEY in variable or model_key not in variable:
                 continue
             end = variable.find(":" + model_key)
             full_name = variable[end + 1:]
@@ -66,7 +65,7 @@ def lca_plot(file_path: str, result_step: str = 'characterization', filter_optio
 
         df = pd.concat([df, df2], axis=1, ignore_index=False)
 
-    # Normalize values if asked
+    # Normalize values (sum for each impact = 1) if asked
     if percent is True:
         # df = df / df.sum()  # normalize impacts (sum for each impact = 1)
         df = df / df.loc[model_key]
