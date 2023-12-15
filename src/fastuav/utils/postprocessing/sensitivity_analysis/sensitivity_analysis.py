@@ -43,7 +43,8 @@ def doe_fast(
     x_dict: dict,
     y_list: List[str],
     conf_file: str,
-    ns: int,
+    ns: int = 100,
+    custom_driver=None,
     calc_second_order: bool = True,
 ) -> pd.DataFrame:
     """
@@ -57,19 +58,20 @@ def doe_fast(
     If an optimization problem is declared in the configuration file,
     a nested optimization (sub-problem) is run (e.g. to ensure system optimality and/or consistency at each simulation).
 
-    :param method_name: 'uniform', 'lhs', 'Sobol' or 'Morris'
+    :param method_name: 'uniform', 'lhs', 'fullfactorial', 'Sobol' or 'Morris'
     :param x_dict: inputs dictionary {input_name: [dist_parameter_1, dist_parameter_2, distribution_type]}
     :param y_list: list of problem outputs to record
     :param conf_file: configuration file for the problem
-    :param ns: number of samples (Uniform and Sobol) or trajectories (Morris)
+    :param ns: number of samples (for Uniform, LHS and Sobol) or trajectories (for Morris)
+    :param custom_driver: user-defined OpenMDAO driver if method_name is set to "custom"
     :param calc_second_order: calculate second order indices (Sobol)
 
-    :return: dataframe of the monte carlo simulation results
+    :return: dataframe of the design of experiments results
     """
 
     class SubProbComp(om.ExplicitComponent):
         """
-        Sub-problem component for nested optimization (e.g., to ensure system consistency).
+        Sub-problem component for nested optimization.
         """
 
         def initialize(self):
@@ -93,9 +95,6 @@ def doe_fast(
             p = self._prob = prob
             p.setup()
 
-            # set counter for optimization failure
-            self._fail_count = 0
-
             # define the i/o of the component
             x_list = self._x_list = self.options["x_list"]
             y_list = self._y_list = self.options["y_list"]
@@ -105,6 +104,10 @@ def doe_fast(
 
             for y in y_list:
                 self.add_output(y)
+
+            # set counter and output variable for recording optimization failure or success
+            self._fail_count = 0
+            self.add_output('optim_failed')
 
             self.declare_partials("*", "*", method="fd")
 
@@ -121,11 +124,12 @@ def doe_fast(
             ):  # turn off all convergence messages (including failures)
                 fail = p.run_driver()
 
-            if fail:
-                self._fail_count += 1
-
             for y in y_list:
                 outputs[y] = p[y]
+
+            if fail:
+                self._fail_count += 1
+            outputs['optim_failed'] = fail
 
     conf = oad.FASTOADProblemConfigurator(conf_file)
     prob_definition = conf.get_optimization_definition()
@@ -150,17 +154,13 @@ def doe_fast(
         nested_optimization = False
         prob = conf.get_problem(read_inputs=True)
 
-    # DoE parameters
-    dists = []
-    for x_name, x_value in x_dict.items():
-        prob.model.add_design_var(
-            x_name, lower=x_value[0], upper=x_value[1]
-        )  # add input parameter for DoE
-        dist = x_value[2]  # add distribution type ('unif' or 'norm')
-        dists.append(dist)
-
     # Setup driver
     if method_name == "list":
+        # add input parameters for DoE
+        for x_name, x_value in x_dict.items():
+            prob.model.add_design_var(
+                x_name, lower=x_value.min(), upper=x_value.max()
+            )
         # generate all combinations from values in the dict of parameters
         keys, values = zip(*x_dict.items())
         permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
@@ -170,40 +170,71 @@ def doe_fast(
                 data=case_list
             )
         )
-    if method_name == "uniform":
-        prob.driver = om.DOEDriver(
-            om.UniformGenerator(
-                num_samples=ns
-                # distribution type has no effect here: all distributions will be uniform
+    elif method_name in ("uniform", "lhs", "fullfactorial"):
+        # add input parameters for DoE
+        for x_name, x_value in x_dict.items():
+            prob.model.add_design_var(
+                x_name, lower=x_value[0], upper=x_value[1]
             )
-        )
-    elif method_name == "lhs":
-        prob.driver = om.DOEDriver(
-            om.LatinHypercubeGenerator(
-                samples=ns
-                # distribution type has no effect here: all distributions will be uniform
+        # setup driver
+        if method_name == "uniform":
+            prob.driver = om.DOEDriver(
+                om.UniformGenerator(
+                    num_samples=ns
+                )
             )
-        )
-    elif method_name == "Sobol":
-        prob.driver = SalibDOEDriver(
-            sa_method_name=method_name,
-            sa_doe_options={"n_samples": ns, "calc_second_order": calc_second_order},
-            distributions=dists,
-        )
-    elif method_name == "Morris":
-        prob.driver = SalibDOEDriver(
-            sa_method_name="Morris",
-            sa_doe_options={"n_trajs": ns},
-            distributions=dists,
-        )
+        elif method_name == "lhs":
+            prob.driver = om.DOEDriver(
+                om.LatinHypercubeGenerator(
+                    samples=ns
+                )
+            )
+        elif method_name == "fullfactorial":
+            prob.driver = om.DOEDriver(
+                om.FullFactorialGenerator(
+                    levels=ns
+                )
+            )
+    elif method_name in ("Sobol", "Morris"):
+        # add input parameters for DoE
+        dists = []
+        for x_name, x_value in x_dict.items():
+            prob.model.add_design_var(
+                x_name, lower=x_value[0], upper=x_value[1]
+            )
+            dist = x_value[2]  # add distribution type ('unif' or 'norm')
+            dists.append(dist)
+        # setup driver
+        if method_name == "Sobol":
+            prob.driver = SalibDOEDriver(
+                sa_method_name=method_name,
+                sa_doe_options={"n_samples": ns, "calc_second_order": calc_second_order},
+                distributions=dists,
+            )
+        elif method_name == "Morris":
+            # setup driver
+            prob.driver = SalibDOEDriver(
+                sa_method_name="Morris",
+                sa_doe_options={"n_trajs": ns},
+                distributions=dists,
+            )
+    elif method_name == "custom":
+        # add input parameters for DoE
+        for x_name, x_value in x_dict.items():
+            prob.model.add_design_var(
+                x_name, lower=x_value.min(), upper=x_value.max()
+            )
+        # setup driver
+        prob.driver = custom_driver
 
     # Attach recorder to the driver
     if os.path.exists("cases.sql"):
         os.remove("cases.sql")
     prob.driver.add_recorder(om.SqliteRecorder("cases.sql"))
-    prob.driver.recording_options["includes"] = (
-        x_list + y_list
-    )  # include all variables from the problem
+    recorded_variables = x_list + y_list
+    if nested_optimization:
+        recorded_variables.append("optim_failed")
+    prob.driver.recording_options["includes"] = recorded_variables
 
     # Run problem
     prob.setup()

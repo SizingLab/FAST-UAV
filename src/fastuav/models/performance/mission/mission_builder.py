@@ -88,12 +88,16 @@ class MissionComponent(om.ExplicitComponent):
             self.add_input("mission:%s:%s:duration" % (mission_name, route_name),
                            val=np.nan,
                            units="min")
+            self.add_input("mission:%s:%s:cruise:distance" % (mission_name, route_name),
+                           val=np.nan,
+                           units="m")
 
         for propulsion_id in list(set(chain(*propulsion_id_dict.values()))):  # list of unique propulsion ids
             self.add_output("mission:%s:energy:%s" % (mission_name, propulsion_id), units="kJ")
             self.add_output("mission:%s:duration:%s" % (mission_name, propulsion_id), units="min")
         self.add_output("mission:%s:energy" % mission_name, units="kJ")
         self.add_output("mission:%s:duration" % mission_name, units="min")
+        self.add_output("mission:%s:distance" % mission_name, units="m")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="fd")
@@ -116,6 +120,9 @@ class MissionComponent(om.ExplicitComponent):
 
         outputs["mission:%s:duration" % mission_name] = sum(
             inputs["mission:%s:%s:duration" % (mission_name, route_name)] for route_name in routes_list)
+
+        outputs["mission:%s:distance" % mission_name] = sum(
+            inputs["mission:%s:%s:cruise:distance" % (mission_name, route_name)] for route_name in routes_list)
 
 
 class MissionConstraints(om.ExplicitComponent):
