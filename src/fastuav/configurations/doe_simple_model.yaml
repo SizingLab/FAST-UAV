@@ -1,0 +1,36 @@
+title: Multirotor Drone MDO with LCA
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders:
+    
+# Input and output files
+input_file: ../workdir/problem_inputs.xml
+output_file: ../workdir/problem_outputs.xml
+
+# Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
+driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
+
+# Definition of OpenMDAO model
+model:
+    lca:
+        id: fastuav.plugin.lca.multirotor
+        project: fastuav
+        database: ecoinvent 3.9_cutoff_ecoSpold02
+        functional_unit: "lifetime" # lifetime # kg.km # kg.h
+        #methods:
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
+            #- "('CML v4.8 2016 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
+            #- "('IPCC 2021 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
+            #- "('IPCC 2013 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
+            #- "('TRACI v2.1 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'water use no LT', 'water consumption potential (WCP) no LT')"
+            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'material resources: metals/minerals no LT', 'surplus ore potential (SOP) no LT')"
+        normalization: True
+        weighting: True
+        parameters: {"elec_switch_param": "eu", "battery_type": "nmc_811"}  # non-float parameters for lca are declared here
+        mission: "operational"  # mission to assess
+        postprocessing_multirotor: True
+
+
+
