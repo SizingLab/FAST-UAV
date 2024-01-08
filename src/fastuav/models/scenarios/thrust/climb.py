@@ -10,9 +10,10 @@ from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 
 
-class VerticalClimbThrust(om.ExplicitComponent):
+class MultirotorClimbThrust(om.ExplicitComponent):
     """
-    Thrust for vertical climb at desired rate of climb.
+    Thrust for a climb in multirotor mode, at desired rate of climb and climb speed
+    (i.e., the flight path is not necessarily vertical)
     """
 
     def initialize(self):
@@ -24,7 +25,7 @@ class VerticalClimbThrust(om.ExplicitComponent):
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
-        self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
+        self.add_input("data:geometry:projected_area:front", val=0.0, units="m**2")  # TODO: define front area for hybrid VTOL UAVs?
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input("mission:sizing:main_route:climb:speed:%s" % propulsion_id, val=0.0, units="m/s")
         self.add_input("mission:sizing:main_route:climb:rate:%s" % propulsion_id, val=np.nan, units="m/s")

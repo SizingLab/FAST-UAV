@@ -53,7 +53,7 @@ def _get_expected_dict():
                     "phase_id": "vertical_takeoff"
                 },
                 "climb_part": {
-                    "phase_id": "vertical_climb"
+                    "phase_id": "multirotor_climb"
                 },
                 "cruise_part": {
                     "phase_id": "fixedwing_cruise"

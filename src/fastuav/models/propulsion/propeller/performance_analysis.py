@@ -48,7 +48,10 @@ class PropellerPerformanceModel:
         Valid in any condition (hover and forward flight).
         """
         v_i = PropellerPerformanceModel.induced_velocity(F_pro, D_pro, V_inf, alpha, rho_air)
-        eta = (V_inf * np.sin(alpha) + v_i) / (W_pro / (2 * np.pi) * D_pro) * c_t / c_p
+        try:
+            eta = (V_inf * np.sin(alpha) + v_i) / (W_pro / (2 * np.pi) * D_pro) * c_t / c_p
+        except (ZeroDivisionError, ValueError):
+            eta = 0.0
         return eta
 
     @staticmethod
