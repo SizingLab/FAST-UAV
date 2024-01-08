@@ -18,7 +18,7 @@
         <lambda is_input="True">0.7</lambda>
         <tc is_input="True">0.15</tc>
         <loading>
-          <k is_input="True">1.0</k>
+          <k is_input="True">0.8</k>
         </loading>
         <sweep>
           <LE units="rad" is_input="True">0.0</LE>

@@ -107,10 +107,8 @@ class WingLoadingCruise(om.ExplicitComponent):
 class WingLoadingSelection(om.ExplicitComponent):
     """
     Wing loading selection.
-    The lowest wing loading is selected for sizing the wing.
-    This ensures that the wing is large enough for all flight conditions,
-    i.e. it provides enough lift in all circumstances.
-    This selection is achieved with an under-sizing coefficient and constraints on the wing loading.
+    This selection is achieved with an under sizing coefficient on the estimated wing loading to meet the stall
+    speed requirement.
     """
 
     def setup(self):
@@ -147,10 +145,9 @@ class WingLoadingSelection(om.ExplicitComponent):
 # class WingLoadingSelection(om.ExplicitComponent):
 #     """
 #     Wing loading selection.
-#     The lowest wing loading is selected for sizing the wing.
-#     This ensures that the wing is large enough for all flight conditions,
-#     i.e. it provides enough lift in all circumstances.
-#     This selection is achieved with an under-sizing coefficient and constraints on the wing loading.
+#     This selection is achieved with a sizing coefficient to vary the wing loading around the estimated value for
+#     best cruise performance. A constraint is added to ensure sufficient performance at low speeds (stall speed
+#     condition).
 #     """
 #
 #     def setup(self):
