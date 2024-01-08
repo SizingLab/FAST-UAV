@@ -3,7 +3,7 @@ title: Multirotor Drone MDO
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders:
     
-# Input and output files
+# Input and output temporary files
 input_file: ../workdir/problem_inputs.xml
 output_file: ../workdir/problem_outputs.xml
 
@@ -16,7 +16,7 @@ model:
         id: fastuav.scenarios.multirotor
     propulsion:
         id: fastuav.propulsion.multirotor
-        gearbox: False
+        gearbox: False  # this is an option
     geometry:
         id: fastuav.geometry.multirotor
     structures:
@@ -84,7 +84,7 @@ optimization:
         lower: 1.0
         upper: 15.0
         
-      # - name: data:propulsion:multirotor:gearbox:N_red # gearbox reduction ratio (if 'gearbox' option is true)
+      # - name: data:propulsion:multirotor:gearbox:N_red # gearbox reduction ratio (if 'gearbox' option is True)
       #   lower: 1.0
       #   upper: 20.0
         

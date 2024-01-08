@@ -822,7 +822,7 @@ def energy_breakdown_sun_plot_drone(
     sub_categories_parent = []
     for variable in variables.names():
         name_split = variable.split(":")
-        if isinstance(name_split, list) and len(name_split) == 5:
+        if isinstance(name_split, list) and len(name_split) == 5 and name_split[1] == mission_name:
             parent_name = name_split[2]
             if parent_name in categories_names and name_split[-1] == "energy":
                 variable_name = name_split[3]
