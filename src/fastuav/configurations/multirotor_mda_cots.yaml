@@ -16,7 +16,6 @@ model:
         id: fastuav.scenarios.multirotor
     propulsion:
         id: fastuav.propulsion.multirotor
-        gearbox: False
         off_the_shelf_propeller: True
     geometry:
         id: fastuav.geometry.multirotor
