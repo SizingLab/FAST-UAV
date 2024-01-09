@@ -63,14 +63,15 @@ If you use FAST-UAV as part of your work in a scientific publication, please con
 }
 
 @article{delbecq2020efficient,
-	title = {Efficient sizing and optimization of multirotor drones based on scaling laws and similarity models},
-	author = {Delbecq, Scott and Budinger, Marc and Ochotorena, Aithor and Reysset, Aur{\'e}lien and Defay, Francois},
-	journal = {Aerospace Science and Technology},
-	volume = {102},
-	doi = {10.1016/j.ast.2020.105873},
-	month = jul,
-	year = {2020},
-	pages = {105873},
+    title = {Efficient sizing and optimization of multirotor drones based on scaling laws and similarity models},
+    author = {Delbecq, Scott and Budinger, Marc and Ochotorena, Aithor and Reysset, Aur{\'e}lien and Defay, Francois},
+    journal = {Aerospace Science and Technology},
+    volume = {102},
+    doi = {10.1016/j.ast.2020.105873},
+    month = jul,
+    year = {2020},
+    pages = {105873},
+}
 ```
 
 
