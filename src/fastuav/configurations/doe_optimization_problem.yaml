@@ -1,4 +1,4 @@
-title: Multirotor Drone MDO with LCA
+title: Multirotor Drone MDO
 
 # List of folder paths where user added custom registered OpenMDAO components
 module_folders:
@@ -30,29 +30,7 @@ model:
             id: fastuav.performance.endurance.multirotor
         missions:
             id: fastuav.performance.mission
-            file_path: ../../missions/missions_multirotor_lca.yaml
-    lca:
-        id: fastuav.plugin.lca.multirotor
-        project: fastuav
-        database: ecoinvent 3.9_cutoff_ecoSpold02
-        functional_unit: "lifetime" # lifetime # kg.km # kg.h
-        #methods:  # default method is Product Environemental Footprint methods
-            #- "('EF v3.1', 'acidification', 'accumulated exceedance (AE)')"
-            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'climate change no LT', 'global warming potential (GWP1000) no LT')"
-            #- "('CML v4.8 2016 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
-            #- "('IPCC 2021 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
-            #- "('IPCC 2013 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
-            #- "('TRACI v2.1 no LT', 'climate change no LT', 'global warming potential (GWP100) no LT')"
-            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'acidification: terrestrial no LT', 'terrestrial acidification potential (TAP) no LT')"
-            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'water use no LT', 'water consumption potential (WCP) no LT')"
-            #- "('ReCiPe 2016 v1.03, midpoint (E) no LT', 'material resources: metals/minerals no LT', 'surplus ore potential (SOP) no LT')"
-        normalization: True
-        weighting: True
-        max_level_processes: 0  # evaluation at the model level only (level 0) is recommended to reduce calculation time (e.g., when running an optimization)
-        parameters: {"elec_switch_param": "eu", "battery_type": "nmc_811"}  # non-float parameters for lca are declared here       
-        mission: "operational"  # mission to assess
-        postprocessing_multirotor: False
-        analytical_derivatives: True
+            file_path: ../../missions/missions_multirotor.yaml
 
 
 # This section is needed only if optimization process is run
@@ -64,18 +42,6 @@ optimization:
       - name: data:weight:mtow:k # over estimation coefficient on the load mass
         upper: 40.0
         lower: 1.0
-        
-      #- name: mission:operational:route_1:cruise:speed
-      #  upper: 20.0
-      #  lower: 1.0
-        
-      #- name: mission:operational:route_2:cruise:speed
-      #  upper: 20.0
-      #  lower: 1.0
-        
-      #- name: mission:sizing:main_route:cruise:speed:multirotor
-      #  upper: 20.0
-      #  lower: 1.0
         
         ## PROPULSION ##
       - name: data:propulsion:multirotor:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
@@ -201,26 +167,15 @@ optimization:
         lower: 0.0
       
         ## MISSION ##
-      #- name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
-      #  lower: 0.0
-        
-      - name: mission:operational:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+      - name: mission:sizing:energy:multirotor:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
         lower: 0.0
         
     objective:
-      # ENVIRONMENTAL SCORE MINIMIZATION
-      #- name: lca:aggregation:weighted_single_score:model_per_FU
-      #  scaler: 10.0
-    
       # MASS MINIMIZATION
       - name: data:weight:mtow
         scaler: 1e-1
-      
-      # OPERATIONAL MISSION ENERGY MINIMIZATION
-      #- name: mission:operational:energy
-      #  scaler: 1e-3
 
-      # SIZING MISSION ENERGY MINIMIZATION
+      # ENERGY MINIMIZATION
       #- name: mission:sizing:energy
       #  scaler: 1e-3
         
