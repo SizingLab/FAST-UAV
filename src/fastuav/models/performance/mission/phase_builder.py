@@ -89,6 +89,8 @@ class SetFlightParameters(om.ExplicitComponent):
         elif phase_name == CLIMB_TAG:
             outputs["mission:%s:%s:climb:speed" % (mission_name, route_name)] = inputs[
                 "mission:sizing:main_route:climb:speed:%s" % propulsion_id]  # [m/s]
+            outputs["mission:%s:%s:climb:rate" % (mission_name, route_name)] = inputs[
+                "mission:sizing:main_route:climb:rate:%s" % propulsion_id]  # [m/s]
         elif phase_name == CRUISE_TAG:
             outputs["mission:%s:%s:cruise:speed" % (mission_name, route_name)] = inputs[
                 "mission:sizing:main_route:cruise:speed:%s" % propulsion_id]  # [m/s]

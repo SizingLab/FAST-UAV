@@ -48,7 +48,7 @@ def promote_and_rename(
     """
 
     # Get input and output variables names from subsystem
-    # TODO: list only promoted variables from subsubsytems \
+    # TODO: list only promoted variables from subsubsystems \
     #  (here '*uncertainty:*:mean' are non-promoted variables but still visible so have to be excluded by hand)
     var_in_names = [var[0].split(".")[-1] for var in
                     subsys.list_inputs(val=False, out_stream=None, excludes=['*uncertainty:*:mean'])]

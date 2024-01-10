@@ -19,7 +19,9 @@ class Geometry(om.Group):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_subsystem("arms", ArmsGeometry(propulsion_id=propulsion_id), promotes=["*"])
-        self.add_subsystem("body", BodyGeometry(), promotes=["*"])
+        # + Body geometry is estimated in the "Scenarios" module instead of here to avoid algebraic loop.
+        # See 'ProjectedAreasGuess' class.
+        # self.add_subsystem("body", BodyGeometry(), promotes=["*"])
 
 
 class ArmsGeometry(om.ExplicitComponent):

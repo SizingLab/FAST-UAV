@@ -16,14 +16,14 @@ from fastuav.utils.configurations_versatility import promote_and_rename
 @oad.RegisterOpenMDAOSystem("fastuav.propulsion")
 class Propulsion(om.Group):
     """
-    Group containing the fixed wing propulsion system calculations
+    Group containing the propulsion system calculations
     """
     def initialize(self):
         self.options.declare("propulsion_id",
                              default=None,
                              values=[[MR_PROPULSION], [FW_PROPULSION], [MR_PROPULSION, FW_PROPULSION]])
 
-        # TODO: declare the following options for each propulsion system
+        # TODO: declare the following options for each propulsion system (e.g. for hybrid UAVs with 2 propulsions)
         # TODO: add option to provide paths to catalogues
         self.options.declare("off_the_shelf_propeller", default=False, types=bool)
         self.options.declare("off_the_shelf_motor", default=False, types=bool)
@@ -64,12 +64,14 @@ class Propulsion(om.Group):
     def configure(self):
         for propulsion_id in self.options["propulsion_id"]:
             old_patterns_list = [":propulsion",
+                                 "mission:sizing:main_route:climb:rate",
                                  "mission:sizing:main_route:climb:speed",
                                  "mission:sizing:main_route:cruise:speed",
                                  "mission:sizing:main_route:stall:speed",
                                  "mission:sizing:payload:power",
                                  ]
             new_patterns_list = [":propulsion:%s" % propulsion_id,
+                                 "mission:sizing:main_route:climb:rate:%s" % propulsion_id,
                                  "mission:sizing:main_route:climb:speed:%s" % propulsion_id,
                                  "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
                                  "mission:sizing:main_route:stall:speed:%s" % propulsion_id,

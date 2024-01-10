@@ -542,7 +542,7 @@ def multirotor_geometry_plot(
         fig = go.Figure()
     k = len(fig.data)
 
-    A_body = variables["data:geometry:body:surface:top"].value[0]  # [m**2]
+    A_body = variables["data:geometry:projected_area:top"].value[0]  # [m**2]
     N_arms = variables["data:geometry:arms:number"].value[0]  # [-]
     arm_length = variables["data:geometry:arms:length"].value[0]  # [m]
     arm_diameter = variables["data:structures:arms:diameter:outer"].value[0]  # [m]
