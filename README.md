@@ -26,9 +26,12 @@ Currently, FAST-UAV is bundled with analytical models for multi-rotor, fixed-win
 🚀 Quick start
 -------
 
-FAST-UAV requires a version of Python higher than 3.8. The installation can be done using the `pip` command:
+FAST-UAV requires Python 3.8 or 3.9. It is recommended to install FAST-UAV in a virtual environment ([conda](https://docs.conda.io/en/latest/), [venv](https://docs.python.org/3/library/venv.html)...).
+To install FAST-UAV, run the following commands in a terminal:
 
 ```{.bash}
+conda create --name <env_name> python=<3.9
+conda activate <env_name>
 pip install fastuav
 ```
 
@@ -38,7 +41,6 @@ jupyter lab
 ```
 Jupyter lab will open automatically in your browser. Then, navigate to the `src/fastuav/notebooks` directory and start with the first tutorial notebook.
 
-**Note**: It is recommended to install FAST-UAV in a virtual environment ([conda](https://docs.conda.io/en/latest/), [venv](https://docs.python.org/3/library/venv.html)...)
 
 📚 Citation
 ------------
