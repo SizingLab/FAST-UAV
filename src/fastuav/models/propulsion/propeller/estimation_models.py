@@ -48,8 +48,8 @@ class Diameter(om.ExplicitComponent):
         self.add_input("mission:sizing:main_route:takeoff:altitude", val=0.0, units="m")
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Ct:model:static:estimated", shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Cp:model:static:estimated", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Ct:static:polynomial:estimated", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Cp:static:polynomial:estimated", shape_by_conn=True, val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:ND:takeoff", val=np.nan, units="m/s")
         self.add_output("data:propulsion:propeller:diameter:estimated", units="m")
 
@@ -61,8 +61,8 @@ class Diameter(om.ExplicitComponent):
         F_pro_to = inputs["data:propulsion:propeller:thrust:takeoff"]
         ND_to = inputs["data:propulsion:propeller:ND:takeoff"]
         beta = inputs["data:propulsion:propeller:beta:estimated"]
-        ct_model = inputs["data:propulsion:propeller:Ct:model:static:estimated"]
-        cp_model = inputs["data:propulsion:propeller:Cp:model:static:estimated"]
+        ct_model = inputs["data:propulsion:propeller:Ct:static:polynomial:estimated"]
+        cp_model = inputs["data:propulsion:propeller:Cp:static:polynomial:estimated"]
 
         altitude_takeoff = inputs["mission:sizing:main_route:takeoff:altitude"]
         dISA = inputs["mission:sizing:dISA"]
@@ -86,8 +86,8 @@ class Weight(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:propeller:diameter:estimated", val=np.nan, units="m")
-        self.add_input("data:propulsion:propeller:diameter:reference", val=np.nan, units="m")
-        self.add_input("data:weight:propulsion:propeller:mass:reference", val=np.nan, units="kg")
+        self.add_input("models:propulsion:propeller:diameter:reference", val=np.nan, units="m")
+        self.add_input("models:weight:propulsion:propeller:mass:reference", val=np.nan, units="kg")
         self.add_output("data:weight:propulsion:propeller:mass:estimated", units="kg")
 
     def setup_partials(self):
@@ -96,8 +96,8 @@ class Weight(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         Dpro = inputs["data:propulsion:propeller:diameter:estimated"]
-        Dpro_ref = inputs["data:propulsion:propeller:diameter:reference"]
-        m_pro_ref = inputs["data:weight:propulsion:propeller:mass:reference"]
+        Dpro_ref = inputs["models:propulsion:propeller:diameter:reference"]
+        m_pro_ref = inputs["models:weight:propulsion:propeller:mass:reference"]
 
         m_pro = m_pro_ref * (Dpro / Dpro_ref) ** 3  # [kg] Propeller mass
 
@@ -111,8 +111,8 @@ class FigureOfMerit(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Ct:model:static:estimated", shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Cp:model:static:estimated", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Ct:static:polynomial:estimated", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Cp:static:polynomial:estimated", shape_by_conn=True, val=np.nan, units=None)
         self.add_output("data:propulsion:propeller:FoM:estimated", units=None)
 
     def setup_partials(self):
@@ -121,8 +121,8 @@ class FigureOfMerit(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         beta = inputs["data:propulsion:propeller:beta:estimated"]
-        ct_model = inputs["data:propulsion:propeller:Ct:model:static:estimated"]
-        cp_model = inputs["data:propulsion:propeller:Cp:model:static:estimated"]
+        ct_model = inputs["data:propulsion:propeller:Ct:static:polynomial:estimated"]
+        cp_model = inputs["data:propulsion:propeller:Cp:static:polynomial:estimated"]
 
         c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_static(beta,
                                                                        ct_model=ct_model,

@@ -51,13 +51,13 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         # inputs: estimated values
         self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
         self.add_input("data:propulsion:propeller:diameter:estimated", val=np.nan, units="m")
-        self.add_input("data:propulsion:propeller:Ct:model:static:estimated",
+        self.add_input("data:propulsion:propeller:Ct:static:polynomial:estimated",
                        shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Cp:model:static:estimated",
+        self.add_input("data:propulsion:propeller:Cp:static:polynomial:estimated",
                        shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Ct:model:dynamic:estimated",
+        self.add_input("data:propulsion:propeller:Ct:dynamic:polynomial:estimated",
                        shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Cp:model:dynamic:estimated",
+        self.add_input("data:propulsion:propeller:Cp:dynamic:polynomial:estimated",
                        shape_by_conn=True, val=np.nan, units=None)
         self.add_input("data:weight:propulsion:propeller:mass:estimated", val=np.nan, units="kg")
 
@@ -65,17 +65,17 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         if self.options["off_the_shelf"]:
             self.add_output("data:propulsion:propeller:beta:catalogue", units=None)
             self.add_output("data:propulsion:propeller:diameter:catalogue", units="m")
-            self.add_output("data:propulsion:propeller:Ct:model:static:catalogue",
-                            copy_shape="data:propulsion:propeller:Ct:model:static:estimated",
+            self.add_output("data:propulsion:propeller:Ct:static:polynomial:catalogue",
+                            copy_shape="data:propulsion:propeller:Ct:static:polynomial:estimated",
                             units=None)
-            self.add_output("data:propulsion:propeller:Cp:model:static:catalogue",
-                            copy_shape="data:propulsion:propeller:Cp:model:static:estimated",
+            self.add_output("data:propulsion:propeller:Cp:static:polynomial:catalogue",
+                            copy_shape="data:propulsion:propeller:Cp:static:polynomial:estimated",
                             units=None)
-            self.add_output("data:propulsion:propeller:Ct:model:dynamic:catalogue",
-                            copy_shape="data:propulsion:propeller:Ct:model:dynamic:estimated",
+            self.add_output("data:propulsion:propeller:Ct:dynamic:polynomial:catalogue",
+                            copy_shape="data:propulsion:propeller:Ct:dynamic:polynomial:estimated",
                             units=None)
-            self.add_output("data:propulsion:propeller:Cp:model:dynamic:catalogue",
-                            copy_shape="data:propulsion:propeller:Cp:model:dynamic:estimated",
+            self.add_output("data:propulsion:propeller:Cp:dynamic:polynomial:catalogue",
+                            copy_shape="data:propulsion:propeller:Cp:dynamic:polynomial:estimated",
                             units=None)
             self.add_output("data:weight:propulsion:propeller:mass:catalogue", units="kg")
             self.add_discrete_output("data:propulsion:propeller:product_name", val='')
@@ -83,17 +83,17 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
         # outputs: estimated values if off_the_shelf is False, catalogue values else
         self.add_output("data:propulsion:propeller:beta", units=None)
         self.add_output("data:propulsion:propeller:diameter", units="m")
-        self.add_output("data:propulsion:propeller:Ct:model:static",
-                        copy_shape="data:propulsion:propeller:Ct:model:static:estimated",
+        self.add_output("data:propulsion:propeller:Ct:static:polynomial",
+                        copy_shape="data:propulsion:propeller:Ct:static:polynomial:estimated",
                         units=None)
-        self.add_output("data:propulsion:propeller:Cp:model:static",
-                        copy_shape="data:propulsion:propeller:Cp:model:static:estimated",
+        self.add_output("data:propulsion:propeller:Cp:static:polynomial",
+                        copy_shape="data:propulsion:propeller:Cp:static:polynomial:estimated",
                         units=None)
-        self.add_output("data:propulsion:propeller:Ct:model:dynamic",
-                        copy_shape="data:propulsion:propeller:Ct:model:dynamic:estimated",
+        self.add_output("data:propulsion:propeller:Ct:dynamic:polynomial",
+                        copy_shape="data:propulsion:propeller:Ct:dynamic:polynomial:estimated",
                         units=None)
-        self.add_output("data:propulsion:propeller:Cp:model:dynamic",
-                        copy_shape="data:propulsion:propeller:Cp:model:dynamic:estimated",
+        self.add_output("data:propulsion:propeller:Cp:dynamic:polynomial",
+                        copy_shape="data:propulsion:propeller:Cp:dynamic:polynomial:estimated",
                         units=None)
         self.add_output("data:weight:propulsion:propeller:mass", units="kg")
 
@@ -109,23 +109,23 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:propulsion:propeller:Ct:model:static",
-            "data:propulsion:propeller:Ct:model:static:estimated",
+            "data:propulsion:propeller:Ct:static:polynomial",
+            "data:propulsion:propeller:Ct:static:polynomial:estimated",
             val=1.0,
         )
         self.declare_partials(
-            "data:propulsion:propeller:Cp:model:static",
-            "data:propulsion:propeller:Cp:model:static:estimated",
+            "data:propulsion:propeller:Cp:static:polynomial",
+            "data:propulsion:propeller:Cp:static:polynomial:estimated",
             val=1.0,
         )
         self.declare_partials(
-            "data:propulsion:propeller:Ct:model:dynamic",
-            "data:propulsion:propeller:Ct:model:dynamic:estimated",
+            "data:propulsion:propeller:Ct:dynamic:polynomial",
+            "data:propulsion:propeller:Ct:dynamic:polynomial:estimated",
             val=1.0,
         )
         self.declare_partials(
-            "data:propulsion:propeller:Cp:model:dynamic",
-            "data:propulsion:propeller:Cp:model:dynamic:estimated",
+            "data:propulsion:propeller:Cp:dynamic:polynomial",
+            "data:propulsion:propeller:Cp:dynamic:polynomial:estimated",
             val=1.0,
         )
         self.declare_partials(
@@ -166,18 +166,18 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             outputs["data:weight:propulsion:propeller:mass"] = outputs[
                 "data:weight:propulsion:propeller:mass:catalogue"
             ] = m_pro
-            outputs["data:propulsion:propeller:Ct:model:static"] = outputs[
-                "data:propulsion:propeller:Ct:model:static:catalogue"
+            outputs["data:propulsion:propeller:Ct:static:polynomial"] = outputs[
+                "data:propulsion:propeller:Ct:static:polynomial:catalogue"
             ] = np.array([ct_static, 0])
-            outputs["data:propulsion:propeller:Cp:model:static"] = outputs[
-                "data:propulsion:propeller:Cp:model:static:catalogue"
+            outputs["data:propulsion:propeller:Cp:static:polynomial"] = outputs[
+                "data:propulsion:propeller:Cp:static:polynomial:catalogue"
             ] = np.array([cp_static, 0])
-            outputs["data:propulsion:propeller:Ct:model:dynamic"] = outputs[
-                "data:propulsion:propeller:Ct:model:dynamic:catalogue"
-            ] = inputs["data:propulsion:propeller:Ct:model:dynamic:estimated"]  # No usage of catalogue values yet
-            outputs["data:propulsion:propeller:Cp:model:dynamic"] = outputs[
-                "data:propulsion:propeller:Cp:model:dynamic:catalogue"
-            ] = inputs["data:propulsion:propeller:Cp:model:dynamic:estimated"]  # No usage of catalogue values yet
+            outputs["data:propulsion:propeller:Ct:dynamic:polynomial"] = outputs[
+                "data:propulsion:propeller:Ct:dynamic:polynomial:catalogue"
+            ] = inputs["data:propulsion:propeller:Ct:dynamic:polynomial:estimated"]  # No usage of catalogue values yet
+            outputs["data:propulsion:propeller:Cp:dynamic:polynomial"] = outputs[
+                "data:propulsion:propeller:Cp:dynamic:polynomial:catalogue"
+            ] = inputs["data:propulsion:propeller:Cp:dynamic:polynomial:estimated"]  # No usage of catalogue values yet
             discrete_outputs["data:propulsion:propeller:product_name"] = product_name
 
         # CUSTOM COMPONENTS (no change)
@@ -188,17 +188,17 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:propeller:diameter"] = inputs[
                 "data:propulsion:propeller:diameter:estimated"
             ]
-            outputs["data:propulsion:propeller:Ct:model:static"] = inputs[
-                "data:propulsion:propeller:Ct:model:static:estimated"
+            outputs["data:propulsion:propeller:Ct:static:polynomial"] = inputs[
+                "data:propulsion:propeller:Ct:static:polynomial:estimated"
             ]
-            outputs["data:propulsion:propeller:Cp:model:static"] = inputs[
-                "data:propulsion:propeller:Cp:model:static:estimated"
+            outputs["data:propulsion:propeller:Cp:static:polynomial"] = inputs[
+                "data:propulsion:propeller:Cp:static:polynomial:estimated"
             ]
-            outputs["data:propulsion:propeller:Ct:model:dynamic"] = inputs[
-                "data:propulsion:propeller:Ct:model:dynamic:estimated"
+            outputs["data:propulsion:propeller:Ct:dynamic:polynomial"] = inputs[
+                "data:propulsion:propeller:Ct:dynamic:polynomial:estimated"
             ]
-            outputs["data:propulsion:propeller:Cp:model:dynamic"] = inputs[
-                "data:propulsion:propeller:Cp:model:dynamic:estimated"
+            outputs["data:propulsion:propeller:Cp:dynamic:polynomial"] = inputs[
+                "data:propulsion:propeller:Cp:dynamic:polynomial:estimated"
             ]
             outputs["data:weight:propulsion:propeller:mass"] = inputs[
                 "data:weight:propulsion:propeller:mass:estimated"

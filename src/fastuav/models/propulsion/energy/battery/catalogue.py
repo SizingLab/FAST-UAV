@@ -65,7 +65,7 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
         self.add_input("data:propulsion:battery:cell:voltage:estimated", val=np.nan, units="V")
         self.add_input("data:propulsion:battery:voltage:estimated", val=np.nan, units="V")
         self.add_input("data:propulsion:battery:capacity:estimated", val=np.nan, units="A*s")
-        self.add_input("data:propulsion:battery:power:estimated", val=np.nan, units="W")
+        self.add_input("data:propulsion:battery:power:max:estimated", val=np.nan, units="W")
         self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
         self.add_input("data:propulsion:battery:current:max:estimated", val=np.nan, units="A")
         self.add_input("data:weight:propulsion:battery:mass:estimated", val=np.nan, units="kg")
@@ -79,7 +79,7 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             self.add_output("data:propulsion:battery:cell:voltage:catalogue", units="V")
             self.add_output("data:propulsion:battery:voltage:catalogue", units="V")
             self.add_output("data:propulsion:battery:capacity:catalogue", units="A*s")
-            self.add_output("data:propulsion:battery:power:catalogue", units="W")
+            self.add_output("data:propulsion:battery:power:max:catalogue", units="W")
             self.add_output("data:propulsion:battery:energy:catalogue", units="kJ")
             self.add_output("data:propulsion:battery:current:max:catalogue", units="A")
             self.add_output("data:weight:propulsion:battery:mass:catalogue", units="kg")
@@ -92,7 +92,7 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
         self.add_output("data:propulsion:battery:cell:voltage", units="V")
         self.add_output("data:propulsion:battery:voltage", units="V")
         self.add_output("data:propulsion:battery:capacity", units="A*s")
-        self.add_output("data:propulsion:battery:power", units="W")
+        self.add_output("data:propulsion:battery:power:max", units="W")
         self.add_output("data:propulsion:battery:energy", units="kJ")
         self.add_output("data:propulsion:battery:current:max", units="A")
         self.add_output("data:weight:propulsion:battery:mass", units="kg")
@@ -111,8 +111,8 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             val=1.0,
         )
         self.declare_partials(
-            "data:propulsion:battery:power",
-            "data:propulsion:battery:power:estimated",
+            "data:propulsion:battery:power:max",
+            "data:propulsion:battery:power:max:estimated",
             val=1.0
         )
         self.declare_partials(
@@ -201,8 +201,8 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:battery:capacity"] = outputs[
                 "data:propulsion:battery:capacity:catalogue"
             ] = C_bat
-            outputs["data:propulsion:battery:power"] = outputs[
-                "data:propulsion:battery:power:catalogue"
+            outputs["data:propulsion:battery:power:max"] = outputs[
+                "data:propulsion:battery:power:max:catalogue"
             ] = P_bat
             outputs["data:propulsion:battery:energy"] = outputs[
                 "data:propulsion:battery:energy:catalogue"
@@ -240,8 +240,8 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:battery:capacity"] = inputs[
                 "data:propulsion:battery:capacity:estimated"
             ]
-            outputs["data:propulsion:battery:power"] = inputs[
-                "data:propulsion:battery:power:estimated"
+            outputs["data:propulsion:battery:power:max"] = inputs[
+                "data:propulsion:battery:power:max:estimated"
             ]
             outputs["data:propulsion:battery:energy"] = inputs[
                 "data:propulsion:battery:energy:estimated"

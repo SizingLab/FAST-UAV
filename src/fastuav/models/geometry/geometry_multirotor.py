@@ -87,12 +87,12 @@ class ProjectedAreasGuess(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_input("data:geometry:body:surface:top:reference", val=np.nan, units="m**2")
-        self.add_input("data:geometry:body:surface:front:reference", val=np.nan, units="m**2")
-        self.add_input("data:weight:mtow:reference", val=np.nan, units="kg")
-        self.add_input("data:geometry:projected_area:top:k", val=1.0, units=None)
-        self.add_input("data:geometry:projected_area:front:k", val=1.0, units=None)
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("models:geometry:body:surface:top:reference", val=np.nan, units="m**2")
+        self.add_input("models:geometry:body:surface:front:reference", val=np.nan, units="m**2")
+        self.add_input("models:weight:mtow:reference", val=np.nan, units="kg")
+        self.add_input("optimization:variables:geometry:projected_area:top:k", val=1.0, units=None)
+        self.add_input("optimization:variables:geometry:projected_area:front:k", val=1.0, units=None)
         self.add_output("data:geometry:projected_area:top", units="m**2")
         self.add_output("data:geometry:projected_area:front", units="m**2")
 
@@ -100,12 +100,12 @@ class ProjectedAreasGuess(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        m_uav_guess = inputs["data:weight:mtow:guess"]
-        S_top_ref = inputs["data:geometry:body:surface:top:reference"]
-        S_front_ref = inputs["data:geometry:body:surface:front:reference"]
-        MTOW_ref = inputs["data:weight:mtow:reference"]
-        k_top = inputs["data:geometry:projected_area:top:k"]
-        k_front = inputs["data:geometry:projected_area:front:k"]
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
+        S_top_ref = inputs["models:geometry:body:surface:top:reference"]
+        S_front_ref = inputs["models:geometry:body:surface:front:reference"]
+        MTOW_ref = inputs["models:weight:mtow:reference"]
+        k_top = inputs["optimization:variables:geometry:projected_area:top:k"]
+        k_front = inputs["optimization:variables:geometry:projected_area:front:k"]
 
         S_top = k_top * S_top_ref * (m_uav_guess / MTOW_ref) ** (
             2 / 3

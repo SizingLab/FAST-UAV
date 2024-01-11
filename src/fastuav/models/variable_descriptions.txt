@@ -8,26 +8,26 @@ data:weight:propulsion:multirotor:esc:mass:catalogue || Multirotor ESC mass (cat
 data:propulsion:multirotor:esc:voltage || Multirotor ESC voltage
 data:propulsion:multirotor:esc:voltage:estimated || Multirotor ESC voltage (estimated value)
 data:propulsion:multirotor:esc:voltage:catalogue || Multirotor ESC voltage (catalogue value)
-data:propulsion:multirotor:esc:constraints:voltage:battery || Constraint on multirotor ESC voltage vs. battery
-data:propulsion:multirotor:esc:constraints:power:climb || Constraint on multirotor ESC power (climb)
-data:propulsion:multirotor:esc:constraints:power:cruise || Constraint on multirotor ESC power (cruise)
-data:propulsion:multirotor:esc:constraints:power:takeoff || Constraint on multirotor ESC power (takeoff)
+optimization:constraints:propulsion:multirotor:esc:voltage:battery || Constraint on multirotor ESC voltage vs. battery
+optimization:constraints:propulsion:multirotor:esc:power:climb || Constraint on multirotor ESC power (climb)
+optimization:constraints:propulsion:multirotor:esc:power:cruise || Constraint on multirotor ESC power (cruise)
+optimization:constraints:propulsion:multirotor:esc:power:takeoff || Constraint on multirotor ESC power (takeoff)
 data:propulsion:multirotor:esc:power:climb || Multirotor ESC power (climb)
 data:propulsion:multirotor:esc:power:cruise || Multirotor ESC power (cruise)
 data:propulsion:multirotor:esc:power:hover || Multirotor ESC power (hover)
 data:propulsion:multirotor:esc:power:takeoff || Multirotor ESC power (takeoff)
-data:propulsion:multirotor:esc:power || Multirotor ESC max. power
-data:propulsion:multirotor:esc:power:estimated || Multirotor ESC max. power (estimated value)
-data:propulsion:multirotor:esc:power:catalogue || Multirotor ESC max. power (catalogue value)
-data:weight:propulsion:multirotor:esc:mass:reference || Multirotor ESC mass reference for scaling law
-data:propulsion:multirotor:esc:power:reference || Multirotor ESC max. power reference for scaling law
-data:propulsion:multirotor:esc:voltage:reference || Multirotor ESC voltage reference for scaling law
-data:propulsion:multirotor:esc:efficiency:reference || Multirotor ESC efficiency reference
-data:propulsion:multirotor:esc:power:k || Sizing coefficient on multirotor ESC power
-data:propulsion:multirotor:esc:voltage:k || Sizing coefficient on multirotor ESC voltage
-data:propulsion:multirotor:esc:voltage:tol || Permitted deviation from estimation model to size ESC voltage
-data:propulsion:multirotor:esc:constraints:voltage:max || Constraint to ensure ESC voltage estimate is within model bounds
-data:propulsion:multirotor:esc:constraints:voltage:min || Constraint to ensure ESC voltage estimate is within model bounds
+data:propulsion:multirotor:esc:power:max || Multirotor ESC max. power
+data:propulsion:multirotor:esc:power:max:estimated || Multirotor ESC max. power (estimated value)
+data:propulsion:multirotor:esc:power:max:catalogue || Multirotor ESC max. power (catalogue value)
+models:weight:propulsion:multirotor:esc:mass:reference || Multirotor ESC mass reference for scaling law
+models:propulsion:multirotor:esc:power:reference || Multirotor ESC max. power reference for scaling law
+models:propulsion:multirotor:esc:voltage:reference || Multirotor ESC voltage reference for scaling law
+models:propulsion:multirotor:esc:efficiency:reference || Multirotor ESC efficiency reference
+optimization:variables:propulsion:multirotor:esc:power:k || Sizing coefficient on multirotor ESC power
+optimization:variables:propulsion:multirotor:esc:voltage:k || Sizing coefficient on multirotor ESC voltage
+models:propulsion:multirotor:esc:voltage:tol || Permitted deviation from estimation model to size ESC voltage
+optimization:constraints:propulsion:multirotor:esc:voltage:max || Constraint to ensure ESC voltage estimate is within model bounds
+optimization:constraints:propulsion:multirotor:esc:voltage:min || Constraint to ensure ESC voltage estimate is within model bounds
 
 # Fixed-wing system
 data:propulsion:fixedwing:esc:efficiency || Fixed-wing ESC efficiency
@@ -38,26 +38,26 @@ data:weight:propulsion:fixedwing:esc:mass:catalogue || Fixed-wing ESC mass (cata
 data:propulsion:fixedwing:esc:voltage || Fixed-wing ESC voltage
 data:propulsion:fixedwing:esc:voltage:estimated || Fixed-wing ESC voltage (estimated value)
 data:propulsion:fixedwing:esc:voltage:catalogue || Fixed-wing ESC voltage (catalogue value)
-data:propulsion:fixedwing:esc:constraints:voltage:battery || Constraint on fixed-wing ESC voltage vs. battery
-data:propulsion:fixedwing:esc:constraints:power:climb || Constraint on fixed-wing ESC power (climb)
-data:propulsion:fixedwing:esc:constraints:power:cruise || Constraint on fixed-wing ESC power (cruise)
-data:propulsion:fixedwing:esc:constraints:power:takeoff || Constraint on fixed-wing ESC power (takeoff)
+optimization:constraints:propulsion:fixedwing:esc:voltage:battery || Constraint on fixed-wing ESC voltage vs. battery
+optimization:constraints:propulsion:fixedwing:esc:power:climb || Constraint on fixed-wing ESC power (climb)
+optimization:constraints:propulsion:fixedwing:esc:power:cruise || Constraint on fixed-wing ESC power (cruise)
+optimization:constraints:propulsion:fixedwing:esc:power:takeoff || Constraint on fixed-wing ESC power (takeoff)
 data:propulsion:fixedwing:esc:power:climb || Fixed-wing ESC power (climb)
 data:propulsion:fixedwing:esc:power:cruise || Fixed-wing ESC power (cruise)
 data:propulsion:fixedwing:esc:power:hover || Fixed-wing ESC power (hover)
 data:propulsion:fixedwing:esc:power:takeoff || Fixed-wing ESC power (takeoff)
-data:propulsion:fixedwing:esc:power || Fixed-wing ESC max. power
-data:propulsion:fixedwing:esc:power:estimated || Fixed-wing ESC max. power (estimated value)
-data:propulsion:fixedwing:esc:power:catalogue || Fixed-wing ESC max. power (catalogue value)
-data:weight:propulsion:fixedwing:esc:mass:reference || Fixed-wing ESC mass reference for scaling law
-data:propulsion:fixedwing:esc:power:reference || Fixed-wing ESC max. power reference for scaling law
-data:propulsion:fixedwing:esc:voltage:reference || Fixed-wing ESC voltage reference for scaling law
-data:propulsion:fixedwing:esc:efficiency:reference || Fixed-wing ESC efficiency reference
-data:propulsion:fixedwing:esc:power:k || Sizing coefficient on fixed-wing ESC power
-data:propulsion:fixedwing:esc:voltage:k || Sizing coefficient on fixed-wing ESC voltage
-data:propulsion:fixedwing:esc:voltage:tol || Permitted deviation from estimation model to size ESC voltage
-data:propulsion:fixedwing:esc:constraints:voltage:max || Constraint to ensure ESC voltage estimate is within model bounds
-data:propulsion:fixedwing:esc:constraints:voltage:min || Constraint to ensure ESC voltage estimate is within model bounds
+data:propulsion:fixedwing:esc:power:max || Fixed-wing ESC max. power
+data:propulsion:fixedwing:esc:power:max:estimated || Fixed-wing ESC max. power (estimated value)
+data:propulsion:fixedwing:esc:power:max:catalogue || Fixed-wing ESC max. power (catalogue value)
+models:weight:propulsion:fixedwing:esc:mass:reference || Fixed-wing ESC mass reference for scaling law
+models:propulsion:fixedwing:esc:power:reference || Fixed-wing ESC max. power reference for scaling law
+models:propulsion:fixedwing:esc:voltage:reference || Fixed-wing ESC voltage reference for scaling law
+models:propulsion:fixedwing:esc:efficiency:reference || Fixed-wing ESC efficiency reference
+optimization:variables:propulsion:fixedwing:esc:power:k || Sizing coefficient on fixed-wing ESC power
+optimization:variables:propulsion:fixedwing:esc:voltage:k || Sizing coefficient on fixed-wing ESC voltage
+models:propulsion:fixedwing:esc:voltage:tol || Permitted deviation from estimation model to size ESC voltage
+optimization:constraints:propulsion:fixedwing:esc:voltage:max || Constraint to ensure ESC voltage estimate is within model bounds
+optimization:constraints:propulsion:fixedwing:esc:voltage:min || Constraint to ensure ESC voltage estimate is within model bounds
 
 ## Battery
 # Multirotor system
@@ -66,12 +66,12 @@ data:propulsion:multirotor:battery:capacity:estimated || Multirotor battery capa
 data:propulsion:multirotor:battery:capacity:catalogue || Multirotor battery capacity (catalogue value)
 data:propulsion:multirotor:battery:DoD:max || Multirotor battery depth of discharge
 data:propulsion:multirotor:battery:DoD:max:estimated || Multirotor battery depth of discharge (estimated value)
-data:propulsion:multirotor:battery:DoD:max:reference || Multirotor battery depth of discharge reference
+models:propulsion:multirotor:battery:DoD:max:reference || Multirotor battery depth of discharge reference
 data:propulsion:multirotor:battery:energy || Multirotor battery energy
 data:propulsion:multirotor:battery:energy:estimated || Multirotor battery energy (estimated value)
 data:propulsion:multirotor:battery:energy:catalogue || Multirotor battery energy (catalogue value)
-data:propulsion:multirotor:battery:energy:reference || Multirotor battery energy reference for scaling law
-data:propulsion:multirotor:battery:energy:k || Sizing coefficient on multirotor battery energy
+models:propulsion:multirotor:battery:energy:reference || Multirotor battery energy reference for scaling law
+optimization:variables:propulsion:multirotor:battery:energy:k || Sizing coefficient on multirotor battery energy
 data:weight:propulsion:multirotor:battery:mass || Multirotor battery mass
 data:weight:propulsion:multirotor:battery:mass:estimated || Multirotor battery mass (estimated value)
 data:weight:propulsion:multirotor:battery:mass:catalogue || Multirotor battery mass (catalogue value)
@@ -93,38 +93,37 @@ data:propulsion:multirotor:battery:cell:number:series:catalogue || Cell number i
 data:propulsion:multirotor:battery:cell:voltage || Voltage of one cell for multirotor battery
 data:propulsion:multirotor:battery:cell:voltage:estimated || Voltage of one cell for multirotor battery (estimated value)
 data:propulsion:multirotor:battery:cell:voltage:catalogue || Voltage of one cell for multirotor battery (catalogue value)
-mission:sizing:constraints:energy || Constraint on multirotor battery energy to meet complete sizing mission
-data:propulsion:multirotor:battery:constraints:power:climb || Constraint on multirotor battery power (climb)
-data:propulsion:multirotor:battery:constraints:power:cruise || Constraint on multirotor battery power (cruise)
-data:propulsion:multirotor:battery:constraints:power:takeoff || Constraint on multirotor battery power (takeoff)
-data:propulsion:multirotor:battery:constraints:voltage:climb || Constraint on multirotor battery voltage (climb)
-data:propulsion:multirotor:battery:constraints:voltage:cruise || Constraint on multirotor battery voltage (cruise)
-data:propulsion:multirotor:battery:constraints:voltage:takeoff || Constraint on multirotor battery voltage (takeoff)
+optimization:constraints:propulsion:multirotor:battery:power:climb || Constraint on multirotor battery power (climb)
+optimization:constraints:propulsion:multirotor:battery:power:cruise || Constraint on multirotor battery power (cruise)
+optimization:constraints:propulsion:multirotor:battery:power:takeoff || Constraint on multirotor battery power (takeoff)
+optimization:constraints:propulsion:multirotor:battery:voltage:climb || Constraint on multirotor battery voltage (climb)
+optimization:constraints:propulsion:multirotor:battery:voltage:cruise || Constraint on multirotor battery voltage (cruise)
+optimization:constraints:propulsion:multirotor:battery:voltage:takeoff || Constraint on multirotor battery voltage (takeoff)
 data:propulsion:multirotor:battery:current:max || Multirotor battery max. current
 data:propulsion:multirotor:battery:current:max:estimated || Multirotor battery max. current (estimated value)
 data:propulsion:multirotor:battery:current:max:catalogue || Multirotor battery max. current (catalogue value)
-data:propulsion:multirotor:battery:capacity:reference || Multirotor battery capacity reference for scaling law
-data:weight:propulsion:multirotor:battery:mass:reference || Multirotor battery mass reference for scaling law
-data:propulsion:multirotor:battery:voltage:reference || Multirotor battery voltage reference for scaling law
-data:propulsion:multirotor:battery:volume:reference || Multirotor battery volume reference for scaling law
-data:propulsion:multirotor:battery:current:max:reference || Multirotor battery max. current reference for scaling law
-data:propulsion:multirotor:battery:capacity:k || Sizing coefficient on multirotor battery mass
-data:propulsion:multirotor:battery:voltage:k || Sizing coefficient on multirotor battery voltage
+models:propulsion:multirotor:battery:capacity:reference || Multirotor battery capacity reference for scaling law
+models:weight:propulsion:multirotor:battery:mass:reference || Multirotor battery mass reference for scaling law
+models:propulsion:multirotor:battery:voltage:reference || Multirotor battery voltage reference for scaling law
+models:propulsion:multirotor:battery:volume:reference || Multirotor battery volume reference for scaling law
+models:propulsion:multirotor:battery:current:max:reference || Multirotor battery max. current reference for scaling law
+optimization:variables:propulsion:multirotor:battery:capacity:k || Sizing coefficient on multirotor battery mass
+optimization:variables:propulsion:multirotor:battery:voltage:k || Sizing coefficient on multirotor battery voltage
 data:propulsion:multirotor:battery:current:climb || Multirotor battery current (climb)
 data:propulsion:multirotor:battery:current:cruise || Multirotor battery current (cruise)
 data:propulsion:multirotor:battery:current:hover || Multirotor battery current (hover)
 data:propulsion:multirotor:battery:current:takeoff || Multirotor battery current (takeoff)
-data:propulsion:multirotor:battery:constraints:voltage:consistency || Consistency constraint on multirotor battery voltage
-data:propulsion:multirotor:battery:power || Multirotor battery power
-data:propulsion:multirotor:battery:power:estimated || Multirotor battery power (estimated value)
-data:propulsion:multirotor:battery:power:catalogue || Multirotor battery power (catalogue value)
+optimization:constraints:propulsion:multirotor:battery:voltage:consistency || Consistency constraint on multirotor battery voltage
+data:propulsion:multirotor:battery:power:max|| Multirotor battery max. power
+data:propulsion:multirotor:battery:power:max:estimated || Multirotor battery max. power (estimated value)
+data:propulsion:multirotor:battery:power:max:catalogue || Multirotor battery max. power (catalogue value)
 data:propulsion:multirotor:battery:power:climb || Multirotor battery power (climb)
 data:propulsion:multirotor:battery:power:cruise || Multirotor battery power (cruise)
 data:propulsion:multirotor:battery:power:hover || Multirotor battery power (hover)
 data:propulsion:multirotor:battery:power:takeoff || Multirotor battery power (takeoff)
-data:propulsion:multirotor:battery:voltage:tol || Permitted deviation from estimation model to size battery voltage
-data:propulsion:multirotor:battery:constraints:voltage:max || Constraint to ensure battery voltage estimate is within model bounds
-data:propulsion:multirotor:battery:constraints:voltage:min || Constraint to ensure battery voltage estimate is within model bounds
+models:propulsion:multirotor:battery:voltage:tol || Permitted deviation from estimation model to size battery voltage
+optimization:constraints:propulsion:multirotor:battery:voltage:max || Constraint to ensure battery voltage estimate is within model bounds
+optimization:constraints:propulsion:multirotor:battery:voltage:min || Constraint to ensure battery voltage estimate is within model bounds
 
 # Fixed-wing system
 data:propulsion:fixedwing:battery:capacity || Fixed-wing battery capacity
@@ -132,12 +131,12 @@ data:propulsion:fixedwing:battery:capacity:estimated || Fixed-wing battery capac
 data:propulsion:fixedwing:battery:capacity:catalogue || Fixed-wing battery capacity (catalogue value)
 data:propulsion:fixedwing:battery:DoD:max || Fixed-wing battery depth of discharge
 data:propulsion:fixedwing:battery:DoD:max:estimated || Fixed-wing battery depth of discharge (estimated value)
-data:propulsion:fixedwing:battery:DoD:max:reference || Fixed-wing battery depth of discharge reference
+models:propulsion:fixedwing:battery:DoD:max:reference || Fixed-wing battery depth of discharge reference
 data:propulsion:fixedwing:battery:energy || Fixed-wing battery energy
 data:propulsion:fixedwing:battery:energy:estimated || Fixed-wing battery energy (estimated value)
 data:propulsion:fixedwing:battery:energy:catalogue || Fixed-wing battery energy (catalogue value)
-data:propulsion:fixedwing:battery:energy:reference || Fixed-wing battery energy reference for scaling law
-data:propulsion:fixedwing:battery:energy:k || Sizing coefficient on fixed-wing battery energy
+models:propulsion:fixedwing:battery:energy:reference || Fixed-wing battery energy reference for scaling law
+optimization:variables:propulsion:fixedwing:battery:energy:k || Sizing coefficient on fixed-wing battery energy
 data:weight:propulsion:fixedwing:battery:mass || Fixed-wing battery mass
 data:weight:propulsion:fixedwing:battery:mass:estimated || Fixed-wing battery mass (estimated value)
 data:weight:propulsion:fixedwing:battery:mass:catalogue || Fixed-wing battery mass (catalogue value)
@@ -159,38 +158,37 @@ data:propulsion:fixedwing:battery:cell:number:series:catalogue || Cell number in
 data:propulsion:fixedwing:battery:cell:voltage || Voltage of one cell for fixed-wing battery
 data:propulsion:fixedwing:battery:cell:voltage:estimated || Voltage of one cell for fixed-wing battery (estimated value)
 data:propulsion:fixedwing:battery:cell:voltage:catalogue || Voltage of one cell for fixed-wing battery (catalogue value)
-mission:sizing:constraints:energy || Constraint on fixed-wing battery energy to meet complete sizing mission
-data:propulsion:fixedwing:battery:constraints:power:climb || Constraint on fixed-wing battery power (climb)
-data:propulsion:fixedwing:battery:constraints:power:cruise || Constraint on fixed-wing battery power (cruise)
-data:propulsion:fixedwing:battery:constraints:power:takeoff || Constraint on fixed-wing battery power (takeoff)
-data:propulsion:fixedwing:battery:constraints:voltage:climb || Constraint on fixed-wing battery voltage (climb)
-data:propulsion:fixedwing:battery:constraints:voltage:cruise || Constraint on fixed-wing battery voltage (cruise)
-data:propulsion:fixedwing:battery:constraints:voltage:takeoff || Constraint on fixed-wing battery voltage (takeoff)
+optimization:constraints:propulsion:fixedwing:battery:power:climb || Constraint on fixed-wing battery power (climb)
+optimization:constraints:propulsion:fixedwing:battery:power:cruise || Constraint on fixed-wing battery power (cruise)
+optimization:constraints:propulsion:fixedwing:battery:power:takeoff || Constraint on fixed-wing battery power (takeoff)
+optimization:constraints:propulsion:fixedwing:battery:voltage:climb || Constraint on fixed-wing battery voltage (climb)
+optimization:constraints:propulsion:fixedwing:battery:voltage:cruise || Constraint on fixed-wing battery voltage (cruise)
+optimization:constraints:propulsion:fixedwing:battery:voltage:takeoff || Constraint on fixed-wing battery voltage (takeoff)
 data:propulsion:fixedwing:battery:current:max || Fixed-wing battery max. current
 data:propulsion:fixedwing:battery:current:max:estimated || Fixed-wing battery max. current (estimated value)
 data:propulsion:fixedwing:battery:current:max:catalogue || Fixed-wing battery max. current (catalogue value)
-data:propulsion:fixedwing:battery:capacity:reference || Fixed-wing battery capacity reference for scaling law
-data:weight:propulsion:fixedwing:battery:mass:reference || Fixed-wing battery mass reference for scaling law
-data:propulsion:fixedwing:battery:voltage:reference || Fixed-wing battery voltage reference for scaling law
-data:propulsion:fixedwing:battery:volume:reference || Fixed-wing battery volume reference for scaling law
-data:propulsion:fixedwing:battery:current:max:reference || Fixed-wing battery max. current reference for scaling law
-data:propulsion:fixedwing:battery:capacity:k || Sizing coefficient on fixed-wing battery mass
-data:propulsion:fixedwing:battery:voltage:k || Sizing coefficient on fixed-wing battery voltage
+models:propulsion:fixedwing:battery:capacity:reference || Fixed-wing battery capacity reference for scaling law
+models:weight:propulsion:fixedwing:battery:mass:reference || Fixed-wing battery mass reference for scaling law
+models:propulsion:fixedwing:battery:voltage:reference || Fixed-wing battery voltage reference for scaling law
+models:propulsion:fixedwing:battery:volume:reference || Fixed-wing battery volume reference for scaling law
+models:propulsion:fixedwing:battery:current:max:reference || Fixed-wing battery max. current reference for scaling law
+optimization:variables:propulsion:fixedwing:battery:capacity:k || Sizing coefficient on fixed-wing battery mass
+optimization:variables:propulsion:fixedwing:battery:voltage:k || Sizing coefficient on fixed-wing battery voltage
 data:propulsion:fixedwing:battery:current:climb || Fixed-wing battery current (climb)
 data:propulsion:fixedwing:battery:current:cruise || Fixed-wing battery current (cruise)
 data:propulsion:fixedwing:battery:current:hover || Fixed-wing battery current (hover)
 data:propulsion:fixedwing:battery:current:takeoff || Fixed-wing battery current (takeoff)
-data:propulsion:fixedwing:battery:constraints:voltage:consistency || Consistency constraint on fixed-wing battery voltage
-data:propulsion:fixedwing:battery:power || Fixed-wing battery power
-data:propulsion:fixedwing:battery:power:estimated || Fixed-wing battery power (estimated value)
-data:propulsion:fixedwing:battery:power:catalogue || Fixed-wing battery power (catalogue value)
+optimization:constraints:propulsion:fixedwing:battery:voltage:consistency || Consistency constraint on fixed-wing battery voltage
+data:propulsion:fixedwing:battery:power:max || Fixed-wing battery power
+data:propulsion:fixedwing:battery:power:max:estimated || Fixed-wing battery power (estimated value)
+data:propulsion:fixedwing:battery:power:max:catalogue || Fixed-wing battery power (catalogue value)
 data:propulsion:fixedwing:battery:power:climb || Fixed-wing battery power (climb)
 data:propulsion:fixedwing:battery:power:cruise || Fixed-wing battery power (cruise)
 data:propulsion:fixedwing:battery:power:hover || Fixed-wing battery power (hover)
 data:propulsion:fixedwing:battery:power:takeoff || Fixed-wing battery power (takeoff)
-data:propulsion:fixedwing:battery:voltage:tol || Permitted deviation from estimation model to size battery voltage
-data:propulsion:fixedwing:battery:constraints:voltage:max || Constraint to ensure battery voltage estimate is within model bounds
-data:propulsion:fixedwing:battery:constraints:voltage:min || Constraint to ensure battery voltage estimate is within model bounds
+models:propulsion:fixedwing:battery:voltage:tol || Permitted deviation from estimation model to size battery voltage
+optimization:constraints:propulsion:fixedwing:battery:voltage:max || Constraint to ensure battery voltage estimate is within model bounds
+optimization:constraints:propulsion:fixedwing:battery:voltage:min || Constraint to ensure battery voltage estimate is within model bounds
 
 ## Gearbox
 # Multirotor
@@ -222,13 +220,13 @@ data:propulsion:multirotor:motor:power:climb || Multirotor motor power (climb)
 data:propulsion:multirotor:motor:power:cruise || Multirotor motor power (cruise)
 data:propulsion:multirotor:motor:power:hover || Multirotor motor power (hover)
 data:propulsion:multirotor:motor:power:takeoff || Multirotor motor power (takeoff)
-data:propulsion:multirotor:motor:length:reference || Multirotor motor length reference for scaling law
-data:weight:propulsion:multirotor:motor:mass:reference || Multirotor motor mass reference for scaling law
-data:propulsion:multirotor:motor:resistance:reference || Multirotor motor resistance reference for scaling law
-data:propulsion:multirotor:motor:torque:coefficient:reference || Multirotor motor torque coefficient reference for scaling law
-data:propulsion:multirotor:motor:torque:friction:reference || Multirotor motor friction torque reference for scaling law
-data:propulsion:multirotor:motor:torque:max:reference || Multirotor motor max. torque reference for scaling law
-data:propulsion:multirotor:motor:torque:nominal:reference || Multirotor motor nominal torque reference for scaling law
+models:propulsion:multirotor:motor:length:reference || Multirotor motor length reference for scaling law
+models:weight:propulsion:multirotor:motor:mass:reference || Multirotor motor mass reference for scaling law
+models:propulsion:multirotor:motor:resistance:reference || Multirotor motor resistance reference for scaling law
+models:propulsion:multirotor:motor:torque:coefficient:reference || Multirotor motor torque coefficient reference for scaling law
+models:propulsion:multirotor:motor:torque:friction:reference || Multirotor motor friction torque reference for scaling law
+models:propulsion:multirotor:motor:torque:max:reference || Multirotor motor max. torque reference for scaling law
+models:propulsion:multirotor:motor:torque:nominal:reference || Multirotor motor nominal torque reference for scaling law
 data:propulsion:multirotor:motor:torque:climb || Multirotor motor torque (climb)
 data:propulsion:multirotor:motor:torque:cruise || Multirotor motor torque (cruise)
 data:propulsion:multirotor:motor:torque:friction || Multirotor motor friction torque
@@ -246,23 +244,23 @@ data:propulsion:multirotor:motor:voltage:climb || Multirotor motor voltage (clim
 data:propulsion:multirotor:motor:voltage:cruise || Multirotor motor voltage (cruise)
 data:propulsion:multirotor:motor:voltage:hover || Multirotor motor voltage (hover)
 data:propulsion:multirotor:motor:voltage:takeoff || Multirotor motor voltage (takeoff)
-data:propulsion:multirotor:motor:constraints:torque:climb || Constraint on multirotor motor torque (climb)
-data:propulsion:multirotor:motor:constraints:torque:cruise || Constraint on multirotor motor torque (cruise)
-data:propulsion:multirotor:motor:constraints:torque:takeoff || Constraint on multirotor motor torque (takeoff)
-data:propulsion:multirotor:motor:constraints:torque:hover || Constraint on multirotor motor torque (hover)
-data:propulsion:multirotor:motor:speed:k || Sizing coefficient of multirotor motor speed
-data:propulsion:multirotor:motor:torque:k || Sizing coefficient on multirotor motor torque
+optimization:constraints:propulsion:multirotor:motor:torque:climb || Constraint on multirotor motor torque (climb)
+optimization:constraints:propulsion:multirotor:motor:torque:cruise || Constraint on multirotor motor torque (cruise)
+optimization:constraints:propulsion:multirotor:motor:torque:takeoff || Constraint on multirotor motor torque (takeoff)
+optimization:constraints:propulsion:multirotor:motor:torque:hover || Constraint on multirotor motor torque (hover)
+optimization:variables:propulsion:multirotor:motor:speed:k || Sizing coefficient of multirotor motor speed
+optimization:variables:propulsion:multirotor:motor:torque:k || Sizing coefficient on multirotor motor torque
 data:propulsion:multirotor:motor:efficiency:climb || Multirotor motor efficiency (climb)
 data:propulsion:multirotor:motor:efficiency:cruise || Multirotor motor efficiency (cruise)
 data:propulsion:multirotor:motor:efficiency:hover || Multirotor motor efficiency (hover)
 data:propulsion:multirotor:motor:efficiency:takeoff || Multirotor motor efficiency (takeoff)
 data:propulsion:multirotor:motor:speed:constant || Multirotor motor speed constant
 data:propulsion:multirotor:motor:speed:constant:estimated || Multirotor motor speed constant (estimated value)
-data:propulsion:multirotor:motor:speed:constant:estimated || Multirotor motor speed constant (catalogue value)
-data:propulsion:multirotor:motor:speed:constant:reference || Multirotor motor speed constant reference for scaling law
-data:propulsion:multirotor:motor:speed:constant:tol || Permitted deviation from estimation model to size motor speed constant
-data:propulsion:multirotor:motor:constraints:speed:constant:max || Constraint to ensure speed constant estimate is within model bounds
-data:propulsion:multirotor:motor:constraints:speed:constant:min || Constraint to ensure speed constant estimate is within model bounds
+data:propulsion:multirotor:motor:speed:constant:catalogue || Multirotor motor speed constant (catalogue value)
+models:propulsion:multirotor:motor:speed:constant:reference || Multirotor motor speed constant reference for scaling law
+models:propulsion:multirotor:motor:speed:constant:tol || Permitted deviation from estimation model to size motor speed constant
+optimization:constraints:propulsion:multirotor:motor:speed:constant:max || Constraint to ensure speed constant estimate is within model bounds
+optimization:constraints:propulsion:multirotor:motor:speed:constant:min || Constraint to ensure speed constant estimate is within model bounds
 data:propulsion:multirotor:motor:speed:cruise || Multirotor motor rotation speed (cruise)
 data:propulsion:multirotor:motor:speed:climb || Multirotor motor rotation speed (climb)
 data:propulsion:multirotor:motor:speed:hover || Multirotor motor rotation speed (hover)
@@ -287,13 +285,13 @@ data:propulsion:fixedwing:motor:power:climb || Fixed-wing motor power (climb)
 data:propulsion:fixedwing:motor:power:cruise || Fixed-wing motor power (cruise)
 data:propulsion:fixedwing:motor:power:hover || Fixed-wing motor power (hover)
 data:propulsion:fixedwing:motor:power:takeoff || Fixed-wing motor power (takeoff)
-data:propulsion:fixedwing:motor:length:reference || Fixed-wing motor length reference for scaling law
-data:weight:propulsion:fixedwing:motor:mass:reference || Fixed-wing motor mass reference for scaling law
-data:propulsion:fixedwing:motor:resistance:reference || Fixed-wing motor resistance reference for scaling law
-data:propulsion:fixedwing:motor:torque:coefficient:reference || Fixed-wing motor torque coefficient reference for scaling law
-data:propulsion:fixedwing:motor:torque:friction:reference || Fixed-wing motor friction torque reference for scaling law
-data:propulsion:fixedwing:motor:torque:max:reference || Fixed-wing motor max. torque reference for scaling law
-data:propulsion:fixedwing:motor:torque:nominal:reference || Fixed-wing motor nominal torque reference for scaling law
+models:propulsion:fixedwing:motor:length:reference || Fixed-wing motor length reference for scaling law
+models:weight:propulsion:fixedwing:motor:mass:reference || Fixed-wing motor mass reference for scaling law
+models:propulsion:fixedwing:motor:resistance:reference || Fixed-wing motor resistance reference for scaling law
+models:propulsion:fixedwing:motor:torque:coefficient:reference || Fixed-wing motor torque coefficient reference for scaling law
+models:propulsion:fixedwing:motor:torque:friction:reference || Fixed-wing motor friction torque reference for scaling law
+models:propulsion:fixedwing:motor:torque:max:reference || Fixed-wing motor max. torque reference for scaling law
+models:propulsion:fixedwing:motor:torque:nominal:reference || Fixed-wing motor nominal torque reference for scaling law
 data:propulsion:fixedwing:motor:torque:climb || Fixed-wing motor torque (climb)
 data:propulsion:fixedwing:motor:torque:cruise || Fixed-wing motor torque (cruise)
 data:propulsion:fixedwing:motor:torque:friction || Fixed-wing motor friction torque
@@ -311,12 +309,12 @@ data:propulsion:fixedwing:motor:voltage:climb || Fixed-wing motor voltage (climb
 data:propulsion:fixedwing:motor:voltage:cruise || Fixed-wing motor voltage (cruise)
 data:propulsion:fixedwing:motor:voltage:hover || Fixed-wing motor voltage (hover)
 data:propulsion:fixedwing:motor:voltage:takeoff || Fixed-wing motor voltage (takeoff)
-data:propulsion:fixedwing:motor:constraints:torque:climb || Constraint on fixed-wing motor torque (climb)
-data:propulsion:fixedwing:motor:constraints:torque:cruise || Constraint on fixed-wing motor torque (cruise)
-data:propulsion:fixedwing:motor:constraints:torque:takeoff || Constraint on fixed-wing motor torque (takeoff)
-data:propulsion:fixedwing:motor:constraints:torque:hover || Constraint on fixed-wing motor torque (hover)
-data:propulsion:fixedwing:motor:speed:k || Sizing coefficient of fixed-wing motor speed
-data:propulsion:fixedwing:motor:torque:k || Sizing coefficient on fixed-wing motor torque
+optimization:constraints:propulsion:fixedwing:motor:torque:climb || Constraint on fixed-wing motor torque (climb)
+optimization:constraints:propulsion:fixedwing:motor:torque:cruise || Constraint on fixed-wing motor torque (cruise)
+optimization:constraints:propulsion:fixedwing:motor:torque:takeoff || Constraint on fixed-wing motor torque (takeoff)
+optimization:constraints:propulsion:fixedwing:motor:torque:hover || Constraint on fixed-wing motor torque (hover)
+optimization:variables:propulsion:fixedwing:motor:speed:k || Sizing coefficient of fixed-wing motor speed
+optimization:variables:propulsion:fixedwing:motor:torque:k || Sizing coefficient on fixed-wing motor torque
 data:propulsion:fixedwing:motor:efficiency:climb || Fixed-wing motor efficiency (climb)
 data:propulsion:fixedwing:motor:efficiency:cruise || Fixed-wing motor efficiency (cruise)
 data:propulsion:fixedwing:motor:efficiency:hover || Fixed-wing motor efficiency (hover)
@@ -324,10 +322,10 @@ data:propulsion:fixedwing:motor:efficiency:takeoff || Fixed-wing motor efficienc
 data:propulsion:fixedwing:motor:speed:constant || Fixed-wing motor speed constant
 data:propulsion:fixedwing:motor:speed:constant:estimated || Fixed-wing motor speed constant (estimated value)
 data:propulsion:fixedwing:motor:speed:constant:estimated || Fixed-wing motor speed constant (catalogue value)
-data:propulsion:fixedwing:motor:speed:constant:reference || Fixed-wing motor speed constant reference for scaling law
-data:propulsion:fixedwing:motor:speed:constant:tol || Permitted deviation from estimation model to size motor speed constant
-data:propulsion:fixedwing:motor:constraints:speed:constant:max || Constraint to ensure speed constant estimate is within model bounds
-data:propulsion:fixedwing:motor:constraints:speed:constant:min || Constraint to ensure speed constant estimate is within model bounds
+models:propulsion:fixedwing:motor:speed:constant:reference || Fixed-wing motor speed constant reference for scaling law
+models:propulsion:fixedwing:motor:speed:constant:tol || Permitted deviation from estimation model to size motor speed constant
+optimization:constraints:propulsion:fixedwing:motor:speed:constant:max || Constraint to ensure speed constant estimate is within model bounds
+optimization:constraints:propulsion:fixedwing:motor:speed:constant:min || Constraint to ensure speed constant estimate is within model bounds
 data:propulsion:fixedwing:motor:speed:cruise || Fixed-wing motor rotation speed (cruise)
 data:propulsion:fixedwing:motor:speed:climb || Fixed-wing motor rotation speed (climb)
 data:propulsion:fixedwing:motor:speed:hover || Fixed-wing motor rotation speed (hover)
@@ -335,17 +333,17 @@ data:propulsion:fixedwing:motor:speed:takeoff || Fixed-wing motor rotation speed
 
 # Propeller
 # Multirotor system
-data:propulsion:multirotor:propeller:is_coaxial || 0: single propeller; 1: coaxial propellers
+data:propulsion:multirotor:propeller:is_coaxial || 0: one propeller per arm; 1: coaxial propellers
 data:weight:propulsion:multirotor:propeller:mass || Multirotor propeller mass
 data:weight:propulsion:multirotor:propeller:mass:estimated || Multirotor propeller mass (estimated value)
 data:weight:propulsion:multirotor:propeller:mass:catalogue || Multirotor propeller mass (catalogue value)
 data:propulsion:multirotor:propeller:number || Number of propellers for multirotor
-data:propulsion:multirotor:propeller:advance_ratio:climb || Advance ratio for multirotor propellers (climb)
-data:propulsion:multirotor:propeller:advance_ratio:cruise || Advance ratio for multirotor propellers (cruise)
+optimization:variables:propulsion:multirotor:propeller:advance_ratio:climb || Advance ratio for multirotor propellers (climb)
+optimization:variables:propulsion:multirotor:propeller:advance_ratio:cruise || Advance ratio for multirotor propellers (cruise)
 data:propulsion:multirotor:propeller:beta || Multirotor propeller pitch-to-diameter ratio
 data:propulsion:multirotor:propeller:beta:estimated || Multirotor propeller pitch-to-diameter ratio (estimated value)
 data:propulsion:multirotor:propeller:beta:catalogue || Multirotor propeller pitch-to-diameter ratio (catalogue value)
-data:propulsion:multirotor:propeller:beta:guess || Multirotor propeller pitch-to-diameter ratio (initial guess)
+optimization:variables:propulsion:multirotor:propeller:beta || Multirotor propeller pitch-to-diameter ratio (initial guess)
 data:propulsion:multirotor:propeller:diameter || Multirotor propeller diameter
 data:propulsion:multirotor:propeller:diameter:estimated || Multirotor propeller diameter (estimated value)
 data:propulsion:multirotor:propeller:diameter:catalogue || Multirotor propeller diameter (catalogue value)
@@ -353,9 +351,9 @@ data:propulsion:multirotor:propeller:power:climb || Multirotor propeller power (
 data:propulsion:multirotor:propeller:power:cruise || Multirotor propeller power (cruise)
 data:propulsion:multirotor:propeller:power:hover || Multirotor propeller power (hover)
 data:propulsion:multirotor:propeller:power:takeoff || Multirotor propeller power (takeoff)
-data:propulsion:multirotor:propeller:diameter:reference || Multirotor propeller diameter reference for scaling law
-data:weight:propulsion:multirotor:propeller:mass:reference || Multirotor propeller mass reference for scaling law
-data:propulsion:multirotor:propeller:ND:max:reference || Max. rotational speed not to be exceeded for multirotor propeller
+models:propulsion:multirotor:propeller:diameter:reference || Multirotor propeller diameter reference for scaling law
+models:weight:propulsion:multirotor:propeller:mass:reference || Multirotor propeller mass reference for scaling law
+models:propulsion:multirotor:propeller:ND:max:reference || Max. rotational speed not to be exceeded for multirotor propeller
 data:propulsion:multirotor:propeller:speed:climb || Multirotor propeller rotational speed (climb)
 data:propulsion:multirotor:propeller:speed:cruise || Multirotor propeller rotational speed (cruise)
 data:propulsion:multirotor:propeller:speed:hover || Multirotor propeller rotational speed (hover)
@@ -363,30 +361,30 @@ data:propulsion:multirotor:propeller:speed:takeoff || Multirotor propeller rotat
 data:propulsion:multirotor:propeller:thrust:climb || Multirotor propeller thrust (climb)
 data:propulsion:multirotor:propeller:thrust:cruise || Multirotor propeller thrust (cruise)
 data:propulsion:multirotor:propeller:thrust:hover || Multirotor propeller thrust (hover)
-data:propulsion:multirotor:propeller:thrust:takeoff || Multirotor propeller max. thrust
+data:propulsion:multirotor:propeller:thrust:takeoff || Multirotor propeller max. (takeoff) thrust
 data:propulsion:multirotor:propeller:torque:climb || Multirotor propeller torque (climb)
 data:propulsion:multirotor:propeller:torque:cruise || Multirotor propeller torque (cruise)
 data:propulsion:multirotor:propeller:torque:hover || Multirotor propeller torque (hover)
 data:propulsion:multirotor:propeller:torque:takeoff || Multirotor propeller torque (takeoff)
-data:propulsion:multirotor:propeller:constraints:rpm:climb || Constraint on multirotor propeller rotational speed (climb)
-data:propulsion:multirotor:propeller:constraints:rpm:cruise || Constraint on multirotor propeller rotational speed (cruise)
-data:propulsion:multirotor:propeller:constraints:rpm:max || Constraint on multirotor propeller max. rotational speed
-data:propulsion:multirotor:propeller:ND:k || Sizing coefficient on multirotor propeller rotational speed
+optimization:constraints:propulsion:multirotor:propeller:rpm:climb || Constraint on multirotor propeller rotational speed (climb)
+optimization:constraints:propulsion:multirotor:propeller:rpm:cruise || Constraint on multirotor propeller rotational speed (cruise)
+optimization:constraints:propulsion:multirotor:propeller:rpm:max || Constraint on multirotor propeller max. rotational speed
+optimization:variables:propulsion:multirotor:propeller:ND:k || Sizing coefficient on multirotor propeller rotational speed
 data:propulsion:multirotor:propeller:ND:takeoff || Multirotor propeller tip speed (takeoff)
-data:propulsion:multirotor:propeller:constraints:airspeed:climb || Constraint on climb speed
-data:propulsion:multirotor:propeller:constraints:airspeed:cruise || Constraint on cruise speed
-data:propulsion:multirotor:propeller:Cp:model:dynamic || Polynomial function coef. for propeller Cp (non-static conditions)
-data:propulsion:multirotor:propeller:Cp:model:dynamic:estimated || Polynomial function coef. for propeller Cp (non-static conditions)
-data:propulsion:multirotor:propeller:Cp:model:dynamic:reference || Polynomial function coef. for propeller Cp (non-static conditions)
-data:propulsion:multirotor:propeller:Cp:model:static || Polynomial function coef. for propeller Cp (static conditions)
-data:propulsion:multirotor:propeller:Cp:model:static:estimated || Polynomial function coef. for propeller Cp (static conditions)
-data:propulsion:multirotor:propeller:Cp:model:static:reference || Polynomial function coef. for propeller Cp (static conditions)
-data:propulsion:multirotor:propeller:Ct:model:dynamic || Polynomial function coef. for propeller Ct (non-static conditions)
-data:propulsion:multirotor:propeller:Ct:model:dynamic:estimated || Polynomial function coef. for propeller Ct (non-static conditions)
-data:propulsion:multirotor:propeller:Ct:model:dynamic:reference || Polynomial function coef. for propeller Ct (non-static conditions)
-data:propulsion:multirotor:propeller:Ct:model:static || Polynomial function coef. for propeller Ct (static conditions)
-data:propulsion:multirotor:propeller:Ct:model:static:estimated || Polynomial function coef. for propeller Ct (static conditions)
-data:propulsion:multirotor:propeller:Ct:model:static:reference || Polynomial function coef. for propeller Ct (static conditions)
+optimization:constraints:propulsion:multirotor:propeller:airspeed:climb || Constraint on climb speed
+optimization:constraints:propulsion:multirotor:propeller:airspeed:cruise || Constraint on cruise speed
+data:propulsion:multirotor:propeller:Cp:dynamic:polynomial || Polynomial function coef. for propeller Cp (non-static conditions)
+data:propulsion:multirotor:propeller:Cp:dynamic:polynomial:estimated || Polynomial function coef. for propeller Cp (non-static conditions)
+models:propulsion:multirotor:propeller:Cp:dynamic:polynomial || Polynomial function coef. for propeller Cp (non-static conditions)
+data:propulsion:multirotor:propeller:Cp:static:polynomial || Polynomial function coef. for propeller Cp (static conditions)
+data:propulsion:multirotor:propeller:Cp:static:polynomial:estimated || Polynomial function coef. for propeller Cp (static conditions)
+models:propulsion:multirotor:propeller:Cp:static:polynomial || Polynomial function coef. for propeller Cp (static conditions)
+data:propulsion:multirotor:propeller:Ct:dynamic:polynomial || Polynomial function coef. for propeller Ct (non-static conditions)
+data:propulsion:multirotor:propeller:Ct:dynamic:polynomial:estimated || Polynomial function coef. for propeller Ct (non-static conditions)
+models:propulsion:multirotor:propeller:Ct:dynamic:polynomial || Polynomial function coef. for propeller Ct (non-static conditions)
+data:propulsion:multirotor:propeller:Ct:static:polynomial || Polynomial function coef. for propeller Ct (static conditions)
+data:propulsion:multirotor:propeller:Ct:static:polynomial:estimated || Polynomial function coef. for propeller Ct (static conditions)
+models:propulsion:multirotor:propeller:Ct:static:polynomial || Polynomial function coef. for propeller Ct (static conditions)
 data:propulsion:multirotor:propeller:AoA:climb || Multirotor propeller angle of attack (climb)
 data:propulsion:multirotor:propeller:AoA:cruise || Multirotor propeller angle of attack (cruise)
 data:propulsion:multirotor:propeller:FoM:estimated || Multirotor propeller figure of merit (hover efficiency)
@@ -394,17 +392,17 @@ data:propulsion:multirotor:propeller:efficiency:climb || Multirotor propeller ef
 data:propulsion:multirotor:propeller:efficiency:cruise || Multirotor propeller efficiency (cruise)
 
 # Fixed-wing system
-data:propulsion:fixedwing:propeller:is_coaxial || 0: single propeller; 1: coaxial propellers
+data:propulsion:fixedwing:propeller:is_coaxial || 0: one propeller per arm; 1: coaxial propellers
 data:weight:propulsion:fixedwing:propeller:mass || Fixed-wing propeller mass
 data:weight:propulsion:fixedwing:propeller:mass:estimated || Fixed-wing propeller mass (estimated value)
 data:weight:propulsion:fixedwing:propeller:mass:catalogue || Fixed-wing propeller mass (catalogue value)
 data:propulsion:fixedwing:propeller:number || Number of propellers for fixed-wing
-data:propulsion:fixedwing:propeller:advance_ratio:climb || Advance ratio for fixed-wing propellers (climb)
-data:propulsion:fixedwing:propeller:advance_ratio:cruise || Advance ratio for fixed-wing propellers (cruise)
+optimization:variables:propulsion:fixedwing:propeller:advance_ratio:climb || Advance ratio for fixed-wing propellers (climb)
+optimization:variables:propulsion:fixedwing:propeller:advance_ratio:cruise || Advance ratio for fixed-wing propellers (cruise)
 data:propulsion:fixedwing:propeller:beta || Fixed-wing propeller pitch-to-diameter ratio
 data:propulsion:fixedwing:propeller:beta:estimated || Fixed-wing propeller pitch-to-diameter ratio (estimated value)
 data:propulsion:fixedwing:propeller:beta:catalogue || Fixed-wing propeller pitch-to-diameter ratio (catalogue value)
-data:propulsion:fixedwing:propeller:beta:guess || Fixed-wing propeller pitch-to-diameter ratio (initial guess)
+optimization:variables:propulsion:fixedwing:propeller:beta || Fixed-wing propeller pitch-to-diameter ratio (initial guess)
 data:propulsion:fixedwing:propeller:diameter || Fixed-wing propeller diameter
 data:propulsion:fixedwing:propeller:diameter:estimated || Fixed-wing propeller diameter (estimated value)
 data:propulsion:fixedwing:propeller:diameter:catalogue || Fixed-wing propeller diameter (catalogue value)
@@ -412,9 +410,9 @@ data:propulsion:fixedwing:propeller:power:climb || Fixed-wing propeller power (c
 data:propulsion:fixedwing:propeller:power:cruise || Fixed-wing propeller power (cruise)
 data:propulsion:fixedwing:propeller:power:hover || Fixed-wing propeller power (hover)
 data:propulsion:fixedwing:propeller:power:takeoff || Fixed-wing propeller power (takeoff)
-data:propulsion:fixedwing:propeller:diameter:reference || Fixed-wing propeller diameter reference for scaling law
-data:weight:propulsion:fixedwing:propeller:mass:reference || Fixed-wing propeller mass reference for scaling law
-data:propulsion:fixedwing:propeller:ND:max:reference || Max. rotational speed not to be exceeded for fixed-wing propeller
+models:propulsion:fixedwing:propeller:diameter:reference || Fixed-wing propeller diameter reference for scaling law
+models:weight:propulsion:fixedwing:propeller:mass:reference || Fixed-wing propeller mass reference for scaling law
+models:propulsion:fixedwing:propeller:ND:max:reference || Max. rotational speed not to be exceeded for fixed-wing propeller
 data:propulsion:fixedwing:propeller:speed:climb || Fixed-wing propeller rotational speed (climb)
 data:propulsion:fixedwing:propeller:speed:cruise || Fixed-wing propeller rotational speed (cruise)
 data:propulsion:fixedwing:propeller:speed:hover || Fixed-wing propeller rotational speed (hover)
@@ -427,25 +425,25 @@ data:propulsion:fixedwing:propeller:torque:climb || Fixed-wing propeller torque 
 data:propulsion:fixedwing:propeller:torque:cruise || Fixed-wing propeller torque (cruise)
 data:propulsion:fixedwing:propeller:torque:hover || Fixed-wing propeller torque (hover)
 data:propulsion:fixedwing:propeller:torque:takeoff || Fixed-wing propeller torque (takeoff)
-data:propulsion:fixedwing:propeller:constraints:rpm:climb || Constraint on fixed-wing propeller rotational speed (climb)
-data:propulsion:fixedwing:propeller:constraints:rpm:cruise || Constraint on fixed-wing propeller rotational speed (cruise)
-data:propulsion:fixedwing:propeller:constraints:rpm:max || Constraint on fixed-wing propeller max. rotational speed
-data:propulsion:fixedwing:propeller:ND:k || Sizing coefficient on fixed-wing propeller rotational speed
+optimization:constraints:propulsion:fixedwing:propeller:rpm:climb || Constraint on fixed-wing propeller rotational speed (climb)
+optimization:constraints:propulsion:fixedwing:propeller:rpm:cruise || Constraint on fixed-wing propeller rotational speed (cruise)
+optimization:constraints:propulsion:fixedwing:propeller:rpm:max || Constraint on fixed-wing propeller max. rotational speed
+optimization:variables:propulsion:fixedwing:propeller:ND:k || Sizing coefficient on fixed-wing propeller rotational speed
 data:propulsion:fixedwing:propeller:ND:takeoff || Fixed-wing propeller tip speed (takeoff)
-data:propulsion:fixedwing:propeller:constraints:airspeed:climb || Constraint on climb speed
-data:propulsion:fixedwing:propeller:constraints:airspeed:cruise || Constraint on cruise speed
-data:propulsion:fixedwing:propeller:Cp:model:dynamic || Polynomial function coef. for propeller Cp (non-static conditions)
-data:propulsion:fixedwing:propeller:Cp:model:dynamic:estimated || Polynomial function coef. for propeller Cp (non-static conditions)
-data:propulsion:fixedwing:propeller:Cp:model:dynamic:reference || Polynomial function coef. for propeller Cp (non-static conditions)
-data:propulsion:fixedwing:propeller:Cp:model:static || Polynomial function coef. for propeller Cp (static conditions)
-data:propulsion:fixedwing:propeller:Cp:model:static:estimated || Polynomial function coef. for propeller Cp (static conditions)
-data:propulsion:fixedwing:propeller:Cp:model:static:reference || Polynomial function coef. for propeller Cp (static conditions)
-data:propulsion:fixedwing:propeller:Ct:model:dynamic || Polynomial function coef. for propeller Ct (non-static conditions)
-data:propulsion:fixedwing:propeller:Ct:model:dynamic:estimated || Polynomial function coef. for propeller Ct (non-static conditions)
-data:propulsion:fixedwing:propeller:Ct:model:dynamic:reference || Polynomial function coef. for propeller Ct (non-static conditions)
-data:propulsion:fixedwing:propeller:Ct:model:static || Polynomial function coef. for propeller Ct (static conditions)
-data:propulsion:fixedwing:propeller:Ct:model:static:estimated || Polynomial function coef. for propeller Ct (static conditions)
-data:propulsion:fixedwing:propeller:Ct:model:static:reference || Polynomial function coef. for propeller Ct (static conditions)
+optimization:constraints:propulsion:fixedwing:propeller:airspeed:climb || Constraint on climb speed
+optimization:constraints:propulsion:fixedwing:propeller:airspeed:cruise || Constraint on cruise speed
+data:propulsion:fixedwing:propeller:Cp:dynamic:polynomial || Polynomial function coef. for propeller Cp (non-static conditions)
+data:propulsion:fixedwing:propeller:Cp:dynamic:polynomial:estimated || Polynomial function coef. for propeller Cp (non-static conditions)
+models:propulsion:fixedwing:propeller:Cp:dynamic:polynomial || Polynomial function coef. for propeller Cp (non-static conditions)
+data:propulsion:fixedwing:propeller:Cp:static:polynomial || Polynomial function coef. for propeller Cp (static conditions)
+data:propulsion:fixedwing:propeller:Cp:static:polynomial:estimated || Polynomial function coef. for propeller Cp (static conditions)
+models:propulsion:fixedwing:propeller:Cp:static:polynomial || Polynomial function coef. for propeller Cp (static conditions)
+data:propulsion:fixedwing:propeller:Ct:dynamic:polynomial || Polynomial function coef. for propeller Ct (non-static conditions)
+data:propulsion:fixedwing:propeller:Ct:dynamic:polynomial:estimated || Polynomial function coef. for propeller Ct (non-static conditions)
+models:propulsion:fixedwing:propeller:Ct:dynamic:polynomial || Polynomial function coef. for propeller Ct (non-static conditions)
+data:propulsion:fixedwing:propeller:Ct:static:polynomial || Polynomial function coef. for propeller Ct (static conditions)
+data:propulsion:fixedwing:propeller:Ct:static:polynomial:estimated || Polynomial function coef. for propeller Ct (static conditions)
+models:propulsion:fixedwing:propeller:Ct:static:polynomial || Polynomial function coef. for propeller Ct (static conditions)
 data:propulsion:fixedwing:propeller:AoA:climb || Fixed-wing propeller angle of attack (climb)
 data:propulsion:fixedwing:propeller:AoA:cruise || Fixed-wing propeller angle of attack (cruise)
 data:propulsion:fixedwing:propeller:FoM:estimated || Fixed-wing propeller figure of merit (hover efficiency)
@@ -457,18 +455,18 @@ data:propulsion:fixedwing:propeller:efficiency:cruise || Fixed-wing propeller ef
 data:weight:propulsion:multirotor:wires:density || Multirotor wires linear density
 data:weight:propulsion:multirotor:wires:mass || Multirotor wires mass
 data:propulsion:multirotor:wires:radius || Multirotor wires radius
-data:propulsion:multirotor:wires:current:reference || Multirotor wires current reference for scaling law
-data:weight:propulsion:multirotor:wires:density:reference || Multirotor wires linear density reference for scaling law
-data:propulsion:multirotor:wires:radius:reference || Multirotor wires radius reference for scaling law
+models:propulsion:multirotor:wires:current:reference || Multirotor wires current reference for scaling law
+models:weight:propulsion:multirotor:wires:density:reference || Multirotor wires linear density reference for scaling law
+models:propulsion:multirotor:wires:radius:reference || Multirotor wires radius reference for scaling law
 data:propulsion:multirotor:wires:length || Multirotor wires length
 data:propulsion:multirotor:wires:number || Number of wires for multirotor (battery, ESC and motor connections)
 # Fixed-wing
 data:weight:propulsion:fixedwing:wires:density || Fixed-wing wires linear density
 data:weight:propulsion:fixedwing:wires:mass || Fixed-wing wires mass
 data:propulsion:fixedwing:wires:radius || Fixed-wing wires radius
-data:propulsion:fixedwing:wires:current:reference || Fixed-wing wires current reference for scaling law
-data:weight:propulsion:fixedwing:wires:density:reference || Fixed-wing wires linear density reference for scaling law
-data:propulsion:fixedwing:wires:radius:reference || Fixed-wing wires radius reference for scaling law
+models:propulsion:fixedwing:wires:current:reference || Fixed-wing wires current reference for scaling law
+models:weight:propulsion:fixedwing:wires:density:reference || Fixed-wing wires linear density reference for scaling law
+models:propulsion:fixedwing:wires:radius:reference || Fixed-wing wires radius reference for scaling law
 data:propulsion:fixedwing:wires:length || Fixed-wing wires length
 data:propulsion:fixedwing:wires:number || Number of wires for fixed-wing (battery, ESC and motor connections)
 
@@ -481,20 +479,20 @@ data:weight:misc:mass || Miscellaneous mass (e.g. to account for non-modelled pa
 
 # Maximum Take Off Weight
 data:weight:mtow || Maximum takeoff weight (MTOW)
-data:weight:mtow:guess || Initial guess of MTOW for sizing scenarios
-data:weight:mtow:reference || MTOW reference for scaling law
+optimization:variables:weight:mtow:guess || Initial guess of MTOW for sizing scenarios
+models:weight:mtow:reference || MTOW reference for scaling law
 data:weight:mtow:requirement || MTOW requirement not to exceed
-data:weight:mtow:requirement:constraint || Constraint on MTOW requirement
-data:weight:mtow:guess:constraint || Constraint to ensure MTOW consistency (see NVH formulation)
-data:weight:mtow:k || Normalized variable for MTOW consistency (see NVH formulation)
+optimization:constraints:weight:mtow:requirement || Constraint on MTOW requirement
+optimization:constraints:weight:mtow:consistency || Constraint to ensure MTOW consistency (see NVH formulation)
+optimization:variables:weight:mtow:k || Normalized variable for MTOW consistency (see NVH formulation)
 
 # Aerodynamics
-data:aerodynamics:multirotor:CD0 || Parasitic drag coefficient of multirotor airframe
+data:aerodynamics:multirotor:CD0 || Parasitic drag coefficient of airframe (in multirotor mode)
 data:aerodynamics:CLmax || Max. lift coefficient
 data:aerodynamics:CD0 || Parasitic drag coefficient of airframe (total)
 data:aerodynamics:CD0:fuselage || Parasitic drag coefficient of fuselage
-data:aerodynamics:CD0:guess || Initial guess for parasitic drag coefficient of airframe
-data:aerodynamics:CD0:guess:constraint || Constraint to ensure parasitic drag coefficient consistency
+optimization:variables:aerodynamics:CD0:guess || Initial guess for parasitic drag coefficient of airframe
+optimization:constraints:aerodynamics:CD0:consistency || Constraint to ensure parasitic drag coefficient consistency
 data:aerodynamics:CD0:wing || Parasitic drag coefficient of wing
 data:aerodynamics:CD0:tail:horizontal || Parasitic drag coefficient of horizontal tail
 data:aerodynamics:CD0:tail:vertical || Parasitic drag coefficient of vertical tail
@@ -508,39 +506,39 @@ data:aerodynamics:CD0:stopped_propellers || Parasitic drag coefficient of stoppe
 data:structures:arms:diameter:inner || Inner diameter of the beam
 data:structures:arms:diameter:outer || Outer diameter of the beam
 data:structures:arms:stress:max || Maximum allowable stress for arms material
-data:structures:arms:diameter:k || Inner to outer beam diameter ratio
+optimization:variables:structures:arms:diameter:k || Inner to outer beam diameter ratio
 
 # Fixed-wing
 data:structures:wing:ribs:number || Number of ribs for the wing
 data:structures:wing:ribs:thickness || Thickness of ribs
 data:structures:wing:spar:depth || Spar depth (I-beam)
-data:structures:wing:spar:depth:constraint || Constraint on spar depth vs. wing thickness
-data:structures:wing:spar:depth:k || Flanges thickness over distance between the two flanges (I-beam)
+optimization:constraints:structures:wing:spar:depth || Constraint on spar depth vs. wing thickness
+optimization:variables:structures:wing:spar:depth:k || Flanges thickness over distance between the two flanges (I-beam)
 data:structures:wing:spar:flange:depth || Flanges depth (I-beam)
 data:structures:wing:spar:flange:thickness || Flanges thickness (I-beam)
 data:structures:wing:spar:stress:max || Maximum allowable stress for wing spars material
 data:structures:wing:spar:web:depth || Distance between two flanges (I-beam)
-data:structures:wing:spar:web:depth:k || Sizing coefficient on spar loads
+optimization:variables:structures:wing:spar:web:depth:k || Sizing coefficient on spar loads
 data:structures:wing:spar:web:thickness || Web thickness (I-beam)
 
 # Hybrid
 data:structures:wing:spar:stress:VTOL || Max. stress on wing spars due to VTOL thrust
-data:structures:wing:spar:stress:VTOL:constraint || Constraint on wing spars stress due to VTOL thrust
+optimization:constraints:structures:wing:spar:stress:VTOL || Constraint on wing spars stress due to VTOL thrust
 
 ## Geometry
 # Multirotor
 data:geometry:arms:length || Arms length
 data:geometry:arms:number || Number of arms
 data:geometry:arms:prop_per_arm || Number of propellers per arm (single or coaxial configuration)
-data:geometry:body:surface:front:reference || Front surface reference for scaling law
-data:geometry:body:surface:top:reference || Top surface reference for scaling law
+models:geometry:body:surface:front:reference || Front surface reference for scaling law
+models:geometry:body:surface:top:reference || Top surface reference for scaling law
 data:geometry:body:surface:front || Front surface of the body (deprecated)
 data:geometry:body:surface:top || Top surface of the body (deprecated)
-data:geometry:projected_area:front || Front surface of the airframe
-data:geometry:projected_area:front:k || Normalized variable for front surface consistency (see NVH formulation)
+data:geometry:projected_area:front || Front surface of the airframe (useless for fixed-wing and hybrid UAVs)
+optimization:variables:geometry:projected_area:front:k || Normalized variable for front surface consistency (see NVH formulation)
 data:geometry:projected_area:top || Top surface of the airframe
-data:geometry:projected_area:top:k || Normalized variable for top surface consistency (see NVH formulation)
-data:geometry:projected_area:top:constraint || Constraint to ensure top surface consistency
+optimization:variables:geometry:projected_area:top:k || Normalized variable for top surface consistency (see NVH formulation)
+optimization:constraints:geometry:projected_area:top || Constraint to ensure top surface consistency
 
 # Fixed-wing
 data:geometry:fuselage:fineness || Fineness ratio of fuselage
@@ -555,13 +553,13 @@ data:geometry:fuselage:surface:rear || Surface of rear fuselage
 data:geometry:fuselage:diameter:k || Tail cone diameter ratio (mid to tip)
 data:geometry:fuselage:diameter:mid || Diameter of fuselage mid-section
 data:geometry:fuselage:diameter:tip || Tip diameter of fuselage
-data:geometry:fuselage:volume:constraint || Constraint on fuselage volume to house batteries and payload
+optimization:constraints:geometry:fuselage:volume || Constraint on fuselage volume to house batteries and payload
 data:geometry:fuselage:volume:mid || Volume of fuselage mid-section
-data:geometry:wing:AR || Aspect ratio of wing
-data:geometry:wing:lambda || Taper ratio of wing
+optimization:variables:geometry:wing:AR || Aspect ratio of wing
+optimization:variables:geometry:wing:lambda || Taper ratio of wing
 data:geometry:wing:loading || Wing loading
 data:geometry:wing:loading:cruise || Estimated wing loading for optimal cruise performance
-data:geometry:wing:loading:k || Sizing coefficient on wing loading
+optimization:variables:geometry:wing:loading:k || Sizing coefficient on wing loading
 data:geometry:wing:loading:stall || Maximum wing loading for stall conditions
 data:geometry:wing:span || Wingspan
 data:geometry:wing:surface || Wing area
@@ -570,7 +568,7 @@ data:geometry:wing:MAC:length || Length of mean aerodynamic chord of wing
 data:geometry:wing:MAC:y || Y-position of wing MAC
 data:geometry:wing:MAC:C4:x || X-location of wing MAC quarter chord (w.r.t. nose tip)
 data:geometry:wing:MAC:LE:x || X-location of wing MAC leading edge (w.r.t. nose tip)
-data:geometry:wing:MAC:LE:x:k || Sizing coefficient on x-location of MAC leading edge
+optimization:variables:geometry:wing:MAC:LE:x:k || Sizing coefficient on x-location of MAC leading edge
 data:geometry:wing:root:chord || Wing chord at root
 data:geometry:wing:root:thickness || Wing thickness at root
 data:geometry:wing:root:LE:x || X-position of wing root leading edge (w.r.t. nose tip)
@@ -579,9 +577,9 @@ data:geometry:wing:sweep:LE || Sweep angle of wing leading edge
 data:geometry:wing:sweep:TE || Sweep angle of wing trailing edge
 data:geometry:wing:tip:chord || Wing chord at tip
 data:geometry:wing:tip:thickness || Wing thickness at tip
-data:geometry:tail:horizontal:AR || Aspect ratio of horizontal tail
+optimization:variables:geometry:tail:horizontal:AR || Aspect ratio of horizontal tail
 data:geometry:tail:horizontal:arm || Distance between wing MAC and HT MAC (tail moment arm)
-data:geometry:tail:horizontal:arm:k || Sizing coefficient on tail moment arm
+optimization:variables:geometry:tail:horizontal:arm:k || Sizing coefficient on tail moment arm
 data:geometry:tail:horizontal:coefficient || Volume coefficient of horizontal tail
 data:geometry:tail:horizontal:lambda || Taper ratio of horizontal tail
 data:geometry:tail:horizontal:span || Span of horizontal tail
@@ -596,7 +594,7 @@ data:geometry:tail:horizontal:root:LE:x || X-location of HT root leading edge (w
 data:geometry:tail:horizontal:root:TE:x || X-location of HT root trailing edge (w.r.t. nose tip)
 data:geometry:tail:horizontal:tip:chord || Horizontal tail chord at tip
 data:geometry:tail:horizontal:tip:thickness ||  Horizontal tail thickness at tip
-data:geometry:tail:vertical:AR || Aspect ratio of vertical tail
+optimization:variables:geometry:tail:vertical:AR || Aspect ratio of vertical tail
 data:geometry:tail:vertical:arm || Distance between wing MAC and VT MAC (tail moment arm)
 data:geometry:tail:vertical:coefficient || Volume coefficient of vertical tail
 data:geometry:tail:vertical:lambda || Taper ratio of vertical tail
@@ -617,18 +615,18 @@ data:geometry:tail:vertical:MAC:z || Z-location of VT MAC
 # Hybrid
 data:geometry:multirotor:propeller:clearance || Clearance distance between VTOL propellers and airframe
 data:geometry:multirotor:propeller:y || Y-location of VTOL propellers
-data:geometry:multirotor:propeller:y:constraint || Constraint on y-location of VTOL propellers vs. wing span
-data:geometry:multirotor:propeller:y:k || Sizing coefficient on y-location of VTOL propellers
+optimization:constraints:geometry:multirotor:propeller:y || Constraint on y-location of VTOL propellers vs. wing span
+optimization:variables:geometry:multirotor:propeller:y:k || Sizing coefficient on y-location of VTOL propellers
 data:geometry:multirotor:propeller:x:front || X-location of the front VTOL propellers (w.r.t. nose tip)
 data:geometry:multirotor:propeller:x:rear || X-location of the rear VTOL propellers (w.r.t. nose tip)
 
 
 # Airframe weights
 data:weight:arms:density || Arms material density
-data:weight:airframe:arms:mass || Arms mass (total)
-data:weight:airframe:body:mass || Body mass
-data:weight:airframe:arms:mass:reference || Arms mass reference for scaling law
-data:weight:airframe:body:mass:reference || Body mass reference for scaling law
+data:weight:airframe:arms:mass || Total mass of multirotor arms (total)
+data:weight:airframe:body:mass || Mass of multirotor body (useless for fixed-wing and hybrid UAVs)
+models:weight:airframe:arms:mass:reference || Arms mass reference for scaling law
+models:weight:airframe:body:mass:reference || Body mass reference for scaling law
 data:weight:airframe || Airframe mass (total)
 data:weight:airframe:fuselage:mass || Fuselage mass
 data:weight:airframe:fuselage:mass:density || Fuselage material density
@@ -658,6 +656,10 @@ data:stability:CoG:arms || Center of gravity of VTOL arms
 data:stability:CoG:propulsion:multirotor || Center of gravity of multirotor (VTOL) propulsion system
 data:stability:neutral_point || Neutral point
 data:stability:static_margin || Static margin
+data:stability:static_margin:requirement:min || Requirement on minimum static margin
+data:stability:static_margin:requirement:max || Requirement on maximum static margin
+optimization:constraints:stability:static_margin:min || Constraint on minimum static margin
+optimization:constraints:stability:static_margin:max || Constraint on maximum static margin
 
 # UAV high-level performance
 data:performance:endurance:hover || Maximum hover endurance
@@ -672,9 +674,9 @@ mission:sizing:duration:multirotor || Sizing mission duration (multirotor mode)
 mission:sizing:duration:fixedwing || Sizing mission duration (fixed-wing mode)
 mission:sizing:energy || Sizing mission energy consumption (total)
 mission:sizing:energy:multirotor || Sizing mission energy consumption (multirotor mode)
-mission:sizing:energy:multirotor:constraint || Constraint on multirotor battery energy to complete the mission
+optimization:constraints:mission:sizing:energy:multirotor || Constraint on multirotor battery energy to complete the mission
 mission:sizing:energy:fixedwing || Sizing mission energy consumption (fixed-wing mode)
-mission:sizing:energy:fixedwing:constraint || Constraint on fixed-wing battery energy to complete the mission
+optimization:constraints:mission:sizing:energy:fixedwing || Constraint on fixed-wing battery energy to complete the mission
 mission:sizing:load_factor:ultimate || Ultimate load factor for sizing the structures
 mission:sizing:main_route:duration || Duration of main route of sizing mission
 mission:sizing:main_route:duration:multirotor || Duration of main route of sizing mission (multirotor mode)
@@ -741,14 +743,14 @@ uncertainty:propulsion:fixedwing:propeller:beta:abs || (variable for uncertainty
 uncertainty:propulsion:fixedwing:propeller:beta:rel || (variable for uncertainty analysis)
 uncertainty:propulsion:fixedwing:propeller:diameter:abs || (variable for uncertainty analysis)
 uncertainty:propulsion:fixedwing:propeller:diameter:rel || (variable for uncertainty analysis)
-uncertainty:propulsion:fixedwing:propeller:Cp:model:dynamic:abs || (variable for uncertainty analysis)
-uncertainty:propulsion:fixedwing:propeller:Cp:model:dynamic:rel || (variable for uncertainty analysis)
-uncertainty:propulsion:fixedwing:propeller:Cp:model:static:abs || (variable for uncertainty analysis)
-uncertainty:propulsion:fixedwing:propeller:Cp:model:static:rel || (variable for uncertainty analysis)
-uncertainty:propulsion:fixedwing:propeller:Ct:model:dynamic:abs || (variable for uncertainty analysis)
-uncertainty:propulsion:fixedwing:propeller:Ct:model:dynamic:rel || (variable for uncertainty analysis)
-uncertainty:propulsion:fixedwing:propeller:Ct:model:static:abs || (variable for uncertainty analysis)
-uncertainty:propulsion:fixedwing:propeller:Ct:model:static:rel || (variable for uncertainty analysis)
+uncertainty:propulsion:fixedwing:propeller:Cp:dynamic:polynomial:abs || (variable for uncertainty analysis)
+uncertainty:propulsion:fixedwing:propeller:Cp:dynamic:polynomial:rel || (variable for uncertainty analysis)
+uncertainty:propulsion:fixedwing:propeller:Cp:static:polynomial:abs || (variable for uncertainty analysis)
+uncertainty:propulsion:fixedwing:propeller:Cp:static:polynomial:rel || (variable for uncertainty analysis)
+uncertainty:propulsion:fixedwing:propeller:Ct:dynamic:polynomial:abs || (variable for uncertainty analysis)
+uncertainty:propulsion:fixedwing:propeller:Ct:dynamic:polynomial:rel || (variable for uncertainty analysis)
+uncertainty:propulsion:fixedwing:propeller:Ct:static:polynomial:abs || (variable for uncertainty analysis)
+uncertainty:propulsion:fixedwing:propeller:Ct:static:polynomial:rel || (variable for uncertainty analysis)
 uncertainty:propulsion:multirotor:battery:energy:abs || (variable for uncertainty analysis)
 uncertainty:propulsion:multirotor:battery:energy:rel || (variable for uncertainty analysis)
 uncertainty:propulsion:multirotor:battery:power:abs || (variable for uncertainty analysis)
@@ -779,14 +781,14 @@ uncertainty:propulsion:multirotor:propeller:beta:abs || (variable for uncertaint
 uncertainty:propulsion:multirotor:propeller:beta:rel || (variable for uncertainty analysis)
 uncertainty:propulsion:multirotor:propeller:diameter:abs || (variable for uncertainty analysis)
 uncertainty:propulsion:multirotor:propeller:diameter:rel || (variable for uncertainty analysis)
-uncertainty:propulsion:multirotor:propeller:Cp:model:dynamic:abs || (variable for uncertainty analysis)
-uncertainty:propulsion:multirotor:propeller:Cp:model:dynamic:rel || (variable for uncertainty analysis)
-uncertainty:propulsion:multirotor:propeller:Cp:model:static:abs || (variable for uncertainty analysis)
-uncertainty:propulsion:multirotor:propeller:Cp:model:static:rel || (variable for uncertainty analysis)
-uncertainty:propulsion:multirotor:propeller:Ct:model:dynamic:abs || (variable for uncertainty analysis)
-uncertainty:propulsion:multirotor:propeller:Ct:model:dynamic:rel || (variable for uncertainty analysis)
-uncertainty:propulsion:multirotor:propeller:Ct:model:static:abs || (variable for uncertainty analysis)
-uncertainty:propulsion:multirotor:propeller:Ct:model:static:rel || (variable for uncertainty analysis)
+uncertainty:propulsion:multirotor:propeller:Cp:dynamic:polynomial:abs || (variable for uncertainty analysis)
+uncertainty:propulsion:multirotor:propeller:Cp:dynamic:polynomial:rel || (variable for uncertainty analysis)
+uncertainty:propulsion:multirotor:propeller:Cp:static:polynomial:abs || (variable for uncertainty analysis)
+uncertainty:propulsion:multirotor:propeller:Cp:static:polynomial:rel || (variable for uncertainty analysis)
+uncertainty:propulsion:multirotor:propeller:Ct:dynamic:polynomial:abs || (variable for uncertainty analysis)
+uncertainty:propulsion:multirotor:propeller:Ct:dynamic:polynomial:rel || (variable for uncertainty analysis)
+uncertainty:propulsion:multirotor:propeller:Ct:static:polynomial:abs || (variable for uncertainty analysis)
+uncertainty:propulsion:multirotor:propeller:Ct:static:polynomial:rel || (variable for uncertainty analysis)
 uncertainty:weight:propulsion:fixedwing:battery:mass:abs || (variable for uncertainty analysis)
 uncertainty:weight:propulsion:fixedwing:battery:mass:rel || (variable for uncertainty analysis)
 uncertainty:weight:propulsion:fixedwing:esc:mass:abs || (variable for uncertainty analysis)

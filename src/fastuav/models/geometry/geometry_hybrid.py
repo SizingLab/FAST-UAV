@@ -47,7 +47,7 @@ class PropellersVTOL(om.ExplicitComponent):
         propulsion_fw = self.options["propulsion_fw"]
         propulsion_mr = self.options["propulsion_mr"]
 
-        self.add_input("data:geometry:%s:propeller:y:k" % propulsion_mr, val=1.0, units=None)
+        self.add_input("optimization:variables:geometry:%s:propeller:y:k" % propulsion_mr, val=1.0, units=None)
 
         self.add_input("data:propulsion:%s:propeller:diameter" % propulsion_fw, val=np.nan, units="m")
         self.add_input("data:propulsion:%s:propeller:diameter" % propulsion_mr, val=np.nan, units="m")
@@ -68,7 +68,7 @@ class PropellersVTOL(om.ExplicitComponent):
         propulsion_fw = self.options["propulsion_fw"]
         propulsion_mr = self.options["propulsion_mr"]
 
-        k_y = inputs["data:geometry:%s:propeller:y:k" % propulsion_mr]
+        k_y = inputs["optimization:variables:geometry:%s:propeller:y:k" % propulsion_mr]
         D_pro_FW = inputs["data:propulsion:%s:propeller:diameter" % propulsion_fw]
         D_pro_MR = inputs["data:propulsion:%s:propeller:diameter" % propulsion_mr]
         c_pro_MR = inputs["data:geometry:%s:propeller:clearance" % propulsion_mr]
@@ -106,7 +106,7 @@ class PropellersVTOLConstraint(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("data:geometry:%s:propeller:y" % propulsion_id, val=np.nan, units="m")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
-        self.add_output("data:geometry:%s:propeller:y:constraint" % propulsion_id, units=None)
+        self.add_output("optimization:constraints:geometry:%s:propeller:y" % propulsion_id, units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -118,17 +118,17 @@ class PropellersVTOLConstraint(om.ExplicitComponent):
 
         y_cnstr = (b_w / 2 - y) / y  # constraint on the maximum y-location
 
-        outputs["data:geometry:%s:propeller:y:constraint" % propulsion_id] = y_cnstr
+        outputs["optimization:constraints:geometry:%s:propeller:y" % propulsion_id] = y_cnstr
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         propulsion_id = self.options["propulsion_id"]
         y = inputs["data:geometry:%s:propeller:y" % propulsion_id]
         b_w = inputs["data:geometry:wing:span"]
 
-        partials["data:geometry:%s:propeller:y:constraint" % propulsion_id,
+        partials["optimization:constraints:geometry:%s:propeller:y" % propulsion_id,
                  "data:geometry:%s:propeller:y" % propulsion_id] = - b_w / 2 / y ** 2
 
-        partials["data:geometry:%s:propeller:y:constraint" % propulsion_id,
+        partials["optimization:constraints:geometry:%s:propeller:y" % propulsion_id,
                  "data:geometry:wing:span"] = 1 / 2 / y
 
 

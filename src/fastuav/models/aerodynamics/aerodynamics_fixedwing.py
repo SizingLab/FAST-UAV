@@ -252,29 +252,29 @@ class ParasiticDragConstraint(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CD0", val=np.nan, units=None)
-        self.add_output("data:aerodynamics:CD0:guess:constraint", units=None)
+        self.add_output("optimization:constraints:aerodynamics:CD0:consistency", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        CD_0_guess = inputs["data:aerodynamics:CD0:guess"]
+        CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
         CD_0 = inputs["data:aerodynamics:CD0"]
 
         CD0_cnstr = (CD_0_guess - CD_0) / CD_0
 
-        outputs["data:aerodynamics:CD0:guess:constraint"] = CD0_cnstr
+        outputs["optimization:constraints:aerodynamics:CD0:consistency"] = CD0_cnstr
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        CD_0_guess = inputs["data:aerodynamics:CD0:guess"]
+        CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
         CD_0 = inputs["data:aerodynamics:CD0"]
 
-        partials["data:aerodynamics:CD0:guess:constraint", "data:aerodynamics:CD0:guess"] = (
+        partials["optimization:constraints:aerodynamics:CD0:consistency", "optimization:variables:aerodynamics:CD0:guess"] = (
             1 / CD_0
         )
-        partials["data:aerodynamics:CD0:guess:constraint", "data:aerodynamics:CD0"] = (
+        partials["optimization:constraints:aerodynamics:CD0:consistency", "data:aerodynamics:CD0"] = (
             - CD_0_guess / CD_0 ** 2
         )
 
@@ -309,14 +309,14 @@ class SpanEfficiency(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:geometry:wing:AR", val=np.nan, units=None)
+        self.add_input("optimization:variables:geometry:wing:AR", val=np.nan, units=None)
         self.add_output("data:aerodynamics:CDi:e", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        AR_w = inputs["data:geometry:wing:AR"]
+        AR_w = inputs["optimization:variables:geometry:wing:AR"]
 
         e = (
             1.78 * (1 - 0.045 * AR_w**0.68) - 0.64
@@ -325,9 +325,9 @@ class SpanEfficiency(om.ExplicitComponent):
         outputs["data:aerodynamics:CDi:e"] = e
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        AR_w = inputs["data:geometry:wing:AR"]
+        AR_w = inputs["optimization:variables:geometry:wing:AR"]
 
-        partials["data:aerodynamics:CDi:e", "data:geometry:wing:AR"] = (
+        partials["data:aerodynamics:CDi:e", "optimization:variables:geometry:wing:AR"] = (
             -1.78 * 0.045 * 0.68 * AR_w ** (0.68 - 1)
         )
 
@@ -338,7 +338,7 @@ class InducedDragConstant(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:geometry:wing:AR", val=np.nan, units=None)
+        self.add_input("optimization:variables:geometry:wing:AR", val=np.nan, units=None)
         self.add_input("data:aerodynamics:CDi:e", val=np.nan, units=None)
         self.add_output("data:aerodynamics:CDi:K", units=None)
 
@@ -346,7 +346,7 @@ class InducedDragConstant(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        AR_w = inputs["data:geometry:wing:AR"]
+        AR_w = inputs["optimization:variables:geometry:wing:AR"]
         e = inputs["data:aerodynamics:CDi:e"]
 
         K = 1 / (
@@ -356,10 +356,10 @@ class InducedDragConstant(om.ExplicitComponent):
         outputs["data:aerodynamics:CDi:K"] = K
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        AR_w = inputs["data:geometry:wing:AR"]
+        AR_w = inputs["optimization:variables:geometry:wing:AR"]
         e = inputs["data:aerodynamics:CDi:e"]
 
-        partials["data:aerodynamics:CDi:K", "data:geometry:wing:AR"] = -1 / (np.pi * e * AR_w**2)
+        partials["data:aerodynamics:CDi:K", "optimization:variables:geometry:wing:AR"] = -1 / (np.pi * e * AR_w**2)
         partials["data:aerodynamics:CDi:K", "data:aerodynamics:CDi:e"] = -1 / (
             np.pi * e**2 * AR_w
         )

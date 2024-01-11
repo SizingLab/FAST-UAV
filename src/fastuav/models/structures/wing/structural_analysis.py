@@ -59,10 +59,10 @@ class SparsStressVTOL(om.ExplicitComponent):
         self.add_input("data:geometry:%s:propeller:y" % propulsion_id, val=np.nan, units="m")
         if spar_model == "pipe":
             self.add_input("data:structures:wing:spar:diameter:outer", val=np.nan, units="m")
-            self.add_input("data:structures:wing:spar:diameter:k", val=0.9, units=None)
+            self.add_input("optimization:variables:structures:wing:spar:diameter:k", val=0.9, units=None)
         else:
             self.add_input("data:structures:wing:spar:web:depth", val=np.nan, units="m")
-            self.add_input("data:structures:wing:spar:depth:k", val=0.1, units=None)
+            self.add_input("optimization:variables:structures:wing:spar:depth:k", val=0.1, units=None)
         self.add_output("data:structures:wing:spar:stress:VTOL", units="N/m**2")
 
     def setup_partials(self):
@@ -80,11 +80,11 @@ class SparsStressVTOL(om.ExplicitComponent):
 
         if spar_model == "pipe":
             d_out = inputs["data:structures:wing:spar:diameter:outer"]  # outer diameter [m]
-            k_spar = inputs["data:structures:wing:spar:diameter:k"]  # aspect ratio of the spar [-]
+            k_spar = inputs["optimization:variables:structures:wing:spar:diameter:k"]  # aspect ratio of the spar [-]
             sig_root = WingStructuralAnalysisModels.pipe_stress(M_root, d_out, k_spar)
         else:
             h_web = inputs["data:structures:wing:spar:web:depth"]  # distance between the two flanges [m]
-            k_spar = inputs["data:structures:wing:spar:depth:k"]  # aspect ratio of the spar [-]
+            k_spar = inputs["optimization:variables:structures:wing:spar:depth:k"]  # aspect ratio of the spar [-]
             sig_root = WingStructuralAnalysisModels.i_beam_stress(M_root, h_web, k_spar)
 
         outputs["data:structures:wing:spar:stress:VTOL"] = sig_root

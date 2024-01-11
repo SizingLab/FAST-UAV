@@ -44,167 +44,169 @@ optimization:
     design_variables:
     
         ## GLOBAL ##
-      - name: data:weight:mtow:k # over estimation coefficient on the load mass
+      - name: optimization:variables:weight:mtow:k # over estimation coefficient on the load mass
         lower: 1.0
         upper: 40.0
         
-      - name: data:geometry:wing:loading:k  # under estimation coefficient on the wing loading
+      - name: optimization:variables:geometry:wing:loading:k  # under estimation coefficient on the wing loading
         lower: 0.1
         upper: 1.0
         
         ## PROPULSION ##
-      - name: data:propulsion:fixedwing:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
+      - name: optimization:variables:propulsion:fixedwing:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
         lower: 0.01
         upper: 1.0
 
-      - name: data:propulsion:fixedwing:propeller:beta:guess # pitch/diameter ratio of the propeller
+      - name: optimization:variables:propulsion:fixedwing:propeller:beta # pitch/diameter ratio of the propeller
         lower: 0.48
         upper: 1.0
 
-      - name: data:propulsion:fixedwing:propeller:advance_ratio:climb # climbing advance ratio
+      - name: optimization:variables:propulsion:fixedwing:propeller:advance_ratio:climb # climbing advance ratio
         lower: 0.01
         upper: 1.2
 
-      - name: data:propulsion:fixedwing:propeller:advance_ratio:cruise # cruise advance ratio
+      - name: optimization:variables:propulsion:fixedwing:propeller:advance_ratio:cruise # cruise advance ratio
         lower: 0.01
         upper: 1.2
 
-      - name: data:propulsion:fixedwing:motor:torque:k # over estimation coefficient on the motor torque
+      - name: optimization:variables:propulsion:fixedwing:motor:torque:k # over estimation coefficient on the motor torque
         lower: 1.0
         upper: 20.0
 
-      - name: data:propulsion:fixedwing:motor:speed:k # over estimation coefficient on the motor speed
+      - name: optimization:variables:propulsion:fixedwing:motor:speed:k # over estimation coefficient on the motor speed
         lower: 0.1
         upper: 10.0
 
-      - name: data:propulsion:fixedwing:battery:energy:k # over estimation coefficient on the battery energy
+      - name: optimization:variables:propulsion:fixedwing:battery:energy:k # over estimation coefficient on the battery energy
         lower: 0.1
         upper: 20.0
         
-      - name: data:propulsion:fixedwing:battery:voltage:k # over estimation coefficient on the battery voltage
+      - name: optimization:variables:propulsion:fixedwing:battery:voltage:k # over estimation coefficient on the battery voltage
         lower: 1.0
         upper: 10.0
 
-      - name: data:propulsion:fixedwing:esc:power:k # over estimation coefficient on the ESC power
+      - name: optimization:variables:propulsion:fixedwing:esc:power:k # over estimation coefficient on the ESC power
         lower: 1.0
         upper: 15.0
         
-      - name: data:propulsion:fixedwing:esc:voltage:k # over estimation coefficient on the ESC voltage
+      - name: optimization:variables:propulsion:fixedwing:esc:voltage:k # over estimation coefficient on the ESC voltage
         lower: 1.0
         upper: 15.0
     
         ## GEOMETRY ##
-      - name: data:geometry:wing:AR
+      - name: optimization:variables:geometry:wing:AR
         lower: 8.0
         upper: 20.0
         
-      - name: data:geometry:wing:lambda
+      - name: optimization:variables:geometry:wing:lambda
         lower: 0.1
         upper: 1.0
         
-      - name: data:geometry:wing:MAC:LE:x:k  # under estimation coefficient on wing's MAC leading edge location
+      - name: optimization:variables:geometry:wing:MAC:LE:x:k  # under estimation coefficient on wing's MAC leading edge location
         lower: 0.01
         upper: 1.0
         
-      - name: data:geometry:tail:horizontal:AR
+      - name: optimization:variables:geometry:tail:horizontal:AR
         lower: 3.0
         upper: 6.0
         
-      - name: data:geometry:tail:vertical:AR
+      - name: optimization:variables:geometry:tail:vertical:AR
         lower: 0.9
         upper: 4.0
         
-      - name: data:geometry:tail:horizontal:arm:k  # under estimation coefficient on tail moment arm
+      - name: optimization:variables:geometry:tail:horizontal:arm:k  # under estimation coefficient on tail moment arm
         lower: 0.01
         upper: 1.0
         
         ## STRUCTURES ##  
-      - name: data:structures:wing:spar:depth:k  # data:structures:wing:spar:diameter:k
+      - name: optimization:variables:structures:wing:spar:depth:k  # optimization:variables:structures:wing:spar:diameter:k
         lower: 0.01
         upper: 0.99
 
         ## AERODYNAMICS ##
-      - name: data:aerodynamics:CD0:guess
+      - name: optimization:variables:aerodynamics:CD0:guess
         lower: 0.01
         upper: 1.0
         
     constraints:
     
         ## GLOBAL ##
-      - name: data:weight:mtow:guess:constraint # Mass consistency
+      - name: optimization:constraints:weight:mtow:consistency # Mass consistency
         lower: 0.0
 
-      - name: data:weight:mtow:requirement:constraint # MTOW requirement
+      - name: optimization:constraints:weight:mtow:requirement # MTOW requirement
         lower: 0.0
         
         ## PROPULSION ##
-      - name: data:propulsion:fixedwing:propeller:constraints:airspeed:climb  # climb speed requirement
+      - name: optimization:constraints:propulsion:fixedwing:propeller:airspeed:climb  # climb speed requirement
         lower: 0.0
         upper: 0.01
         
-      - name: data:propulsion:fixedwing:propeller:constraints:airspeed:cruise  # cruise speed requirement
+      - name: optimization:constraints:propulsion:fixedwing:propeller:airspeed:cruise  # cruise speed requirement
         lower: 0.0
         upper: 0.01
         
-      - name: data:propulsion:fixedwing:propeller:constraints:rpm:climb  # propeller rpm in climb
+      - name: optimization:constraints:propulsion:fixedwing:propeller:rpm:climb  # propeller rpm in climb
         lower: 0.0
         
-      - name: data:propulsion:fixedwing:propeller:constraints:rpm:cruise  # propeller rpm in cruise
+      - name: optimization:constraints:propulsion:fixedwing:propeller:rpm:cruise  # propeller rpm in cruise
         lower: 0.0
         
-      - name: data:propulsion:fixedwing:motor:constraints:torque:climb  # motor torque in climb
+      - name: optimization:constraints:propulsion:fixedwing:motor:torque:climb  # motor torque in climb
         lower: 0.0
         
-      - name: data:propulsion:fixedwing:motor:constraints:torque:cruise  # motor torque in cruise
+      - name: optimization:constraints:propulsion:fixedwing:motor:torque:cruise  # motor torque in cruise
         lower: 0.0
       
-      - name: data:propulsion:fixedwing:battery:constraints:power:takeoff  # battery power at takeoff
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:takeoff  # battery power at takeoff
         lower: 0.0
 
-      - name: data:propulsion:fixedwing:battery:constraints:power:climb  # battery power in climb
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:climb  # battery power in climb
         lower: 0.0
 
-      - name: data:propulsion:fixedwing:battery:constraints:power:cruise  # battery power in cruise
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:cruise  # battery power in cruise
         lower: 0.0
 
-      - name: data:propulsion:fixedwing:battery:constraints:voltage:climb  # battery voltage in climb
+      - name: optimization:constraints:propulsion:fixedwing:battery:voltage:climb  # battery voltage in climb
         lower: 0.0
 
-      - name: data:propulsion:fixedwing:battery:constraints:voltage:cruise  # battery voltage in cruise
+      - name: optimization:constraints:propulsion:fixedwing:battery:voltage:cruise  # battery voltage in cruise
         lower: 0.0
       
-      - name: data:propulsion:fixedwing:esc:constraints:power:climb  # ESC power in climb
+      - name: optimization:constraints:propulsion:fixedwing:esc:power:climb  # ESC power in climb
         lower: 0.0
         
-      - name: data:propulsion:fixedwing:esc:constraints:power:cruise  # ESC power in cruise
+      - name: optimization:constraints:propulsion:fixedwing:esc:power:cruise  # ESC power in cruise
         lower: 0.0
         
-      - name: data:propulsion:fixedwing:esc:constraints:voltage:min  # min bound for voltage w.r.t. power (to match commercially available components)
+      - name: optimization:constraints:propulsion:fixedwing:esc:voltage:min  # min bound for voltage w.r.t. power (to match commercially available components)
         lower: 0.0
         
-      - name: data:propulsion:fixedwing:esc:constraints:voltage:max  # max bound for voltage w.r.t. power (to match commercially available components)
+      - name: optimization:constraints:propulsion:fixedwing:esc:voltage:max  # max bound for voltage w.r.t. power (to match commercially available components)
         lower: 0.0 
       
         ## GEOMETRY ##  
-      - name: data:geometry:fuselage:volume:constraint  # fuselage volume requirement
+      - name: optimization:constraints:geometry:fuselage:volume  # fuselage volume requirement
         lower: 0.0
         
         ## STRUCTURES ##
-      - name: data:structures:wing:spar:depth:constraint  # data:structures:wing:spar:diameter:constraint
+      - name: optimization:constraints:structures:wing:spar:depth  # data:structures:wing:spar:diameter
         lower: 0.0
     
         ## AERODYNAMICS ##
-      - name: data:aerodynamics:CD0:guess:constraint # Drag consistency
+      - name: optimization:constraints:aerodynamics:CD0:consistency # Drag consistency
         lower: 0.0
         upper: 0.01
       
         ## STABILITY ##
-      - name: data:stability:static_margin  # static margin constraint
-        lower: 0.10
-        #upper: 0.15
+      - name: optimization:constraints:stability:static_margin:min  # static margin constraint (min value)
+        lower: 0.0
+        
+      #- name: optimization:constraints:stability:static_margin:max  # static margin constraint (max value)
+      #  lower: 0.0
       
         ## MISSION ##
-      #- name: mission:sizing:energy:fixedwing:constraint  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+      #- name: optimization:constraints:mission:sizing:energy:fixedwing  # energy requirement to fulfill mission (e.g. for mass minimization objective)
       #  lower: 0.0
       
 
@@ -215,4 +217,4 @@ optimization:
         
       # ENDURANCE MAXIMIZATION
       - name: data:performance:endurance:cruise
-        scaler: -1e-3  # the use of a scaler is highly recommanded due to numerical precision affecting the final convergence.
+        scaler: -1e-3  # the use of a scaler is highly recommended due to numerical precision affecting the final convergence.
