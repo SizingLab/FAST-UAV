@@ -127,7 +127,7 @@ class Spars(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("mission:sizing:load_factor:ultimate", val=3.0, units=None)
-        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:y", val=np.nan, units="m")
         self.add_input("data:structures:wing:spar:stress:max", val=np.nan, units="N/m**2")
@@ -135,14 +135,14 @@ class Spars(om.ExplicitComponent):
         self.add_output("data:weight:airframe:wing:spar:mass", units="kg", lower=0.0)
 
         if self.options["spar_model"] == "pipe":
-            self.add_input("data:structures:wing:spar:diameter:k", val=0.9, units=None)
-            self.add_input("data:structures:wing:spar:diameter:outer:k", val=1.0, units=None)
+            self.add_input("optimization:variables:structures:wing:spar:diameter:k", val=0.9, units=None)
+            self.add_input("optimization:variables:structures:wing:spar:diameter:outer:k", val=1.0, units=None)
             self.add_output("data:structures:wing:spar:diameter:inner", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:diameter:outer", units="m", lower=0.0)
 
         elif self.options["spar_model"] == "I_beam":
-            self.add_input("data:structures:wing:spar:depth:k", val=0.1, units=None)
-            self.add_input("data:structures:wing:spar:web:depth:k", val=1.0, units=None)
+            self.add_input("optimization:variables:structures:wing:spar:depth:k", val=0.1, units=None)
+            self.add_input("optimization:variables:structures:wing:spar:web:depth:k", val=1.0, units=None)
             self.add_output("data:structures:wing:spar:web:depth", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:web:thickness", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:flange:depth", units="m", lower=0.0)
@@ -156,7 +156,7 @@ class Spars(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         spar_model = self.options["spar_model"]
         n_ult = inputs["mission:sizing:load_factor:ultimate"]
-        m_uav_guess = inputs["data:weight:mtow:guess"]
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
         b_w = inputs["data:geometry:wing:span"]
         y_MAC = inputs["data:geometry:wing:MAC:y"]
         sig_max = inputs["data:structures:wing:spar:stress:max"]
@@ -168,9 +168,9 @@ class Spars(om.ExplicitComponent):
 
         if spar_model == "pipe":  # Circular hollow beam model
             # aspect ratio of the spar [-]:
-            k_spar = inputs["data:structures:wing:spar:diameter:k"]
+            k_spar = inputs["optimization:variables:structures:wing:spar:diameter:k"]
             # under-sizing coef. [-] on spar outer diameter (1.0 for FW (monotonicity eq.)/ des. var. for Hybrid):
-            k_d = inputs["data:structures:wing:spar:diameter:outer:k"]
+            k_d = inputs["optimization:variables:structures:wing:spar:diameter:outer:k"]
             # Outer diameter calculation [m]:
             d_out = k_d * ((32 * M_root) / (np.pi * (1 - k_spar ** 4) * sig_max)) ** (1 / 3)
             # Mass and inner diameter calculations:
@@ -183,9 +183,9 @@ class Spars(om.ExplicitComponent):
 
         else:  # I-beam model
             # aspect ratio of the spar [-], i.e. flanges' thickness over distance between the two flanges:
-            k_spar = inputs["data:structures:wing:spar:depth:k"]
+            k_spar = inputs["optimization:variables:structures:wing:spar:depth:k"]
             # under-sizing coef. [-] on spar web depth (1.0 for FW (monotonicity eq.)/ des. var. for Hybrid):
-            k_h = inputs["data:structures:wing:spar:web:depth:k"]
+            k_h = inputs["optimization:variables:structures:wing:spar:web:depth:k"]
             # flange depth-to-thickness ratio [-]: b_flange = a_flange / k_flange
             k_flange = 0.1
             # web depth calculation [m]:

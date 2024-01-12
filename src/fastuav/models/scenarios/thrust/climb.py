@@ -21,7 +21,7 @@ class MultirotorClimbThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
@@ -52,7 +52,7 @@ class MultirotorClimbThrust(om.ExplicitComponent):
         rho_air = atm.density
 
         # Weight
-        m_uav_guess = inputs["data:weight:mtow:guess"]
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
 
         # Drag parameters
         C_D0 = inputs["data:aerodynamics:%s:CD0" % propulsion_id]
@@ -92,10 +92,10 @@ class FixedwingClimbThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
-        self.add_input("data:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input("mission:sizing:main_route:climb:speed:%s" % propulsion_id, val=0.0, units="m/s")
@@ -123,14 +123,14 @@ class FixedwingClimbThrust(om.ExplicitComponent):
         q_climb = atm.dynamic_pressure
 
         # Weight
-        m_uav_guess = inputs["data:weight:mtow:guess"]
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
         Weight = m_uav_guess * g
 
         # Induced drag parameters
         K = inputs["data:aerodynamics:CDi:K"]
 
         # Parasitic drag parameters
-        CD_0_guess = inputs["data:aerodynamics:CD0:guess"]
+        CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
 
         # Thrust and trim calculation (equilibrium)
         TW_climb = (

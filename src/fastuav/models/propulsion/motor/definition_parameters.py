@@ -38,7 +38,7 @@ class MaxTorque(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
         self.add_input("data:propulsion:propeller:torque:takeoff", val=np.nan, units="N*m")
-        self.add_input("data:propulsion:motor:torque:k", val=np.nan, units=None)
+        self.add_input("optimization:variables:propulsion:motor:torque:k", val=np.nan, units=None)
         self.add_output("data:propulsion:motor:torque:max:estimated", units="N*m")
 
     def setup_partials(self):
@@ -47,7 +47,7 @@ class MaxTorque(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         Q_pro_to = inputs["data:propulsion:propeller:torque:takeoff"]
-        k_mot = inputs["data:propulsion:motor:torque:k"]
+        k_mot = inputs["optimization:variables:propulsion:motor:torque:k"]
 
         T_mot_to = Q_pro_to / N_red  # [N.m] takeoff torque
         T_mot_max = k_mot * T_mot_to  # [N.m] required motor nominal torque
@@ -57,7 +57,7 @@ class MaxTorque(om.ExplicitComponent):
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         Q_pro_to = inputs["data:propulsion:propeller:torque:takeoff"]
-        k_mot = inputs["data:propulsion:motor:torque:k"]
+        k_mot = inputs["optimization:variables:propulsion:motor:torque:k"]
 
         partials[
             "data:propulsion:motor:torque:max:estimated", "data:propulsion:gearbox:N_red"
@@ -69,7 +69,7 @@ class MaxTorque(om.ExplicitComponent):
             k_mot / N_red
         )
         partials[
-            "data:propulsion:motor:torque:max:estimated", "data:propulsion:motor:torque:k"
+            "data:propulsion:motor:torque:max:estimated", "optimization:variables:propulsion:motor:torque:k"
         ] = (Q_pro_to / N_red)
 
 
@@ -82,7 +82,7 @@ class VelocityConstant(om.ExplicitComponent):
         self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
         self.add_input("data:propulsion:propeller:power:takeoff", val=np.nan, units="W")
         self.add_input("data:propulsion:propeller:speed:takeoff", val=np.nan, units="rad/s")
-        self.add_input("data:propulsion:motor:speed:k", val=np.nan, units=None)
+        self.add_input("optimization:variables:propulsion:motor:speed:k", val=np.nan, units=None)
         self.add_output("data:propulsion:motor:speed:constant:estimated", units="rad/V/s")
 
     def setup_partials(self):
@@ -92,7 +92,7 @@ class VelocityConstant(om.ExplicitComponent):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         W_pro_to = inputs["data:propulsion:propeller:speed:takeoff"]
         P_pro_to = inputs["data:propulsion:propeller:power:takeoff"]
-        k_speed_mot = inputs["data:propulsion:motor:speed:k"]
+        k_speed_mot = inputs["optimization:variables:propulsion:motor:speed:k"]
 
         # TODO: replace W_mot_to / U_bat_guess by Kv_hat = 41.59 T_nom ** (-0.35)  (datasheet regression)
         W_mot_to = W_pro_to * N_red  # [rad/s] Motor take-off speed
@@ -105,7 +105,7 @@ class VelocityConstant(om.ExplicitComponent):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         P_pro_to = inputs["data:propulsion:propeller:power:takeoff"]
         W_pro_to = inputs["data:propulsion:propeller:speed:takeoff"]
-        k_speed_mot = inputs["data:propulsion:motor:speed:k"]
+        k_speed_mot = inputs["optimization:variables:propulsion:motor:speed:k"]
 
         U_bat_guess = 1.84 * P_pro_to ** 0.36  # [V] battery voltage estimation
 
@@ -124,5 +124,5 @@ class VelocityConstant(om.ExplicitComponent):
         ] = k_speed_mot / U_bat_guess
 
         partials[
-            "data:propulsion:motor:speed:constant:estimated", "data:propulsion:motor:speed:k"
+            "data:propulsion:motor:speed:constant:estimated", "optimization:variables:propulsion:motor:speed:k"
         ] = W_pro_to * N_red / U_bat_guess

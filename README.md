@@ -30,7 +30,7 @@ FAST-UAV requires Python 3.8 or 3.9. It is recommended to install FAST-UAV in a 
 To install FAST-UAV, run the following commands in a terminal:
 
 ```{.bash}
-conda create --name <env_name> python=<3.9
+conda create --name <env_name> python=3.9
 conda activate <env_name>
 pip install fastuav
 ```

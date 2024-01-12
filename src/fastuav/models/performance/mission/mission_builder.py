@@ -141,7 +141,7 @@ class MissionConstraints(om.ExplicitComponent):
             self.add_input("mission:%s:energy:%s" % (mission_name, propulsion_id), val=np.nan, units="kJ")
             self.add_input("data:propulsion:%s:battery:energy" % propulsion_id, val=0.0, units="kJ")
             self.add_input("data:propulsion:%s:battery:DoD:max" % propulsion_id, val=0.8, units=None)
-            self.add_output("mission:%s:energy:%s:constraint" % (mission_name, propulsion_id), units=None)
+            self.add_output("optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id), units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -155,7 +155,7 @@ class MissionConstraints(om.ExplicitComponent):
             E_bat = inputs["data:propulsion:%s:battery:energy" % propulsion_id]
             C_ratio = inputs["data:propulsion:%s:battery:DoD:max" % propulsion_id]
             energy_con = (E_bat * C_ratio - E_mission) / (E_bat * C_ratio) if E_bat > 0 else -1e6
-            outputs["mission:%s:energy:%s:constraint" % (mission_name, propulsion_id)] = energy_con
+            outputs["optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id)] = energy_con
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         mission_name = self.options["mission_name"]
@@ -166,14 +166,14 @@ class MissionConstraints(om.ExplicitComponent):
             E_bat = inputs["data:propulsion:%s:battery:energy" % propulsion_id]
             C_ratio = inputs["data:propulsion:%s:battery:DoD:max" % propulsion_id]
             partials[
-                "mission:%s:energy:%s:constraint" % (mission_name, propulsion_id),
+                "optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id),
                 "mission:%s:energy:%s" % (mission_name, propulsion_id),
             ] = -1.0 / (E_bat * C_ratio) if E_bat > 0 else 0.0
             partials[
-                "mission:%s:energy:%s:constraint" % (mission_name, propulsion_id),
+                "optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id),
                 "data:propulsion:%s:battery:energy" % propulsion_id,
             ] = E_mission / (E_bat**2 * C_ratio) if E_bat > 0 else 0.0
             partials[
-                "mission:%s:energy:%s:constraint" % (mission_name, propulsion_id),
+                "optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id),
                 "data:propulsion:%s:battery:DoD:max" % propulsion_id,
             ] = E_mission / (E_bat * C_ratio**2) if E_bat > 0 else 0.0

@@ -66,7 +66,7 @@ class WingLoadingCruise(om.ExplicitComponent):
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_input("data:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_output("data:geometry:wing:loading:cruise", units="N/m**2")
 
@@ -89,7 +89,7 @@ class WingLoadingCruise(om.ExplicitComponent):
         K = inputs["data:aerodynamics:CDi:K"]
 
         # Parasitic drag parameter
-        CD_0_guess = inputs["data:aerodynamics:CD0:guess"]
+        CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
 
         # Wing loading calculation
         WS_cruise = q_cruise * np.sqrt(
@@ -113,7 +113,7 @@ class WingLoadingSelection(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:loading:stall", val=np.nan, units="N/m**2")
-        self.add_input("data:geometry:wing:loading:k", val=1.0, units=None)
+        self.add_input("optimization:variables:geometry:wing:loading:k", val=1.0, units=None)
         self.add_output("data:geometry:wing:loading", units="N/m**2")
 
     def setup_partials(self):
@@ -121,7 +121,7 @@ class WingLoadingSelection(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         WS_stall = inputs["data:geometry:wing:loading:stall"]
-        k_WS = inputs["data:geometry:wing:loading:k"]
+        k_WS = inputs["optimization:variables:geometry:wing:loading:k"]
 
         WS = (
             k_WS * WS_stall
@@ -131,10 +131,10 @@ class WingLoadingSelection(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         WS_stall = inputs["data:geometry:wing:loading:stall"]
-        k_WS = inputs["data:geometry:wing:loading:k"]
+        k_WS = inputs["optimization:variables:geometry:wing:loading:k"]
 
         partials["data:geometry:wing:loading", "data:geometry:wing:loading:stall"] = k_WS
-        partials["data:geometry:wing:loading", "data:geometry:wing:loading:k"] = WS_stall
+        partials["data:geometry:wing:loading", "optimization:variables:geometry:wing:loading:k"] = WS_stall
 
 
 # @ValidityDomainChecker(
@@ -153,9 +153,9 @@ class WingLoadingSelection(om.ExplicitComponent):
 #     def setup(self):
 #         self.add_input("data:geometry:wing:loading:cruise", val=np.nan, units="N/m**2")
 #         self.add_input("data:geometry:wing:loading:stall", val=np.nan, units="N/m**2")
-#         self.add_input("data:geometry:wing:loading:k", val=1.0, units=None)
+#         self.add_input("optimization:variables:geometry:wing:loading:k", val=1.0, units=None)
 #         self.add_output("data:geometry:wing:loading", units="N/m**2")
-#         self.add_output("data:geometry:wing:loading:stall:constraint", units=None)
+#         self.add_output("optimization:constraints:geometry:wing:loading:stall", units=None)
 #
 #     def setup_partials(self):
 #         self.declare_partials("*", "*", method="exact")
@@ -163,7 +163,7 @@ class WingLoadingSelection(om.ExplicitComponent):
 #     def compute(self, inputs, outputs):
 #         WS_cruise = inputs["data:geometry:wing:loading:cruise"]
 #         WS_stall = inputs["data:geometry:wing:loading:stall"]
-#         k_WS = inputs["data:geometry:wing:loading:k"]
+#         k_WS = inputs["optimization:variables:geometry:wing:loading:k"]
 #
 #         WS = (
 #             k_WS * WS_cruise
@@ -173,20 +173,20 @@ class WingLoadingSelection(om.ExplicitComponent):
 #         ) / WS  # constraint on stall WS (selected WS should be lower than stall WS)
 #
 #         outputs["data:geometry:wing:loading"] = WS
-#         outputs["data:geometry:wing:loading:stall:constraint"] = WS_stall_cnstr
+#         outputs["optimization:constraints:geometry:wing:loading:stall"] = WS_stall_cnstr
 #
 #     def compute_partials(self, inputs, partials, discrete_inputs=None):
 #         WS_cruise = inputs["data:geometry:wing:loading:cruise"]
 #         WS_stall = inputs["data:geometry:wing:loading:stall"]
-#         k_WS = inputs["data:geometry:wing:loading:k"]
+#         k_WS = inputs["optimization:variables:geometry:wing:loading:k"]
 #         WS = k_WS * WS_cruise
 #
-#         partials["data:geometry:wing:loading", "data:geometry:wing:loading:k"] = WS_cruise
+#         partials["optimization:variables:geometry:wing:loading", "optimization:variables:geometry:wing:loading:k"] = WS_cruise
 #         partials["data:geometry:wing:loading", "data:geometry:wing:loading:cruise"] = k_WS
-#         partials["data:geometry:wing:loading:stall:constraint", "data:geometry:wing:loading:stall"] = 1.0 / WS
+#         partials["optimization:constraints:geometry:wing:loading:stall", "data:geometry:wing:loading:stall"] = 1.0 / WS
 #         partials[
-#             "data:geometry:wing:loading:stall:constraint", "data:geometry:wing:loading:cruise"
+#             "optimization:constraints:geometry:wing:loading:stall", "data:geometry:wing:loading:cruise"
 #         ] = - WS_stall / (k_WS * WS_cruise ** 2)
 #         partials[
-#             "data:geometry:wing:loading:stall:constraint", "data:geometry:wing:loading:k"
+#             "optimization:variables:geometry:wing:loading:stall:constraint", "optimization:variables:geometry:wing:loading:k"
 #         ] = - WS_stall / (k_WS ** 2 * WS_cruise)

@@ -27,9 +27,9 @@ class Weight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:weight:propulsion:esc:mass:reference", val=np.nan, units="kg")
-        self.add_input("data:propulsion:esc:power:reference", val=np.nan, units="W")
-        self.add_input("data:propulsion:esc:power:estimated", val=np.nan, units="W")
+        self.add_input("models:weight:propulsion:esc:mass:reference", val=np.nan, units="kg")
+        self.add_input("models:propulsion:esc:power:reference", val=np.nan, units="W")
+        self.add_input("data:propulsion:esc:power:max:estimated", val=np.nan, units="W")
         self.add_output("data:weight:propulsion:esc:mass:estimated", units="kg")
 
     def setup_partials(self):
@@ -37,9 +37,9 @@ class Weight(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        m_esc_ref = inputs["data:weight:propulsion:esc:mass:reference"]
-        P_esc_ref = inputs["data:propulsion:esc:power:reference"]
-        P_esc = inputs["data:propulsion:esc:power:estimated"]
+        m_esc_ref = inputs["models:weight:propulsion:esc:mass:reference"]
+        P_esc_ref = inputs["models:propulsion:esc:power:reference"]
+        P_esc = inputs["data:propulsion:esc:power:max:estimated"]
 
         m_esc = m_esc_ref * (P_esc / P_esc_ref)  # [kg] Mass ESC
 

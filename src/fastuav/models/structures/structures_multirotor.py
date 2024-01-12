@@ -29,7 +29,7 @@ class ArmsWeight(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
 
-        self.add_input("data:structures:arms:diameter:k", val=np.nan, units=None)
+        self.add_input("optimization:variables:structures:arms:diameter:k", val=np.nan, units=None)
         self.add_input("data:geometry:arms:number", val=np.nan, units=None)
         self.add_input("data:geometry:arms:prop_per_arm", val=np.nan, units=None)
         self.add_input("data:geometry:arms:length", val=np.nan, units="m")
@@ -47,7 +47,7 @@ class ArmsWeight(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
-        D_ratio = inputs["data:structures:arms:diameter:k"]
+        D_ratio = inputs["optimization:variables:structures:arms:diameter:k"]
         Narm = inputs["data:geometry:arms:number"]
         Npro_arm = inputs["data:geometry:arms:prop_per_arm"]
         Larm = inputs["data:geometry:arms:length"]
@@ -77,8 +77,8 @@ class BodyWeight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:weight:airframe:arms:mass:reference", val=np.nan, units="kg")
-        self.add_input("data:weight:airframe:body:mass:reference", val=np.nan, units="kg")
+        self.add_input("models:weight:airframe:arms:mass:reference", val=np.nan, units="kg")
+        self.add_input("models:weight:airframe:body:mass:reference", val=np.nan, units="kg")
         self.add_input("data:weight:airframe:arms:mass", val=np.nan, units="kg")
         self.add_output("data:weight:airframe:body:mass", units="kg")
 
@@ -87,8 +87,8 @@ class BodyWeight(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        Marm_ref = inputs["data:weight:airframe:arms:mass:reference"]
-        Mbody_ref = inputs["data:weight:airframe:body:mass:reference"]
+        Marm_ref = inputs["models:weight:airframe:arms:mass:reference"]
+        Mbody_ref = inputs["models:weight:airframe:body:mass:reference"]
         Marms = inputs["data:weight:airframe:arms:mass"]
 
         Mbody = Mbody_ref * (Marms / Marm_ref)  # [kg] mass of the frame
