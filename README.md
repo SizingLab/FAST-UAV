@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="docs/assets/banner.png" width="75%" alt="Xplique" align="center" />
+    <img src="docs/assets/banner.png" width="75%" alt="FASTUAV" align="center" />
 </p>
 
 Future Aircraft Sizing Tool - Unmanned Aerial Vehicles
