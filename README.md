@@ -109,3 +109,4 @@ The software is released under <a href="https://www.gnu.org/licenses/gpl-3.0.en.
 Feel free to contact us if you have any question or suggestion, or if you wish to contribute with us on FAST-UAV!
 * Scott DELBECQ [scott.delbecq@isae-supaero.fr](scott.delbecq@isae-supaero.fr)
 * Félix POLLET [felix.pollet@isae-supaero.fr](felix.pollet@isae-supaero.fr)
+* Marc BUDINGER [mbudinge@insa-toulouse.fr](mbudinge@insa-toulouse.fr)
