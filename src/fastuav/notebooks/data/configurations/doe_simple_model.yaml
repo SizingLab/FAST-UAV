@@ -1,0 +1,17 @@
+title: Multirotor Drone MDO with LCA
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders:
+    
+# Input and output files
+input_file: ../../workdir/problem_inputs.xml
+output_file: ../../workdir/problem_outputs.xml
+
+# Definition of OpenMDAO model
+model:
+    missions:
+        id: fastuav.performance.mission
+        file_path: ../missions/missions_multirotor_doe.yaml  # path to the mission definition file
+
+
+

@@ -1,0 +1,28 @@
+# Missions definition for multirotor UAV
+
+routes:
+  main_route:
+    climb_part:
+      phase_id: multirotor_climb
+    hover_part:
+      phase_id: hover
+    cruise_part:
+      phase_id: multirotor_cruise
+  diversion:
+    climb_part:
+      phase_id: multirotor_climb
+    hover_part:
+      phase_id: hover
+    cruise_part:
+      phase_id: multirotor_cruise
+
+missions:
+  sizing:
+    parts:
+      - route: main_route
+  #operational:
+  #  parts:
+  #    - route: main_route
+  #    - route: diversion
+
+

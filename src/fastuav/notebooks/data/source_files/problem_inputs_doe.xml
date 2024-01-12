@@ -1,0 +1,126 @@
+<FASTOAD_model>
+  <data>
+    <weight>
+      <mtow units="kg" is_input="True">5.621522065691114<!--Maximum Take Off Weight--></mtow>
+    </weight>
+    <aerodynamics>
+      <multirotor>
+        <CD0 is_input="True">1.0<!--Parasitic drag coefficient of airframe (in multirotor mode)--></CD0>
+      </multirotor>
+    </aerodynamics>
+    <geometry>
+      <projected_area>
+        <front units="m**2" is_input="True">0.050525883729765<!--Front surface of the airframe (useless for fixed-wing and hybrid UAVs)--></front>
+        <top units="m**2" is_input="True">0.11368323839197124<!--Top surface of the airframe--></top>
+      </projected_area>
+    </geometry>
+    <propulsion>
+      <multirotor>
+        <battery>
+          <energy units="kJ" is_input="True">1157.5996922738536<!--Multirotor battery energy--></energy>
+          <voltage units="V" is_input="True">24.539307701323104<!--Multirotor battery voltage--></voltage>
+          <DoD>
+            <max is_input="True">0.8<!--Multirotor battery depth of discharge--></max>
+          </DoD>
+          <power>
+            <climb units="W" is_input="True">908.7055062731744<!--Multirotor battery power (climb)--></climb>
+            <cruise units="W" is_input="True">1203.518728858352<!--Multirotor battery power (cruise)--></cruise>
+            <hover units="W" is_input="True">742.1372450560945<!--Multirotor battery power (hover)--></hover>
+          </power>
+        </battery>
+        <esc>
+          <efficiency is_input="True">0.95<!--Multirotor ESC efficiency--></efficiency>
+        </esc>
+        <gearbox>
+          <N_red is_input="True">1.0<!--Multirotor gearbox reduction ratio--></N_red>
+        </gearbox>
+        <motor>
+          <resistance units="V/A" is_input="True">0.7459200490548663<!--Multirotor motor resistance--></resistance>
+          <speed>
+            <constant units="rad/V/s" is_input="True">69.32796005438682<!--Multirotor motor speed constant--></constant>
+          </speed>
+          <torque>
+            <friction units="N*m" is_input="True">0.0018119367048259004<!--Multirotor motor friction torque--></friction>
+          </torque>
+        </motor>
+        <propeller>
+          <beta is_input="True">0.3076179950398614<!--Multirotor propeller pitch-to-diameter ratio--></beta>
+          <diameter units="m" is_input="True">0.20889179004256567<!--Multirotor propeller diameter--></diameter>
+          <number is_input="True">12.0<!--Number of propellers for multirotor--></number>
+          <Cp>
+            <dynamic>
+              <polynomial is_input="True">[0.01813, -0.06218, 0.35712, -0.23774, 0.00343, -0.1235, 0.0, 0.07549, 0.0, 0.0, 0.286, 0.993]<!--Polynomial function coef. for propeller Cp (non-static conditions)--></polynomial>
+            </dynamic>
+          </Cp>
+          <Ct>
+            <dynamic>
+              <polynomial is_input="True">[0.02791, 0.11867, 0.27334, -0.28852, -0.06543, -0.23504, 0.02104, 0.0, 0.0, 0.18677, 0.197, 1.094]<!--Polynomial function coef. for propeller Ct (non-static conditions)--></polynomial>
+            </dynamic>
+          </Ct>
+        </propeller>
+      </multirotor>
+    </propulsion>
+  </data>
+  <mission>
+    <operational>
+      <dISA units="degK" is_input="True">0.0</dISA>
+      <main_route>
+        <climb>
+          <rate units="m/s" is_input="True">3.0</rate>
+          <speed units="m/s" is_input="True">3.0</speed>
+          <payload>
+            <power units="W" is_input="True">0.0</power>
+          </payload>
+        </climb>
+        <cruise>
+          <altitude units="m" is_input="True">120.0</altitude>
+          <distance units="m" is_input="True">10000.0</distance>
+          <speed units="m/s" is_input="True">15.0</speed>
+          <payload>
+            <power units="W" is_input="True">0.0</power>
+          </payload>
+        </cruise>
+        <hover>
+          <duration units="min" is_input="True">2.0</duration>
+          <payload>
+            <power units="W" is_input="True">0.0</power>
+          </payload>
+        </hover>
+        <payload>
+          <mass units="kg" is_input="True">2.0</mass>
+        </payload>
+        <takeoff>
+          <altitude units="m" is_input="True">0.0</altitude>
+        </takeoff>
+      </main_route>
+    </operational>
+    <sizing>
+      <payload>
+        <mass units="kg" is_input="True">2.0<!--Design payload mass--></mass>
+      </payload>
+      <main_route>
+        <cruise>
+          <altitude units="m" is_input="True">120.0<!--Cruise altitude for main route of sizing mission--></altitude>
+          <distance units="m" is_input="True">1000.0<!--Distance of cruise segment for main route of sizing mission--></distance>
+          <speed>
+            <multirotor units="m/s" is_input="True">20.0<!--Cruise speed for main route of sizing mission (multirotor mode)--></multirotor>
+          </speed>
+        </cruise>
+        <hover>
+          <duration units="min" is_input="True">1.0<!--Duration of hover segment for main route of sizing mission--></duration>
+        </hover>
+        <takeoff>
+          <altitude units="m" is_input="True">0.0<!--Takeoff altitude for main route of sizing mission--></altitude>
+        </takeoff>
+        <climb>
+          <rate>
+            <multirotor units="m/s" is_input="True">3.0<!--Climb rate for main route of sizing mission (multirotor mode)--></multirotor>
+          </rate>
+          <speed>
+            <multirotor units="m/s" is_input="True">3.0<!--Climb speed for main route of sizing mission (multirotor mode)--></multirotor>
+          </speed>
+        </climb>
+      </main_route>
+    </sizing>
+  </mission>
+</FASTOAD_model>

@@ -1,0 +1,38 @@
+title: Hybrid VTOL Drone MDO
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders:
+   
+# Input and output files
+input_file: ../../workdir/problem_inputs.xml
+output_file: ../../workdir/problem_outputs.xml
+
+# Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
+driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
+
+# Definition of OpenMDAO model
+model:
+    scenarios:
+        id: fastuav.scenarios.hybrid
+    propulsion:
+        id: fastuav.propulsion.hybrid
+        gearbox: False
+    geometry:
+        id: fastuav.geometry.hybrid
+    structures:
+        id: fastuav.structures.hybrid
+        spar_model: "I_beam"  # "I_beam" or "pipe"
+    aerodynamics:
+        id: fastuav.aerodynamics.hybrid
+    wires:
+        id: fastuav.propulsion.wires.hybrid
+    mtow:
+        id: fastuav.mtow.hybrid
+    stability:
+        id: fastuav.stability.hybrid
+    performance:
+        cruise_range:
+            id: fastuav.performance.endurance.hybrid
+        missions:
+            id: fastuav.performance.mission
+            file_path: ../missions/missions_hybrid.yaml

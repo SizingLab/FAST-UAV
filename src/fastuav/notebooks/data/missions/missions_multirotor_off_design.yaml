@@ -1,0 +1,41 @@
+# Missions definition for multirotor UAV
+
+routes:
+  main_route:
+    climb_part:
+      phase_id: multirotor_climb
+    hover_part:
+      phase_id: hover
+    cruise_part:
+      phase_id: multirotor_cruise
+  diversion:
+    hover_part:
+      phase_id: hover
+    cruise_part:
+      phase_id: multirotor_cruise
+  route_1:
+    climb_part:
+      phase_id: multirotor_climb
+    cruise_part:
+      phase_id: multirotor_cruise
+  route_2:
+    hover_part:
+      phase_id: hover
+
+missions:
+  sizing:  # it is mandatory to define this mission
+    parts:
+      - route: main_route
+
+  operational_1:  # first off-desing mission to evaluate
+    parts:
+      - route: main_route
+      - route: diversion
+      
+  operational_2:  # second off-design mission to evaluate
+    parts:
+      - route: route_1
+      - route: route_2
+      # ...
+
+

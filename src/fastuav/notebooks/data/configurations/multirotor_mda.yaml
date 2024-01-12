@@ -1,0 +1,48 @@
+title: Multirotor Drone MDA  # only consistency constraints are solved. No design optimization.
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders:
+    
+# Input and output files
+input_file: ../../workdir/problem_inputs.xml
+output_file: ../../workdir/problem_outputs.xml
+
+# Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
+driver: om.ScipyOptimizeDriver(tol=1e-3, optimizer='SLSQP', maxiter=50)
+
+# Definition of OpenMDAO model
+model:
+    scenarios:
+        id: fastuav.scenarios.multirotor
+    propulsion:
+        id: fastuav.propulsion.multirotor
+        off_the_shelf_propeller: False
+    geometry:
+        id: fastuav.geometry.multirotor
+    structures:
+        id: fastuav.structures.multirotor
+    wires:
+        id: fastuav.propulsion.wires.multirotor
+    mtow:
+        id: fastuav.mtow.multirotor
+    performance:
+        endurance:
+            id: fastuav.performance.endurance.multirotor
+        missions:
+            id: fastuav.performance.mission
+            file_path: ../missions/missions_multirotor.yaml
+
+optimization:
+    design_variables:
+      - name: optimization:variables:weight:mtow:k # over estimation coefficient on the mass (to solve the mass consistency constraint)
+        upper: 40.0
+        lower: 1.0
+
+    constraints:
+      - name: optimization:constraints:weight:mtow:consistency  # consistency constraint on the drone mass
+        lower: 0.0    
+      
+    objective:
+      # MASS MINIMIZATION (this objective enables to transform the inequality constraint into an equality)
+      - name: data:weight:mtow
+        scaler: 1e-1

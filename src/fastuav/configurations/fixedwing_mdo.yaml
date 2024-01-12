@@ -4,8 +4,8 @@ title: Fixed-Wing Drone MDO
 module_folders:
    
 # Input and output files
-input_file: ../workdir/problem_inputs.xml
-output_file: ../workdir/problem_outputs.xml
+input_file: ../../workdir/problem_inputs.xml
+output_file: ../../workdir/problem_outputs.xml
 
 # Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
 driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
@@ -35,7 +35,7 @@ model:
             id: fastuav.performance.endurance.fixedwing
         missions:
             id: fastuav.performance.mission
-            file_path: ../../missions/missions_fixedwing.yaml
+            file_path: ../missions/missions_fixedwing.yaml
 
 
 # This section is needed only if optimization process is run
