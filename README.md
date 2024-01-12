@@ -35,12 +35,12 @@ conda activate <env_name>
 pip install fastuav
 ```
 
-Now that FAST-UAV is installed, you can start using it through [Jupyter notebooks](https://jupyter.org/):
+Now that FAST-UAV is installed, you can start using it through [Jupyter notebooks](https://jupyter.org/).
+To do so, create a new folder for FAST-UAV, `cd` into this folder, and type this command in your terminal:
 ```{.bash}
-jupyter lab
+fastoad notebooks -p fastuav
 ```
-Jupyter lab will open automatically in your browser. Then, navigate to the `src/fastuav/notebooks` directory and start with the first tutorial notebook.
-
+Then run the Jupyter server as indicated in the obtained message.
 
 📚 Citation
 ------------
@@ -94,7 +94,7 @@ and Technology, 2020, 102, pp.1-23. https://doi.org/10.1016/j.ast.2020.105873. h
 
 > F. Pollet, M. Budinger, S. Delbecq, J. -M. Moschetta, and J. Liscouët. Quantifying and Mitigating Uncertainties in Design Optimization Including Off-the-Shelf Components: Application to an Electric Multirotor UAV. Aerospace Science and Technology, 2023, pp.108179. https://doi.org/10.1016/j.ast.2023.108179.
 
->  F. Pollet, M. Budinger, S. Delbecq, J. -M. Moschetta, and T. Planès. Environmental Life Cycle Assessments for the Design Exploration of Electric UAVs. Aerospace Europe Conference 2023 – 10th EUCASS – 9th CEAS, Jul. 2023, Lausanne, Switzerland. https://doi.org/10.13009/EUCASS2023-548. https://hal.science/hal-04229799.
+> F. Pollet, M. Budinger, S. Delbecq, J. -M. Moschetta, and T. Planès. Environmental Life Cycle Assessments for the Design Exploration of Electric UAVs. Aerospace Europe Conference 2023 – 10th EUCASS – 9th CEAS, Jul. 2023, Lausanne, Switzerland. https://doi.org/10.13009/EUCASS2023-548. https://hal.science/hal-04229799.
 
 > [DroneApp](https://github.com/SizingLab/droneapp-legacy) sizing tool
 
