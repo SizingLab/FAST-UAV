@@ -113,3 +113,10 @@ Feel free to contact us if you have any question or suggestion, or if you wish t
 * Scott DELBECQ [scott.delbecq@isae-supaero.fr](scott.delbecq@isae-supaero.fr)
 * Félix POLLET [felix.pollet@isae-supaero.fr](felix.pollet@isae-supaero.fr)
 * Marc BUDINGER [mbudinge@insa-toulouse.fr](mbudinge@insa-toulouse.fr)
+
+For developers, please follow the following procedure:
+1. [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the GitHub repository of FAST-UAV
+2. Clone your forked repository onto your local machine with `git clone`
+3. `cd` into your FAST-UAV project and install the required dependencies with [Poetry](https://python-poetry.org/docs/) using the `poetry install` command.
+4. Start making changes to the forked repository
+5. Open a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) to merge those changes back into the original repository of FAST-UAV.
