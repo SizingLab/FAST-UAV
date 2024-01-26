@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "FASTUAV"
-version = "0.1.0"
+version = "0.1.1"
 description = "FAST-UAV is a framework for performing rapid Overall Aircraft Design for Unmanned Aerial Vehicles"
 readme = "README.md"
 authors = [
@@ -50,7 +50,7 @@ scikit-learn = "^1.0.2"
 psutil = "*"
 kaleido = "0.2.1"
 SALib = "1.4.5"
-#numpy = "1.23.5"
+numpy = "1.23.1"
 
 # For future LCA deployment
 #brightway2 = "^2.3"
