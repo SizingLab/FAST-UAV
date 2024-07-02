@@ -47,8 +47,20 @@ Then run the Jupyter server as indicated in the obtained message.
 
 📚 Citation
 ------------
+This project is part of Félix Pollet's PhD thesis, which is available [here](http://www.theses.fr/2024ESAE0013/document).
 If you use FAST-UAV as part of your work in a scientific publication, please consider citing the following papers:
 ```
+@phdthesis{pollet_design_2024,
+	type = {{PhD} {Thesis}},
+	title = {Design optimization of unmanned aerial vehicles : a multidisciplinary approach with uncertainty, fault-tolerance, and environmental impact assessments},
+	url = {http://www.theses.fr/2024ESAE0013/document},
+	school = {Institut Supérieur de l'Aéronautique et de l'Espace},
+	author = {Pollet, F{\'e}lix},
+	collaborator = {Moschetta, Jean-Marc and Budinger, Marc and Delbecq, Scott},
+	month = mar,
+	year = {2024},
+}
+
 @inproceedings{pollet2022common,
     title = {A common framework for the design optimization of fixed-wing, multicopter and {VTOL} {UAV} configurations},
     author = {Pollet, F{\'e}lix and Delbecq, Scott and Budinger, Marc and Moschetta, Jean-Marc and Liscou{\"e}t, Jonathan},
