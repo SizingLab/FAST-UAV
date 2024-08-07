@@ -1,0 +1,68 @@
+project: fastuav_lca
+
+ecoinvent:
+    version: 3.9.1
+    model: cutoff
+    # Note: import of ecoinvent requires to provide credentials.
+    # For privacy reasons, we ask you to create a file named .env, that you will not share /commit,
+    # and contains the following :
+        # ECOINVENT_LOGIN=<your_login>
+        # ECOINVENT_PASSWORD=<your_password>
+
+model:
+
+    operation:
+        custom_attributes:
+            - attribute: "phase"
+              value: "operation"
+
+        name: 'market group for electricity, low voltage'
+        loc: 'Europe without Switzerland'
+        amount: mission_energy * n_cycles_uav
+    # TODO: declare switch options?
+
+    production:
+        custom_attributes:
+            - attribute: "phase"
+              value: "production"
+
+        propellers:
+            name: 'market for carbon fibre reinforced plastic, injection moulded'
+            amount: mass_propellers
+
+        motors:
+            name: 'market for electric motor, for electric scooter'
+            amount: mass_motors
+
+        controllers:
+            name: 'market for controller, for electric scooter'
+            amount: mass_controllers
+
+        airframe:
+            name: 'market for carbon fibre reinforced plastic, injection moulded'
+            amount: mass_airframe
+
+        batteries:
+            name: 'market for battery cell, Li-ion, NMC811'
+            #amount: mass_batteries * ceiling(n_cycles_uav / n_cycles_battery)
+            amount: data__weight__propulsion__multirotor__battery__mass * ceiling(n_cycles_uav / n_cycles_battery)  # semi-colons ':' are to be replaced by double underscores '__'
+
+
+methods:  # tip: you can search for methods with lca_algebraic function agb.findMethods()
+   - "('EF v3.1', 'acidification', 'accumulated exceedance (AE)')"
+   - "('EF v3.1', 'climate change', 'global warming potential (GWP100)')"
+   - "('EF v3.1', 'ecotoxicity: freshwater', 'comparative toxic unit for ecosystems (CTUe)')"
+   - "('EF v3.1', 'energy resources: non-renewable', 'abiotic depletion potential (ADP): fossil fuels')"
+   - "('EF v3.1', 'eutrophication: freshwater', 'fraction of nutrients reaching freshwater end compartment (P)')"
+   - "('EF v3.1', 'eutrophication: marine', 'fraction of nutrients reaching marine end compartment (N)')"
+   - "('EF v3.1', 'eutrophication: terrestrial', 'accumulated exceedance (AE)')"
+   - "('EF v3.1', 'human toxicity: carcinogenic', 'comparative toxic unit for human (CTUh)')"
+   - "('EF v3.1', 'human toxicity: non-carcinogenic', 'comparative toxic unit for human (CTUh)')"
+   - "('EF v3.1', 'ionising radiation: human health', 'human exposure efficiency relative to u235')"
+   - "('EF v3.1', 'land use', 'soil quality index')"
+   - "('EF v3.1', 'material resources: metals/minerals', 'abiotic depletion potential (ADP): elements (ultimate reserves)')"
+   - "('EF v3.1', 'ozone depletion', 'ozone depletion potential (ODP)')"
+   - "('EF v3.1', 'particulate matter formation', 'impact on human health')"
+   - "('EF v3.1', 'photochemical oxidant formation: human health', 'tropospheric ozone concentration increase')"
+   - "('EF v3.1', 'water use', 'user deprivation potential (deprivation-weighted water consumption)')"
+

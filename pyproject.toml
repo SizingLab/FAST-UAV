@@ -39,22 +39,26 @@ classifiers = [
 # of poetry.lock file will modify docs/requirements.txt and make
 # the commit fail because "files were modified by this hook". In that case,
 # doing again the commit including changes in docs/requirements.txt will succeed.
-python = "^3.8, <3.10"
+python = ">=3.10, <3.11"
 fast-oad-core = "^1.4.1"
 stdatm = "0.2.0"
-#openmdao = "<3.18.0"
 matplotlib = "^3.6.2"
 cma = "^3.1.0"
 scikit-learn = "^1.0.2"
 psutil = "*"
 kaleido = "0.2.1"
-SALib = "1.4.5"
+SALib = "^1.5.0" #"1.4.5"
 numpy = "1.23.5"
-brightway2 = "^2.3"
-bw2io = "0.8.8"  # compatibility with ecoinvent 3.9 only !!! For ecoinvent 3.8, switch to 0.8.7
-lca-algebraic = "1.0.5"
+#brightway2 = "^2.3"
+#bw2io = "0.8.8"  # compatibility with ecoinvent 3.9 only !!! For ecoinvent 3.8, switch to 0.8.7
+#lca-algebraic = "1.0.5"
+#lcav = {git = "https://github.com/felixpollet/lcav.git"}
 networkx = "*"
 #pyvis = "*"
+
+tbb = "2021.10.0"  # For MacOS
+intel-openmp = "2023.2.0"  # For MacOS
+mkl= "2023.2.2"  # For MacOS
 
 [tool.poetry.extras]
 jupyterlab = ["jupyterlab"]
