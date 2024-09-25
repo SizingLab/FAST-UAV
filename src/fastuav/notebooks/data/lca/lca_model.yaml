@@ -18,7 +18,8 @@ model:
 
         name: 'market group for electricity, low voltage'
         loc: 'Europe without Switzerland'
-        amount: mission_energy * n_cycles_uav
+        #amount: mission__sizing__energy / 3600 * n_cycles_uav / data__propulsion__multirotor__battery__efficiency
+        amount: mission__operational__energy / 3600 * n_cycles_uav / data__propulsion__multirotor__battery__efficiency
     # TODO: declare switch options?
 
     production:
@@ -28,23 +29,22 @@ model:
 
         propellers:
             name: 'market for carbon fibre reinforced plastic, injection moulded'
-            amount: mass_propellers
+            amount: data__weight__propulsion__multirotor__propeller__mass * data__propulsion__multirotor__propeller__number
 
         motors:
             name: 'market for electric motor, for electric scooter'
-            amount: mass_motors
+            amount: data__weight__propulsion__multirotor__motor__mass * data__propulsion__multirotor__propeller__number
 
         controllers:
             name: 'market for controller, for electric scooter'
-            amount: mass_controllers
+            amount: data__weight__propulsion__multirotor__esc__mass * data__propulsion__multirotor__propeller__number
 
         airframe:
             name: 'market for carbon fibre reinforced plastic, injection moulded'
-            amount: mass_airframe
+            amount: data__weight__airframe__body__mass + data__weight__airframe__arms__mass
 
         batteries:
             name: 'market for battery cell, Li-ion, NMC811'
-            #amount: mass_batteries * ceiling(n_cycles_uav / n_cycles_battery)
             amount: data__weight__propulsion__multirotor__battery__mass * ceiling(n_cycles_uav / n_cycles_battery)  # semi-colons ':' are to be replaced by double underscores '__'
 
 

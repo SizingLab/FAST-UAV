@@ -19,14 +19,12 @@ class LCAmultirotor(om.Group):
     def initialize(self):
         # Generic options for LCA module
         self.options.declare("configuration_file", default=None, types=str)
+        self.options.declare("axis", default=None, types=str)
         self.options.declare("normalization", default=False, types=bool)
         self.options.declare("weighting", default=False, types=bool)
 
         # Computation options for optimization
         self.options.declare("analytical_derivatives", default=True, types=bool)
-
-        # FAST-UAV specific option for selecting mission to evaluate
-        self.options.declare("mission", default=SIZING_MISSION_TAG, types=str)
 
         # Postprocessing modules
         self.options.declare("postprocessing_multirotor", default=False, types=bool)
@@ -35,10 +33,10 @@ class LCAmultirotor(om.Group):
         self.add_subsystem("core",
                            LCAcore(
                                configuration_file=self.options["configuration_file"],
+                               axis=self.options["axis"],
                                normalization=self.options["normalization"],
                                weighting=self.options["weighting"],
                                analytical_derivatives=self.options["analytical_derivatives"],
-                               mission=self.options["mission"]
                                    ),
                            promotes=["*"]
                            )

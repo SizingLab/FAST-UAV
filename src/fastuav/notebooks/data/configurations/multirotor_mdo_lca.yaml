@@ -4,8 +4,8 @@ title: Multirotor Drone MDO with LCA
 module_folders:
     
 # Input and output files
-input_file: ../workdir/problem_inputs.xml
-output_file: ../workdir/problem_outputs.xml
+input_file: ../../workdir/problem_inputs.xml
+output_file: ../../workdir/problem_outputs.xml
 
 # Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
 driver: om.ScipyOptimizeDriver(tol=1e-3, optimizer='SLSQP', maxiter=50)
@@ -34,11 +34,11 @@ model:
     lca:
         id: fastuav.plugin.lca.multirotor
         configuration_file: ../lca/lca_model.yaml
+        axis: "phase"
         normalization: False
         weighting: False
-        mission: "operational"  # mission to assess
-        postprocessing_multirotor: False
         analytical_derivatives: True
+        postprocessing_multirotor: False  # specific to FAST-UAV
 
 
 # This section is needed only if optimization process is run
@@ -197,10 +197,14 @@ optimization:
       # ENVIRONMENTAL SCORE MINIMIZATION
       #- name: lca:aggregation:weighted_single_score:model_per_FU
       #  scaler: 10.0
+      
+      # ENVIRONMENTAL SCORE MINIMIZATION
+      - name: lca:characterization:climate_change
+        scaler: 1e-2
     
       # MASS MINIMIZATION
-      - name: data:weight:mtow
-        scaler: 1e-1
+      #- name: data:weight:mtow
+      #  scaler: 1e-1
       
       # OPERATIONAL MISSION ENERGY MINIMIZATION
       #- name: mission:operational:energy

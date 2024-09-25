@@ -6,7 +6,10 @@ LCA models and calculations.
 import openmdao.api as om
 import numpy as np
 import brightway2 as bw
-import lca_algebraic as lcalg
+import pandas as pd
+import lca_algebraic as agb
+from lca_algebraic.axis_dict import AxisDict
+from typing import Dict
 from lcav.io.configuration import LCAProblemConfigurator
 import re
 import sympy as sym
@@ -28,17 +31,12 @@ class LCAcore(om.Group):
     def initialize(self):
         # Declare options
         self.options.declare("configuration_file", default=None, types=str)
+        self.options.declare("axis", default=None, types=str)
         self.options.declare("normalization", default=False, types=bool)
         self.options.declare("weighting", default=False, types=bool)
 
         # Computation options for optimization
         self.options.declare("analytical_derivatives", default=True, types=bool)
-
-        # FAST-UAV model specific parameters
-        self.options.declare("parameters", default=dict(), types=dict)  # for storing non-float parameters
-
-        # FAST-UAV specific option for selecting mission to evaluate
-        self.options.declare("mission", default=SIZING_MISSION_TAG, types=str)
 
     def setup(self):
         # LCA MODEL
@@ -46,17 +44,10 @@ class LCAcore(om.Group):
             "model",
             Model(
                 configuration_file=self.options["configuration_file"],
-                mission=self.options["mission"]
+                axis=self.options["axis"]
             ),
             promotes=["*"]
         )
-
-        # CHARACTERIZATION
-        #self.add_subsystem(
-        #    "characterization",
-        #    Characterization()
-        #    # promote for this subsystem is done in configure() method
-        #)
 
         # NORMALIZATION
         if self.options["weighting"] or self.options["normalization"]:
@@ -67,11 +58,11 @@ class LCAcore(om.Group):
             self.add_subsystem("weighting", Weighting(), promotes=["*"])
             self.add_subsystem("aggregation", Aggregation(), promotes=["*"])
 
-    def configure(self):
-        """
-        Set inputs and options for characterization module by copying `model` outputs and options.
-        Configure() method from the containing group is necessary to get access to `model` metadata after Setup().
-        """
+   #def configure(self):
+   #     """
+   #     Set inputs and options for characterization module by copying `model` outputs and options.
+   #     Configure() method from the containing group is necessary to get access to `model` metadata after Setup().
+   #     """
 
         # Add LCA parameters declared in the LCA model to the characterization module,
         # either as inputs (float parameters) or options (str parameters)
@@ -101,108 +92,177 @@ class Model(om.ExplicitComponent):
     """
 
     def initialize(self):
-        # Attributes
-        self.parameters = dict()  # dictionary of {parameter_name: parameter_object} to store all parameters
-        self.model = None  # LCA model
-        self.methods = list()  # list of methods for LCIA
-
         # Declare options
         self.options.declare("configuration_file", default=None, types=str)
-        self.options.declare("mission", default=SIZING_MISSION_TAG, types=str)
+        self.options.declare("axis", default=None, types=str)
 
     def setup(self):
+        # Read LCA configuration file, build model and get methods
         _, self.model, self.methods = LCAProblemConfigurator(self.options['configuration_file']).generate()
-        self.parameters = lcalg.all_params().values()
 
-        # Add inputs and outputs related to LCA parameters.
-        # (Note: non-float parameters are to be declared through options)
-        # Inputs: UAV parameters
-        # NB: check that units are consistence with LCA parameters/activities!
-        mission_name = self.options["mission"]
-        self.add_input("mission:%s:distance" % mission_name, val=np.nan, units='m')
-        self.add_input("mission:%s:duration" % mission_name, val=np.nan, units='min')
-        self.add_input("mission:%s:energy" % mission_name, val=np.nan, units='kJ')
-        self.add_input("mission:sizing:payload:mass", val=np.nan, units='kg')  # TODO: specify operational mission payload?
-        self.add_input("data:weight:propulsion:multirotor:battery:mass", val=np.nan, units='kg')
-        self.add_input("data:weight:airframe:arms:mass", val=np.nan, units='kg')
-        self.add_input("data:weight:airframe:body:mass", val=np.nan, units='kg')
-        self.add_input("data:propulsion:multirotor:propeller:number", val=np.nan, units=None)
-        self.add_input("data:weight:propulsion:multirotor:motor:mass", val=np.nan, units='kg')
-        self.add_input("data:weight:propulsion:multirotor:propeller:mass", val=np.nan, units='kg')
-        self.add_input("data:weight:propulsion:multirotor:esc:mass", val=np.nan, units='kg')
-        self.add_input("data:propulsion:multirotor:battery:efficiency", val=np.nan, units=None)
+        # Retrieve LCA parameters declared in model
+        self.parameters = agb.all_params().values()
 
-        # Outputs: LCA parameters calculated in compute() method
-        self.add_output(LCA_PARAM_KEY + 'mission_distance', val=np.nan, units=None)
-        self.add_output(LCA_PARAM_KEY + 'mission_duration', val=np.nan, units=None)
-        self.add_output(LCA_PARAM_KEY + 'mission_energy', val=np.nan, units=None)
-        self.add_output(LCA_PARAM_KEY + 'mass_payload', val=np.nan, units=None)
-        self.add_output(LCA_PARAM_KEY + 'mass_motors', val=np.nan, units=None)
-        self.add_output(LCA_PARAM_KEY + 'mass_propellers', val=np.nan, units=None)
-        self.add_output(LCA_PARAM_KEY + 'mass_controllers', val=np.nan, units=None)
-        self.add_output(LCA_PARAM_KEY + 'mass_batteries', val=np.nan, units=None)
-        self.add_output(LCA_PARAM_KEY + 'mass_airframe', val=np.nan, units=None)
+        # Compile expressions for impacts
+        self.lambdas = agb.lca._preMultiLCAAlgebric(self.model, self.methods, axis=self.options['axis'])
+
+        # Compile expressions for partial derivatives of impacts w.r.t. parameters
+        self.partial_lambdas_dict = _preMultiLCAAlgebricPartials(self.model, self.methods, axis=self.options['axis'])
+        # self.partial_lambdas_dict = {
+        #     param.name: [
+        #         agb.lca.LambdaWithParamNames(  # lambdify expression for future evaluation by lca_algebraic
+        #             lambd.expr.replace(sym.ceiling, lambda x: x).  # replace ceiling function by identity for better derivatives
+        #             diff(param)  # differentiate expression w.r.t. parameter
+        #         ) for lambd in self.lambdas  # for each LCIA method
+        #     ] for param in self.parameters  # for each parameter
+        # }
+
+        # Get axis keys to ventilate results by e.g. life-cycle phase
+        self.axis_keys = self.lambdas[0].axis_keys
+
+        # Each LCA parameter is declared as an input
+        for p in self.parameters:
+            if p.type == 'float':
+                p_name = p.name.replace('__', ':')  # refactor names (':' is not supported in LCA parameters)
+                self.add_input(p_name, val=np.nan, units=None)
+            # TODO: add non float parameters as options?
+
+        # Declare outputs for each method and axis key
+        for m in self.methods:
+            m_name = re.sub(r': |/| ', '_', m[1])
+            self.add_output(LCA_CHARACTERIZATION_KEY + m_name,
+                            units=None,  # NB: LCA units not supported by OpenMDAO so set in description
+                            desc=bw.Method(m).metadata['unit'] + "/FU")
+            if self.axis_keys:
+                for axis_key in self.axis_keys:
+                    self.add_output(LCA_CHARACTERIZATION_KEY + m_name + ':' + axis_key,
+                                    units=None,
+                                    desc=bw.Method(m).metadata['unit'] + "/FU")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        # The compute method is used here to set lca parameters' values
-        mission_name = self.options["mission"]
-        mission_distance = inputs["mission:%s:distance" % mission_name] / 1000  # [km]  # TODO: select distance of a single route?
-        mission_duration = inputs["mission:%s:duration" % mission_name] / 60  # [h]
-        mass_payload = inputs["mission:sizing:payload:mass"]  # [kg]
-        mission_energy = inputs["mission:%s:energy" % mission_name] / 3600 / inputs[
-            "data:propulsion:multirotor:battery:efficiency"]  # power at grid [kWh]
-        mass_batteries = inputs["data:weight:propulsion:multirotor:battery:mass"]  # [kg]
-        N_pro = inputs["data:propulsion:multirotor:propeller:number"]
-        mass_motors = inputs["data:weight:propulsion:multirotor:motor:mass"] * N_pro  # [kg]
-        mass_propellers = inputs["data:weight:propulsion:multirotor:propeller:mass"] * N_pro  # [kg]
-        mass_controllers = inputs["data:weight:propulsion:multirotor:esc:mass"] * N_pro  # [kg]
-        mass_airframe = inputs["data:weight:airframe:body:mass"] + inputs["data:weight:airframe:arms:mass"]  # [kg]
+        # Refactor input names
+        parameters = {
+            name.replace(':', '__'): value[0] for name, value in inputs.items()
+        }
 
-        # Data manipulation for normalized models (avoid division by zero)
-        eps = np.array([1e-9])
-        mission_distance = max(mission_distance, eps)
-        mission_duration = max(mission_duration, eps)
-        mass_payload = max(mass_payload, eps)
+        # Compute impacts from pre-compiled expressions and current parameters values
+        res = self.compute_impacts_from_lambdas(
+            self.lambdas,
+            **parameters
+        )
 
-        # Outputs: LCA parameters (names should be the same as declared in the declare_parameters() function
-        outputs[LCA_PARAM_KEY + 'mission_distance'] = mission_distance
-        outputs[LCA_PARAM_KEY + 'mission_duration'] = mission_duration
-        outputs[LCA_PARAM_KEY + 'mission_energy'] = mission_energy
-        outputs[LCA_PARAM_KEY + 'mass_payload'] = mass_payload
-        outputs[LCA_PARAM_KEY + 'mass_motors'] = mass_motors
-        outputs[LCA_PARAM_KEY + 'mass_propellers'] = mass_propellers
-        outputs[LCA_PARAM_KEY + 'mass_controllers'] = mass_controllers
-        outputs[LCA_PARAM_KEY + 'mass_batteries'] = mass_batteries
-        outputs[LCA_PARAM_KEY + 'mass_airframe'] = mass_airframe
+        # Store results in outputs
+        for m in res:  # for each LCIA method
+            m_name = re.sub(r': |/| ', '_', m.split(' - ')[0])
+            if self.axis_keys:  # results by phase/contributor
+                s = 0
+                for axis_key in self.axis_keys:
+                    s_i = res[m][res.index.get_level_values(self.options['axis']) == axis_key].iloc[0]
+                    outputs[LCA_CHARACTERIZATION_KEY + m_name + ':' + axis_key] = s_i
+                    s += s_i
+                outputs[LCA_CHARACTERIZATION_KEY + m_name] = s
+            else:
+                outputs[LCA_CHARACTERIZATION_KEY + m_name] = res[m].iloc[0]
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        mission_name = self.options["mission"]
+        # Refactor input names
+        parameters = {
+            name.replace(':', '__'): value[0] for name, value in inputs.items()
+        }
 
-        partials[LCA_PARAM_KEY + 'mission_distance', "mission:%s:distance" % mission_name] = 1 / 1000
-        partials[LCA_PARAM_KEY + 'mission_duration', "mission:%s:duration" % mission_name] = 1 / 60
-        partials[LCA_PARAM_KEY + 'mission_energy',
-                 "data:propulsion:multirotor:battery:efficiency"] = - inputs["mission:%s:energy" % mission_name] / 3600 / inputs["data:propulsion:multirotor:battery:efficiency"] ** 2
-        partials[LCA_PARAM_KEY + 'mission_energy',
-                 "mission:%s:energy" % mission_name] = 1 / 3600 / inputs["data:propulsion:multirotor:battery:efficiency"]
-        partials[LCA_PARAM_KEY + 'mass_payload', "mission:sizing:payload:mass"] = 1.0
-        partials[LCA_PARAM_KEY + 'mass_motors',
-                 "data:weight:propulsion:multirotor:motor:mass"] = inputs["data:propulsion:multirotor:propeller:number"]
-        partials[LCA_PARAM_KEY + 'mass_motors',
-                 "data:propulsion:multirotor:propeller:number"] = inputs["data:weight:propulsion:multirotor:motor:mass"]
-        partials[LCA_PARAM_KEY + 'mass_propellers',
-                 "data:weight:propulsion:multirotor:propeller:mass"] = inputs["data:propulsion:multirotor:propeller:number"]
-        partials[LCA_PARAM_KEY + 'mass_propellers',
-                 "data:propulsion:multirotor:propeller:number"] = inputs["data:weight:propulsion:multirotor:propeller:mass"]
-        partials[LCA_PARAM_KEY + 'mass_controllers',
-                 "data:weight:propulsion:multirotor:esc:mass"] = inputs["data:propulsion:multirotor:propeller:number"]
-        partials[LCA_PARAM_KEY + 'mass_controllers',
-                 "data:propulsion:multirotor:propeller:number"] = inputs["data:weight:propulsion:multirotor:esc:mass"]
-        partials[LCA_PARAM_KEY + 'mass_batteries', "data:weight:propulsion:multirotor:battery:mass"] = 1.0
-        partials[LCA_PARAM_KEY + 'mass_airframe', "data:weight:airframe:body:mass"] = 1.0
-        partials[LCA_PARAM_KEY + 'mass_airframe', "data:weight:airframe:arms:mass"] = 1.0
+        # Compute partials from pre-compiled expressions and current parameters values
+        res = {param_name: self.compute_impacts_from_lambdas(partial_lambdas, **parameters) for param_name, partial_lambdas in
+               self.partial_lambdas_dict.items()}
+
+        # Compute partials
+        for param_name, res_param in res.items():
+            for m in res_param:
+                m_name = re.sub(r': |/| ', '_', m.split(' - ')[0])
+                input_name = param_name.replace('__', ':')
+                if self.axis_keys:  # results by phase/contributor
+                    s = 0
+                    for axis_key in self.axis_keys:
+                        s_i = res_param[m][res_param.index.get_level_values(self.options['axis']) == axis_key].iloc[0]
+                        partials[LCA_CHARACTERIZATION_KEY + m_name + ':' + axis_key, input_name] = s_i
+                        s += s_i
+                    partials[LCA_CHARACTERIZATION_KEY + m_name, input_name] = s
+                else:
+                    partials[LCA_CHARACTERIZATION_KEY + m_name, input_name] = res_param[m].iloc[0]
+
+    def compute_impacts_from_lambdas(
+        self,
+        lambdas,
+        **params: Dict[str, agb.SingleOrMultipleFloat],
+    ):
+        """
+        Modified version of compute_impacts from lca_algebraic.
+        More like a wrapper of _postLCAAlgebraic, to avoid calling _preLCAAlgebraic which is unecessarily
+        time consuming when lambdas have already been calculated and doesn't have to be updated.
+        """
+        dfs = dict()
+
+        dbname = self.model.key[0]
+        with agb.DbContext(dbname):
+            # Check no params are passed for FixedParams
+            for key in params:
+                if key in agb.params._fixed_params():
+                    print("Param '%s' is marked as FIXED, but passed in parameters : ignored" % key)
+
+            #lambdas = _preMultiLCAAlgebric(model, methods, alpha=alpha, axis=axis)  # <-- this is the time-consuming part
+
+            df = agb.lca._postMultiLCAAlgebric(self.methods, lambdas, **params)
+
+            model_name = agb.base_utils._actName(self.model)
+            while model_name in dfs:
+                model_name += "'"
+
+            # param with several values
+            list_params = {k: vals for k, vals in params.items() if isinstance(vals, list)}
+
+            # Shapes the output / index according to the axis or multi param entry
+            if self.options['axis']:
+                df[self.options['axis']] = lambdas[0].axis_keys
+                df = df.set_index(self.options['axis'])
+                df.index.set_names([self.options['axis']])
+
+                # Filter out line with zero output
+                df = df.loc[
+                    df.apply(
+                        lambda row: not (row.name is None and row.values[0] == 0.0),
+                        axis=1,
+                    )
+                ]
+
+                # Rename "None" to others
+                df = df.rename(index={None: "other"})
+
+                # Sort index
+                df.sort_index(inplace=True)
+
+                # Add "total" line
+                df.loc["*sum*"] = df.sum(numeric_only=True)
+
+            elif len(list_params) > 0:
+                for k, vals in list_params.items():
+                    df[k] = vals
+                df = df.set_index(list(list_params.keys()))
+
+            else:
+                # Single output ? => give the single row the name of the model activity
+                df = df.rename(index={0: model_name})
+
+            dfs[model_name] = df
+
+        if len(dfs) == 1:
+            df = list(dfs.values())[0]
+        else:
+            # Concat several dataframes for several models
+            df = pd.concat(list(dfs.values()))
+
+        return df
 
 
 class Characterization(om.ExplicitComponent):
@@ -229,7 +289,7 @@ class Characterization(om.ExplicitComponent):
 
     def setup(self):
         # model
-        self.model = lcalg.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
+        self.model = agb.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
 
         # methods
         self.methods = [eval(m) for m in self.options["methods"]]
@@ -281,9 +341,6 @@ class Characterization(om.ExplicitComponent):
                 # set output value
                 outputs[LCA_CHARACTERIZATION_KEY + m_name + path] = score
 
-        #elapsed_time = time.time() - start_time
-        #print(elapsed_time)
-
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         # Parameters dictionary
         parameters = self.options["parameters"]  # initialized with non-float parameters provided as options
@@ -324,7 +381,7 @@ class Characterization(om.ExplicitComponent):
         derivative = sym.diff(expr_simplified, input_param)
 
         # expand enumParams --> 'elec_switch_param': 'eu' becomes 'elec_switch_param_us' : 0, 'elec_switch_param_eu': 1
-        new_params = {name: value for name, value in lcalg.params._completeParamValues(parameters).items()}
+        new_params = {name: value for name, value in agb.params._completeParamValues(parameters).items()}
         for key, val in new_params.items():
             if isinstance(val, np.ndarray):
                 new_params[key] = val[0]
@@ -346,7 +403,7 @@ class Characterization(om.ExplicitComponent):
         if parameters is None:
             parameters = {}
 
-        res = lcalg.multiLCAAlgebric(
+        res = agb.multiLCAAlgebric(
             self.model,  # The model
             self.methods,  # Impact categories / methods
 
@@ -367,8 +424,8 @@ class Characterization(om.ExplicitComponent):
             extract_activities = None
         else:
             extract_activities = [extract_activities]
-        with lcalg.params.DbContext(self.model):
-            exprs_list, _ = lcalg.lca._modelToExpr(self.model, self.methods, extract_activities=extract_activities)
+        with agb.params.DbContext(self.model):
+            exprs_list, _ = agb.lca._modelToExpr(self.model, self.methods, extract_activities=extract_activities)
         for i, method in enumerate(self.methods):
             m_name = self.method_label_formatting(method)
             exprs[m_name] = exprs_list[i]
@@ -391,7 +448,7 @@ class Characterization(om.ExplicitComponent):
         dict_labels = {}
         for m in methods:
             dict_labels[m] = Characterization.method_label_formatting(m)
-        lcalg.set_custom_impact_labels(dict_labels)
+        agb.set_custom_impact_labels(dict_labels)
 
     @staticmethod
     def method_label_formatting(method_name):
@@ -426,7 +483,7 @@ class Normalization(om.ExplicitComponent):
 
     def setup(self):
         # model
-        self.model = lcalg.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
+        self.model = agb.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
 
         # methods
         self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
@@ -486,7 +543,7 @@ class Weighting(om.ExplicitComponent):
 
     def setup(self):
         # model
-        self.model = lcalg.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
+        self.model = agb.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
 
         # sub activities in model
         self.activities = Characterization.recursive_activities(self.model)
@@ -548,7 +605,7 @@ class Aggregation(om.ExplicitComponent):
 
     def setup(self):
         # model
-        self.model = lcalg.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
+        self.model = agb.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
 
         # methods
         self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
@@ -577,3 +634,31 @@ class Aggregation(om.ExplicitComponent):
             for m_name in self.methods:
                 partials[LCA_AGGREGATION_KEY + LCA_WEIGHTED_SINGLE_SCORE_KEY + path,
                          LCA_WEIGHTING_KEY + m_name + path] = 1.0
+
+
+def _preMultiLCAAlgebricPartials(model, methods, alpha=1, axis=None):
+    """
+    Modified version of _preMultiLCAAlgebric from lca_algebraic
+    to compute partial derivatives of impacts w.r.t. parameters instead of expressions of impacts.
+    """
+    with agb.DbContext(model):
+        exprs = agb.lca._modelToExpr(model, methods, alpha=alpha, axis=axis)
+
+        # Replace ceiling function by identity for better derivatives
+        exprs = [expr.replace(sym.ceiling, lambda x: x) for expr in exprs]
+
+        # Lambdify (compile) expressions
+        if isinstance(exprs[0], AxisDict):
+            return {
+                param.name: [
+                    agb.lca.LambdaWithParamNames(
+                        AxisDict({axis_tag: res.diff(param) for axis_tag, res in expr.items()})) for expr in exprs
+                ] for param in agb.all_params().values()
+            }
+        else:
+            return {
+                param.name: [
+                    agb.lca.LambdaWithParamNames(expr.diff(param)) for expr in exprs
+                ]
+                for param in agb.all_params().values()
+            }
