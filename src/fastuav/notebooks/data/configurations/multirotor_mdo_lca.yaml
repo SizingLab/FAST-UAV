@@ -35,9 +35,8 @@ model:
         id: fastuav.plugin.lca.multirotor
         configuration_file: ../lca/lca_model.yaml
         axis: "phase"
-        normalization: False
-        weighting: False
-        analytical_derivatives: True
+        normalization: True
+        weighting: True
         postprocessing_multirotor: False  # specific to FAST-UAV
 
 

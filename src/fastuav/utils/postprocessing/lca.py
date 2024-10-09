@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 from fastuav.constants import LCA_CHARACTERIZATION_KEY, LCA_MODEL_KEY, LCA_USER_DB, LCA_POSTPROCESS_KEY, \
-    LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY, LCA_FACTOR_KEY, LCA_AGGREGATION_KEY
+    LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY, LCA_FACTOR_KEY, LCA_SINGLE_SCORE_KEY
 import lca_algebraic as lcalg
 import brightway2 as bw
 from sympy.parsing.sympy_parser import parse_expr
@@ -34,7 +34,7 @@ def lca_plot(file_path: str, result_step: str = 'characterization', filter_optio
         'characterization': LCA_CHARACTERIZATION_KEY,
         'normalization': LCA_NORMALIZATION_KEY,
         'weighting': LCA_WEIGHTING_KEY,
-        'aggregation': LCA_AGGREGATION_KEY
+        'aggregation': LCA_SINGLE_SCORE_KEY
     }
     RESULTS_KEY = result_steps_dict[result_step]
 
@@ -235,7 +235,7 @@ def lca_specific_contributions(file_path: str, result_step: str = 'characterizat
         'characterization': LCA_CHARACTERIZATION_KEY,
         'normalization': LCA_NORMALIZATION_KEY,
         'weighting': LCA_WEIGHTING_KEY,
-        'aggregation': LCA_AGGREGATION_KEY
+        'aggregation': LCA_SINGLE_SCORE_KEY
     }
     RESULTS_KEY = LCA_POSTPROCESS_KEY + result_steps_dict[result_step].split(':', 1)[-1]
 

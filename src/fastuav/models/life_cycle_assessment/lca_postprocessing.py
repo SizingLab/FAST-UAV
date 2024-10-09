@@ -1,5 +1,7 @@
 """
-LCA postprocessing calculations
+LCA postprocessing calculations.
+
+TO BE UPDATED WITH NEW LCA MODULE
 """
 
 import openmdao.api as om
@@ -7,9 +9,9 @@ import numpy as np
 from scipy.constants import g
 from stdatm import AtmosphereSI
 from fastuav.constants import LCA_CHARACTERIZATION_KEY, LCA_POSTPROCESS_KEY, LCA_DEFAULT_METHOD, \
-    LCA_DEFAULT_FUNCTIONAL_UNIT, LCA_FUNCTIONAL_UNITS_LIST, LCA_WEIGHTING_KEY, LCA_NORMALIZATION_KEY, LCA_AGGREGATION_KEY,\
+    LCA_DEFAULT_FUNCTIONAL_UNIT, LCA_FUNCTIONAL_UNITS_LIST, LCA_WEIGHTING_KEY, LCA_NORMALIZATION_KEY, LCA_SINGLE_SCORE_KEY,\
     LCA_WEIGHTED_SINGLE_SCORE_KEY
-from fastuav.models.life_cycle_assessment.lca_core import Characterization
+from fastuav.models.life_cycle_assessment.lca_core import CharacterizationDeprecated
 
 
 class SpecificComponentContributions(om.ExplicitComponent):
@@ -69,7 +71,7 @@ class SpecificComponentContributions(om.ExplicitComponent):
 
         # impact assessment methods
         model_name = self.model_name = ":model_per_FU"  #if self.options["functional_unit"] == "lifetime" else ":model_per_FU:model" # FIXME: check no error for different functional units
-        method_names = self.method_names = [Characterization.method_label_formatting(eval(m)) for m in
+        method_names = self.method_names = [CharacterizationDeprecated.method_label_formatting(eval(m)) for m in
                                             self.options["methods"]]
 
         results_dict = self.results_dict = {LCA_CHARACTERIZATION_KEY: method_names}  # characterized scores
@@ -77,7 +79,7 @@ class SpecificComponentContributions(om.ExplicitComponent):
             results_dict[LCA_NORMALIZATION_KEY] = method_names  # normalized scores
         if self.options['weighting']:
             results_dict[LCA_WEIGHTING_KEY] = method_names  # weighted scores
-            results_dict[LCA_AGGREGATION_KEY] = [LCA_WEIGHTED_SINGLE_SCORE_KEY]  # aggregated score
+            results_dict[LCA_SINGLE_SCORE_KEY] = [LCA_WEIGHTED_SINGLE_SCORE_KEY]  # aggregated score
 
         for result_key, result_methods in results_dict.items():
             for m_name in result_methods:

@@ -13,17 +13,10 @@ from typing import Dict
 from lcav.io.configuration import LCAProblemConfigurator
 import re
 import sympy as sym
-from fastuav.exceptions import FastLcaProjectDoesNotExist, \
-    FastLcaDatabaseIsNotImported, \
-    FastLcaMethodDoesNotExist, \
-    FastLcaParameterNotDeclared
-from fastuav.constants import LCA_DEFAULT_PROJECT, LCA_DEFAULT_ECOINVENT, LCA_USER_DB, LCA_MODEL_KEY, \
-    LCA_PARAM_KEY, LCA_CHARACTERIZATION_KEY, LCA_DEFAULT_METHOD, SIZING_MISSION_TAG, LCA_FUNCTIONAL_UNITS_LIST, \
-    LCA_DEFAULT_FUNCTIONAL_UNIT, LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY, LCA_FACTOR_KEY, LCA_WEIGHTED_SINGLE_SCORE_KEY, \
-    LCA_AGGREGATION_KEY
+from fastuav.constants import LCA_CHARACTERIZATION_KEY, LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY, LCA_FACTOR_KEY, LCA_SINGLE_SCORE_KEY
 
 
-class LCAcore(om.Group):
+class LifeCycleAssessment(om.Group):
     """
     Group for LCA models and calculations.
     """
@@ -35,14 +28,11 @@ class LCAcore(om.Group):
         self.options.declare("normalization", default=False, types=bool)
         self.options.declare("weighting", default=False, types=bool)
 
-        # Computation options for optimization
-        self.options.declare("analytical_derivatives", default=True, types=bool)
-
     def setup(self):
-        # LCA MODEL
+        # Core LCA (model + characterisation)
         self.add_subsystem(
-            "model",
-            Model(
+            "core",
+            LCAcore(
                 configuration_file=self.options["configuration_file"],
                 axis=self.options["axis"]
             ),
@@ -51,44 +41,77 @@ class LCAcore(om.Group):
 
         # NORMALIZATION
         if self.options["weighting"] or self.options["normalization"]:
-            self.add_subsystem("normalization", Normalization(), promotes=["*"])
+            self.add_subsystem("normalization", Normalization())
 
         # WEIGHTING AND AGGREGATION
         if self.options["weighting"]:
-            self.add_subsystem("weighting", Weighting(), promotes=["*"])
-            self.add_subsystem("aggregation", Aggregation(), promotes=["*"])
+            self.add_subsystem("weighting", Weighting())
+            self.add_subsystem("aggregation", Aggregation())
 
-   #def configure(self):
-   #     """
-   #     Set inputs and options for characterization module by copying `model` outputs and options.
-   #     Configure() method from the containing group is necessary to get access to `model` metadata after Setup().
-   #     """
+    def configure(self):
+        """
+        Configure() method is called after setup() of the containing group to get access to `model` metadata and
+        set the appropriate inputs/outputs of the normalization and weighting modules.
+        """
+        if self.options["weighting"] or self.options["normalization"]:
+            methods = []
+            axis_keys = []
+            for var_in in self.core.list_outputs(return_format='dict', out_stream=None).keys():
+                var_out_norm = var_in.replace(LCA_CHARACTERIZATION_KEY, LCA_NORMALIZATION_KEY)
+                m_name = var_in.split(":")[2]  # get method name (not very generic, but works for now)
+                norm_factor = LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY
 
-        # Add LCA parameters declared in the LCA model to the characterization module,
-        # either as inputs (float parameters) or options (str parameters)
-        # for name, object in self.model.parameters.items():
-        #     if object.type == 'float':  # add float parameters as inputs to calculation module
-        #         self.characterization.add_input(LCA_PARAM_KEY + name, val=np.nan, units=None)
-        #     elif name in self.options["parameters"].keys():  # add non-float parameters as options
-        #         self.characterization.options["parameters"][name] = self.options["parameters"][name]
-        #
-        # # Add LCIA methods retrieved from the lca configuration file
-        # self.characterization.options["methods"] = self.model.methods
-        # self.normalization.options["methods"] = self.model.methods
-        # self.weighting.options["methods"] = self.model.methods
-        #
-        # # Promote variables and declare partials
-        # self.promotes("characterization", any=['*'])
-        # if self.options['analytical_derivatives']:
-        #     self.characterization.declare_partials("*", "*", method="exact")
-        # else:
-        #     self.characterization.declare_partials("*", "*", method="fd")
+                # Add outputs from core LCIA as inputs to normalization
+                self.normalization.add_input(var_in, val=np.nan, units=None)
+                self.normalization.add_output(var_out_norm, units=None)
+                self.normalization.declare_partials(var_out_norm, var_in, method="exact")
+
+                # Add normalization factor as input
+                if m_name not in methods:
+                    self.normalization.add_input(norm_factor, val=np.nan, units=None)
+                    self.normalization.declare_partials(var_out_norm, norm_factor, method="exact")
+
+                if self.options["weighting"]:
+                    var_out_weight = var_out_norm.replace(LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY)
+                    weight_factor = LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY
+
+                    # Add outputs from normalization as inputs to weighting
+                    self.weighting.add_input(var_out_norm, val=np.nan, units=None)
+                    self.weighting.add_output(var_out_weight, units=None)
+                    self.weighting.declare_partials(var_out_weight, var_out_norm, method="exact")
+
+                    # Add weighting factor as input
+                    if m_name not in methods:
+                        self.weighting.add_input(weight_factor, val=1.0, units=None)
+                        self.weighting.declare_partials(var_out_weight, weight_factor, method="exact")
+
+                    # Add outputs from weighting as inputs to aggregation (single score)
+                    self.aggregation.add_input(var_out_weight, val=np.nan, units=None)
+
+                    # get axis key (not very generic, but works for now)
+                    axis_key = ":" + ":".join(var_in.split(":")[3:]) if len(var_in.split(":")) > 3 else ""
+                    var_single_score = LCA_SINGLE_SCORE_KEY + axis_key
+                    if axis_key not in axis_keys:
+                        self.aggregation.add_output(var_single_score, val=np.nan, units=None)
+                        axis_keys.append(axis_key)
+                    self.aggregation.declare_partials(var_single_score, var_out_weight, val=1.0)
+
+                if m_name not in methods:
+                    methods.append(m_name)
+
+            # Promote variables
+            self.promotes("normalization", any=['*'])
+            if self.options["weighting"]:
+                self.promotes("weighting", any=['*'])
+                self.promotes("aggregation", any=['*'])
 
 
-class Model(om.ExplicitComponent):
+class LCAcore(om.ExplicitComponent):
     """
     This OpenMDAO component implements an LCA model using brightway2 and lca_algebraic libraries.
-    It creates an LCA model and sets the LCA parameters for further parametric LCA calculation.
+    It creates an LCA model from a configuration file, then compiles functions for the impacts and partial derivatives.
+    The parametric functions (lambdas) are used to compute the impacts and partial derivatives of the impacts w.r.t.
+    parameters in a very fast way compared to conventional LCA.
     """
 
     def initialize(self):
@@ -105,17 +128,10 @@ class Model(om.ExplicitComponent):
 
         # Compile expressions for impacts
         self.lambdas = agb.lca._preMultiLCAAlgebric(self.model, self.methods, axis=self.options['axis'])
+        # TODO: enable multiple axes to be declared, e.g. to ventilate impacts by phase and component.
 
         # Compile expressions for partial derivatives of impacts w.r.t. parameters
         self.partial_lambdas_dict = _preMultiLCAAlgebricPartials(self.model, self.methods, axis=self.options['axis'])
-        # self.partial_lambdas_dict = {
-        #     param.name: [
-        #         agb.lca.LambdaWithParamNames(  # lambdify expression for future evaluation by lca_algebraic
-        #             lambd.expr.replace(sym.ceiling, lambda x: x).  # replace ceiling function by identity for better derivatives
-        #             diff(param)  # differentiate expression w.r.t. parameter
-        #         ) for lambd in self.lambdas  # for each LCIA method
-        #     ] for param in self.parameters  # for each parameter
-        # }
 
         # Get axis keys to ventilate results by e.g. life-cycle phase
         self.axis_keys = self.lambdas[0].axis_keys
@@ -141,6 +157,7 @@ class Model(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
+        # TODO: distinguish between constant and variable parameters to avoid unnecessary partials calculations
 
     def compute(self, inputs, outputs):
         # Refactor input names
@@ -265,375 +282,67 @@ class Model(om.ExplicitComponent):
         return df
 
 
-class Characterization(om.ExplicitComponent):
-    """
-    This OpenMDAO component achieves a life cycle inventory (LCI) and a life cycle impact assessment (LCIA)
-    for the provided model, parameters and methods.
-    """
-
-    def initialize(self):
-        # model
-        self.model = None
-
-        # sub activities in model
-        self.activities = dict()
-
-        # methods
-        self.methods = list()
-        self.options.declare("methods",
-                             default=LCA_DEFAULT_METHOD,
-                             types=list)
-
-        # symbolic expressions of LCA: used for providing analytical partials
-        self.exprs_dict = dict()
-
-    def setup(self):
-        # model
-        self.model = agb.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
-
-        # methods
-        self.methods = [eval(m) for m in self.options["methods"]]
-        self.assert_methods(self.methods)  # check methods exist in brightway project
-        self.set_method_labels(self.methods)  # some formatting for labels in lca_algebraic library
-
-        # outputs
-        for path in self.activities.keys():
-            for m in self.methods:
-                m_name = self.method_label_formatting(m)
-
-                # characterized score
-                self.add_output(LCA_CHARACTERIZATION_KEY + m_name + path,
-                                units=None,  # LCA units not supported by OpenMDAO so set in description
-                                desc=bw.Method(m).metadata['unit'] + "/FU")
-
-    # def setup_partials(self):
-    #     Declared in configure method of parent group
-
-    def compute(self, inputs, outputs):
-
-        #start_time = time.time()
-
-        # parameters
-        parameters = self.options["parameters"]  # initialized with non-float parameters provided as options
-        for key, value in inputs.items():  # add float parameters provided as inputs
-            if LCA_PARAM_KEY in key and not np.isnan(value):
-                name = re.split(LCA_PARAM_KEY, key)[-1]
-                parameters[name] = value
-
-        # LCA calculations (first call may be time-consuming but next calls are faster thanks to cache)
-        activities = self.activities  # get all activities and sub activities in model
-        for path, act in activities.items():
-            res = self.compute_lca(extract_activities=act,
-                                   parameters=parameters)  # parametric LCA
-            res.index.values[0] = act['name']
-
-            # storing symbolic expression for future use (e.g. analytical derivatives calculation)
-            if act not in self.exprs_dict:  # TODO: add option to disable this storage (e.g. only if analytical_derivatives)
-                self.exprs_dict[act] = self.lca_model_expression(extract_activities=act)
-
-            # Outputs
-            for m in res:
-                # get score for method m
-                score = res[m][0]  # if a parameter is provided as a list of values, there will be several scores. For now we only get the first one.
-                # results from lca_algebraic does not use the same names as the input methods list...
-                end = m.find("[")  # TODO: mapping function to improve calculation time?
-                m_name = m[:end]
-                # set output value
-                outputs[LCA_CHARACTERIZATION_KEY + m_name + path] = score
-
-    def compute_partials(self, inputs, partials, discrete_inputs=None):
-        # Parameters dictionary
-        parameters = self.options["parameters"]  # initialized with non-float parameters provided as options
-        for key, value in inputs.items():  # add float parameters provided as inputs
-            if LCA_PARAM_KEY in key and not np.isnan(value):
-                name = re.split(LCA_PARAM_KEY, key)[-1]
-                parameters[name] = value
-
-        # partials
-        for path, act in self.activities.items():
-            for m in self.methods:
-                m_name = self.method_label_formatting(m)
-                output_name = LCA_CHARACTERIZATION_KEY + m_name + path
-                for input_name in inputs.keys():
-                    param_name = re.split(LCA_PARAM_KEY, input_name)[-1]
-                    partials[output_name,
-                             input_name] = self.partials_lca(param_name, m_name, parameters, act)
-
-    def partials_lca(self, input_param, output_method, parameters, activity):
-        """
-        returns the partial derivative of a method's result with respect to a parameter.
-        """
-        # TODO: compute derivative expressions at initialization to avoid systematic differentiation of sympy expression.
-
-        # Dictionary of algebraic LCA expressions
-        exprs_dict = self.exprs_dict
-
-        # Sub-dictionary of expressions for a given activity
-        exprs = exprs_dict[activity]
-
-        # Expression for a given method
-        expr = exprs[output_method]
-
-        # replace functions that has no well-defined derivatives
-        expr_simplified = expr.replace(sym.ceiling, lambda x: x)  # here we replace ceiling function by identity
-
-        # differentiate expression
-        derivative = sym.diff(expr_simplified, input_param)
-
-        # expand enumParams --> 'elec_switch_param': 'eu' becomes 'elec_switch_param_us' : 0, 'elec_switch_param_eu': 1
-        new_params = {name: value for name, value in agb.params._completeParamValues(parameters).items()}
-        for key, val in new_params.items():
-            if isinstance(val, np.ndarray):
-                new_params[key] = val[0]
-
-        # evaluate derivative
-        res = derivative.evalf(subs=new_params)
-
-        return res
-
-    def compute_lca(self, extract_activities, parameters=None):
-        """
-        Main LCIA calculation method.
-        """
-        if extract_activities == self.model:
-            extract_activities = None
-        else:
-            extract_activities = [extract_activities]
-
-        if parameters is None:
-            parameters = {}
-
-        res = agb.multiLCAAlgebric(
-            self.model,  # The model
-            self.methods,  # Impact categories / methods
-
-            # List of sub activities to consider
-            extract_activities=extract_activities,
-
-            # Parameters of the model
-            **parameters
-        )
-        return res
-
-    def lca_model_expression(self, extract_activities=None):
-        """
-        computes algebraic expressions corresponding to a model for each method
-        """
-        exprs = dict()
-        if extract_activities == self.model:
-            extract_activities = None
-        else:
-            extract_activities = [extract_activities]
-        with agb.params.DbContext(self.model):
-            exprs_list, _ = agb.lca._modelToExpr(self.model, self.methods, extract_activities=extract_activities)
-        for i, method in enumerate(self.methods):
-            m_name = self.method_label_formatting(method)
-            exprs[m_name] = exprs_list[i]
-        return exprs
-
-    @staticmethod
-    def assert_methods(methods):
-        """
-        Check if methods exist in brightway.
-        """
-        for method in methods:
-            if method not in bw.methods:
-                raise FastLcaMethodDoesNotExist(method)
-
-    @staticmethod
-    def set_method_labels(methods):
-        """
-        Set custom method labels for lca_algebraic results.
-        """
-        dict_labels = {}
-        for m in methods:
-            dict_labels[m] = Characterization.method_label_formatting(m)
-        agb.set_custom_impact_labels(dict_labels)
-
-    @staticmethod
-    def method_label_formatting(method_name):
-        """
-        Format method labels for fast-oad compatibility (handling of variables names).
-        """
-        new_name = [
-            s.replace(':', '-').replace('.', '_').replace(',', ':').replace(' ', '_').replace('(', '').replace(')',
-                                                                                                               '').replace('/', '_')
-            for s in method_name]  # replace invalid characters
-        new_name = ':'.join(['%s'] * len(new_name)) % tuple(new_name)  # concatenate method specifications
-        return new_name
-
-
 class Normalization(om.ExplicitComponent):
     """
     Normalization of the LCIA results.
     """
 
-    def initialize(self):
-        # model
-        self.model = None
-
-        # sub activities in model
-        self.activities = dict()
-
-        # methods
-        self.methods = list()
-        self.options.declare("methods",
-                             default=LCA_DEFAULT_METHOD,
-                             types=list)
-
-    def setup(self):
-        # model
-        self.model = agb.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
-
-        # methods
-        self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
-
-        # inputs
-        for m_name in self.methods:
-            self.add_input(LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY,  # normalization factors
-                           val=np.nan,
-                           units=None)
-
-            for path in self.activities.keys():
-                self.add_input(LCA_CHARACTERIZATION_KEY + m_name + path,  # characterized scores
-                               val=np.nan,
-                               units=None)
-                self.add_output(LCA_NORMALIZATION_KEY + m_name + path,  # normalized scores for each activity
-                                units=None)
-
-    def setup_partials(self):
-        self.declare_partials("*", "*", method="exact")
-
     def compute(self, inputs, outputs):
-        for m_name in self.methods:
-            method_factor = inputs[LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY]
-            for path in self.activities.keys():
-                score = inputs[LCA_CHARACTERIZATION_KEY + m_name + path]
-                normalized_score = score / method_factor
-                outputs[LCA_NORMALIZATION_KEY + m_name + path] = normalized_score
+        for var_in in inputs:
+            if LCA_FACTOR_KEY not in var_in:
+                var_out = var_in.replace(LCA_CHARACTERIZATION_KEY, LCA_NORMALIZATION_KEY)
+                m_name = var_in.split(":")[2]  # Not very generic, but works for now
+                norm_factor = LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY
+                outputs[var_out] = inputs[var_in] / inputs[norm_factor]
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        for m_name in self.methods:
-            method_factor = inputs[LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY]
-            for path in self.activities.keys():
-                score = inputs[LCA_CHARACTERIZATION_KEY + m_name + path]
-                partials[LCA_NORMALIZATION_KEY + m_name + path,
-                         LCA_CHARACTERIZATION_KEY + m_name + path] = 1 / method_factor
-                partials[LCA_NORMALIZATION_KEY + m_name + path,
-                         LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY] = - score / method_factor ** 2
+        for var_in in inputs:
+            if LCA_FACTOR_KEY not in var_in:
+                var_out = var_in.replace(LCA_CHARACTERIZATION_KEY, LCA_NORMALIZATION_KEY)
+                m_name = var_in.split(":")[2]  # Not very generic, but works for now
+                norm_factor = LCA_NORMALIZATION_KEY + m_name + LCA_FACTOR_KEY
+                partials[var_out, var_in] = 1.0 / inputs[norm_factor]
+                partials[var_out, norm_factor] = -inputs[var_in] / inputs[norm_factor] ** 2
 
 
 class Weighting(om.ExplicitComponent):
     """
-    Weighting of the LCIA results.
+    Weighting of the normalised LCIA results.
     """
 
-    def initialize(self):
-        # model
-        self.model = None
-
-        # sub activities in model
-        self.activities = dict()
-
-        # methods
-        self.methods = list()
-        self.options.declare("methods",
-                             default=LCA_DEFAULT_METHOD,
-                             types=list)
-
-    def setup(self):
-        # model
-        self.model = agb.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
-
-        # sub activities in model
-        self.activities = Characterization.recursive_activities(self.model)
-
-        # methods
-        self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
-
-        # inputs
-        for m_name in self.methods:
-            self.add_input(LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY,  # weighting factors
-                           val=np.nan,
-                           units=None)
-
-            for path in self.activities.keys():
-                self.add_input(LCA_NORMALIZATION_KEY + m_name + path,  # normalized scores
-                               val=np.nan,
-                               units=None)
-                self.add_output(LCA_WEIGHTING_KEY + m_name + path,  # weighted scores for each activity
-                                units=None)
-
-    def setup_partials(self):
-        self.declare_partials("*", "*", method="exact")
-
     def compute(self, inputs, outputs):
-        for path in self.activities.keys():
-            # aggregated_score = 0.0
-            for m_name in self.methods:
-                normalized_score = inputs[LCA_NORMALIZATION_KEY + m_name + path]
-                method_weight = inputs[LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY]
-                weighted_score = normalized_score * method_weight
-                outputs[LCA_WEIGHTING_KEY + m_name + path] = weighted_score
+        for var_in in inputs:
+            if LCA_FACTOR_KEY not in var_in:
+                var_out = var_in.replace(LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY)
+                m_name = var_in.split(":")[2]  # Not very generic, but works for now
+                weight_factor = LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY
+                outputs[var_out] = inputs[var_in] / inputs[weight_factor]
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        for path in self.activities.keys():
-            for m_name in self.methods:
-                normalized_score = inputs[LCA_NORMALIZATION_KEY + m_name + path]
-                method_weight = inputs[LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY]
-                partials[LCA_WEIGHTING_KEY + m_name + path, LCA_NORMALIZATION_KEY + m_name + path] = method_weight
-                partials[LCA_WEIGHTING_KEY + m_name + path, LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY] = normalized_score
+        for var_in in inputs:
+            if LCA_FACTOR_KEY not in var_in:
+                var_out = var_in.replace(LCA_NORMALIZATION_KEY, LCA_WEIGHTING_KEY)
+                m_name = var_in.split(":")[2]  # Not very generic, but works for now
+                weight_factor = LCA_WEIGHTING_KEY + m_name + LCA_FACTOR_KEY
+                partials[var_out, var_in] = inputs[weight_factor]
+                partials[var_out, weight_factor] = inputs[var_in]
 
 
 class Aggregation(om.ExplicitComponent):
     """
-    Aggregation of the LCIA results.
+    Aggregation of the weighted LCIA results into a single score.
     """
 
-    def initialize(self):
-        # model
-        self.model = None
-
-        # sub activities in model
-        self.activities = dict()
-
-        # methods
-        self.methods = list()
-        self.options.declare("methods",
-                             default=LCA_DEFAULT_METHOD,
-                             types=list)
-
-    def setup(self):
-        # model
-        self.model = agb.getActByCode(LCA_USER_DB, LCA_MODEL_KEY)
-
-        # methods
-        self.methods = [Characterization.method_label_formatting(eval(m)) for m in self.options["methods"]]
-
-        # inputs
-        for path in self.activities.keys():
-            for m_name in self.methods:
-                self.add_input(LCA_WEIGHTING_KEY + m_name + path,  # weighted scores for each activity
-                               val=np.nan,
-                               units=None)
-            self.add_output(LCA_AGGREGATION_KEY + LCA_WEIGHTED_SINGLE_SCORE_KEY + path,  # aggregated scores
-                            units=None,
-                            desc='points')
-
-    def setup_partials(self):
-        self.declare_partials("*", "*", method="exact")
-
     def compute(self, inputs, outputs):
-        # aggregated_score = 0.0
-        for path in self.activities.keys():
-            aggregated_score = sum([inputs[LCA_WEIGHTING_KEY + m_name + path] for m_name in self.methods])
-            outputs[LCA_AGGREGATION_KEY + LCA_WEIGHTED_SINGLE_SCORE_KEY + path] = aggregated_score
-
-    def compute_partials(self, inputs, partials, discrete_inputs=None):
-        for path in self.activities.keys():
-            for m_name in self.methods:
-                partials[LCA_AGGREGATION_KEY + LCA_WEIGHTED_SINGLE_SCORE_KEY + path,
-                         LCA_WEIGHTING_KEY + m_name + path] = 1.0
+        axis_keys = []
+        for var_in in inputs:
+            axis_key = ":" + ":".join(var_in.split(":")[3:]) if len(var_in.split(":")) > 3 else ""
+            if axis_key not in axis_keys:
+                var_out = LCA_SINGLE_SCORE_KEY + axis_key
+                if axis_key == "":  # single score for entire system
+                    outputs[var_out] = sum(inputs[var_in] for var_in in inputs if len(var_in.split(":")) == 3)
+                else:  # single scores by phase/contributor
+                    outputs[var_out] = sum(inputs[var_axis] for var_axis in inputs if axis_key in var_axis)
 
 
 def _preMultiLCAAlgebricPartials(model, methods, alpha=1, axis=None):

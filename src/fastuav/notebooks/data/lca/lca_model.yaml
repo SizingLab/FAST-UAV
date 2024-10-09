@@ -28,6 +28,10 @@ model:
               value: "production"
 
         propellers:
+            custom_attributes:
+            - attribute: "component"
+              value: "propellers"
+            
             name: 'market for carbon fibre reinforced plastic, injection moulded'
             amount: data__weight__propulsion__multirotor__propeller__mass * data__propulsion__multirotor__propeller__number
 
