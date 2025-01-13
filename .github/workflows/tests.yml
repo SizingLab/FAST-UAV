@@ -1,0 +1,38 @@
+name: tests
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [ '3.8' ]
+        os: [ ubuntu-latest, windows-latest ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install poetry
+        run: pipx install poetry==${{ vars.POETRY_VERSION }}
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+      - name: Activate environment and install dependencies
+        run: |
+          poetry env use ${{ matrix.python-version }}
+          poetry install
+
+      - name: Notebook tests
+        run: poetry run pytest --no-cov --nbval-lax -p no:python src/fastuav/notebooks
+        shell: bash
