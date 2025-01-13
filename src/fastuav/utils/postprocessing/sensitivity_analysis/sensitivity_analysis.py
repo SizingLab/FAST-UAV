@@ -12,6 +12,8 @@ For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 import contextlib
 import os
 import os.path as pth
+from venv import create
+
 from fastuav.utils.drivers.salib_doe_driver import SalibDOEDriver
 import fastoad.api as oad
 from fastoad.io.variable_io import DataFile
@@ -28,7 +30,6 @@ import itertools
 
 SA_PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
-    "",
     "..",
     "..",
     "..",
@@ -260,8 +261,12 @@ def doe_fast(
     if fail_count > 0:
         print("%d out of %d optimizations failed." % (fail_count, len(cases)))
 
-    # save to .csv for future use
-    df.to_csv(SA_PATH + "/doe_" + method_name + ".csv")
+    # If SA_PATH does not exist, create it
+    if not pth.exists(SA_PATH):
+        os.makedirs(SA_PATH)
+
+    # Save to .csv for future use
+    df.to_csv(pth.join(SA_PATH, "doe_" + method_name + ".csv"))
 
     return df
 
