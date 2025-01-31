@@ -55,11 +55,11 @@ class RouteBuilder(om.Group):
     @staticmethod
     def get_part_attributes(part_id):
         """
-        Gets the phase name (e.g. "climb") corresponding the to phase identifier (e.g. "vertical_climb"),
+        Gets the phase name (e.g. "climb") corresponding the to phase identifier (e.g. "multirotor_climb"),
         and also returns the propulsion identifier (e.g. "multirotor" or "fixedwing") used to complete this phase.
         Note that take-off is not taken into account when building the mission profile, as its duration is neglected.
         """
-        if part_id == VERTICAL_CLIMB_TAG:
+        if part_id == MR_CLIMB_TAG:
             part_name = CLIMB_TAG
             propulsion_id = MR_PROPULSION
         elif part_id == FW_CLIMB_TAG:

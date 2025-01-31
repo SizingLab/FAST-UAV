@@ -3,7 +3,7 @@
 routes:
   main_route:
     climb_part:
-      phase_id: vertical_climb
+      phase_id: multirotor_climb
     hover_part:
       phase_id: hover
     cruise_part:

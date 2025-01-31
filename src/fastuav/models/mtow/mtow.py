@@ -30,28 +30,28 @@ class MtowGuess(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:weight:mtow:k", val=np.nan, units=None)
+        self.add_input("optimization:variables:weight:mtow:k", val=np.nan, units=None)
         self.add_input("mission:sizing:payload:mass", val=np.nan, units="kg")
-        self.add_output("data:weight:mtow:guess", units="kg")
+        self.add_output("optimization:variables:weight:mtow:guess", units="kg")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        k_M = inputs["data:weight:mtow:k"]
+        k_M = inputs["optimization:variables:weight:mtow:k"]
         m_load = inputs["mission:sizing:payload:mass"]
 
         m_uav_guess = (
             k_M * m_load
         )  # [kg] Estimate of the total mass (or equivalent weight of dynamic scenario)
 
-        outputs["data:weight:mtow:guess"] = m_uav_guess
+        outputs["optimization:variables:weight:mtow:guess"] = m_uav_guess
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        k_M = inputs["data:weight:mtow:k"]
+        k_M = inputs["optimization:variables:weight:mtow:k"]
         m_load = inputs["mission:sizing:payload:mass"]
-        partials["data:weight:mtow:guess", "data:weight:mtow:k"] = m_load
-        partials["data:weight:mtow:guess", "mission:sizing:payload:mass"] = k_M
+        partials["optimization:variables:weight:mtow:guess", "optimization:variables:weight:mtow:k"] = m_load
+        partials["optimization:variables:weight:mtow:guess", "mission:sizing:payload:mass"] = k_M
 
 
 class MtowCalculation(om.ExplicitComponent):
@@ -171,9 +171,9 @@ class MtowConstraints(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:weight:mtow:requirement", val=np.nan, units="kg")
         self.add_input("data:weight:mtow", val=np.nan, units="kg")
-        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_output("data:weight:mtow:guess:constraint", units=None)
-        self.add_output("data:weight:mtow:requirement:constraint", units=None)
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_output("optimization:constraints:weight:mtow:consistency", units=None)
+        self.add_output("optimization:constraints:weight:mtow:requirement", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -181,27 +181,27 @@ class MtowConstraints(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         MTOW = inputs["data:weight:mtow:requirement"]
         m_uav = inputs["data:weight:mtow"]
-        m_uav_guess = inputs["data:weight:mtow:guess"]
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
 
         mass_con = (m_uav_guess - m_uav) / m_uav  # mass convergence
         MTOW_con = (
             MTOW - m_uav
         ) / m_uav  # Max. takeoff weight specification, e.g. for endurance maximization
 
-        outputs["data:weight:mtow:guess:constraint"] = mass_con
-        outputs["data:weight:mtow:requirement:constraint"] = MTOW_con
+        outputs["optimization:constraints:weight:mtow:consistency"] = mass_con
+        outputs["optimization:constraints:weight:mtow:requirement"] = MTOW_con
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         MTOW = inputs["data:weight:mtow:requirement"]
         m_uav = inputs["data:weight:mtow"]
-        m_uav_guess = inputs["data:weight:mtow:guess"]
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
 
-        partials["data:weight:mtow:guess:constraint", "data:weight:mtow:guess"] = (
+        partials["optimization:constraints:weight:mtow:consistency", "optimization:variables:weight:mtow:guess"] = (
             1.0 / m_uav
         )
-        partials["data:weight:mtow:guess:constraint", "data:weight:mtow"] = (
+        partials["optimization:constraints:weight:mtow:consistency", "data:weight:mtow"] = (
             -m_uav_guess / m_uav**2
         )
 
-        partials["data:weight:mtow:requirement:constraint", "data:weight:mtow:requirement"] = 1.0 / m_uav
-        partials["data:weight:mtow:requirement:constraint", "data:weight:mtow"] = -MTOW / m_uav**2
+        partials["optimization:constraints:weight:mtow:requirement", "data:weight:mtow:requirement"] = 1.0 / m_uav
+        partials["optimization:constraints:weight:mtow:requirement", "data:weight:mtow"] = -MTOW / m_uav**2

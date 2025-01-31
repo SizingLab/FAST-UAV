@@ -32,12 +32,12 @@ class WingGeometry(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
-        self.add_input("data:geometry:wing:AR", val=np.nan, units=None)
-        self.add_input("data:geometry:wing:lambda", val=np.nan, units=None)
+        self.add_input("optimization:variables:geometry:wing:AR", val=np.nan, units=None)
+        self.add_input("optimization:variables:geometry:wing:lambda", val=np.nan, units=None)
         self.add_input("data:geometry:wing:sweep:LE", val=np.nan, units="rad")
-        self.add_input("data:geometry:wing:MAC:LE:x:k", val=0.40, units=None)
+        self.add_input("optimization:variables:geometry:wing:MAC:LE:x:k", val=0.40, units=None)
         self.add_input("data:geometry:wing:tc", val=0.15, units=None)
-        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_output("data:geometry:wing:surface", units="m**2", lower=0.0)
         self.add_output("data:geometry:wing:span", units="m", lower=0.0)
         self.add_output("data:geometry:wing:root:chord", units="m", lower=0.0)
@@ -58,14 +58,14 @@ class WingGeometry(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         WS = inputs["data:geometry:wing:loading"]
-        m_uav_guess = inputs["data:weight:mtow:guess"]
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
         tc_ratio = inputs["data:geometry:wing:tc"]
         sweep_LE = inputs["data:geometry:wing:sweep:LE"]
 
         # design variables
-        AR_w = inputs["data:geometry:wing:AR"]
-        lmbda_w = inputs["data:geometry:wing:lambda"]
-        k_xw = inputs["data:geometry:wing:MAC:LE:x:k"]
+        AR_w = inputs["optimization:variables:geometry:wing:AR"]
+        lmbda_w = inputs["optimization:variables:geometry:wing:lambda"]
+        k_xw = inputs["optimization:variables:geometry:wing:MAC:LE:x:k"]
 
         # Wing sizing
         S_w = m_uav_guess * g / WS  # wing surface [m2]
@@ -108,7 +108,7 @@ class HorizontalTailGeometry(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:geometry:tail:horizontal:AR", val=4.0, units=None)
+        self.add_input("optimization:variables:geometry:tail:horizontal:AR", val=4.0, units=None)
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:C4:x", val=np.nan, units="m")
@@ -116,7 +116,7 @@ class HorizontalTailGeometry(om.ExplicitComponent):
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:coefficient", val=0.5, units=None)
         self.add_input("data:geometry:tail:horizontal:lambda", val=0.9, units=None)
-        self.add_input("data:geometry:tail:horizontal:arm:k", val=0.75, units=None)
+        self.add_input("optimization:variables:geometry:tail:horizontal:arm:k", val=0.75, units=None)
         self.add_output("data:geometry:tail:horizontal:surface", units="m**2", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:arm", units="m", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:span", units="m", lower=0.0)
@@ -131,15 +131,15 @@ class HorizontalTailGeometry(om.ExplicitComponent):
         self.add_output("data:geometry:tail:horizontal:root:LE:x", units="m", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:root:TE:x", units="m", lower=0.0)
 
-        # self.add_input("data:geometry:wing:AR", val=np.nan, units=None)
-        # self.add_output("data:geometry:tail:horizontal:AR", units=None, lower=0.0)
+        # self.add_input("optimization:variables:geometry:wing:AR", val=np.nan, units=None)
+        # self.add_output("optimization:variables:geometry:tail:horizontal:AR", units=None, lower=0.0)
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        AR_ht = inputs["data:geometry:tail:horizontal:AR"]
+        AR_ht = inputs["optimization:variables:geometry:tail:horizontal:AR"]
         S_w = inputs["data:geometry:wing:surface"]
         b_w = inputs["data:geometry:wing:span"]
         c_MAC_w = inputs["data:geometry:wing:MAC:length"]
@@ -148,11 +148,11 @@ class HorizontalTailGeometry(om.ExplicitComponent):
         lmbda_ht = inputs["data:geometry:tail:horizontal:lambda"]
         tc_ratio = inputs["data:geometry:wing:tc"]  # assume same profile as wing
 
-        # AR_w = inputs["data:geometry:wing:AR"]
+        # AR_w = inputs["optimization:variables:geometry:wing:AR"]
         # AR_ht = (2 / 3) * AR_w  # horizontal tail AR [-]
 
         # design variable
-        k_ht = inputs["data:geometry:tail:horizontal:arm:k"]
+        k_ht = inputs["optimization:variables:geometry:tail:horizontal:arm:k"]
 
         # Tail sizing
         l_ht = (
@@ -197,7 +197,7 @@ class HorizontalTailGeometry(om.ExplicitComponent):
         outputs["data:geometry:tail:horizontal:MAC:C4:x"] = x_MAC_c4_ht
         outputs["data:geometry:tail:horizontal:root:LE:x"] = x_root_LE_ht
         outputs["data:geometry:tail:horizontal:root:TE:x"] = x_root_TE_ht
-        # outputs["data:geometry:tail:horizontal:AR"] = AR_ht
+        # outputs["optimization:variables:geometry:tail:horizontal:AR"] = AR_ht
 
 
 class VerticalTailGeometry(om.ExplicitComponent):
@@ -206,7 +206,7 @@ class VerticalTailGeometry(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:geometry:tail:vertical:AR", val=1.5, units=None)
+        self.add_input("optimization:variables:geometry:tail:vertical:AR", val=1.5, units=None)
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:C4:x", val=np.nan, units="m")
@@ -228,15 +228,15 @@ class VerticalTailGeometry(om.ExplicitComponent):
         self.add_output("data:geometry:tail:vertical:root:LE:x", units="m", lower=0.0)
         self.add_output("data:geometry:tail:vertical:root:TE:x", units="m", lower=0.0)
 
-        # self.add_input("data:geometry:tail:horizontal:AR", val=np.nan, units=None)
-        # self.add_output("data:geometry:tail:vertical:AR", units=None, lower=0.0)
+        # self.add_input("optimization:variables:geometry:tail:horizontal:AR", val=np.nan, units=None)
+        # self.add_output("optimization:variables:geometry:tail:vertical:AR", units=None, lower=0.0)
 
     def setup_partials(self):
         # Finite difference all partials.
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        AR_vt = inputs["data:geometry:tail:vertical:AR"]
+        AR_vt = inputs["optimization:variables:geometry:tail:vertical:AR"]
         S_w = inputs["data:geometry:wing:surface"]
         b_w = inputs["data:geometry:wing:span"]
         x_MAC_c4_w = inputs["data:geometry:wing:MAC:C4:x"]
@@ -245,7 +245,7 @@ class VerticalTailGeometry(om.ExplicitComponent):
         tc_ratio = inputs["data:geometry:wing:tc"]  # assume same profile as wing
         l_ht = inputs["data:geometry:tail:horizontal:arm"]
 
-        # AR_ht = inputs["data:geometry:tail:horizontal:AR"]
+        # AR_ht = inputs["optimization:variables:geometry:tail:horizontal:AR"]
         # AR_vt = (1 / 2) * AR_ht  # vertical tail AR [-]
 
         # Tail sizing
@@ -289,7 +289,7 @@ class VerticalTailGeometry(om.ExplicitComponent):
         outputs["data:geometry:tail:vertical:MAC:C4:x"] = x_MAC_c4_vt
         outputs["data:geometry:tail:vertical:root:LE:x"] = x_root_LE_vt
         outputs["data:geometry:tail:vertical:root:TE:x"] = x_root_TE_vt
-        # outputs["data:geometry:tail:vertical:AR"] = AR_vt
+        # outputs["optimization:variables:geometry:tail:vertical:AR"] = AR_vt
 
 
 class FuselageGeometry(om.ExplicitComponent):
@@ -363,8 +363,8 @@ class ProjectedAreasGuess(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
-        self.add_input("data:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_input("data:geometry:projected_area:top:k", val=np.nan, units=None)
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("optimization:variables:geometry:projected_area:top:k", val=np.nan, units=None)
         self.add_output("data:geometry:projected_area:top", units="m**2")
 
     def setup_partials(self):
@@ -372,8 +372,8 @@ class ProjectedAreasGuess(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         WS = inputs["data:geometry:wing:loading"]
-        mtow_guess = inputs["data:weight:mtow:guess"]
-        k_top = inputs["data:geometry:projected_area:top:k"]
+        mtow_guess = inputs["optimization:variables:weight:mtow:guess"]
+        k_top = inputs["optimization:variables:geometry:projected_area:top:k"]
 
         S_top = k_top * mtow_guess * g / WS  # [m**2] top area guess
 
@@ -390,7 +390,7 @@ class ProjectedAreasConstraint(om.ExplicitComponent):
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:tail:horizontal:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:fuselage:surface", val=np.nan, units="m**2")
-        self.add_output("data:geometry:projected_area:top:constraint", units=None)
+        self.add_output("optimization:constraints:geometry:projected_area:top", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -406,7 +406,7 @@ class ProjectedAreasConstraint(om.ExplicitComponent):
 
         S_constraint = (S_top_guess - S_top) / S_top  # [-] projected area consistency constraint
 
-        outputs["data:geometry:projected_area:top:constraint"] = S_constraint
+        outputs["optimization:constraints:geometry:projected_area:top"] = S_constraint
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         S_top_guess = inputs["data:geometry:projected_area:top"]  # [m**2] projected area initial guess
@@ -416,13 +416,13 @@ class ProjectedAreasConstraint(om.ExplicitComponent):
         S_fus_proj = S_fus / np.pi  # [m**2] projected area of the fuselage
         S_top = S_w + S_ht + S_fus_proj  # [m**2] projected area
 
-        partials["data:geometry:projected_area:top:constraint",
+        partials["optimization:constraints:geometry:projected_area:top",
                  "data:geometry:projected_area:top"] = 1 / S_top
-        partials["data:geometry:projected_area:top:constraint",
+        partials["optimization:constraints:geometry:projected_area:top",
                  "data:geometry:wing:surface"] = - S_top_guess / S_top ** 2
-        partials["data:geometry:projected_area:top:constraint",
+        partials["optimization:constraints:geometry:projected_area:top",
                  "data:geometry:tail:horizontal:surface"] = - S_top_guess / S_top ** 2
-        partials["data:geometry:projected_area:top:constraint",
+        partials["optimization:constraints:geometry:projected_area:top",
                  "data:geometry:fuselage:surface"] = - S_top_guess / np.pi / S_top ** 2
 
 
@@ -443,7 +443,7 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
             self.add_input("data:propulsion:%s:battery:volume" % propulsion_id, val=np.nan, units="m**3")
         self.add_input("data:geometry:fuselage:volume:mid", val=np.nan, units="m**3")
         self.add_input("mission:sizing:payload:volume", val=np.nan, units="m**3")
-        self.add_output("data:geometry:fuselage:volume:constraint", units=None)
+        self.add_output("optimization:constraints:geometry:fuselage:volume", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -458,7 +458,7 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
 
         V_cnstr = (V_fus - V_req) / V_req  # mid fuselage volume constraint
 
-        outputs["data:geometry:fuselage:volume:constraint"] = V_cnstr
+        outputs["optimization:constraints:geometry:fuselage:volume"] = V_cnstr
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         propulsion_id_list = self.options["propulsion_id_list"]
@@ -469,11 +469,11 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
         V_req = V_pay + V_bat
 
         partials[
-            "data:geometry:fuselage:volume:constraint",
+            "optimization:constraints:geometry:fuselage:volume",
             "data:geometry:fuselage:volume:mid"] = 1 / V_req
-        partials["data:geometry:fuselage:volume:constraint",
+        partials["optimization:constraints:geometry:fuselage:volume",
                  "mission:sizing:payload:volume"] = - V_fus / V_req ** 2
 
         for propulsion_id in propulsion_id_list:
-            partials["data:geometry:fuselage:volume:constraint",
+            partials["optimization:constraints:geometry:fuselage:volume",
                      "data:propulsion:%s:battery:volume" % propulsion_id] = - V_fus / V_req ** 2

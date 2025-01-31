@@ -42,3 +42,44 @@ class StaticMargin(om.ExplicitComponent):
                  "data:stability:CoG"] = - 1 / c_MAC
         partials["data:stability:static_margin",
                  "data:geometry:wing:MAC:length"] = - (x_np - x_cg) / c_MAC ** 2
+
+
+class StaticMarginConstraints(om.ExplicitComponent):
+    """
+    Constraint on the required static margin
+    """
+
+    def setup(self):
+        self.add_input("data:stability:static_margin", val=np.nan, units=None)
+        self.add_input("data:stability:static_margin:requirement:min", val=0.10, units=None)
+        self.add_input("data:stability:static_margin:requirement:max", val=0.40, units=None)
+        self.add_output("optimization:constraints:stability:static_margin:min", units=None)
+        self.add_output("optimization:constraints:stability:static_margin:max", units=None)
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        SM = inputs["data:stability:static_margin"]
+        SM_min = inputs["data:stability:static_margin:requirement:min"]
+        SM_max = inputs["data:stability:static_margin:requirement:max"]
+
+        SM_con_min = (SM - SM_min) / SM_min if SM_min != 0 else (SM - SM_min)
+        SM_con_max = (SM_max - SM) / SM_max if SM_max != 0 else (SM_max - SM)
+
+        outputs["optimization:constraints:stability:static_margin:min"] = SM_con_min
+        outputs["optimization:constraints:stability:static_margin:max"] = SM_con_max
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        SM_min = inputs["data:stability:static_margin:requirement:min"]
+        SM_max = inputs["data:stability:static_margin:requirement:max"]
+
+        partials["optimization:constraints:stability:static_margin:min",
+                 "data:stability:static_margin"] = 1 / SM_min if SM_min != 0 else 1.0
+        partials["optimization:constraints:stability:static_margin:min",
+                 "data:stability:static_margin:requirement:min"] = - 1 / SM_min**2 if SM_min != 0 else -1.0
+        partials["optimization:constraints:stability:static_margin:max",
+                 "data:stability:static_margin"] = - 1 / SM_max if SM_max != 0 else -1.0
+        partials["optimization:constraints:stability:static_margin:max",
+                 "data:stability:static_margin:requirement:max"] = 1 / SM_max ** 2 if SM_max != 0 else 1.0
+

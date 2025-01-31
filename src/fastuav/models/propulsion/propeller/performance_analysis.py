@@ -48,7 +48,10 @@ class PropellerPerformanceModel:
         Valid in any condition (hover and forward flight).
         """
         v_i = PropellerPerformanceModel.induced_velocity(F_pro, D_pro, V_inf, alpha, rho_air)
-        eta = (V_inf * np.sin(alpha) + v_i) / (W_pro / (2 * np.pi) * D_pro) * c_t / c_p
+        try:
+            eta = (V_inf * np.sin(alpha) + v_i) / (W_pro / (2 * np.pi) * D_pro) * c_t / c_p
+        except (ZeroDivisionError, ValueError):
+            eta = 0.0
         return eta
 
     @staticmethod
@@ -101,10 +104,10 @@ class PropellerPerformance(om.ExplicitComponent):
         scenario = self.options["scenario"]
         self.add_input("data:propulsion:propeller:diameter", val=np.nan, units="m")
         self.add_input("data:propulsion:propeller:beta", val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Ct:model:static", shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Cp:model:static", shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Ct:model:dynamic", shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Cp:model:dynamic", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Ct:static:polynomial", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Cp:static:polynomial", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Ct:dynamic:polynomial", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:Cp:dynamic:polynomial", shape_by_conn=True, val=np.nan, units=None)
         if scenario == "takeoff":
             self.add_input("mission:sizing:main_route:takeoff:altitude", val=0.0, units="m")
         elif scenario == "hover":
@@ -112,7 +115,7 @@ class PropellerPerformance(om.ExplicitComponent):
         else:
             self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")  # conservative assumption
             self.add_input("mission:sizing:main_route:%s:speed" % scenario, val=np.nan, units="m/s")
-            self.add_input("data:propulsion:propeller:advance_ratio:%s" % scenario, val=np.nan, units=None)
+            self.add_input("optimization:variables:propulsion:propeller:advance_ratio:%s" % scenario, val=np.nan, units=None)
             self.add_input("data:propulsion:propeller:AoA:%s" % scenario, val=np.nan, units="rad")
             self.add_output("data:propulsion:propeller:efficiency:%s" % scenario, units=None)
         self.add_input("mission:sizing:dISA", val=np.nan, units="K")
@@ -129,10 +132,10 @@ class PropellerPerformance(om.ExplicitComponent):
         scenario = self.options["scenario"]
         D_pro = inputs["data:propulsion:propeller:diameter"]
         beta = inputs["data:propulsion:propeller:beta"]
-        ct_model_sta = inputs["data:propulsion:propeller:Ct:model:static"]
-        cp_model_sta = inputs["data:propulsion:propeller:Cp:model:static"]
-        ct_model_dyn = inputs["data:propulsion:propeller:Ct:model:dynamic"]
-        cp_model_dyn = inputs["data:propulsion:propeller:Cp:model:dynamic"]
+        ct_model_sta = inputs["data:propulsion:propeller:Ct:static:polynomial"]
+        cp_model_sta = inputs["data:propulsion:propeller:Cp:static:polynomial"]
+        ct_model_dyn = inputs["data:propulsion:propeller:Ct:dynamic:polynomial"]
+        cp_model_dyn = inputs["data:propulsion:propeller:Cp:dynamic:polynomial"]
         F_pro = inputs["data:propulsion:propeller:thrust:%s" % scenario]
         dISA = inputs["mission:sizing:dISA"]
         alpha = 0.0
@@ -151,7 +154,7 @@ class PropellerPerformance(om.ExplicitComponent):
 
         else:
             altitude = inputs["mission:sizing:main_route:cruise:altitude"]
-            J = inputs["data:propulsion:propeller:advance_ratio:%s" % scenario]
+            J = inputs["optimization:variables:propulsion:propeller:advance_ratio:%s" % scenario]
             alpha = inputs["data:propulsion:propeller:AoA:%s" % scenario]
             c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_incidence(beta,
                                                                               J,

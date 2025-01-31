@@ -10,7 +10,7 @@ from fastuav.models.geometry.geometry_fixedwing import ProjectedAreasGuess
 from fastuav.models.aerodynamics.aerodynamics_fixedwing import SpanEfficiency, InducedDragConstant
 from fastuav.models.scenarios.thrust.takeoff import VerticalTakeoffThrust, LauncherTakeoff
 from fastuav.models.scenarios.thrust.cruise import FixedwingCruiseThrust, NoCruise
-from fastuav.models.scenarios.thrust.climb import VerticalClimbThrust, FixedwingClimbThrust
+from fastuav.models.scenarios.thrust.climb import MultirotorClimbThrust, FixedwingClimbThrust
 from fastuav.models.scenarios.thrust.hover import HoverThrust, NoHover
 from fastuav.models.scenarios.wing_loading.wing_loading import (
     WingLoadingCruise,
@@ -41,7 +41,7 @@ class SizingScenariosHybrid(om.Group):
         thrust = self.add_subsystem("thrust", om.Group(), promotes=["*"])
         multirotor = thrust.add_subsystem("multirotor", om.Group(), promotes=["*"])
         multirotor.add_subsystem("takeoff", VerticalTakeoffThrust(), promotes=["*"])
-        multirotor.add_subsystem("climb", VerticalClimbThrust(), promotes=["*"])
+        multirotor.add_subsystem("climb", MultirotorClimbThrust(), promotes=["*"])
         multirotor.add_subsystem("hover", HoverThrust(), promotes=["*"])
         multirotor.add_subsystem("no_cruise", NoCruise(), promotes=["*"])
         fixedwing = thrust.add_subsystem("fixedwing", om.Group(), promotes=["*"])

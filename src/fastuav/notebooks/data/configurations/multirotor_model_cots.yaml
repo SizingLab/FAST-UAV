@@ -1,0 +1,36 @@
+title: Multirotor Drone Model with COTS components  # Single evaluation (no MDA or MDO)
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders:
+    
+# Input and output files
+input_file: ../../workdir/problem_inputs.xml
+output_file: ../../workdir/problem_outputs.xml
+
+# Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
+driver: om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')
+# driver: om.pyOptSparseDriver(optimizer='SLSQP')  # not supported yet for windows users
+# driver: CMAESDriver()
+
+# Definition of OpenMDAO model
+model:
+    scenarios:
+        id: fastuav.scenarios.multirotor
+    propulsion:
+        id: fastuav.propulsion.multirotor
+        gearbox: False
+        off_the_shelf_propeller: True
+    geometry:
+        id: fastuav.geometry.multirotor
+    structures:
+        id: fastuav.structures.multirotor
+    wires:
+        id: fastuav.propulsion.wires.multirotor
+    mtow:
+        id: fastuav.mtow.multirotor
+    performance:
+        endurance:
+            id: fastuav.performance.endurance.multirotor
+        missions:
+            id: fastuav.performance.mission
+            file_path: ../missions/missions_multirotor.yaml

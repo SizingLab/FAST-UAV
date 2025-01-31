@@ -9,7 +9,7 @@ from fastuav.models.mtow.mtow import MtowGuess
 from fastuav.models.geometry.geometry_multirotor import ProjectedAreasGuess
 from fastuav.models.scenarios.thrust.takeoff import VerticalTakeoffThrust
 from fastuav.models.scenarios.thrust.cruise import MultirotorCruiseThrust
-from fastuav.models.scenarios.thrust.climb import VerticalClimbThrust
+from fastuav.models.scenarios.thrust.climb import MultirotorClimbThrust
 from fastuav.models.scenarios.thrust.hover import HoverThrust
 
 
@@ -27,5 +27,5 @@ class SizingScenariosMultirotor(om.Group):
         thrust = self.add_subsystem("thrust", om.Group(), promotes=["*"])
         thrust.add_subsystem("hover", HoverThrust(), promotes=["*"])
         thrust.add_subsystem("takeoff", VerticalTakeoffThrust(), promotes=["*"])
-        thrust.add_subsystem("climb", VerticalClimbThrust(), promotes=["*"])
+        thrust.add_subsystem("climb", MultirotorClimbThrust(), promotes=["*"])
         thrust.add_subsystem("cruise", MultirotorCruiseThrust(), promotes=["*"])

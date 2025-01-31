@@ -1,0 +1,11 @@
+title: Multirotor Drone Performance  # Performance evaluation with existing UAV design.
+    
+# Input and output files
+input_file: ../../workdir/problem_inputs.xml
+output_file: ../../workdir/problem_outputs.xml
+
+# Definition of OpenMDAO model
+model:
+    missions:
+        id: fastuav.performance.mission
+        file_path: ../missions/missions_multirotor_off_design.yaml  # path to the mission definition file

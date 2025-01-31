@@ -14,10 +14,10 @@ class NeutralPoint(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:geometry:wing:AR", val=np.nan, units=None)
+        self.add_input("optimization:variables:geometry:wing:AR", val=np.nan, units=None)
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:coefficient", val=0.5, units=None)
-        self.add_input("data:geometry:tail:horizontal:AR", val=4.0, units=None)
+        self.add_input("optimization:variables:geometry:tail:horizontal:AR", val=4.0, units=None)
         self.add_input("data:aerodynamics:CDi:e", val=np.nan, units=None)
         self.add_input("data:geometry:wing:MAC:C4:x", val=np.nan, units="m")
         self.add_output("data:stability:neutral_point", units="m")
@@ -27,10 +27,10 @@ class NeutralPoint(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        AR_w = inputs["data:geometry:wing:AR"]
+        AR_w = inputs["optimization:variables:geometry:wing:AR"]
         c_MAC = inputs["data:geometry:wing:MAC:length"]
         V_ht = inputs["data:geometry:tail:horizontal:coefficient"]
-        AR_ht = inputs["data:geometry:tail:horizontal:AR"]
+        AR_ht = inputs["optimization:variables:geometry:tail:horizontal:AR"]
         e = inputs["data:aerodynamics:CDi:e"]
         x_ac_w = inputs[
             "data:geometry:wing:MAC:C4:x"

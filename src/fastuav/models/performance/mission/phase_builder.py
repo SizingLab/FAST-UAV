@@ -89,6 +89,8 @@ class SetFlightParameters(om.ExplicitComponent):
         elif phase_name == CLIMB_TAG:
             outputs["mission:%s:%s:climb:speed" % (mission_name, route_name)] = inputs[
                 "mission:sizing:main_route:climb:speed:%s" % propulsion_id]  # [m/s]
+            outputs["mission:%s:%s:climb:rate" % (mission_name, route_name)] = inputs[
+                "mission:sizing:main_route:climb:rate:%s" % propulsion_id]  # [m/s]
         elif phase_name == CRUISE_TAG:
             outputs["mission:%s:%s:cruise:speed" % (mission_name, route_name)] = inputs[
                 "mission:sizing:main_route:cruise:speed:%s" % propulsion_id]  # [m/s]
@@ -145,9 +147,9 @@ class PhaseComponent(om.ExplicitComponent):
             self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
             self.add_input("data:propulsion:%s:propeller:diameter" % propulsion_id, val=np.nan, units="m")
             self.add_input("data:propulsion:%s:propeller:beta" % propulsion_id, val=np.nan, units=None)
-            self.add_input("data:propulsion:%s:propeller:Ct:model:dynamic" % propulsion_id,
+            self.add_input("data:propulsion:%s:propeller:Ct:dynamic:polynomial" % propulsion_id,
                            shape_by_conn=True, val=np.nan, units=None)
-            self.add_input("data:propulsion:%s:propeller:Cp:model:dynamic" % propulsion_id,
+            self.add_input("data:propulsion:%s:propeller:Cp:dynamic:polynomial" % propulsion_id,
                            shape_by_conn=True, val=np.nan, units=None)
             self.add_input("mission:%s:%s:%s:payload:power" % (mission_name, route_name, phase_name), val=np.nan, units="W")
             if propulsion_id == MR_PROPULSION:
@@ -214,8 +216,8 @@ class PhaseComponent(om.ExplicitComponent):
             flight_model.propeller_number = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
             flight_model.propeller_diameter = inputs["data:propulsion:%s:propeller:diameter" % propulsion_id]
             flight_model.propeller_beta = inputs["data:propulsion:%s:propeller:beta" % propulsion_id]
-            flight_model.propeller_ct_model = inputs["data:propulsion:%s:propeller:Ct:model:dynamic" % propulsion_id]
-            flight_model.propeller_cp_model = inputs["data:propulsion:%s:propeller:Cp:model:dynamic" % propulsion_id]
+            flight_model.propeller_ct_model = inputs["data:propulsion:%s:propeller:Ct:dynamic:polynomial" % propulsion_id]
+            flight_model.propeller_cp_model = inputs["data:propulsion:%s:propeller:Cp:dynamic:polynomial" % propulsion_id]
             flight_model.payload_power = inputs["mission:%s:%s:%s:payload:power" % (mission_name, route_name, phase_name)]
 
             if propulsion_id == MR_PROPULSION:
