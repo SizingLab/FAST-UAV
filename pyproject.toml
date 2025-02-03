@@ -11,6 +11,7 @@ authors = [
 packages = [
     { include = "fastuav", from = "src" },
 ]
+exclude = ["**/tests/**"]
 
 homepage = "https://github.com/SizingLab/FAST-UAV"
 keywords = [
@@ -41,38 +42,86 @@ classifiers = [
 # of poetry.lock file will modify docs/requirements.txt and make
 # the commit fail because "files were modified by this hook". In that case,
 # doing again the commit including changes in docs/requirements.txt will succeed.
-python = ">=3.10, <3.12"
-fast-oad-core = "^1.7.3"
+python = "^3.10, <3.12"
+fast-oad-core = { version = "^1.7.3", python = "<3.12" }
 cma = "^3.1.0"
 scikit-learn = "^1.0.2"
-psutil = "*"
-kaleido = "0.2.1"
+matplotlib = "*"
 SALib = "1.4.5"
 fast-oad-lca = { git = "https://github.com/felixpollet/FAST-OAD_LCA.git", branch = "main" }
 
-[tool.poetry.extras]
-jupyterlab = ["jupyterlab"]
+[tool.poetry.group.test.dependencies]
+pytest = "^8.0"
+pytest-cov = "^5.0"
+coverage = { version = "^7.0", extras = ["toml"] }
+nbval = "^0.11"
+
+[tool.poetry.group.doc.dependencies]
+sphinx = "^4.1.2"
+sphinx-rtd-theme = "^1.0"
+sphinxcontrib-bibtex = "^2.3.0"
+
+[tool.poetry.group.lint.dependencies]
+pre-commit = "^3.5.0"
+nbstripout = "^0.5.0"
+ruff = "0.5.5"
 
 [tool.poetry.plugins."fastoad.plugins"]
 "uav" = "fastuav"
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2"
-pytest-cov = "^3.0"
-coverage = { extras = ["toml"], version = "^5.5" }
-pre-commit = "^2.14.1"
-black = { version = "22.3.0", extras = ["jupyter"], allow-prereleases = true }
-pylint = "^2.10.2"
-nbval = "^0.9.6"
-sphinx = "^4.1.2"
-sphinx-rtd-theme = "^1.0"
-sphinxcontrib-bibtex = "^2.3.0"
-flake8 = "^4.0.1"
-nbstripout = "^0.5.0"
-
-[tool.black]
-line-length = 100
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "semver"
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-include = ["*.ipynb"]
+
+[tool.ruff.lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "--cov-report term-missing --cov-report html --verbose"
+testpaths = ["src", "tests"]
+norecursedirs = ["dist", "build", ".tox"]
+filterwarnings = ["default"]
+
+[tool.coverage.run]
+branch = true
+source = ["fastuav"]
+omit = ["*/test/*", "*/tests/*"]
+[tool.coverage.paths]
+source = ["src/"]
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ = = .__main__.:"
+]

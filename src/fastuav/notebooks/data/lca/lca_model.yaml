@@ -19,7 +19,7 @@ model:
         name: 'market group for electricity, low voltage'
         loc: 'Europe without Switzerland'
         #amount: mission__sizing__energy / 3600 * n_cycles_uav / data__propulsion__multirotor__battery__efficiency
-        amount: mission__operational__energy / 3600 * n_cycles_uav / data__propulsion__multirotor__battery__efficiency
+        amount: mission__operational__energy / 3600 * lca__parameters__n_cycles_uav / data__propulsion__multirotor__battery__efficiency
     # TODO: declare switch options?
 
     production:
@@ -49,7 +49,7 @@ model:
 
         batteries:
             name: 'market for battery cell, Li-ion, NMC811'
-            amount: data__weight__propulsion__multirotor__battery__mass * ceiling(n_cycles_uav / n_cycles_battery)  # semi-colons ':' are to be replaced by double underscores '__'
+            amount: data__weight__propulsion__multirotor__battery__mass * ceiling(lca__parameters__n_cycles_uav / lca__parameters__n_cycles_battery)  # semi-colons ':' are to be replaced by double underscores '__'
 
 
 methods:  # tip: you can search for methods with lca_algebraic function agb.findMethods()

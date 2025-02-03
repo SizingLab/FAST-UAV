@@ -1,73 +1,26 @@
 <FASTOAD_model>
-  <lca>
-    <parameters>
-      <n_cycles_battery is_input="True">400.0</n_cycles_battery>
-      <n_cycles_uav is_input="True">2600.0</n_cycles_uav>
-    </parameters>
-  </lca>
   <mission>
-    <operational>
-      <dISA units="degK" is_input="True">0.0</dISA>
-      <route_1>
-        <cruise>
-          <altitude units="m" is_input="True">120.0</altitude>
-          <distance units="m" is_input="True">7500.0</distance>
-          <speed units="m/s" is_input="True">15.0</speed>
-          <payload>
-            <power units="W" is_input="True">0.0</power>
-          </payload>
-        </cruise>
-        <hover>
-          <duration units="min" is_input="True">2.5</duration>
-          <payload>
-            <power units="W" is_input="True">0.0</power>
-          </payload>
-        </hover>
-        <payload>
-          <mass units="kg" is_input="True">2.0</mass>
-        </payload>
-      </route_1>
-      <route_2>
-        <cruise>
-          <altitude units="m" is_input="True">120.0</altitude>
-          <distance units="m" is_input="True">7500.0</distance>
-          <speed units="m/s" is_input="True">15.0</speed>
-          <payload>
-            <power units="W" is_input="True">0.0</power>
-          </payload>
-        </cruise>
-        <hover>
-          <duration units="min" is_input="True">2.5</duration>
-          <payload>
-            <power units="W" is_input="True">0.0</power>
-          </payload>
-        </hover>
-        <payload>
-          <mass units="kg" is_input="True">0.0</mass>
-        </payload>
-      </route_2>
-    </operational>
     <sizing>
       <dISA units="degK" is_input="True">0.0<!--Temperature variation w.r.t. ISA--></dISA>
       <payload>
-        <mass units="kg" is_input="True">2.0<!--Design payload mass--></mass>
+        <mass units="kg" is_input="True">5.5<!--Design payload mass--></mass>
         <power>
           <multirotor units="W" is_input="True">0.0<!--Design payload consumption (connected to multirotor battery)--></multirotor>
         </power>
       </payload>
       <thrust_weight_ratio>
-        <multirotor is_input="True">2.0<!--Thrust-to-weight ratio for multirotor propulsion--></multirotor>
+        <multirotor is_input="True">1.97<!--Thrust-to-weight ratio for multirotor propulsion--></multirotor>
       </thrust_weight_ratio>
       <main_route>
         <cruise>
-          <altitude units="m" is_input="True">120.0<!--Cruise altitude for main route of sizing mission--></altitude>
-          <distance units="m" is_input="True">1000.0<!--Distance of cruise segment for main route of sizing mission--></distance>
+          <altitude units="m" is_input="True">0.0<!--Cruise altitude for main route of sizing mission--></altitude>
+          <distance units="m" is_input="True">0.0<!--Distance of cruise segment for main route of sizing mission--></distance>
           <speed>
             <multirotor units="m/s" is_input="True">20.0<!--Cruise speed for main route of sizing mission (multirotor mode)--></multirotor>
           </speed>
         </cruise>
         <hover>
-          <duration units="min" is_input="True">1.0<!--Duration of hover segment for main route of sizing mission--></duration>
+          <duration units="min" is_input="True">18.0<!--Duration of hover segment for main route of sizing mission--></duration>
         </hover>
         <takeoff>
           <altitude units="m" is_input="True">0.0<!--Takeoff altitude for main route of sizing mission--></altitude>
@@ -86,7 +39,7 @@
   <data>
     <aerodynamics>
       <multirotor>
-        <CD0 is_input="True">1.0<!--Parasitic drag coefficient of airframe (in multirotor mode)--></CD0>
+        <CD0 is_input="True">0.5<!--Parasitic drag coefficient of airframe (in multirotor mode)--></CD0>
       </multirotor>
     </aerodynamics>
     <weight>
@@ -94,7 +47,7 @@
         <density units="kg/m**3" is_input="True">1700.0<!--Arms material density--></density>
       </arms>
       <misc>
-        <mass units="kg" is_input="True">1.0<!--Miscellaneous mass (e.g. to account for non-modelled parts)--></mass>
+        <mass units="kg" is_input="True">0.85<!--Miscellaneous mass (e.g. to account for non-modelled parts)--></mass>
       </misc>
       <mtow>
         <requirement units="kg" is_input="True">100.0<!--Top-level requirement: Maximum Take Off Weight--></requirement>
@@ -102,18 +55,17 @@
     </weight>
     <propulsion>
       <multirotor>
+        <propeller>
+          <is_coaxial is_input="True">0.0<!--0: one propeller per arm; 1: coaxial propellers--></is_coaxial>
+          <number is_input="True">6.0<!--Number of propellers for multirotor--></number>
+        </propeller>
         <battery>
-          <efficiency is_input="True">0.85</efficiency>
           <cell>
             <voltage>
-              <estimated units="V" is_input="True">3.7<!--Voltage of one cell for multirotor battery (estimated value)--></estimated>
+              <estimated units="V" is_input="True">3.8<!--Voltage of one cell for multirotor battery (estimated value)--></estimated>
             </voltage>
           </cell>
         </battery>
-        <propeller>
-          <is_coaxial is_input="True">1.0<!--0: one propeller per arm; 1: coaxial propellers--></is_coaxial>
-          <number is_input="True">12.0<!--Number of propellers for multirotor--></number>
-        </propeller>
       </multirotor>
     </propulsion>
     <structures>
@@ -127,17 +79,17 @@
   <models>
     <weight>
       <mtow>
-        <reference units="kg" is_input="True">nan<!--MTOW reference for scaling law--></reference>
+        <reference units="kg" is_input="True">1.4<!--MTOW reference for scaling law--></reference>
       </mtow>
       <airframe>
         <arms>
           <mass>
-            <reference units="kg" is_input="True">nan<!--Arms mass reference for scaling law--></reference>
+            <reference units="kg" is_input="True">1.338<!--Arms mass reference for scaling law--></reference>
           </mass>
         </arms>
         <body>
           <mass>
-            <reference units="kg" is_input="True">nan<!--Body mass reference for scaling law--></reference>
+            <reference units="kg" is_input="True">22.35<!--Body mass reference for scaling law--></reference>
           </mass>
         </body>
       </airframe>
@@ -145,27 +97,27 @@
         <multirotor>
           <battery>
             <mass>
-              <reference units="kg" is_input="True">nan<!--Multirotor battery mass reference for scaling law--></reference>
+              <reference units="kg" is_input="True">0.68<!--Multirotor battery mass reference for scaling law--></reference>
             </mass>
           </battery>
           <esc>
             <mass>
-              <reference units="kg" is_input="True">nan<!--Multirotor ESC mass reference for scaling law--></reference>
+              <reference units="kg" is_input="True">0.115<!--Multirotor ESC mass reference for scaling law--></reference>
             </mass>
           </esc>
           <motor>
             <mass>
-              <reference units="kg" is_input="True">nan<!--Multirotor motor mass reference for scaling law--></reference>
+              <reference units="kg" is_input="True">0.575<!--Multirotor motor mass reference for scaling law--></reference>
             </mass>
           </motor>
           <propeller>
             <mass>
-              <reference units="kg" is_input="True">nan<!--Multirotor propeller mass reference for scaling law--></reference>
+              <reference units="kg" is_input="True">0.014999<!--Multirotor propeller mass reference for scaling law--></reference>
             </mass>
           </propeller>
           <wires>
             <density>
-              <reference units="kg/m" is_input="True">nan<!--Multirotor wires linear density reference for scaling law--></reference>
+              <reference units="kg/m" is_input="True">0.19028501<!--Multirotor wires linear density reference for scaling law--></reference>
             </density>
           </wires>
         </multirotor>
@@ -175,10 +127,10 @@
       <body>
         <surface>
           <front>
-            <reference units="m**2" is_input="True">nan<!--Front surface reference for scaling law--></reference>
+            <reference units="m**2" is_input="True">0.02<!--Front surface reference for scaling law--></reference>
           </front>
           <top>
-            <reference units="m**2" is_input="True">nan<!--Top surface reference for scaling law--></reference>
+            <reference units="m**2" is_input="True">0.045<!--Top surface reference for scaling law--></reference>
           </top>
         </surface>
       </body>
@@ -187,17 +139,17 @@
       <multirotor>
         <battery>
           <capacity>
-            <reference units="A*s" is_input="True">nan<!--Multirotor battery capacity reference for scaling law--></reference>
+            <reference units="A*s" is_input="True">20520.0<!--Multirotor battery capacity reference for scaling law--></reference>
           </capacity>
           <energy>
-            <reference units="kJ" is_input="True">nan<!--Multirotor battery energy reference for scaling law--></reference>
+            <reference units="kJ" is_input="True">467.856<!--Multirotor battery energy reference for scaling law--></reference>
           </energy>
           <voltage>
-            <reference units="V" is_input="True">nan<!--Multirotor battery voltage reference for scaling law--></reference>
+            <reference units="V" is_input="True">22.8<!--Multirotor battery voltage reference for scaling law--></reference>
             <tol units="percent" is_input="True">0.0<!--Permitted deviation from estimation model to size battery voltage--></tol>
           </voltage>
           <volume>
-            <reference units="cm**3" is_input="True">nan<!--Multirotor battery volume reference for scaling law--></reference>
+            <reference units="cm**3" is_input="True">500.0<!--Multirotor battery volume reference for scaling law--></reference>
           </volume>
           <DoD>
             <max>
@@ -206,7 +158,7 @@
           </DoD>
           <current>
             <max>
-              <reference units="A" is_input="True">nan<!--Multirotor battery max. current reference for scaling law--></reference>
+              <reference units="A" is_input="True">200.0<!--Multirotor battery max. current reference for scaling law--></reference>
             </max>
           </current>
         </battery>
@@ -215,7 +167,7 @@
             <reference is_input="True">0.95<!--Multirotor ESC efficiency reference--></reference>
           </efficiency>
           <power>
-            <reference units="W" is_input="True">nan<!--Multirotor ESC max. power reference for scaling law--></reference>
+            <reference units="W" is_input="True">3108.0<!--Multirotor ESC max. power reference for scaling law--></reference>
           </power>
           <voltage>
             <tol units="percent" is_input="True">0.0<!--Permitted deviation from estimation model to size ESC voltage--></tol>
@@ -223,32 +175,32 @@
         </esc>
         <motor>
           <length>
-            <reference units="m" is_input="True">nan<!--Multirotor motor length reference for scaling law--></reference>
+            <reference units="m" is_input="True">0.088<!--Multirotor motor length reference for scaling law--></reference>
           </length>
           <resistance>
-            <reference units="V/A" is_input="True">nan<!--Multirotor motor resistance reference for scaling law--></reference>
+            <reference units="V/A" is_input="True">0.03<!--Multirotor motor resistance reference for scaling law--></reference>
           </resistance>
           <speed>
             <constant>
-              <reference units="rad/V/s" is_input="True">nan<!--Multirotor motor speed constant reference for scaling law--></reference>
+              <reference units="rad/V/s" is_input="True">33.333333<!--Multirotor motor speed constant reference for scaling law--></reference>
               <tol units="percent" is_input="True">0.0<!--Permitted deviation from estimation model to size motor speed constant--></tol>
             </constant>
           </speed>
           <torque>
             <friction>
-              <reference units="N*m" is_input="True">nan<!--Multirotor motor friction torque reference for scaling law--></reference>
+              <reference units="N*m" is_input="True">0.03<!--Multirotor motor friction torque reference for scaling law--></reference>
             </friction>
             <max>
-              <reference units="N*m" is_input="True">nan<!--Multirotor motor max. torque reference for scaling law--></reference>
+              <reference units="N*m" is_input="True">2.81714286<!--Multirotor motor max. torque reference for scaling law--></reference>
             </max>
             <nominal>
-              <reference units="N*m" is_input="True">nan<!--Multirotor motor nominal torque reference for scaling law--></reference>
+              <reference units="N*m" is_input="True">2.32<!--Multirotor motor nominal torque reference for scaling law--></reference>
             </nominal>
           </torque>
         </motor>
         <propeller>
           <diameter>
-            <reference units="m" is_input="True">nan<!--Multirotor propeller diameter reference for scaling law--></reference>
+            <reference units="m" is_input="True">0.2794<!--Multirotor propeller diameter reference for scaling law--></reference>
           </diameter>
           <Cp>
             <dynamic>
@@ -268,16 +220,16 @@
           </Ct>
           <ND>
             <max>
-              <reference units="m/s" is_input="True">nan<!--Max. rotational speed not to be exceeded for multirotor propeller--></reference>
+              <reference units="m/s" is_input="True">44.45<!--Max. rotational speed not to be exceeded for multirotor propeller--></reference>
             </max>
           </ND>
         </propeller>
         <wires>
           <current>
-            <reference units="A" is_input="True">nan<!--Multirotor wires current reference for scaling law--></reference>
+            <reference units="A" is_input="True">120.0<!--Multirotor wires current reference for scaling law--></reference>
           </current>
           <radius>
-            <reference units="m" is_input="True">nan<!--Multirotor wires radius reference for scaling law--></reference>
+            <reference units="m" is_input="True">0.0052<!--Multirotor wires radius reference for scaling law--></reference>
           </radius>
         </wires>
       </multirotor>
@@ -287,7 +239,7 @@
     <variables>
       <weight>
         <mtow>
-          <k is_input="True">nan<!--Normalized variable for MTOW consistency (see NVH formulation)--></k>
+          <k is_input="True">2.0<!--Normalized variable for MTOW consistency (see NVH formulation)--></k>
         </mtow>
       </weight>
       <geometry>
@@ -303,21 +255,21 @@
       <propulsion>
         <multirotor>
           <propeller>
-            <beta is_input="True">nan<!--Multirotor propeller pitch-to-diameter ratio (initial guess)--></beta>
+            <beta is_input="True">0.3<!--Multirotor propeller pitch-to-diameter ratio (initial guess)--></beta>
             <ND>
-              <k is_input="True">nan<!--Sizing coefficient on multirotor propeller rotational speed--></k>
+              <k is_input="True">1.0<!--Sizing coefficient on multirotor propeller rotational speed--></k>
             </ND>
             <advance_ratio>
-              <climb is_input="True">nan<!--Advance ratio for multirotor propellers (climb)--></climb>
-              <cruise is_input="True">nan<!--Advance ratio for multirotor propellers (cruise)--></cruise>
+              <climb is_input="True">0.125<!--Advance ratio for multirotor propellers (climb)--></climb>
+              <cruise is_input="True">0.55<!--Advance ratio for multirotor propellers (cruise)--></cruise>
             </advance_ratio>
           </propeller>
           <battery>
             <energy>
-              <k is_input="True">nan<!--Sizing coefficient on multirotor battery energy--></k>
+              <k is_input="True">1.0<!--Sizing coefficient on multirotor battery energy--></k>
             </energy>
             <voltage>
-              <k is_input="True">nan<!--Sizing coefficient on multirotor battery voltage--></k>
+              <k is_input="True">1.0<!--Sizing coefficient on multirotor battery voltage--></k>
             </voltage>
           </battery>
           <esc>
@@ -330,10 +282,10 @@
           </esc>
           <motor>
             <speed>
-              <k is_input="True">nan<!--Sizing coefficient of multirotor motor speed--></k>
+              <k is_input="True">1.0<!--Sizing coefficient of multirotor motor speed--></k>
             </speed>
             <torque>
-              <k is_input="True">nan<!--Sizing coefficient on multirotor motor torque--></k>
+              <k is_input="True">1.0<!--Sizing coefficient on multirotor motor torque--></k>
             </torque>
           </motor>
         </multirotor>
@@ -341,7 +293,7 @@
       <structures>
         <arms>
           <diameter>
-            <k is_input="True">nan<!--Inner to outer beam diameter ratio--></k>
+            <k is_input="True">0.99<!--Inner to outer beam diameter ratio--></k>
           </diameter>
         </arms>
       </structures>
@@ -355,6 +307,10 @@
             <abs units="kJ" is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
             <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
           </energy>
+          <power>
+            <abs units="W" is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
+            <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
+          </power>
           <voltage>
             <abs units="V" is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
             <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
@@ -371,28 +327,20 @@
               <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
             </max>
           </current>
-          <power>
-            <max>
-              <abs units="W" is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
-              <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
-            </max>
-          </power>
         </battery>
         <esc>
           <efficiency>
             <abs is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
             <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
           </efficiency>
+          <power>
+            <abs units="W" is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
+            <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
+          </power>
           <voltage>
             <abs units="V" is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
             <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
           </voltage>
-          <power>
-            <max>
-              <abs units="W" is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
-              <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
-            </max>
-          </power>
         </esc>
         <motor>
           <resistance>
@@ -432,28 +380,28 @@
           <Cp>
             <dynamic>
               <polynomial>
-                <abs is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
-                <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
+                <abs is_input="True">0.0</abs>
+                <rel is_input="True">0.0</rel>
               </polynomial>
             </dynamic>
             <static>
               <polynomial>
-                <abs is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
-                <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
+                <abs is_input="True">0.0</abs>
+                <rel is_input="True">0.0</rel>
               </polynomial>
             </static>
           </Cp>
           <Ct>
             <dynamic>
               <polynomial>
-                <abs is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
-                <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
+                <abs is_input="True">0.0</abs>
+                <rel is_input="True">0.0</rel>
               </polynomial>
             </dynamic>
             <static>
               <polynomial>
-                <abs is_input="True">0.0<!--(variable for uncertainty analysis)--></abs>
-                <rel is_input="True">0.0<!--(variable for uncertainty analysis)--></rel>
+                <abs is_input="True">0.0</abs>
+                <rel is_input="True">0.0</rel>
               </polynomial>
             </static>
           </Ct>

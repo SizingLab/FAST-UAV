@@ -19,7 +19,6 @@
 /src/fastuav.egg-info/
 /src/fastuav/notebooks/reports/
 /src/fastuav/data/problem_outputs_lca.xml
-/src/fastuav/data/problem_outputs_lca_mdo.xml
 /src/fastuav/data/lca_cycles_lfp_eu.csv
 /src/fastuav/data/lca_cycles_lfp_eu_endpoint.csv
 /src/fastuav/data/lca_cycles_lfp_fr.csv
@@ -46,3 +45,10 @@
 /src/fastuav/notebooks/contributions_components_v2.ipynb
 /src/fastuav/gui/
 /src/fastuav/notebooks/04_LCA.ipynb
+/src/fastuav/notebooks/data/.ipynb_checkpoints/
+/src/fastuav/notebooks/export/
+/src/fastuav/notebooks/unlinked.log
+/src/fastuav/notebooks/data/configurations/.ipynb_checkpoints/
+/src/fastuav/notebooks/data/missions/.ipynb_checkpoints/
+/src/fastuav/notebooks/data/source_files/.ipynb_checkpoints/
+/src/fastuav/notebooks/data/source_files/lca_save/

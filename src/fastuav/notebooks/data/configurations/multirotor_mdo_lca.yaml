@@ -1,14 +1,11 @@
-title: Multirotor Drone MDO
-
-# List of folder paths where user added custom registered OpenMDAO components
-module_folders:
+title: Multirotor Drone MDO with LCA
     
 # Input and output temporary files
 input_file: ../../workdir/problem_inputs.xml
 output_file: ../../workdir/problem_outputs.xml
 
 # Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
-driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
+driver: om.ScipyOptimizeDriver(tol=1e-3, optimizer='SLSQP', maxiter=50)
 
 # Definition of OpenMDAO model
 model:
@@ -16,7 +13,6 @@ model:
         id: fastuav.scenarios.multirotor
     propulsion:
         id: fastuav.propulsion.multirotor
-        gearbox: False  # this is an option
     geometry:
         id: fastuav.geometry.multirotor
     structures:
@@ -30,7 +26,13 @@ model:
             id: fastuav.performance.endurance.multirotor
         missions:
             id: fastuav.performance.mission
-            file_path: ../missions/missions_multirotor.yaml
+            file_path: ../missions/missions_multirotor_lca.yaml
+    lca:
+        id: fastoad.plugin.lca
+        configuration_file: ../lca/lca_model.yaml
+        axis: "phase"
+        normalization: False
+        weighting: False
 
 
 # This section is needed only if optimization process is run
@@ -100,8 +102,8 @@ optimization:
       - name: optimization:constraints:weight:mtow:consistency # Mass consistency
         lower: 0.0
 
-      #- name: optimization:constraints:weight:mtow:requirement # MTOW requirement
-      #  lower: 0.0
+      - name: optimization:constraints:weight:mtow:requirement # MTOW requirement
+        lower: 0.0
         
         ## PROPULSION ##
       - name: optimization:constraints:propulsion:multirotor:propeller:airspeed:climb  # climb speed requirement
@@ -167,15 +169,30 @@ optimization:
         lower: 0.0
       
         ## MISSION ##
-      - name: optimization:constraints:mission:sizing:energy:multirotor  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+      #- name: optimization:constraints:mission:sizing:energy:multirotor  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+       # lower: 0.0
+        
+      - name: optimization:constraints:mission:operational:energy:multirotor  # energy requirement to fulfill operational mission
         lower: 0.0
         
     objective:
+      # ENVIRONMENTAL SCORE MINIMIZATION
+      #- name: lca:aggregation:weighted_single_score:model_per_FU
+      #  scaler: 10.0
+      
+      # ENVIRONMENTAL SCORE MINIMIZATION
+      #- name: lca:characterization:climate_change
+      #  scaler: 1e-2
+    
       # MASS MINIMIZATION
       - name: data:weight:mtow
         scaler: 1e-1
+      
+      # OPERATIONAL MISSION ENERGY MINIMIZATION
+      #- name: mission:operational:energy
+      #  scaler: 1e-3
 
-      # ENERGY MINIMIZATION
+      # SIZING MISSION ENERGY MINIMIZATION
       #- name: mission:sizing:energy
       #  scaler: 1e-3
         
