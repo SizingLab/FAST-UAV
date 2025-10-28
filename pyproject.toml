@@ -49,6 +49,7 @@ psutil = "*"
 kaleido = "0.2.1"
 SALib = "1.4.5"
 seaborn = "^0.13"
+pyzmq = ">=26,<27" # Issue with Ubuntu 24.04 and Python 3.12
 
 # For future LCA deployment
 #brightway2 = "^2.3"
