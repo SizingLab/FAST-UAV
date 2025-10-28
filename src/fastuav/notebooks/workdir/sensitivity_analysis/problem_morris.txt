@@ -1,0 +1,1 @@
+{'num_vars': 2, 'names': ['uncertainty:propulsion:multirotor:battery:power:max:rel', 'uncertainty:propulsion:multirotor:motor:torque:friction:rel'], 'bounds': [[-0.1, 0.1, 'unif'], [-0.1, 0.1, 'unif']]}
