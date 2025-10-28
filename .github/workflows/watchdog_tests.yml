@@ -3,21 +3,19 @@ name: watchdog-tests
 on:
   workflow_dispatch:
   workflow_call:
-  push:
-    branches: [ 'main', 'main-v*' ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ 'main', 'main-v*' ]
+    branches: [ 'main' ]
   schedule:
-    - cron: '00 4 * * *'
+    - cron: '0 4 * * 1'   # Monday 06:00 (UTC+2)
 
 jobs:
   tests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [ '3.8' ]
-        os: [ ubuntu-latest, windows-latest ]
+        python-version: [ '3.9', '3.10', '3.11', '3.12' ]
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
 
     steps:
       - uses: actions/checkout@v3
