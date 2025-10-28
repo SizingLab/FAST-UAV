@@ -79,6 +79,26 @@ test = ["anyio[trio]", "coverage[toml] (>=7)", "exceptiongroup (>=1.2.0)", "hypo
 trio = ["trio (>=0.23)"]
 
 [[package]]
+name = "anywidget"
+version = "0.9.18"
+description = "custom jupyter widgets made easy"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "anywidget-0.9.18-py3-none-any.whl", hash = "sha256:944b82ef1dd17b8ff0fb6d1f199f613caf9111338e6e2857da478f6e73770cb8"},
+    {file = "anywidget-0.9.18.tar.gz", hash = "sha256:262cf459b517a7d044d6fbc84b953e9c83f026790b2dd3ce90f21a7f8eded00f"},
+]
+
+[package.dependencies]
+ipywidgets = ">=7.6.0"
+psygnal = ">=0.8.1"
+typing-extensions = ">=4.2.0"
+
+[package.extras]
+dev = ["watchfiles (>=0.18.0)"]
+
+[[package]]
 name = "appnope"
 version = "0.1.3"
 description = "Disable App Nap on macOS >= 10.9"
@@ -982,18 +1002,19 @@ tests = ["asttokens (>=2.1.0)", "coverage", "coverage-enable-subprocess", "ipyth
 
 [[package]]
 name = "fast-oad-core"
-version = "1.8.3"
+version = "1.8.4"
 description = "FAST-OAD is a framework for performing rapid Overall Aircraft Design"
 optional = false
 python-versions = "<3.13,>=3.9"
 groups = ["main"]
 files = [
-    {file = "fast_oad_core-1.8.3-py3-none-any.whl", hash = "sha256:dade9f4a562b0ed740db9522ead10de30baee406292f22f803602698769b5064"},
-    {file = "fast_oad_core-1.8.3.tar.gz", hash = "sha256:c2a84571ba65a2e0cebb5c8d02a0c641b641cd6020cc845bd0501f209ba0b610"},
+    {file = "fast_oad_core-1.8.4-py3-none-any.whl", hash = "sha256:796be6ae70423735935903da7e713daf99b4d63608cbcc3e361b0f35bbd00906"},
+    {file = "fast_oad_core-1.8.4.tar.gz", hash = "sha256:6bc5bf010f43a667dac6d1d1b90e1582e3f3e49e2c4409b9e7884adc75bae412"},
 ]
 
 [package.dependencies]
 aenum = ">=3.1.0,<4.0.0"
+anywidget = ">=0.9.18,<0.10.0"
 click = ">=8.0.3,<9.0.0"
 Deprecated = ">=1.2.13,<2.0.0"
 ensure = [
@@ -1017,17 +1038,15 @@ lxml = [
     {version = ">=4.9.3,<6", markers = "python_version >= \"3.11\" and python_version < \"4.0\""},
 ]
 numpy = ">=1.23.2,<3"
-openmdao = ">3.27,<3.38"
+openmdao = ">3.27,<3.39"
 pandas = [
     {version = ">=1.3.4,<3", markers = "python_version < \"3.11\""},
     {version = ">=1.5.3,<3", markers = "python_version == \"3.11\""},
     {version = ">=2.1.1,<3.0.0", markers = "python_version >= \"3.12\" and python_version < \"4.0\""},
 ]
-plotly = [
-    {version = ">=5,<6", markers = "python_version < \"3.12\""},
-    {version = ">=5.19,<6.0", markers = "python_version >= \"3.12\" and python_version < \"4.0\""},
-]
+plotly = ">=6.2.0,<7.0.0"
 pyDOE3 = ">=1.0.0,<2.0.0"
+rich = ">=14.0.0,<15.0.0"
 "ruamel.yaml" = ">=0.15.78,<0.18"
 scipy = ">=1.11.2,<2.0.0"
 stdatm = ">=0.4.2"
@@ -2285,6 +2304,57 @@ htmlsoup = ["BeautifulSoup4"]
 source = ["Cython (==0.29.37)"]
 
 [[package]]
+name = "markdown-it-py"
+version = "3.0.0"
+description = "Python port of markdown-it. Markdown parsing, done right!"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+markers = "python_version == \"3.9\""
+files = [
+    {file = "markdown-it-py-3.0.0.tar.gz", hash = "sha256:e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb"},
+    {file = "markdown_it_py-3.0.0-py3-none-any.whl", hash = "sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1"},
+]
+
+[package.dependencies]
+mdurl = ">=0.1,<1.0"
+
+[package.extras]
+benchmarking = ["psutil", "pytest", "pytest-benchmark"]
+code-style = ["pre-commit (>=3.0,<4.0)"]
+compare = ["commonmark (>=0.9,<1.0)", "markdown (>=3.4,<4.0)", "mistletoe (>=1.0,<2.0)", "mistune (>=2.0,<3.0)", "panflute (>=2.3,<3.0)"]
+linkify = ["linkify-it-py (>=1,<3)"]
+plugins = ["mdit-py-plugins"]
+profiling = ["gprof2dot"]
+rtd = ["jupyter_sphinx", "mdit-py-plugins", "myst-parser", "pyyaml", "sphinx", "sphinx-copybutton", "sphinx-design", "sphinx_book_theme"]
+testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions"]
+
+[[package]]
+name = "markdown-it-py"
+version = "4.0.0"
+description = "Python port of markdown-it. Markdown parsing, done right!"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "python_version >= \"3.10\""
+files = [
+    {file = "markdown_it_py-4.0.0-py3-none-any.whl", hash = "sha256:87327c59b172c5011896038353a81343b6754500a08cd7a4973bb48c6d578147"},
+    {file = "markdown_it_py-4.0.0.tar.gz", hash = "sha256:cb0a2b4aa34f932c007117b194e945bd74e0ec24133ceb5bac59009cda1cb9f3"},
+]
+
+[package.dependencies]
+mdurl = ">=0.1,<1.0"
+
+[package.extras]
+benchmarking = ["psutil", "pytest", "pytest-benchmark"]
+compare = ["commonmark (>=0.9,<1.0)", "markdown (>=3.4,<4.0)", "markdown-it-pyrs", "mistletoe (>=1.0,<2.0)", "mistune (>=3.0,<4.0)", "panflute (>=2.3,<3.0)"]
+linkify = ["linkify-it-py (>=1,<3)"]
+plugins = ["mdit-py-plugins (>=0.5.0)"]
+profiling = ["gprof2dot"]
+rtd = ["ipykernel", "jupyter_sphinx", "mdit-py-plugins (>=0.5.0)", "myst-parser", "pyyaml", "sphinx", "sphinx-book-theme (>=1.0,<2.0)", "sphinx-copybutton", "sphinx-design"]
+testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions", "requests"]
+
+[[package]]
 name = "markupsafe"
 version = "2.1.4"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -2451,6 +2521,18 @@ files = [
 ]
 
 [[package]]
+name = "mdurl"
+version = "0.1.2"
+description = "Markdown URL utilities"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
+    {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
+]
+
+[[package]]
 name = "mistune"
 version = "3.0.2"
 description = "A sane and fast Markdown parser with useful plugins and renderers"
@@ -2502,6 +2584,31 @@ files = [
     {file = "mypy_extensions-1.0.0-py3-none-any.whl", hash = "sha256:4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d"},
     {file = "mypy_extensions-1.0.0.tar.gz", hash = "sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782"},
 ]
+
+[[package]]
+name = "narwhals"
+version = "2.10.0"
+description = "Extremely lightweight compatibility layer between dataframe libraries"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "narwhals-2.10.0-py3-none-any.whl", hash = "sha256:baed44e8fc38e800e3a585e3fa9843a7079a6fad5fbffbecee4348d6ac52298c"},
+    {file = "narwhals-2.10.0.tar.gz", hash = "sha256:1c05bbef2048a4045263de7d98c3d06140583eb13d796dd733b2157f05d24485"},
+]
+
+[package.extras]
+cudf = ["cudf (>=24.10.0)"]
+dask = ["dask[dataframe] (>=2024.8)"]
+duckdb = ["duckdb (>=1.1)"]
+ibis = ["ibis-framework (>=6.0.0)", "packaging", "pyarrow-hotfix", "rich"]
+modin = ["modin"]
+pandas = ["pandas (>=1.1.3)"]
+polars = ["polars (>=0.20.4)"]
+pyarrow = ["pyarrow (>=13.0.0)"]
+pyspark = ["pyspark (>=3.5.0)"]
+pyspark-connect = ["pyspark[connect] (>=3.5.0)"]
+sqlframe = ["sqlframe (>=3.22.0,!=3.39.3)"]
 
 [[package]]
 name = "nbclassic"
@@ -3191,19 +3298,27 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4)", "pytest-co
 
 [[package]]
 name = "plotly"
-version = "5.24.1"
-description = "An open-source, interactive data visualization library for Python"
+version = "6.3.1"
+description = "An open-source interactive data visualization library for Python"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "plotly-5.24.1-py3-none-any.whl", hash = "sha256:f67073a1e637eb0dc3e46324d9d51e2fe76e9727c892dde64ddf1e1b51f29089"},
-    {file = "plotly-5.24.1.tar.gz", hash = "sha256:dbc8ac8339d248a4bcc36e08a5659bacfe1b079390b8953533f4eb22169b4bae"},
+    {file = "plotly-6.3.1-py3-none-any.whl", hash = "sha256:8b4420d1dcf2b040f5983eed433f95732ed24930e496d36eb70d211923532e64"},
+    {file = "plotly-6.3.1.tar.gz", hash = "sha256:dd896e3d940e653a7ce0470087e82c2bd903969a55e30d1b01bb389319461bb0"},
 ]
 
 [package.dependencies]
+narwhals = ">=1.15.1"
 packaging = "*"
-tenacity = ">=6.2.0"
+
+[package.extras]
+dev = ["plotly[dev-optional]"]
+dev-build = ["build", "jupyter", "plotly[dev-core]"]
+dev-core = ["pytest", "requests", "ruff (==0.11.12)"]
+dev-optional = ["anywidget", "colorcet", "fiona (<=1.9.6) ; python_version <= \"3.8\"", "geopandas", "inflect", "numpy", "orjson", "pandas", "pdfrw", "pillow", "plotly-geo", "plotly[dev-build]", "plotly[kaleido]", "polars[timezone]", "pyarrow", "pyshp", "pytz", "scikit-image", "scipy", "shapely", "statsmodels", "vaex ; python_version <= \"3.9\"", "xarray"]
+express = ["numpy"]
+kaleido = ["kaleido (>=1.0.0)"]
 
 [[package]]
 name = "pluggy"
@@ -3325,6 +3440,90 @@ files = [
 
 [package.extras]
 test = ["enum34 ; python_version <= \"3.4\"", "ipaddress ; python_version < \"3.0\"", "mock ; python_version < \"3.0\"", "pywin32 ; sys_platform == \"win32\"", "wmi ; sys_platform == \"win32\""]
+
+[[package]]
+name = "psygnal"
+version = "0.14.2"
+description = "Fast python callback/event system modeled after Qt Signals"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+markers = "python_version == \"3.9\""
+files = [
+    {file = "psygnal-0.14.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:84dc83a3d213bf3cef25501b65f13d59ddb793ad59f74006f7e8ffb64a8838dc"},
+    {file = "psygnal-0.14.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:689933fb364a8885f3b39312f8e0cae698fe5f0bb6911c5c393bdf44a42186aa"},
+    {file = "psygnal-0.14.2-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:c85599693955f9bbe2ef635bef823be19fa02e9ac047f32e4ce80e9a270b32dd"},
+    {file = "psygnal-0.14.2-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:6f2938f6feea3c212bcd47723319299128bedcf02290ec892d281ff6d6760aae"},
+    {file = "psygnal-0.14.2-cp310-cp310-win_amd64.whl", hash = "sha256:bfc00d7dd3e7c84005d7af972794ed2f7e683e2c9666a1d2796ba144a315d968"},
+    {file = "psygnal-0.14.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:9fc04ad56b40009d8d0a8c89023fe93a1d39496e88f6eff45fb433aef0283c9c"},
+    {file = "psygnal-0.14.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:d2e1febc998fe49cfe81a0d900c1f92cb7fd9c6df0a43cb89e48493e838630e0"},
+    {file = "psygnal-0.14.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:8968646fa75cf44f8e10d07434928eb7ae63df66398a4cab55ec37ee70165589"},
+    {file = "psygnal-0.14.2-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:6ab578834bd0f872a9d6b01c5efc6b4c77068b9ae9d8f3f360677885af31e67a"},
+    {file = "psygnal-0.14.2-cp311-cp311-win_amd64.whl", hash = "sha256:74a05ddc75bf8a6d25f4bfcdc04de4fc5bf4efd2983c3962db723dc83f46d52a"},
+    {file = "psygnal-0.14.2-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:d05c0b75dac72aeb7b548ffad2d23847e77c97fb50dac8bab7ba407f65fe0111"},
+    {file = "psygnal-0.14.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:407c8466f0e4a7a55bec3c62f09f547143b99a3386376e838b8438bbaca76c60"},
+    {file = "psygnal-0.14.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:7a0edaaa7b0a2e6717b9e66e6ff0c53043f61d8603dae5aba8e4df3f39a42b5a"},
+    {file = "psygnal-0.14.2-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:6fa8f7aa1ba19027881c34e1603d808d81c2aeab21c2b74ea6141cb6ed7cef95"},
+    {file = "psygnal-0.14.2-cp312-cp312-win_amd64.whl", hash = "sha256:1045c7662e4d4d9a496b47956ecf2ee542aaefc283244aece241a23c6b716e7e"},
+    {file = "psygnal-0.14.2-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:bd67b1e9ed8cd1210b851baa41c0e1582b89940c04b50c93cd1db18f6f1d8215"},
+    {file = "psygnal-0.14.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:35aeb647004031951f25a6ec457628b3a7300de6927bec6875f445c373d5974c"},
+    {file = "psygnal-0.14.2-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a27369767302b1202e34dce03c09809d0204a7b2986d8ba9cc7711be739e7e64"},
+    {file = "psygnal-0.14.2-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:4524e67785f8d7fa276a2ed4a24aa4072f7aace3c6c53546bca8a2ab0241156a"},
+    {file = "psygnal-0.14.2-cp313-cp313-win_amd64.whl", hash = "sha256:c03ebf844a5b448875340473e41b5a58e52810e4da9e4bf6d12f18bb8d24b13f"},
+    {file = "psygnal-0.14.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:ce63479937c437ba4235ac2813346312e9649847cc89baa691efa4c21a2ae743"},
+    {file = "psygnal-0.14.2-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:d5deb444641acf67e0ee53f2881e0fb333c63702f7dad4ce757e38f0f26fa907"},
+    {file = "psygnal-0.14.2-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:8d572e273d6277e00f6eff6cdd3c477103451517738c02fc3546e01f73f5726f"},
+    {file = "psygnal-0.14.2-cp39-cp39-musllinux_1_2_x86_64.whl", hash = "sha256:82194598725fca42e5b4f55efa9929f03993d9f13c3b4b61bcb9e543e137f9dd"},
+    {file = "psygnal-0.14.2-cp39-cp39-win_amd64.whl", hash = "sha256:a2123965f03b46f5f79fbe047fb6fa3585b74203fafa1969b881951d14997b89"},
+    {file = "psygnal-0.14.2-py3-none-any.whl", hash = "sha256:6caa7b1ebab0fcfd9e196cf5269b3be2bb4ee7776a11d60fb6fdf7263143e327"},
+    {file = "psygnal-0.14.2.tar.gz", hash = "sha256:588d1a7a0212db8ffc720ef2fb03e849e0280f4f156e5f5922e6b99b13c69689"},
+]
+
+[package.extras]
+proxy = ["wrapt"]
+pydantic = ["pydantic"]
+
+[[package]]
+name = "psygnal"
+version = "0.15.0"
+description = "Fast python callback/event system modeled after Qt Signals"
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+markers = "python_version >= \"3.10\""
+files = [
+    {file = "psygnal-0.15.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:3c33a022d2bdfa68c71f6fe964fb316b8cff36a936a6075bb14378823b5bd28d"},
+    {file = "psygnal-0.15.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:27367d0b47866c6d9c47a19ae9c9570c1525f729314b1d864a7d6e052688645e"},
+    {file = "psygnal-0.15.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:6bafa232672ae1d0f51873629c38aeed85476b6620803e8daa14edf20716054c"},
+    {file = "psygnal-0.15.0-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:45234b9f6f6a793c3df2867f86c5b5223731eda7734768148175268042c6b7b8"},
+    {file = "psygnal-0.15.0-cp310-cp310-win_amd64.whl", hash = "sha256:1fcade907d3385eb3bc97617f51f275dfc5db45f601cc8ef5c2d17b2f9db1d0d"},
+    {file = "psygnal-0.15.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:4d83239961c66f0763c26df121d8028eeb1cdebc3ce2d511836b3424dda591f3"},
+    {file = "psygnal-0.15.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:219550f78512cd274ee11966033843426a85ee333fbfed73d0f7ce1b153c547c"},
+    {file = "psygnal-0.15.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:0c29149a5042d79cb9dfb4d7b6b8c624296681b1533d58b7820c0817ffdd81c4"},
+    {file = "psygnal-0.15.0-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:d4c9762102df30530044c5a44cc591240ff3b89bd67292e10c0b73cd694c84e9"},
+    {file = "psygnal-0.15.0-cp311-cp311-win_amd64.whl", hash = "sha256:0f50938b3caf07e34ab044c19d4e9280a53ff65492c285ff211285f0a08934c1"},
+    {file = "psygnal-0.15.0-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:82eb5767f6cba67fa2d034dab9ec94e8eaf465067666dea3e2f832f2c32debc3"},
+    {file = "psygnal-0.15.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:5dbcc67b2282eebe2e4e55ff9b50dad6b811d4ab698c573a61a725a6296919ba"},
+    {file = "psygnal-0.15.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:c0d65e2686c19997eb4495974abc972ca1661504e73b8b58b1fb8466baf0c7ae"},
+    {file = "psygnal-0.15.0-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:ed3ff192cdd14956c2f7a0be4635fa72b2eb2773dfc58a6aa8c14926647041f2"},
+    {file = "psygnal-0.15.0-cp312-cp312-win_amd64.whl", hash = "sha256:0ed1fd5797df111c9f9b43a1dc01ffb7c76e19ddc9b0de969e0b816034345246"},
+    {file = "psygnal-0.15.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:eb11ecb42b4ff9e45d661396399029c41fbd1cfdd5dbd5c31a3f6f52c8fc2b90"},
+    {file = "psygnal-0.15.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:eace624bb6aa7ad42d1c047a2e3a531f68b3bfc63d8b4c3de9dec4cc122bb534"},
+    {file = "psygnal-0.15.0-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a0172efeb861280bca05673989a4df21624f44344eff20b873d8c9d0edc01350"},
+    {file = "psygnal-0.15.0-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:c284edb17542dad0114ad2a942799d6526fa72be7d76d078a388469d584d034c"},
+    {file = "psygnal-0.15.0-cp313-cp313-win_amd64.whl", hash = "sha256:c60d36d46c992835608030ff3fa918c06c7f22133391d90500585fef726f5d07"},
+    {file = "psygnal-0.15.0-cp314-cp314-macosx_10_15_x86_64.whl", hash = "sha256:f0125639597d42b8d78fcd61cc306d7ae71a198d8fac83ab64a07742e8bb1ca8"},
+    {file = "psygnal-0.15.0-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:d3e759e84c9396f4b1f30bf4b5efd83c5fd359745a72df44b639aa0e5e94c51d"},
+    {file = "psygnal-0.15.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:876e2f8b22236c0327e3da75a17e40a550d89efed904c1e9db23acdd4a66504d"},
+    {file = "psygnal-0.15.0-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:5108268d08ac176ac6f8a0cad2c76883282d75a14663f806fdf207eb53e38014"},
+    {file = "psygnal-0.15.0-cp314-cp314-win_amd64.whl", hash = "sha256:6034cacebd252776743450be62f25df323f8cb4ed7b01a46fc4dcf540baa64a6"},
+    {file = "psygnal-0.15.0-py3-none-any.whl", hash = "sha256:023c361c38e8ada87d0704704e1f2b7e799e9771e00b8e174fb409ff9ddeb502"},
+    {file = "psygnal-0.15.0.tar.gz", hash = "sha256:5534f18e2d1536675e181c6f81cf04f4177b25a9e60fdcf724a25ce5cc195765"},
+]
+
+[package.extras]
+proxy = ["wrapt"]
+pydantic = ["pydantic"]
 
 [[package]]
 name = "ptyprocess"
@@ -3876,6 +4075,25 @@ files = [
     {file = "rfc3986_validator-0.1.1-py2.py3-none-any.whl", hash = "sha256:2f235c432ef459970b4306369336b9d5dbdda31b510ca1e327636e01f528bfa9"},
     {file = "rfc3986_validator-0.1.1.tar.gz", hash = "sha256:3d44bde7921b3b9ec3ae4e3adca370438eccebc676456449b145d533b240d055"},
 ]
+
+[[package]]
+name = "rich"
+version = "14.2.0"
+description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
+optional = false
+python-versions = ">=3.8.0"
+groups = ["main"]
+files = [
+    {file = "rich-14.2.0-py3-none-any.whl", hash = "sha256:76bc51fe2e57d2b1be1f96c524b890b816e334ab4c1e45888799bfaab0021edd"},
+    {file = "rich-14.2.0.tar.gz", hash = "sha256:73ff50c7c0c1c77c8243079283f4edb376f0f6442433aecb8ce7e6d0b92d1fe4"},
+]
+
+[package.dependencies]
+markdown-it-py = ">=2.2.0"
+pygments = ">=2.13.0,<3.0.0"
+
+[package.extras]
+jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "rpds-py"
@@ -4595,21 +4813,6 @@ files = [
 widechars = ["wcwidth"]
 
 [[package]]
-name = "tenacity"
-version = "8.2.3"
-description = "Retry code until it succeeds"
-optional = false
-python-versions = ">=3.7"
-groups = ["main"]
-files = [
-    {file = "tenacity-8.2.3-py3-none-any.whl", hash = "sha256:ce510e327a630c9e1beaf17d42e6ffacc88185044ad85cf74c0a8887c6a0f88c"},
-    {file = "tenacity-8.2.3.tar.gz", hash = "sha256:5398ef0d78e63f40007c1fb4c0bff96e1911394d2fa8d194f77619c05ff6cc8a"},
-]
-
-[package.extras]
-doc = ["reno", "sphinx", "tornado (>=4.5)"]
-
-[[package]]
 name = "terminado"
 version = "0.18.0"
 description = "Tornado websocket backend for the Xterm.js Javascript terminal emulator library."
@@ -4779,11 +4982,11 @@ description = "Backported and Experimental Type Hints for Python 3.8+"
 optional = false
 python-versions = ">=3.8"
 groups = ["main", "dev"]
-markers = "python_version < \"3.11\""
 files = [
     {file = "typing_extensions-4.9.0-py3-none-any.whl", hash = "sha256:af72aea155e91adfc61c3ae9e0e342dbc0cba726d6cba4b6c72c1f34e47291cd"},
     {file = "typing_extensions-4.9.0.tar.gz", hash = "sha256:23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783"},
 ]
+markers = {dev = "python_version < \"3.11\""}
 
 [[package]]
 name = "tzdata"
@@ -5185,4 +5388,4 @@ jupyterlab = []
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9, <3.13"
-content-hash = "9ae4f1edfd89e16f5cd5b431e421e89148e9046d55a4992a984d190e4288454d"
+content-hash = "600724bd64d09e73db2bc3f7633c16c0c2628573829c98952fa7e56f1379765b"

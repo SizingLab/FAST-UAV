@@ -24,7 +24,6 @@ from ipywidgets import widgets, Layout
 import plotly.graph_objects as go
 from SALib.analyze import sobol, morris
 from typing import List
-from plotly.validators.scatter.marker import SymbolValidator
 import itertools
 # from openmdao_drivers.cmaes_driver import CMAESDriver
 
@@ -418,7 +417,7 @@ def sobol_analysis(conf_file, data_file):
             x=[],
             y=[],
             hoverongaps=False,
-            colorbar=dict(title="Sobol index", titleside="top"),
+            colorbar=dict(title=dict(text="Sobol index", side="top")),
         ),
     )
 
@@ -965,8 +964,8 @@ def morris_analysis(conf_file, data_file):
     # Scatter plot
     fig2 = go.FigureWidget(
         layout=go.Layout(
-            xaxis=dict(title=r"$\mu^*$", titlefont=dict(size=20)),
-            yaxis=dict(title=r"$\sigma$", titlefont=dict(size=20)),
+            xaxis=dict(title=dict(text=r"$\mu^*$", font=dict(size=20))),
+            yaxis=dict(title=dict(text=r"$\sigma$", font=dict(size=20))),
             legend=dict(title="", orientation="h", bordercolor="black", borderwidth=1),
             font=dict(size=14),
         )
@@ -1214,7 +1213,7 @@ def morris_analysis(conf_file, data_file):
             fig2.data[2].y = [0, max(Si["mu_star"])]
 
             # add parameters
-            raw_symbols = SymbolValidator().values
+            raw_symbols = list(go.Scatter.marker_symbols)
             for i in range(len(Si["names"])):
                 fig2.add_trace(
                     go.Scatter(
