@@ -264,6 +264,11 @@ def doe_fast(
     # If SA_PATH does not exist, create it
     if not pth.exists(SA_PATH):
         os.makedirs(SA_PATH)
+    
+    # Create figures subdirectory if it doesn't exist
+    figures_path = pth.join(SA_PATH, "figures")
+    if not pth.exists(figures_path):
+        os.makedirs(figures_path)
 
     # Save to .csv for future use
     df.to_csv(pth.join(SA_PATH, "doe_" + method_name + ".csv"))
@@ -719,16 +724,16 @@ def sobol_analysis(conf_file, data_file):
             fig5.data[0].line = dict(color=df[y], colorscale="Viridis")
 
         # export
-        fig1.write_html(pth.join(SA_PATH, "figures") + "/sobol_indices_hist.html")
-        fig1.write_image(pth.join(SA_PATH, "figures") + "/sobol_indices_hist.pdf")
-        fig2.write_html(pth.join(SA_PATH, "figures") + "/sobol_second_order.html")
-        fig2.write_image(pth.join(SA_PATH, "figures") + "/sobol_second_order.pdf")
-        fig3.write_html(pth.join(SA_PATH, "figures") + "/sobol_indices_pie.html")
-        fig3.write_image(pth.join(SA_PATH, "figures") + "/sobol_indices_pie.pdf")
-        fig4.write_html(pth.join(SA_PATH, "figures") + "/output_dist.html")
-        fig4.write_image(pth.join(SA_PATH, "figures") + "output_dist.pdf")
-        fig5.write_html(pth.join(SA_PATH, "figures") + "parallel_plot.html")
-        fig5.write_image(pth.join(SA_PATH, "figures") + "parallel_plot.pdf")
+        fig1.write_html(pth.join(SA_PATH, "figures", "sobol_indices_hist.html"))
+        fig1.write_image(pth.join(SA_PATH, "figures", "sobol_indices_hist.pdf"))
+        fig2.write_html(pth.join(SA_PATH, "figures", "sobol_second_order.html"))
+        fig2.write_image(pth.join(SA_PATH, "figures", "sobol_second_order.pdf"))
+        fig3.write_html(pth.join(SA_PATH, "figures", "sobol_indices_pie.html"))
+        fig3.write_image(pth.join(SA_PATH, "figures", "sobol_indices_pie.pdf"))
+        fig4.write_html(pth.join(SA_PATH, "figures", "output_dist.html"))
+        fig4.write_image(pth.join(SA_PATH, "figures", "output_dist.pdf"))
+        fig5.write_html(pth.join(SA_PATH, "figures", "parallel_plot.html"))
+        fig5.write_image(pth.join(SA_PATH, "figures", "parallel_plot.pdf"))
 
         # with fig6.batch_update():  # Inputs Distributions
         #    # DEPRECATED : both relative and absolute errors are ploted on the same chart...
@@ -1237,10 +1242,10 @@ def morris_analysis(conf_file, data_file):
             )
 
             # export
-            fig1.write_html(pth.join(SA_PATH, "figures") + "/morris_mu.html", include_mathjax="cdn")
-            fig1.write_image(pth.join(SA_PATH, "figures") + "/morris_mu.pdf")
-            fig2.write_html(pth.join(SA_PATH, "figures") + "/morris_mu_sigma.html", include_mathjax="cdn")
-            fig2.write_image(pth.join(SA_PATH, "figures") + "/morris_mu_sigma.pdf")
+            fig1.write_html(pth.join(SA_PATH, "figures", "morris_mu.html"), include_mathjax="cdn")
+            fig1.write_image(pth.join(SA_PATH, "figures", "morris_mu.pdf"))
+            fig2.write_html(pth.join(SA_PATH, "figures", "morris_mu_sigma.html"), include_mathjax="cdn")
+            fig2.write_image(pth.join(SA_PATH, "figures", "morris_mu_sigma.pdf"))
 
     def update_all(change):
         """
