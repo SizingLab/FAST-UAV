@@ -2939,29 +2939,29 @@ files = [
 
 [[package]]
 name = "openmdao"
-version = "3.30.0"
+version = "3.33.0"
 description = "OpenMDAO framework infrastructure"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "openmdao-3.30.0.tar.gz", hash = "sha256:c770d2251ea4589adb7be0fe121258c46a0191bd6bf1f88b8e9ec426e1cfb77e"},
+    {file = "openmdao-3.33.0.tar.gz", hash = "sha256:bc110389517e68d57637ded1a3e7b2f7949b43526e3119a9d7cefed14f404f23"},
 ]
 
 [package.dependencies]
 networkx = ">=2.0"
-numpy = "*"
+numpy = "<2"
 packaging = "*"
 requests = "*"
 scipy = "*"
 
 [package.extras]
-all = ["aiounittest", "bokeh (>=2.4.0)", "colorama", "ipympl", "ipyparallel", "jax (>=0.4.0) ; python_version >= \"3.8\"", "jaxlib (>=0.4.0) ; python_version >= \"3.8\"", "jupyter-book (==0.14)", "matplotlib", "matplotlib", "notebook", "num2words", "numpydoc (>=1.1)", "numpydoc (>=1.1)", "parameterized", "playwright (>=1.20)", "pyDOE3", "pycodestyle (>=2.4.0)", "pydocstyle (>=2.0.0)", "sphinx-sitemap", "testflo (>=1.3.6)", "websockets (>8)"]
-docs = ["ipyparallel", "jupyter-book (==0.14)", "matplotlib", "numpydoc (>=1.1)", "sphinx-sitemap"]
-doe = ["pyDOE3"]
-jax = ["jax (>=0.4.0) ; python_version >= \"3.8\"", "jaxlib (>=0.4.0) ; python_version >= \"3.8\""]
-notebooks = ["ipympl", "notebook"]
-test = ["aiounittest", "num2words", "numpydoc (>=1.1)", "parameterized", "playwright (>=1.20)", "pycodestyle (>=2.4.0)", "pydocstyle (>=2.0.0)", "testflo (>=1.3.6)", "websockets (>8)"]
+all = ["aiounittest", "bokeh (>=2.4.0)", "colorama", "idna (>=3.7)", "ipympl", "ipyparallel", "jax (>=0.4.0)", "jaxlib (>=0.4.0)", "jinja2 (>=3.1.4)", "jupyter-book (==0.14)", "matplotlib", "notebook", "num2words", "numpydoc (>=1.1)", "parameterized", "playwright (>=1.20)", "pycodestyle (>=2.4.0)", "pydocstyle (==2.0.0)", "pydoe3", "sphinx-sitemap", "testflo (>=1.3.6)", "tqdm (>=4.66.3)", "websockets (>8)"]
+docs = ["idna (>=3.7)", "ipyparallel", "jinja2 (>=3.1.4)", "jupyter-book (==0.14)", "matplotlib", "numpydoc (>=1.1)", "sphinx-sitemap", "tqdm (>=4.66.3)"]
+doe = ["pydoe3"]
+jax = ["jax (>=0.4.0)", "jaxlib (>=0.4.0)"]
+notebooks = ["idna (>=3.7)", "ipympl", "notebook"]
+test = ["aiounittest", "num2words", "numpydoc (>=1.1)", "parameterized", "playwright (>=1.20)", "pycodestyle (>=2.4.0)", "pydocstyle (==2.0.0)", "testflo (>=1.3.6)", "websockets (>8)"]
 visualization = ["bokeh (>=2.4.0)", "colorama", "matplotlib"]
 
 [[package]]
@@ -5388,4 +5388,4 @@ jupyterlab = []
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9, <3.13"
-content-hash = "600724bd64d09e73db2bc3f7633c16c0c2628573829c98952fa7e56f1379765b"
+content-hash = "a98ad607a4c0919fefb7aba86806de37cd2c538e76f736bf9010dc8221bce043"

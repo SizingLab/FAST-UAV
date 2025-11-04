@@ -43,6 +43,7 @@ classifiers = [
 # doing again the commit including changes in docs/requirements.txt will succeed.
 python = "^3.9, <3.13"
 fast-oad-core = "^1.8.3"
+openmdao = "<=3.33.0"
 cma = "^3.1.0"
 scikit-learn = "^1.0.2"
 psutil = "*"
