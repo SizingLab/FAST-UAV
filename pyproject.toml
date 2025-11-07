@@ -52,13 +52,7 @@ SALib = "1.4.5"
 seaborn = "^0.13"
 pyzmq = ">=26,<27" # Issue with Ubuntu 24.04 and Python 3.12
 plotly = "^6"
-
-# For future LCA deployment
-#brightway2 = "^2.3"
-#bw2io = "0.8.8"  # compatibility with ecoinvent 3.9 only !!! For ecoinvent 3.8, switch to 0.8.7
-#lca-algebraic = "1.0.5"
-#networkx = "*"
-#pyvis = "*"
+ipywidgets = "^8.1.8"
 
 [tool.poetry.extras]
 jupyterlab = ["jupyterlab"]
