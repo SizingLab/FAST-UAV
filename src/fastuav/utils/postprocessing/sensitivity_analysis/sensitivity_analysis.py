@@ -12,7 +12,7 @@ For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 import contextlib
 import os
 import os.path as pth
-from venv import create
+import warnings
 
 from fastuav.utils.drivers.salib_doe_driver import SalibDOEDriver
 import fastoad.api as oad
@@ -69,6 +69,9 @@ def doe_fast(
     :return: dataframe of the design of experiments results
     """
 
+    # Suppress all-NaN slice warnings (unknown origin, linked to n2_viewer internally called by openmdao?)
+    warnings.filterwarnings("ignore", message="All-NaN slice encountered")
+
     class SubProbComp(om.ExplicitComponent):
         """
         Sub-problem component for nested optimization.
@@ -122,14 +125,14 @@ def doe_fast(
             with open(os.devnull, "w") as f, contextlib.redirect_stdout(
                 f
             ):  # turn off all convergence messages (including failures)
-                fail = p.run_driver()
+                fail = not p.run_driver().success
 
             for y in y_list:
                 outputs[y] = p[y]
 
             if fail:
                 self._fail_count += 1
-            outputs['optim_failed'] = fail
+            outputs['optim_failed'] = float(fail)
 
     conf = oad.FASTOADProblemConfigurator(conf_file)
     prob_definition = conf.get_optimization_definition()
@@ -231,7 +234,7 @@ def doe_fast(
     if os.path.exists("cases.sql"):
         os.remove("cases.sql")
     prob.driver.add_recorder(om.SqliteRecorder("cases.sql"))
-    recorded_variables = x_list + y_list
+    recorded_variables = [f'*{x}' for x in x_list + y_list]
     if nested_optimization:
         recorded_variables.append("optim_failed")
     prob.driver.recording_options["includes"] = recorded_variables
