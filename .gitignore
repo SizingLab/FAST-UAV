@@ -21,3 +21,5 @@
 /src/fastuav/gui/
 /src/fastuav/notebooks/reports/
 /src/fastuav/notebooks/04_LCA.ipynb
+.python-version
+**/__pycache__/

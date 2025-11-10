@@ -7,7 +7,7 @@ Future Aircraft Sizing Tool - Unmanned Aerial Vehicles
 
 <div align="center">
     <a href="#">
-        <img src="https://img.shields.io/badge/Python-3.8, 3.9-efefef">
+        <img src="https://img.shields.io/badge/Python-3.9, 3.10, 3.11, 3.12-efefef">
     </a>
     <a href="#">
         <img src="https://img.shields.io/badge/License-GPLv3-blue.svg">
@@ -26,7 +26,7 @@ Currently, FAST-UAV is bundled with analytical models for multi-rotor, fixed-win
 🚀 Quick start
 -------
 
-FAST-UAV requires Python 3.8 or 3.9. It is recommended to install FAST-UAV in a virtual environment ([conda](https://docs.conda.io/en/latest/), [venv](https://docs.python.org/3/library/venv.html)...):
+FAST-UAV requires Python 3.9 or greater. It is recommended to install FAST-UAV in a virtual environment ([conda](https://docs.conda.io/en/latest/), [venv](https://docs.python.org/3/library/venv.html)...):
 
 ```{.bash}
 conda create --name <env_name> python=3.9

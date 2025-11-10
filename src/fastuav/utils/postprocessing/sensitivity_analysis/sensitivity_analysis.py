@@ -12,7 +12,7 @@ For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 import contextlib
 import os
 import os.path as pth
-from venv import create
+import warnings
 
 from fastuav.utils.drivers.salib_doe_driver import SalibDOEDriver
 import fastoad.api as oad
@@ -24,7 +24,6 @@ from ipywidgets import widgets, Layout
 import plotly.graph_objects as go
 from SALib.analyze import sobol, morris
 from typing import List
-from plotly.validators.scatter.marker import SymbolValidator
 import itertools
 # from openmdao_drivers.cmaes_driver import CMAESDriver
 
@@ -69,6 +68,9 @@ def doe_fast(
 
     :return: dataframe of the design of experiments results
     """
+
+    # Suppress all-NaN slice warnings (unknown origin, linked to n2_viewer internally called by openmdao?)
+    warnings.filterwarnings("ignore", message="All-NaN slice encountered")
 
     class SubProbComp(om.ExplicitComponent):
         """
@@ -123,14 +125,14 @@ def doe_fast(
             with open(os.devnull, "w") as f, contextlib.redirect_stdout(
                 f
             ):  # turn off all convergence messages (including failures)
-                fail = p.run_driver()
+                fail = not p.run_driver().success
 
             for y in y_list:
                 outputs[y] = p[y]
 
             if fail:
                 self._fail_count += 1
-            outputs['optim_failed'] = fail
+            outputs['optim_failed'] = float(fail)
 
     conf = oad.FASTOADProblemConfigurator(conf_file)
     prob_definition = conf.get_optimization_definition()
@@ -232,7 +234,7 @@ def doe_fast(
     if os.path.exists("cases.sql"):
         os.remove("cases.sql")
     prob.driver.add_recorder(om.SqliteRecorder("cases.sql"))
-    recorded_variables = x_list + y_list
+    recorded_variables = [f'*{x}' for x in x_list + y_list]
     if nested_optimization:
         recorded_variables.append("optim_failed")
     prob.driver.recording_options["includes"] = recorded_variables
@@ -264,6 +266,11 @@ def doe_fast(
     # If SA_PATH does not exist, create it
     if not pth.exists(SA_PATH):
         os.makedirs(SA_PATH)
+    
+    # Create figures subdirectory if it doesn't exist
+    figures_path = pth.join(SA_PATH, "figures")
+    if not pth.exists(figures_path):
+        os.makedirs(figures_path)
 
     # Save to .csv for future use
     df.to_csv(pth.join(SA_PATH, "doe_" + method_name + ".csv"))
@@ -413,7 +420,7 @@ def sobol_analysis(conf_file, data_file):
             x=[],
             y=[],
             hoverongaps=False,
-            colorbar=dict(title="Sobol index", titleside="top"),
+            colorbar=dict(title=dict(text="Sobol index", side="top")),
         ),
     )
 
@@ -719,16 +726,16 @@ def sobol_analysis(conf_file, data_file):
             fig5.data[0].line = dict(color=df[y], colorscale="Viridis")
 
         # export
-        fig1.write_html(pth.join(SA_PATH, "figures") + "/sobol_indices_hist.html")
-        fig1.write_image(pth.join(SA_PATH, "figures") + "/sobol_indices_hist.pdf")
-        fig2.write_html(pth.join(SA_PATH, "figures") + "/sobol_second_order.html")
-        fig2.write_image(pth.join(SA_PATH, "figures") + "/sobol_second_order.pdf")
-        fig3.write_html(pth.join(SA_PATH, "figures") + "/sobol_indices_pie.html")
-        fig3.write_image(pth.join(SA_PATH, "figures") + "/sobol_indices_pie.pdf")
-        fig4.write_html(pth.join(SA_PATH, "figures") + "/output_dist.html")
-        fig4.write_image(pth.join(SA_PATH, "figures") + "output_dist.pdf")
-        fig5.write_html(pth.join(SA_PATH, "figures") + "parallel_plot.html")
-        fig5.write_image(pth.join(SA_PATH, "figures") + "parallel_plot.pdf")
+        fig1.write_html(pth.join(SA_PATH, "figures", "sobol_indices_hist.html"))
+        fig1.write_image(pth.join(SA_PATH, "figures", "sobol_indices_hist.pdf"))
+        fig2.write_html(pth.join(SA_PATH, "figures", "sobol_second_order.html"))
+        fig2.write_image(pth.join(SA_PATH, "figures", "sobol_second_order.pdf"))
+        fig3.write_html(pth.join(SA_PATH, "figures", "sobol_indices_pie.html"))
+        fig3.write_image(pth.join(SA_PATH, "figures", "sobol_indices_pie.pdf"))
+        fig4.write_html(pth.join(SA_PATH, "figures", "output_dist.html"))
+        fig4.write_image(pth.join(SA_PATH, "figures", "output_dist.pdf"))
+        fig5.write_html(pth.join(SA_PATH, "figures", "parallel_plot.html"))
+        fig5.write_image(pth.join(SA_PATH, "figures", "parallel_plot.pdf"))
 
         # with fig6.batch_update():  # Inputs Distributions
         #    # DEPRECATED : both relative and absolute errors are ploted on the same chart...
@@ -960,8 +967,8 @@ def morris_analysis(conf_file, data_file):
     # Scatter plot
     fig2 = go.FigureWidget(
         layout=go.Layout(
-            xaxis=dict(title=r"$\mu^*$", titlefont=dict(size=20)),
-            yaxis=dict(title=r"$\sigma$", titlefont=dict(size=20)),
+            xaxis=dict(title=dict(text=r"$\mu^*$", font=dict(size=20))),
+            yaxis=dict(title=dict(text=r"$\sigma$", font=dict(size=20))),
             legend=dict(title="", orientation="h", bordercolor="black", borderwidth=1),
             font=dict(size=14),
         )
@@ -1209,7 +1216,7 @@ def morris_analysis(conf_file, data_file):
             fig2.data[2].y = [0, max(Si["mu_star"])]
 
             # add parameters
-            raw_symbols = SymbolValidator().values
+            raw_symbols = list(go.Scatter.marker_symbols)
             for i in range(len(Si["names"])):
                 fig2.add_trace(
                     go.Scatter(
@@ -1237,10 +1244,10 @@ def morris_analysis(conf_file, data_file):
             )
 
             # export
-            fig1.write_html(pth.join(SA_PATH, "figures") + "/morris_mu.html", include_mathjax="cdn")
-            fig1.write_image(pth.join(SA_PATH, "figures") + "/morris_mu.pdf")
-            fig2.write_html(pth.join(SA_PATH, "figures") + "/morris_mu_sigma.html", include_mathjax="cdn")
-            fig2.write_image(pth.join(SA_PATH, "figures") + "/morris_mu_sigma.pdf")
+            fig1.write_html(pth.join(SA_PATH, "figures", "morris_mu.html"), include_mathjax="cdn")
+            fig1.write_image(pth.join(SA_PATH, "figures", "morris_mu.pdf"))
+            fig2.write_html(pth.join(SA_PATH, "figures", "morris_mu_sigma.html"), include_mathjax="cdn")
+            fig2.write_image(pth.join(SA_PATH, "figures", "morris_mu_sigma.pdf"))
 
     def update_all(change):
         """
