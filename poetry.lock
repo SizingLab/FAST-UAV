@@ -3134,24 +3134,6 @@ qa = ["flake8 (==5.0.4)", "types-setuptools (==67.2.0.1)", "zuban (==0.5.1)"]
 testing = ["docopt", "pytest"]
 
 [[package]]
-name = "pathos"
-version = "0.3.5"
-description = "parallel graph management and execution in heterogeneous computing"
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-files = [
-    {file = "pathos-0.3.5-py3-none-any.whl", hash = "sha256:c95b04103c40a16c08db69cd4b5c52624d55208beadf1348681edece809ec4f8"},
-    {file = "pathos-0.3.5.tar.gz", hash = "sha256:8fe041b8545c5d3880a038f866022bdebf935e5cf68f56ed3407cb7e65193a61"},
-]
-
-[package.dependencies]
-dill = ">=0.4.1"
-multiprocess = ">=0.70.19"
-pox = ">=0.3.7"
-ppft = ">=1.7.8"
-
-[[package]]
 name = "pexpect"
 version = "4.9.0"
 description = "Pexpect allows easy control of interactive console applications."
@@ -3342,33 +3324,6 @@ files = [
 [package.extras]
 dev = ["pre-commit", "tox"]
 testing = ["coverage", "pytest", "pytest-benchmark"]
-
-[[package]]
-name = "pox"
-version = "0.3.7"
-description = "utilities for filesystem exploration and automated builds"
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-files = [
-    {file = "pox-0.3.7-py3-none-any.whl", hash = "sha256:82a495249d13371314c1a5b5626a115e067ef5215d49530bf5efa37fbc25b56a"},
-    {file = "pox-0.3.7.tar.gz", hash = "sha256:0652f6f2103fe6d4ba638beb6fa8d3e8a68fd44bcb63315c614118515bcc3afb"},
-]
-
-[[package]]
-name = "ppft"
-version = "1.7.8"
-description = "distributed and parallel Python"
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-files = [
-    {file = "ppft-1.7.8-py3-none-any.whl", hash = "sha256:d3e0e395215b14afc3dd5adfc032ccecfda2d4ed50dc7ded076cd1d215442843"},
-    {file = "ppft-1.7.8.tar.gz", hash = "sha256:5f696d4f397ae9b0af39b1faffb31957c51dfbc5a3815856472d4f4e872937ee"},
-]
-
-[package.extras]
-dill = ["dill (>=0.4.1)"]
 
 [[package]]
 name = "pre-commit"
@@ -4318,28 +4273,28 @@ files = [
 
 [[package]]
 name = "salib"
-version = "1.4.5"
-description = "Tools for sensitivity analysis. Contains Sobol, Morris, and FAST methods"
+version = "1.5.2"
+description = "Tools for global sensitivity analysis. Contains Sobol', Morris, FAST, DGSM, PAWN, HDMR, Moment Independent and fractional factorial methods"
 optional = false
-python-versions = "*"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "SALib-1.4.5-py2.py3-none-any.whl", hash = "sha256:5a0da75fb7f1a9722035e3eba4db43c7e690bd443d2a4c767bdffb0a7ba87d87"},
-    {file = "SALib-1.4.5.tar.gz", hash = "sha256:cf396176e30ded57ad67d0d154f917689f8f73ef5cc1dcd38d4796f43610d925"},
+    {file = "salib-1.5.2-py3-none-any.whl", hash = "sha256:6f4b6bebc1eeed1d081c8f951fa8c2ad7b0cd8a7159d206af48ef137cc806c43"},
+    {file = "salib-1.5.2.tar.gz", hash = "sha256:a8eeedc4e87cf070f7ef450b76cdecd120d1e5c602a9c35855ec7777591f949f"},
 ]
 
 [package.dependencies]
-matplotlib = "*"
-numpy = "*"
-pandas = "*"
-pathos = "*"
-scipy = "*"
-setuptools = "*"
-wheel = "*"
+matplotlib = ">=3.5"
+multiprocess = "*"
+numpy = ">=2.0"
+pandas = ">=2.0"
+scipy = ">=1.9.3"
 
 [package.extras]
-gurobipy = ["gurobipy"]
-testing = ["pytest", "pytest-cov"]
+dev = ["hatch", "myst-parser", "numpydoc", "pathos (>=0.3.2)", "pre-commit", "pydata-sphinx-theme (>=0.15.2)", "pytest", "pytest-cov", "sphinx"]
+distributed = ["pathos (>=0.3.2)"]
+doc = ["myst-parser", "numpydoc", "pydata-sphinx-theme (>=0.15.2)", "sphinx"]
+test = ["pathos (>=0.3.2)", "pytest", "pytest-cov"]
 
 [[package]]
 name = "scikit-learn"
@@ -5262,24 +5217,6 @@ optional = ["python-socks", "wsaccel"]
 test = ["pytest", "websockets"]
 
 [[package]]
-name = "wheel"
-version = "0.46.3"
-description = "Command line tool for manipulating wheel files"
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-files = [
-    {file = "wheel-0.46.3-py3-none-any.whl", hash = "sha256:4b399d56c9d9338230118d705d9737a2a468ccca63d5e813e2a4fc7815d8bc4d"},
-    {file = "wheel-0.46.3.tar.gz", hash = "sha256:e3e79874b07d776c40bd6033f8ddf76a7dad46a7b8aa1b2787a83083519a1803"},
-]
-
-[package.dependencies]
-packaging = ">=24.0"
-
-[package.extras]
-test = ["pytest (>=6.0.0)", "setuptools (>=77)"]
-
-[[package]]
 name = "widgetsnbextension"
 version = "4.0.15"
 description = "Jupyter interactive widgets for Jupyter Notebook"
@@ -5459,4 +5396,4 @@ jupyterlab = ["jupyterlab"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.15"
-content-hash = "19dae14c366c5493fb589f4ee56a7c5e23b64e2d1cdd6cac6a375cbbf8067fb7"
+content-hash = "b21652911956b0f1cdb7a915019e687ab4f74b10ec91139e3aa9157bc03263b8"
