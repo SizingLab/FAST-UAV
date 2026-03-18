@@ -1,0 +1,51 @@
+name: Build PyPI package
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  release:
+    types: [ published ]
+
+jobs:
+    build-publish-package:
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                python-version: [ "3.10" ]
+                os: [ ubuntu-latest ]
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Poetry
+              run: |
+                  pipx install poetry==${{ vars.POETRY_VERSION }}
+                  pipx inject poetry poetry-dynamic-versioning[plugin]
+              shell: bash
+
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python-version }}
+
+            - name: Build
+              run: poetry build
+              shell: bash
+
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: wheel
+                  path: dist/*.whl
+
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: source
+                  path: dist/*.gz
+
+            - name: Publish to PyPI
+              env:
+                  TOKEN: ${{ secrets.PyPI }} # do not use the secret directly in run command, it would write it plainly in the log
+              run: |
+                  poetry config pypi-token.pypi "$TOKEN"
+                  poetry publish
+              shell: bash
