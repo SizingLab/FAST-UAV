@@ -78,7 +78,7 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
                             copy_shape="data:propulsion:propeller:Cp:dynamic:polynomial:estimated",
                             units=None)
             self.add_output("data:weight:propulsion:propeller:mass:catalogue", units="kg")
-            self.add_discrete_output("data:propulsion:propeller:product_name", val='')
+            # self.add_discrete_output("data:propulsion:propeller:product_name", val='')
 
         # outputs: estimated values if off_the_shelf is False, catalogue values else
         self.add_output("data:propulsion:propeller:beta", units=None)
@@ -153,9 +153,6 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             ct_static = df_y["Ct_static"].iloc[0]  # [-] static thrust coefficient
             cp_static = df_y["Cp_static"].iloc[0]  # [-] static power coefficient
 
-            # FIXME: FAST-OAD variable viewer does not allow for str, will be converted to int
-            product_name = str(df_y["Product Name"].iloc[0])  # product name
-
             # Outputs
             outputs["data:propulsion:propeller:beta"] = outputs[
                 "data:propulsion:propeller:beta:catalogue"
@@ -178,7 +175,7 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:propeller:Cp:dynamic:polynomial"] = outputs[
                 "data:propulsion:propeller:Cp:dynamic:polynomial:catalogue"
             ] = inputs["data:propulsion:propeller:Cp:dynamic:polynomial:estimated"]  # No usage of catalogue values yet
-            discrete_outputs["data:propulsion:propeller:product_name"] = product_name
+            # discrete_outputs["data:propulsion:propeller:product_name"] = product_name
 
         # CUSTOM COMPONENTS (no change)
         else:
