@@ -12,6 +12,7 @@ For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 import contextlib
 import os
 import os.path as pth
+import tempfile
 import warnings
 
 from fastuav.utils.drivers.salib_doe_driver import SalibDOEDriver
@@ -230,10 +231,10 @@ def doe_fast(
         # setup driver
         prob.driver = custom_driver
 
-    # Attach recorder to the driver
-    if os.path.exists("cases.sql"):
-        os.remove("cases.sql")
-    prob.driver.add_recorder(om.SqliteRecorder("cases.sql"))
+    # Attach recorder to the driver (use a temp file to avoid CWD dependency)
+    cases_sql_fd, cases_sql_path = tempfile.mkstemp(suffix=".sql")
+    os.close(cases_sql_fd)
+    prob.driver.add_recorder(om.SqliteRecorder(cases_sql_path))
     recorded_variables = [f'*{x}' for x in x_list + y_list]
     if nested_optimization:
         recorded_variables.append("optim_failed")
@@ -246,12 +247,12 @@ def doe_fast(
 
     # Get results from recorded cases
     df = pd.DataFrame()
-    cr = om.CaseReader("cases.sql")
+    cr = om.CaseReader(cases_sql_path)
     cases = cr.list_cases("driver", out_stream=None)
     for case in cases:
         values = cr.get_case(case).outputs
-        # df = df.append(values, ignore_index=True)
         df = pd.concat([df, pd.DataFrame(values)], ignore_index=True)
+    os.remove(cases_sql_path)  # clean up temp file
 
     # for i in df.columns:
     #     df[i] = df[i].apply(lambda x: x[0])
@@ -441,12 +442,11 @@ def sobol_analysis(conf_file, data_file):
         layout=go.Layout(title=dict(text="Output Distribution")),
     )
 
-    # Parallel coordinates plot
+    # Parallel coordinates plot (requires WebGL — use JupyterLab or Jupyter Notebook)
     fig5 = go.FigureWidget(
         data=go.Parcoords(labelangle=0, labelside="top"),
-        layout=go.Layout(title=dict(text="Parallel Coordinates Plot")),
+        layout=go.Layout(title=dict(text="Parallel Coordinates Plot"), width=1000),
     )
-    fig5.update_layout(width=1000)
 
     # Inputs distribution (deprecated)
     # fig6 = go.FigureWidget(data=[],
@@ -706,22 +706,24 @@ def sobol_analysis(conf_file, data_file):
                 y_data["Unit"].unique()[0] if y_data["Unit"].unique()[0] is not None else "-"
             )
 
-        with fig5.batch_update():  # Parallel coordinate plot
-            dimensions = []
-            for x in x_dict:
-                if x.split(":")[-1] == "rel":
-                    dimensions.append(
-                        dict(
-                            label=get_short_name(x) + ":error",
-                            values=df[x],
-                            tickformat="%",
-                        )
-                    )  # add relative error in percentage
-                else:
-                    dimensions.append(
-                        dict(label=get_short_name(x) + ":error", values=df[x])
-                    )  # add absolute error with unit
-            dimensions.append(dict(label=y, values=df[y]))
+        # Parallel coordinate plot (rebuilt as static PNG to avoid WebGL dependency)
+        dimensions = []
+        for x in x_dict:
+            if x.split(":")[-1] == "rel":
+                dimensions.append(
+                    dict(
+                        label=get_short_name(x) + ":error",
+                        values=df[x],
+                        tickformat="%",
+                    )
+                )  # add relative error in percentage
+            else:
+                dimensions.append(
+                    dict(label=get_short_name(x) + ":error", values=df[x])
+                )  # add absolute error with unit
+        dimensions.append(dict(label=y, values=df[y]))
+
+        with fig5.batch_update():
             fig5.data[0].dimensions = dimensions
             fig5.data[0].line = dict(color=df[y], colorscale="Viridis")
 
