@@ -72,9 +72,9 @@ classifiers = [
 
 # Development dependencies -----------------------------------------------------
 [tool.poetry.group.test.dependencies]
-pytest     = "^6.2"
-pytest-cov = "^3.0"
-coverage   = {version = "^5.5", extras = ["toml"]}
+pytest     = "^8.0"
+pytest-cov = "^6.0"
+coverage   = {version = "^7.0", extras = ["toml"]}
 nbval      = "^0.9.6"
 
 [tool.poetry.group.doc.dependencies]
@@ -107,7 +107,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 
 # Pytest settings ==============================================================
 [tool.pytest.ini_options]
-minversion     = "6.0"
+minversion     = "8.0"
 addopts        = "--cov-report term-missing --cov-report html --verbose"
 testpaths      = ["src", "tests"]
 norecursedirs  = [".tox", "build", "dist"]
