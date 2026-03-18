@@ -567,14 +567,14 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cma"
-version = "3.4.0"
+version = "4.4.4"
 description = "CMA-ES, Covariance Matrix Adaptation Evolution Strategy for non-linear numerical optimization in Python"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "cma-3.4.0-py3-none-any.whl", hash = "sha256:4140e490cc4e68cf8c7b1114e079c0561c9b78b1bf9ec69362c20865636ae5ca"},
-    {file = "cma-3.4.0.tar.gz", hash = "sha256:a1ebd969b99871be3715d5a24b7bf54cf04ea94e80d6b8536d7147620dd10f6c"},
+    {file = "cma-4.4.4-py3-none-any.whl", hash = "sha256:edb6d02eb2aac2d54650f16a8f0c70711ff17445957de7c9de92ff7fd4b7ef38"},
+    {file = "cma-4.4.4.tar.gz", hash = "sha256:632bd654b5dce04c0eaa3166679d3e4773ce7a79eab7934e7f363c341b9a8170"},
 ]
 
 [package.dependencies]
@@ -583,6 +583,7 @@ numpy = "*"
 [package.extras]
 constrained-solution-tracking = ["moarchiving"]
 plotting = ["matplotlib"]
+statistical-tests = ["scipy"]
 
 [[package]]
 name = "colorama"
@@ -5458,4 +5459,4 @@ jupyterlab = ["jupyterlab"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.15"
-content-hash = "25a338d5e1011b79c923875b523616856130bfabe5b0da111b2bb37155c4564f"
+content-hash = "19dae14c366c5493fb589f4ee56a7c5e23b64e2d1cdd6cac6a375cbbf8067fb7"
