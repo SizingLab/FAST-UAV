@@ -1,4 +1,4 @@
-name: tests
+name: Tests
 
 on:
   workflow_dispatch:
@@ -11,30 +11,54 @@ on:
   pull_request:
     branches:
       - '**'
+
 jobs:
   tests:
+    runs-on: ${{ matrix.os }}
+    if: ${{ !contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]') }}
     strategy:
       matrix:
         python-version: [ '3.9', '3.10', '3.11', '3.12' ]
         os: ${{ fromJson(github.event_name == 'push' && '["ubuntu-latest"]' || '["ubuntu-latest","windows-latest","macos-latest"]') }}
-    runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install poetry
         run: pipx install poetry==${{ vars.POETRY_VERSION }}
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'poetry'
+
       - name: Activate environment and install dependencies
         run: |
           poetry env use ${{ matrix.python-version }}
           poetry install
 
+      - name: Check with Ruff
+        run: |
+          poetry run ruff check .           # Check coding rules
+          poetry run ruff format --check .  # Check format
+        shell: bash
+
+      - name: Unit tests without coverage
+        # Runners that won't send coverage report are run without coverage overhead
+        if: ${{ runner.os == 'macOS' || matrix.python-version != '3.9' }}
+        run: poetry run pytest src
+        shell: bash
+
+      - name: Unit tests with coverage
+        # Only for the runner that will send coverage reports (see below)
+        if: ${{ runner.os != 'macOS' && matrix.python-version == '3.9' }}
+        run: |
+          poetry run pytest src --cov
+          poetry run coverage xml  # for sending coverage report
+        shell: bash
+
       - name: Notebook tests
+        if: ${{ github.event_name == 'pull_request' || contains(github.event.head_commit.message, '[test nb]') || github.ref == 'refs/heads/main' }}
         run: poetry run pytest --no-cov --nbval-lax -p no:python src/fastuav/notebooks
         shell: bash

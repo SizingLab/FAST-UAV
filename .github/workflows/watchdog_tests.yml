@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
   workflow_call:
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ 'main' ]
   schedule:
     - cron: '0 4 * * 1'   # Monday 06:00 (UTC+2)
@@ -18,13 +17,13 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install poetry
         run: pipx install poetry==${{ vars.POETRY_VERSION }}
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'poetry'
@@ -34,6 +33,10 @@ jobs:
           poetry env use ${{ matrix.python-version }}
           poetry update
           poetry install
+
+      - name: Unit tests
+        run: poetry run pytest src
+        shell: bash
 
       - name: Notebook tests
         run: poetry run pytest --no-cov --nbval-lax -p no:python src/fastuav/notebooks
