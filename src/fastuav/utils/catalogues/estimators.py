@@ -312,7 +312,7 @@ class NearestNeighbor:
                     ]  # assign closest lower value to input parameter
 
         # predict output
-        df_X = pd.DataFrame({x_name: [x] for x_name, x in zip(X_names, X)})
+        df_X = pd.DataFrame({x_name: [np.asarray(x).flat[0]] for x_name, x in zip(X_names, X)})
         df_X = scaler.transform(df_X)
         distances, indices = clf.kneighbors(df_X)
         df_y = df.iloc[[indices[0][0]]]  # get corresponding product data
