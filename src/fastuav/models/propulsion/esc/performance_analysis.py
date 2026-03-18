@@ -1,6 +1,7 @@
 """
 ESC performances
 """
+
 import openmdao.api as om
 import numpy as np
 
@@ -22,7 +23,9 @@ class ESCPerformanceGroup(om.Group):
     """
 
     def setup(self):
-        self.add_subsystem("takeoff", ESCPerformance(scenario="takeoff"), promotes=["*"])
+        self.add_subsystem(
+            "takeoff", ESCPerformance(scenario="takeoff"), promotes=["*"]
+        )
         self.add_subsystem("hover", ESCPerformance(scenario="hover"), promotes=["*"])
         self.add_subsystem("climb", ESCPerformance(scenario="climb"), promotes=["*"])
         self.add_subsystem("cruise", ESCPerformance(scenario="cruise"), promotes=["*"])
@@ -34,12 +37,18 @@ class ESCPerformance(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
-        self.add_input("data:propulsion:motor:power:%s" % scenario, val=np.nan, units="W")
-        self.add_input("data:propulsion:motor:voltage:%s" % scenario, val=np.nan, units="V")
+        self.add_input(
+            "data:propulsion:motor:power:%s" % scenario, val=np.nan, units="W"
+        )
+        self.add_input(
+            "data:propulsion:motor:voltage:%s" % scenario, val=np.nan, units="V"
+        )
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
         self.add_output("data:propulsion:esc:power:%s" % scenario, units="W")
 
@@ -56,4 +65,3 @@ class ESCPerformance(om.ExplicitComponent):
         P_esc = ESCPerformanceModel.power(P_mot, U_mot, U_bat)  # [W] electronic power
 
         outputs["data:propulsion:esc:power:%s" % scenario] = P_esc
-

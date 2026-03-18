@@ -19,12 +19,20 @@ class WingLoadingStall(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
+        self.options.declare(
+            "propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION]
+        )
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:stall:speed:%s" % propulsion_id, val=np.nan, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:altitude", val=150.0, units="m"
+        )
+        self.add_input(
+            "mission:sizing:main_route:stall:speed:%s" % propulsion_id,
+            val=np.nan,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:aerodynamics:CLmax", val=1.3, units=None)
         self.add_output("data:geometry:wing:loading:stall", units="N/m**2")
@@ -48,7 +56,9 @@ class WingLoadingStall(om.ExplicitComponent):
         CL_max = inputs["data:aerodynamics:CLmax"]
 
         # Wing loading calculation
-        WS_stall = q_stall * CL_max  # wing loading required to meet stall speed requirement [N/m2]
+        WS_stall = (
+            q_stall * CL_max
+        )  # wing loading required to meet stall speed requirement [N/m2]
 
         outputs["data:geometry:wing:loading:stall"] = WS_stall
 
@@ -59,14 +69,24 @@ class WingLoadingCruise(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
+        self.options.declare(
+            "propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION]
+        )
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:altitude", val=150.0, units="m"
+        )
+        self.add_input(
+            "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+            val=0.0,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input(
+            "optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None
+        )
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_output("data:geometry:wing:loading:cruise", units="N/m**2")
 
@@ -92,8 +112,8 @@ class WingLoadingCruise(om.ExplicitComponent):
         CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
 
         # Wing loading calculation
-        WS_cruise = q_cruise * np.sqrt(
-            CD_0_guess / K
+        WS_cruise = (
+            q_cruise * np.sqrt(CD_0_guess / K)
         )  # wing loading that maximizes range during cruise [N/m2] (simplified drag model CD = CD_0 + K * CL^2)
 
         outputs["data:geometry:wing:loading:cruise"] = WS_cruise
@@ -101,7 +121,10 @@ class WingLoadingCruise(om.ExplicitComponent):
 
 @ValidityDomainChecker(
     {
-        "data:geometry:wing:loading": (WS_MIN, None),  # defines a lower bound for wing loading
+        "data:geometry:wing:loading": (
+            WS_MIN,
+            None,
+        ),  # defines a lower bound for wing loading
     }
 )
 class WingLoadingSelection(om.ExplicitComponent):
@@ -113,7 +136,9 @@ class WingLoadingSelection(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:loading:stall", val=np.nan, units="N/m**2")
-        self.add_input("optimization:variables:geometry:wing:loading:k", val=1.0, units=None)
+        self.add_input(
+            "optimization:variables:geometry:wing:loading:k", val=1.0, units=None
+        )
         self.add_output("data:geometry:wing:loading", units="N/m**2")
 
     def setup_partials(self):
@@ -133,8 +158,13 @@ class WingLoadingSelection(om.ExplicitComponent):
         WS_stall = inputs["data:geometry:wing:loading:stall"]
         k_WS = inputs["optimization:variables:geometry:wing:loading:k"]
 
-        partials["data:geometry:wing:loading", "data:geometry:wing:loading:stall"] = k_WS
-        partials["data:geometry:wing:loading", "optimization:variables:geometry:wing:loading:k"] = WS_stall
+        partials["data:geometry:wing:loading", "data:geometry:wing:loading:stall"] = (
+            k_WS
+        )
+        partials[
+            "data:geometry:wing:loading",
+            "optimization:variables:geometry:wing:loading:k",
+        ] = WS_stall
 
 
 # @ValidityDomainChecker(

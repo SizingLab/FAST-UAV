@@ -15,14 +15,28 @@ class VerticalTakeoffThrust(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
+        self.options.declare(
+            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
+        )
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("mission:sizing:thrust_weight_ratio:%s" % propulsion_id, val=np.nan, units=None)
-        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
-        self.add_output("data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, units="N")
+        self.add_input(
+            "mission:sizing:thrust_weight_ratio:%s" % propulsion_id,
+            val=np.nan,
+            units=None,
+        )
+        self.add_input(
+            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
+        )
+        self.add_input(
+            "data:propulsion:%s:propeller:number" % propulsion_id,
+            val=np.nan,
+            units=None,
+        )
+        self.add_output(
+            "data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, units="N"
+        )
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -36,7 +50,9 @@ class VerticalTakeoffThrust(om.ExplicitComponent):
 
         F_pro_to = m_uav_guess * g / Npro * k_maxthrust  # [N] Thrust per propeller
 
-        outputs["data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id] = F_pro_to
+        outputs["data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id] = (
+            F_pro_to
+        )
 
 
 class LauncherTakeoff(om.ExplicitComponent):
@@ -46,19 +62,33 @@ class LauncherTakeoff(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
+        self.options.declare(
+            "propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION]
+        )
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
+        self.add_input(
+            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
+        )
+        self.add_input(
+            "data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None
+        )
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
         self.add_input("mission:sizing:main_route:takeoff:altitude", val=0.0, units="m")
-        self.add_input("mission:sizing:main_route:stall:speed:%s" % propulsion_id, val=np.nan, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:stall:speed:%s" % propulsion_id,
+            val=np.nan,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input(
+            "optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None
+        )
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
-        self.add_output("data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, units="N")
+        self.add_output(
+            "data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, units="N"
+        )
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="fd")
@@ -91,6 +121,10 @@ class LauncherTakeoff(om.ExplicitComponent):
         TW_takeoff = (
             q_takeoff * CD_0_guess / WS + K / q_takeoff * WS
         )  # thrust-to-weight ratio at takeoff  [-]
-        F_pro_takeoff = TW_takeoff * Weight / Npro  # [N] Thrust per propeller for takeoff
+        F_pro_takeoff = (
+            TW_takeoff * Weight / Npro
+        )  # [N] Thrust per propeller for takeoff
 
-        outputs["data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id] = F_pro_takeoff
+        outputs["data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id] = (
+            F_pro_takeoff
+        )

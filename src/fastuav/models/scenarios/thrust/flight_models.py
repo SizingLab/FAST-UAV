@@ -40,24 +40,32 @@ class MultirotorFlightModel:
         Computes angle of attack to maintain flight path
         """
         # flight path angle [rad]
-        if V != .0 and V > RoC:
+        if V != 0.0 and V > RoC:
             theta = np.arcsin(RoC / V)
         else:
             alpha = theta = np.pi / 2
             return alpha
 
         def func(x):
-            drag = MultirotorFlightModel.get_drag(V, x, S_front, S_top, C_D, rho_air)  # [N] drag
-            lift = MultirotorFlightModel.get_lift(V, x, S_top, C_L0, rho_air)  # [N] lift
+            drag = MultirotorFlightModel.get_drag(
+                V, x, S_front, S_top, C_D, rho_air
+            )  # [N] drag
+            lift = MultirotorFlightModel.get_lift(
+                V, x, S_top, C_L0, rho_air
+            )  # [N] lift
             weight = m_uav * g  # [N] weight
-            res = np.tan(abs(x - theta)) - (drag * np.cos(theta) + lift * np.sin(theta)) / (
+            res = np.tan(abs(x - theta)) - (
+                drag * np.cos(theta) + lift * np.sin(theta)
+            ) / (
                 weight + drag * np.sin(theta) - lift * np.cos(theta)
             )  # [-] equilibrium residual
             return res**2
 
         bnds = ((0.0, np.pi / 2),)
-        res = minimize(func, (np.pi/4), bounds=bnds, method='SLSQP')  # [rad] angle of attack
-        alpha = res.x if res.success else np.pi/2
+        res = minimize(
+            func, (np.pi / 4), bounds=bnds, method="SLSQP"
+        )  # [rad] angle of attack
+        alpha = res.x if res.success else np.pi / 2
         return alpha
 
     @staticmethod
@@ -66,20 +74,22 @@ class MultirotorFlightModel:
         Computes thrust to maintain flight path
         """
         # flight path angle [rad]
-        if V != .0 and V >= RoC:
+        if V != 0.0 and V >= RoC:
             theta = np.arcsin(RoC / V)
         else:
             theta = np.pi / 2
 
         weight = m_uav * g  # [N] weight
-        lift = MultirotorFlightModel.get_lift(V, alpha, S_top, C_L0, rho_air)  # [N] lift
-        drag = MultirotorFlightModel.get_drag(V, alpha, S_front, S_top, C_D, rho_air)  # [N] drag
+        lift = MultirotorFlightModel.get_lift(
+            V, alpha, S_top, C_L0, rho_air
+        )  # [N] lift
+        drag = MultirotorFlightModel.get_drag(
+            V, alpha, S_front, S_top, C_D, rho_air
+        )  # [N] drag
         thrust = (
             (weight + drag * np.sin(theta) - lift * np.cos(theta)) ** 2
             + (drag * np.cos(theta) + lift * np.sin(theta)) ** 2
-        ) ** (
-            1 / 2
-        )  # [N] total thrust requirement
+        ) ** (1 / 2)  # [N] total thrust requirement
         return thrust
 
 
@@ -93,7 +103,9 @@ class FixedwingFlightModel:
         """
         Computes angle of attack to maintain flight path
         """
-        alpha = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight TODO: estimate trim?)
+        alpha = (
+            np.pi / 2
+        )  # [rad] Rotor disk Angle of Attack (assumption: axial flight TODO: estimate trim?)
         return alpha
 
     @staticmethod
@@ -101,9 +113,9 @@ class FixedwingFlightModel:
         """
         Computes thrust to maintain flight path
         """
-        q = 0.5 * rho_air * V ** 2  # [Pa] dynamic pressure
+        q = 0.5 * rho_air * V**2  # [Pa] dynamic pressure
         TW = (
-                RoC / V + q * CD0 / WS + K / q * WS
+            RoC / V + q * CD0 / WS + K / q * WS
         )  # thrust-to-weight ratio in climb conditions [-]
         thrust = TW * m_uav * g  # [N] total thrust requirement
         return thrust

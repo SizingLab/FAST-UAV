@@ -1,6 +1,7 @@
 """
 Battery performance analysis
 """
+
 import openmdao.api as om
 import numpy as np
 
@@ -27,10 +28,18 @@ class BatteryPerformanceGroup(om.Group):
     """
 
     def setup(self):
-        self.add_subsystem("takeoff", BatteryPerformance(scenario="takeoff"), promotes=["*"])
-        self.add_subsystem("hover", BatteryPerformance(scenario="hover"), promotes=["*"])
-        self.add_subsystem("climb", BatteryPerformance(scenario="climb"), promotes=["*"])
-        self.add_subsystem("cruise", BatteryPerformance(scenario="cruise"), promotes=["*"])
+        self.add_subsystem(
+            "takeoff", BatteryPerformance(scenario="takeoff"), promotes=["*"]
+        )
+        self.add_subsystem(
+            "hover", BatteryPerformance(scenario="hover"), promotes=["*"]
+        )
+        self.add_subsystem(
+            "climb", BatteryPerformance(scenario="climb"), promotes=["*"]
+        )
+        self.add_subsystem(
+            "cruise", BatteryPerformance(scenario="cruise"), promotes=["*"]
+        )
 
 
 class BatteryPerformance(om.ExplicitComponent):
@@ -39,13 +48,19 @@ class BatteryPerformance(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
         self.add_input("data:propulsion:propeller:number", val=np.nan, units=None)
-        self.add_input("data:propulsion:motor:power:%s" % scenario, val=np.nan, units="W")
-        self.add_input("data:propulsion:esc:efficiency:estimated", val=np.nan, units=None)
+        self.add_input(
+            "data:propulsion:motor:power:%s" % scenario, val=np.nan, units="W"
+        )
+        self.add_input(
+            "data:propulsion:esc:efficiency:estimated", val=np.nan, units=None
+        )
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
         self.add_input("mission:sizing:payload:power", val=np.nan, units="W")
         self.add_output("data:propulsion:battery:current:%s" % scenario, units="A")
@@ -61,7 +76,7 @@ class BatteryPerformance(om.ExplicitComponent):
         P_mot = inputs["data:propulsion:motor:power:%s" % scenario]
         eta_ESC = inputs[
             "data:propulsion:esc:efficiency:estimated"
-        ]  #TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
+        ]  # TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
         U_bat = inputs["data:propulsion:battery:voltage"]
         P_payload = inputs["mission:sizing:payload:power"]
 

@@ -1,6 +1,7 @@
 """
 Multirotor Structures
 """
+
 import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
@@ -24,18 +25,26 @@ class ArmsWeight(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
+        self.options.declare(
+            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
+        )
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
 
-        self.add_input("optimization:variables:structures:arms:diameter:k", val=np.nan, units=None)
+        self.add_input(
+            "optimization:variables:structures:arms:diameter:k", val=np.nan, units=None
+        )
         self.add_input("data:geometry:arms:number", val=np.nan, units=None)
         self.add_input("data:geometry:arms:prop_per_arm", val=np.nan, units=None)
         self.add_input("data:geometry:arms:length", val=np.nan, units="m")
         self.add_input("data:weight:arms:density", val=np.nan, units="kg/m**3")
         self.add_input("data:structures:arms:stress:max", val=np.nan, units="N/m**2")
-        self.add_input("data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, val=np.nan, units="N")
+        self.add_input(
+            "data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id,
+            val=np.nan,
+            units="N",
+        )
 
         self.add_output("data:structures:arms:diameter:outer", units="m", lower=0.0)
         self.add_output("data:structures:arms:diameter:inner", units="m", lower=0.0)
@@ -56,9 +65,9 @@ class ArmsWeight(om.ExplicitComponent):
         F_pro_to = inputs["data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id]
 
         # Inner and outer diameters
-        Dout = (F_pro_to * Npro_arm * Larm * 32 / (np.pi * Sigma_max * (1 - D_ratio ** 4))) ** (
-                1 / 3
-        )  # [m] outer diameter of the beam (sized from max thrust)
+        Dout = (
+            F_pro_to * Npro_arm * Larm * 32 / (np.pi * Sigma_max * (1 - D_ratio**4))
+        ) ** (1 / 3)  # [m] outer diameter of the beam (sized from max thrust)
         Din = D_ratio * Dout  # [m] inner diameter of the beam
 
         # Mass calculation
@@ -77,8 +86,12 @@ class BodyWeight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("models:weight:airframe:arms:mass:reference", val=np.nan, units="kg")
-        self.add_input("models:weight:airframe:body:mass:reference", val=np.nan, units="kg")
+        self.add_input(
+            "models:weight:airframe:arms:mass:reference", val=np.nan, units="kg"
+        )
+        self.add_input(
+            "models:weight:airframe:body:mass:reference", val=np.nan, units="kg"
+        )
         self.add_input("data:weight:airframe:arms:mass", val=np.nan, units="kg")
         self.add_output("data:weight:airframe:body:mass", units="kg")
 

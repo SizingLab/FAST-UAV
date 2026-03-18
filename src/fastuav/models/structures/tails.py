@@ -1,9 +1,12 @@
 """
 Tails Structures and Weights
 """
+
 import openmdao.api as om
 import numpy as np
-from fastuav.models.structures.wing.estimation_models import WingStructuresEstimationModels
+from fastuav.models.structures.wing.estimation_models import (
+    WingStructuresEstimationModels,
+)
 
 
 class HorizontalTailStructures(om.ExplicitComponent):
@@ -12,9 +15,13 @@ class HorizontalTailStructures(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("data:geometry:tail:horizontal:surface", val=np.nan, units="m**2")
+        self.add_input(
+            "data:geometry:tail:horizontal:surface", val=np.nan, units="m**2"
+        )
         self.add_input("data:weight:airframe:tail:density", val=np.nan, units="kg/m**2")
-        self.add_output("data:weight:airframe:tail:horizontal:mass", units="kg", lower=0.0)
+        self.add_output(
+            "data:weight:airframe:tail:horizontal:mass", units="kg", lower=0.0
+        )
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -38,7 +45,9 @@ class VerticalTailStructures(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:geometry:tail:vertical:surface", val=np.nan, units="m**2")
         self.add_input("data:weight:airframe:tail:density", val=np.nan, units="kg/m**2")
-        self.add_output("data:weight:airframe:tail:vertical:mass", units="kg", lower=0.0)
+        self.add_output(
+            "data:weight:airframe:tail:vertical:mass", units="kg", lower=0.0
+        )
 
     def setup_partials(self):
         # Finite difference all partials.

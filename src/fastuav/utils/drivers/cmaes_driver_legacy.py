@@ -1,8 +1,8 @@
 """
 Driver that uses Covariance Matrix Adaptation Evolution Strategy (CMAES).
 """
+
 import os
-import copy
 import time
 
 import numpy as np
@@ -102,7 +102,9 @@ class CMAESDriver(Driver):
             lower=0.0,
             desc="Penalty function parameter.",
         )
-        self.options.declare("penalty_exponent", default=1.0, desc="Penalty function exponent.")
+        self.options.declare(
+            "penalty_exponent", default=1.0, desc="Penalty function exponent."
+        )
         self.options.declare(
             "multi_obj_weights",
             default={},
@@ -154,7 +156,6 @@ class CMAESDriver(Driver):
         """
         procs_per_model = self.options["procs_per_model"]
         if MPI and self.options["run_parallel"]:
-
             full_size = comm.size
             size = full_size // procs_per_model
             if full_size != size * procs_per_model:
@@ -221,7 +222,9 @@ class CMAESDriver(Driver):
 
         self.CMAOptions["bounds"] = [lower_bound, upper_bound]
 
-        desvar_new, obj = self._cmaes.execute(x0, self.options["sigma0"], self.CMAOptions)
+        desvar_new, obj = self._cmaes.execute(
+            x0, self.options["sigma0"], self.CMAOptions
+        )
 
         # Pull optimal parameters back into framework and re-run, so that
         # framework is left in the right final state
@@ -349,16 +352,24 @@ class CMAESDriver(Driver):
                 for name, val in self.get_constraint_values().items():
                     con = self._cons[name]
                     # The not used fields will either None or a very large number
-                    if (con["lower"] is not None) and np.any(con["lower"] > -almost_inf):
+                    if (con["lower"] is not None) and np.any(
+                        con["lower"] > -almost_inf
+                    ):
                         diff = val - con["lower"]
                         violation = np.array([0.0 if d >= 0 else abs(d) for d in diff])
-                    elif (con["upper"] is not None) and np.any(con["upper"] < almost_inf):
+                    elif (con["upper"] is not None) and np.any(
+                        con["upper"] < almost_inf
+                    ):
                         diff = val - con["upper"]
                         violation = np.array([0.0 if d <= 0 else abs(d) for d in diff])
-                    elif (con["equals"] is not None) and np.any(np.abs(con["equals"]) < almost_inf):
+                    elif (con["equals"] is not None) and np.any(
+                        np.abs(con["equals"]) < almost_inf
+                    ):
                         diff = val - con["equals"]
                         violation = np.absolute(diff)
-                    constraint_violations = np.hstack((constraint_violations, violation))
+                    constraint_violations = np.hstack(
+                        (constraint_violations, violation)
+                    )
                 fun = obj + penalty * sum(np.power(constraint_violations, exponent))
 
             # Record after getting obj to assure they have

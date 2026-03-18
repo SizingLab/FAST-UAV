@@ -1,6 +1,7 @@
 """
 Estimation models for the Electronic Speed Controller (ESC)
 """
+
 import openmdao.api as om
 import numpy as np
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
@@ -27,7 +28,9 @@ class Weight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("models:weight:propulsion:esc:mass:reference", val=np.nan, units="kg")
+        self.add_input(
+            "models:weight:propulsion:esc:mass:reference", val=np.nan, units="kg"
+        )
         self.add_input("models:propulsion:esc:power:reference", val=np.nan, units="W")
         self.add_input("data:propulsion:esc:power:max:estimated", val=np.nan, units="W")
         self.add_output("data:weight:propulsion:esc:mass:estimated", units="kg")

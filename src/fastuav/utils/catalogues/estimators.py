@@ -57,11 +57,11 @@ class DecisionTreeRgr:
                         sorted_xy.iloc[:, i] - sorted_xy.iloc[:, i].min() / dist,
                         sorted_xy.iloc[:, i] + sorted_xy.iloc[:, i].min() / dist,
                     )
-                ).ravel(
-                    "F"
-                )  # create a sequence of supplementary points
+                ).ravel("F")  # create a sequence of supplementary points
                 D = np.repeat(C, 2)  # repeat each element of the column twice
-                df_X_Next = np.column_stack(D[:-2]).reshape(-1, 1)  # convert an array in column
+                df_X_Next = np.column_stack(D[:-2]).reshape(
+                    -1, 1
+                )  # convert an array in column
 
                 # axis y
                 t = len(sorted_xy.columns) - len(self._df_y.columns)
@@ -76,7 +76,9 @@ class DecisionTreeRgr:
                 df_y_Next = df_y_Next.reset_index(drop=True)
 
                 # rest of independent axis
-                df_X_rest = sorted_xy.iloc[:, : len(self._df_X.columns)]  # select the columns of X
+                df_X_rest = sorted_xy.iloc[
+                    :, : len(self._df_X.columns)
+                ]  # select the columns of X
                 df_X_rest = df_X_rest.iloc[
                     :, df_X_rest.columns != df_X_rest.columns[i]
                 ]  # skip selected column
@@ -118,7 +120,9 @@ class DecisionTreeRgr:
                 df_yPrev = df_yPrev.reset_index(drop=True)
 
                 # rest of independent axis
-                df_X_rest = sorted_xy.iloc[:, : len(self._df_X.columns)]  # select the columns of X
+                df_X_rest = sorted_xy.iloc[
+                    :, : len(self._df_X.columns)
+                ]  # select the columns of X
                 df_X_rest = df_X_rest.iloc[
                     :, df_X_rest.columns != df_X_rest.columns[i]
                 ]  # skip selected column
@@ -187,7 +191,9 @@ class DecisionTreeClf:
         df_X = self._df[
             self._X_names
         ]  # training input samples (here the values of the definition parameters)
-        df_y = self._df.iloc[:, 0]  # target values (here the indices of the components in database)
+        df_y = self._df.iloc[
+            :, 0
+        ]  # target values (here the indices of the components in database)
         # clf = DecisionTreeClassifier(criterion='entropy', max_depth=None, max_features=len(df_X.columns),
         #                                    max_leaf_nodes=len(df_X), min_impurity_decrease=0.0,
         #                                    min_samples_leaf=1,
@@ -228,7 +234,9 @@ class DecisionTreeClf:
 
             elif crits[i] == "previous":
                 x = X[i][0]
-                lowerneighbour_df = df[df[x_name] <= x][x_name]  # select subset of lower neighbours
+                lowerneighbour_df = df[df[x_name] <= x][
+                    x_name
+                ]  # select subset of lower neighbours
                 if not lowerneighbour_df.empty:
                     lowerneighbour_ind = lowerneighbour_df.idxmax()
                     X[i] = df[x_name][
@@ -304,7 +312,9 @@ class NearestNeighbor:
 
             elif crits[i] == "previous":
                 x = X[i][0]
-                lowerneighbour_df = df[df[x_name] <= x][x_name]  # select subset of lower neighbours
+                lowerneighbour_df = df[df[x_name] <= x][
+                    x_name
+                ]  # select subset of lower neighbours
                 if not lowerneighbour_df.empty:
                     lowerneighbour_ind = lowerneighbour_df.idxmax()
                     X[i] = df[x_name][
@@ -312,7 +322,9 @@ class NearestNeighbor:
                     ]  # assign closest lower value to input parameter
 
         # predict output
-        df_X = pd.DataFrame({x_name: [np.asarray(x).flat[0]] for x_name, x in zip(X_names, X)})
+        df_X = pd.DataFrame(
+            {x_name: [np.asarray(x).flat[0]] for x_name, x in zip(X_names, X)}
+        )
         df_X = scaler.transform(df_X)
         distances, indices = clf.kneighbors(df_X)
         df_y = df.iloc[[indices[0][0]]]  # get corresponding product data
@@ -334,7 +346,9 @@ class NearestNeighbor:
 
         # enforce upper or lower values if asked by user
         closest_feasible_id = indices[0][0]
-        for j in range(0, len(indices[0]) - 1):  # iterate from nearest neighbor to farthest until criteria are met
+        for j in range(
+            0, len(indices[0]) - 1
+        ):  # iterate from nearest neighbor to farthest until criteria are met
             is_feasible = True
             idx = indices[0][j]
             neigh = df.iloc[idx]
@@ -342,7 +356,9 @@ class NearestNeighbor:
                 if crits[i] == "next" and neigh[x_name] < X[i][0]:  # criterion not met
                     is_feasible = False
                     break  # continue to next neighbor
-                elif crits[i] == "previous" and neigh[x_name] > X[i][0]:  # criterion not met
+                elif (
+                    crits[i] == "previous" and neigh[x_name] > X[i][0]
+                ):  # criterion not met
                     is_feasible = False
                     break  # continue to next neighbor
             if is_feasible:  # "next" or "previous" criteria are met

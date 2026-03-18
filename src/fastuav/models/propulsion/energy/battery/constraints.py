@@ -1,6 +1,7 @@
 """
 Battery constraints
 """
+
 import openmdao.api as om
 import numpy as np
 
@@ -12,7 +13,9 @@ class BatteryConstraints(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
-        self.add_input("models:propulsion:battery:voltage:tol", val=0.0, units="percent")
+        self.add_input(
+            "models:propulsion:battery:voltage:tol", val=0.0, units="percent"
+        )
         self.add_input("data:propulsion:battery:power:max", val=np.nan, units="W")
         self.add_input("data:propulsion:motor:voltage:takeoff", val=np.nan, units="V")
         self.add_input("data:propulsion:motor:voltage:climb", val=np.nan, units="V")
@@ -21,15 +24,33 @@ class BatteryConstraints(om.ExplicitComponent):
         self.add_input("data:propulsion:motor:power:climb", val=np.nan, units="W")
         self.add_input("data:propulsion:motor:power:cruise", val=np.nan, units="W")
         self.add_input("data:propulsion:propeller:number", val=np.nan, units=None)
-        self.add_input("data:propulsion:esc:efficiency:estimated", val=np.nan, units=None)
-        self.add_output("optimization:constraints:propulsion:battery:voltage:takeoff", units=None)
-        self.add_output("optimization:constraints:propulsion:battery:voltage:climb", units=None)
-        self.add_output("optimization:constraints:propulsion:battery:voltage:cruise", units=None)
-        self.add_output("optimization:constraints:propulsion:battery:power:takeoff", units=None)
-        self.add_output("optimization:constraints:propulsion:battery:power:climb", units=None)
-        self.add_output("optimization:constraints:propulsion:battery:power:cruise", units=None)
-        self.add_output("optimization:constraints:propulsion:battery:voltage:min", units=None)
-        self.add_output("optimization:constraints:propulsion:battery:voltage:max", units=None)
+        self.add_input(
+            "data:propulsion:esc:efficiency:estimated", val=np.nan, units=None
+        )
+        self.add_output(
+            "optimization:constraints:propulsion:battery:voltage:takeoff", units=None
+        )
+        self.add_output(
+            "optimization:constraints:propulsion:battery:voltage:climb", units=None
+        )
+        self.add_output(
+            "optimization:constraints:propulsion:battery:voltage:cruise", units=None
+        )
+        self.add_output(
+            "optimization:constraints:propulsion:battery:power:takeoff", units=None
+        )
+        self.add_output(
+            "optimization:constraints:propulsion:battery:power:climb", units=None
+        )
+        self.add_output(
+            "optimization:constraints:propulsion:battery:power:cruise", units=None
+        )
+        self.add_output(
+            "optimization:constraints:propulsion:battery:voltage:min", units=None
+        )
+        self.add_output(
+            "optimization:constraints:propulsion:battery:voltage:max", units=None
+        )
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -47,7 +68,9 @@ class BatteryConstraints(om.ExplicitComponent):
         eta_ESC = inputs[
             "data:propulsion:esc:efficiency:estimated"
         ]  # TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
-        k = 1 + inputs["models:propulsion:battery:voltage:tol"] / 100  # tolerance multiplier on prediction intervals
+        k = (
+            1 + inputs["models:propulsion:battery:voltage:tol"] / 100
+        )  # tolerance multiplier on prediction intervals
 
         # Battery voltage versus operating conditions
         battery_con1 = (U_bat - U_mot_to) / U_bat
@@ -60,22 +83,40 @@ class BatteryConstraints(om.ExplicitComponent):
         battery_con6 = (P_bat - P_mot_cr * Npro / eta_ESC) / P_bat
 
         # Voltage versus power : tolerance intervals
-        U_hat = 0.61 * P_bat ** 0.40  # [V] battery voltage-to-power regression
-        eps_low = -10.98  # 1st percentile on regression error (i.e., 99% of data are above this value)
+        U_hat = 0.61 * P_bat**0.40  # [V] battery voltage-to-power regression
+        eps_low = (
+            -10.98
+        )  # 1st percentile on regression error (i.e., 99% of data are above this value)
         eps_up = 16.24  # 99th percentile on regression error (i.e., 99% of data are below this value)
         U_min = U_hat + k * eps_low  # [V] minimum allowable voltage rating
         U_max = U_hat + k * eps_up  # [V] maximum allowable voltage rating
         battery_con7 = (U_bat - U_min) / U_bat
         battery_con8 = (U_max - U_bat) / U_bat
 
-        outputs["optimization:constraints:propulsion:battery:voltage:takeoff"] = battery_con1
-        outputs["optimization:constraints:propulsion:battery:voltage:climb"] = battery_con2
-        outputs["optimization:constraints:propulsion:battery:voltage:cruise"] = battery_con3
-        outputs["optimization:constraints:propulsion:battery:power:takeoff"] = battery_con4
-        outputs["optimization:constraints:propulsion:battery:power:climb"] = battery_con5
-        outputs["optimization:constraints:propulsion:battery:power:cruise"] = battery_con6
-        outputs["optimization:constraints:propulsion:battery:voltage:min"] = battery_con7
-        outputs["optimization:constraints:propulsion:battery:voltage:max"] = battery_con8
+        outputs["optimization:constraints:propulsion:battery:voltage:takeoff"] = (
+            battery_con1
+        )
+        outputs["optimization:constraints:propulsion:battery:voltage:climb"] = (
+            battery_con2
+        )
+        outputs["optimization:constraints:propulsion:battery:voltage:cruise"] = (
+            battery_con3
+        )
+        outputs["optimization:constraints:propulsion:battery:power:takeoff"] = (
+            battery_con4
+        )
+        outputs["optimization:constraints:propulsion:battery:power:climb"] = (
+            battery_con5
+        )
+        outputs["optimization:constraints:propulsion:battery:power:cruise"] = (
+            battery_con6
+        )
+        outputs["optimization:constraints:propulsion:battery:voltage:min"] = (
+            battery_con7
+        )
+        outputs["optimization:constraints:propulsion:battery:voltage:max"] = (
+            battery_con8
+        )
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         U_bat = inputs["data:propulsion:battery:voltage"]
@@ -90,8 +131,10 @@ class BatteryConstraints(om.ExplicitComponent):
         eta_ESC = inputs["data:propulsion:esc:efficiency:estimated"]
         k = 1 + inputs["models:propulsion:battery:voltage:tol"] / 100
 
-        U_hat = 0.61 * P_bat ** 0.40  # [V] battery voltage-to-power regression
-        eps_low = -10.98  # 1st percentile on regression error (i.e., 99% of data are above this value)
+        U_hat = 0.61 * P_bat**0.40  # [V] battery voltage-to-power regression
+        eps_low = (
+            -10.98
+        )  # 1st percentile on regression error (i.e., 99% of data are above this value)
         eps_up = 16.24  # 99th percentile on regression error (i.e., 99% of data are below this value)
         U_min = U_hat + k * eps_low  # [V] minimum allowable voltage rating
         U_max = U_hat + k * eps_up  # [V] maximum allowable voltage rating
@@ -99,38 +142,32 @@ class BatteryConstraints(om.ExplicitComponent):
         # Takeoff voltage
         J[
             "optimization:constraints:propulsion:battery:voltage:takeoff",
-            "data:propulsion:battery:voltage"
-        ] = (U_mot_to / U_bat**2)
+            "data:propulsion:battery:voltage",
+        ] = U_mot_to / U_bat**2
         J[
             "optimization:constraints:propulsion:battery:voltage:takeoff",
             "data:propulsion:motor:voltage:takeoff",
-        ] = (
-            -1 / U_bat
-        )
+        ] = -1 / U_bat
 
         # Climb voltage
         J[
             "optimization:constraints:propulsion:battery:voltage:climb",
-            "data:propulsion:battery:voltage"
-        ] = (U_mot_cl / U_bat**2)
+            "data:propulsion:battery:voltage",
+        ] = U_mot_cl / U_bat**2
         J[
             "optimization:constraints:propulsion:battery:voltage:climb",
             "data:propulsion:motor:voltage:climb",
-        ] = (
-            -1 / U_bat
-        )
+        ] = -1 / U_bat
 
         # Cruise voltage
         J[
             "optimization:constraints:propulsion:battery:voltage:cruise",
-            "data:propulsion:battery:voltage"
-        ] = (U_mot_cr / U_bat**2)
+            "data:propulsion:battery:voltage",
+        ] = U_mot_cr / U_bat**2
         J[
             "optimization:constraints:propulsion:battery:voltage:cruise",
             "data:propulsion:motor:voltage:cruise",
-        ] = (
-            -1 / U_bat
-        )
+        ] = -1 / U_bat
 
         # Takeoff power
         J[
@@ -140,81 +177,75 @@ class BatteryConstraints(om.ExplicitComponent):
         J[
             "optimization:constraints:propulsion:battery:power:takeoff",
             "data:propulsion:motor:power:takeoff",
-        ] = (
-            - Npro / eta_ESC / P_bat
-        )
+        ] = -Npro / eta_ESC / P_bat
         J[
             "optimization:constraints:propulsion:battery:power:takeoff",
-            "data:propulsion:propeller:number"
-        ] = - P_mot_to / eta_ESC / P_bat
+            "data:propulsion:propeller:number",
+        ] = -P_mot_to / eta_ESC / P_bat
         J[
             "optimization:constraints:propulsion:battery:power:takeoff",
             "data:propulsion:esc:efficiency:estimated",
-        ] = (
-             P_mot_to * Npro / (eta_ESC**2) / P_bat
-        )
+        ] = P_mot_to * Npro / (eta_ESC**2) / P_bat
 
         # Climb power
         J[
             "optimization:constraints:propulsion:battery:power:climb",
             "data:propulsion:battery:power:max",
-        ] = (P_mot_cl * Npro / eta_ESC) / (P_bat ** 2)
+        ] = (P_mot_cl * Npro / eta_ESC) / (P_bat**2)
         J[
             "optimization:constraints:propulsion:battery:power:climb",
             "data:propulsion:motor:power:climb",
-        ] = (
-                - Npro / eta_ESC / P_bat
-        )
+        ] = -Npro / eta_ESC / P_bat
         J[
             "optimization:constraints:propulsion:battery:power:climb",
-            "data:propulsion:propeller:number"
-        ] = - P_mot_cl / eta_ESC / P_bat
+            "data:propulsion:propeller:number",
+        ] = -P_mot_cl / eta_ESC / P_bat
         J[
             "optimization:constraints:propulsion:battery:power:climb",
             "data:propulsion:esc:efficiency:estimated",
-        ] = (
-                P_mot_cl * Npro / (eta_ESC ** 2) / P_bat
-        )
+        ] = P_mot_cl * Npro / (eta_ESC**2) / P_bat
 
         # Cruise power
         J[
             "optimization:constraints:propulsion:battery:power:cruise",
             "data:propulsion:battery:power:max",
-        ] = (P_mot_cr * Npro / eta_ESC) / (P_bat ** 2)
+        ] = (P_mot_cr * Npro / eta_ESC) / (P_bat**2)
         J[
             "optimization:constraints:propulsion:battery:power:cruise",
             "data:propulsion:motor:power:cruise",
-        ] = (
-                - Npro / eta_ESC / P_bat
-        )
+        ] = -Npro / eta_ESC / P_bat
         J[
             "optimization:constraints:propulsion:battery:power:cruise",
-            "data:propulsion:propeller:number"
-        ] = - P_mot_cr / eta_ESC / P_bat
+            "data:propulsion:propeller:number",
+        ] = -P_mot_cr / eta_ESC / P_bat
         J[
             "optimization:constraints:propulsion:battery:power:cruise",
             "data:propulsion:esc:efficiency:estimated",
-        ] = (
-                P_mot_cr * Npro / (eta_ESC ** 2) / P_bat
-        )
+        ] = P_mot_cr * Npro / (eta_ESC**2) / P_bat
 
         # Voltage tolerance intervals
         J[
             "optimization:constraints:propulsion:battery:voltage:min",
-            "data:propulsion:battery:voltage"] = U_min / U_bat ** 2
+            "data:propulsion:battery:voltage",
+        ] = U_min / U_bat**2
         J[
             "optimization:constraints:propulsion:battery:voltage:min",
-            "data:propulsion:battery:power:max"] = - 0.40 * P_bat ** (-1) * U_hat / U_bat
+            "data:propulsion:battery:power:max",
+        ] = -0.40 * P_bat ** (-1) * U_hat / U_bat
         J[
             "optimization:constraints:propulsion:battery:voltage:min",
-            "models:propulsion:battery:voltage:tol"] = - eps_low / U_bat / 100
+            "models:propulsion:battery:voltage:tol",
+        ] = -eps_low / U_bat / 100
 
         J[
             "optimization:constraints:propulsion:battery:voltage:max",
-            "data:propulsion:battery:voltage"] = - U_max / U_bat ** 2
+            "data:propulsion:battery:voltage",
+        ] = -U_max / U_bat**2
         J[
             "optimization:constraints:propulsion:battery:voltage:max",
-            "data:propulsion:battery:power:max"] = 0.40 * P_bat ** (-1) * U_hat / U_bat
+            "data:propulsion:battery:power:max",
+        ] = 0.40 * P_bat ** (-1) * U_hat / U_bat
         J[
             "optimization:constraints:propulsion:battery:voltage:max",
-            "models:propulsion:battery:voltage:tol"] = eps_up / U_bat / 100
+            "models:propulsion:battery:voltage:tol",
+        ] = eps_up / U_bat / 100

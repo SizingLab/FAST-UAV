@@ -102,4 +102,3 @@ class MissionDefinition(dict):
             # Ensure "sizing" mission contains "main_route"
             if mission_definition == SIZING_MISSION_TAG:
                 Ensure(MAIN_ROUTE_TAG).is_in(mission_definition.keys())
-

@@ -1,6 +1,7 @@
 """
 Hybrid (fixed wing + VTOL) wires
 """
+
 import fastoad.api as oad
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.models.wires.wires import Wires
