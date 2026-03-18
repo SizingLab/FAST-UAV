@@ -3,11 +3,13 @@ Off-the-shelf Battery selection.
 """
 
 import os.path as pth
-import openmdao.api as om
-from fastuav.utils.catalogues.estimators import NearestNeighbor
-from fastoad.openmdao.validity_checker import ValidityDomainChecker
-import pandas as pd
+
 import numpy as np
+import openmdao.api as om
+import pandas as pd
+from fastoad.openmdao.validity_checker import ValidityDomainChecker
+
+from fastuav.utils.catalogues.estimators import NearestNeighbor
 
 # Database import
 PATH = pth.join(
@@ -71,44 +73,20 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             val=np.nan,
             units=None,
         )
-        self.add_input(
-            "data:propulsion:battery:cell:number:estimated", val=np.nan, units=None
-        )
-        self.add_input(
-            "data:propulsion:battery:cell:voltage:estimated", val=np.nan, units="V"
-        )
-        self.add_input(
-            "data:propulsion:battery:voltage:estimated", val=np.nan, units="V"
-        )
-        self.add_input(
-            "data:propulsion:battery:capacity:estimated", val=np.nan, units="A*s"
-        )
-        self.add_input(
-            "data:propulsion:battery:power:max:estimated", val=np.nan, units="W"
-        )
-        self.add_input(
-            "data:propulsion:battery:energy:estimated", val=np.nan, units="kJ"
-        )
-        self.add_input(
-            "data:propulsion:battery:current:max:estimated", val=np.nan, units="A"
-        )
-        self.add_input(
-            "data:weight:propulsion:battery:mass:estimated", val=np.nan, units="kg"
-        )
-        self.add_input(
-            "data:propulsion:battery:volume:estimated", val=np.nan, units="cm**3"
-        )
-        self.add_input(
-            "data:propulsion:battery:DoD:max:estimated", val=np.nan, units=None
-        )
+        self.add_input("data:propulsion:battery:cell:number:estimated", val=np.nan, units=None)
+        self.add_input("data:propulsion:battery:cell:voltage:estimated", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:voltage:estimated", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:capacity:estimated", val=np.nan, units="A*s")
+        self.add_input("data:propulsion:battery:power:max:estimated", val=np.nan, units="W")
+        self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
+        self.add_input("data:propulsion:battery:current:max:estimated", val=np.nan, units="A")
+        self.add_input("data:weight:propulsion:battery:mass:estimated", val=np.nan, units="kg")
+        self.add_input("data:propulsion:battery:volume:estimated", val=np.nan, units="cm**3")
+        self.add_input("data:propulsion:battery:DoD:max:estimated", val=np.nan, units=None)
         # outputs: catalogue values if off_the_shelf is True
         if self.options["off_the_shelf"]:
-            self.add_output(
-                "data:propulsion:battery:cell:number:series:catalogue", units=None
-            )
-            self.add_output(
-                "data:propulsion:battery:cell:number:parallel:catalogue", units=None
-            )
+            self.add_output("data:propulsion:battery:cell:number:series:catalogue", units=None)
+            self.add_output("data:propulsion:battery:cell:number:parallel:catalogue", units=None)
             self.add_output("data:propulsion:battery:cell:number:catalogue", units=None)
             self.add_output("data:propulsion:battery:cell:voltage:catalogue", units="V")
             self.add_output("data:propulsion:battery:voltage:catalogue", units="V")
@@ -217,9 +195,7 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             N_parallel = df_y["n_parallel"].iloc[0]  # number of parallel connections
             N_cell = N_series * N_parallel  # number of cells
             P_bat = U_bat * I_bat_max  # battery power [W]
-            E_bat = df_y["Energy_kJ"].iloc[
-                0
-            ]  # C_bat * U_bat / 1000  # stored energy [kJ]
+            E_bat = df_y["Energy_kJ"].iloc[0]  # C_bat * U_bat / 1000  # stored energy [kJ]
 
             # Outputs
             outputs["data:propulsion:battery:cell:number"] = outputs[

@@ -3,9 +3,10 @@ Hover scenarios
 """
 
 import numpy as np
-from scipy.constants import g
 import openmdao.api as om
-from fastuav.constants import MR_PROPULSION, FW_PROPULSION
+from scipy.constants import g
+
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 
 
 class HoverThrust(om.ExplicitComponent):
@@ -14,23 +15,17 @@ class HoverThrust(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input(
-            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
-        )
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input(
             "data:propulsion:%s:propeller:number" % propulsion_id,
             val=np.nan,
             units=None,
         )
-        self.add_output(
-            "data:propulsion:%s:propeller:thrust:hover" % propulsion_id, units="N"
-        )
+        self.add_output("data:propulsion:%s:propeller:thrust:hover" % propulsion_id, units="N")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -52,15 +47,11 @@ class NoHover(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_output(
-            "data:propulsion:%s:propeller:thrust:hover" % propulsion_id, units="N"
-        )
+        self.add_output("data:propulsion:%s:propeller:thrust:hover" % propulsion_id, units="N")
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]

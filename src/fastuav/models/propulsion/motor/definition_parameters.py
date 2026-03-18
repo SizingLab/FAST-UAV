@@ -2,8 +2,9 @@
 Definition parameters for the motor.
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
@@ -27,9 +28,7 @@ class MotorDefinitionParameters(om.Group):
             self,
             "velocity_constant",
             VelocityConstant(),
-            uncertain_outputs={
-                "data:propulsion:motor:speed:constant:estimated": "rad/V/s"
-            },
+            uncertain_outputs={"data:propulsion:motor:speed:constant:estimated": "rad/V/s"},
         )
 
 
@@ -40,12 +39,8 @@ class MaxTorque(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
-        self.add_input(
-            "data:propulsion:propeller:torque:takeoff", val=np.nan, units="N*m"
-        )
-        self.add_input(
-            "optimization:variables:propulsion:motor:torque:k", val=np.nan, units=None
-        )
+        self.add_input("data:propulsion:propeller:torque:takeoff", val=np.nan, units="N*m")
+        self.add_input("optimization:variables:propulsion:motor:torque:k", val=np.nan, units=None)
         self.add_output("data:propulsion:motor:torque:max:estimated", units="N*m")
 
     def setup_partials(self):
@@ -88,15 +83,9 @@ class VelocityConstant(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
         self.add_input("data:propulsion:propeller:power:takeoff", val=np.nan, units="W")
-        self.add_input(
-            "data:propulsion:propeller:speed:takeoff", val=np.nan, units="rad/s"
-        )
-        self.add_input(
-            "optimization:variables:propulsion:motor:speed:k", val=np.nan, units=None
-        )
-        self.add_output(
-            "data:propulsion:motor:speed:constant:estimated", units="rad/V/s"
-        )
+        self.add_input("data:propulsion:propeller:speed:takeoff", val=np.nan, units="rad/s")
+        self.add_input("optimization:variables:propulsion:motor:speed:k", val=np.nan, units=None)
+        self.add_output("data:propulsion:motor:speed:constant:estimated", units="rad/V/s")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")

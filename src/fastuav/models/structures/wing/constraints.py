@@ -2,8 +2,8 @@
 Structural constraints for the wing
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class SparsGeometricalConstraint(om.ExplicitComponent):
@@ -18,17 +18,11 @@ class SparsGeometricalConstraint(om.ExplicitComponent):
         spar_model = self.options["spar_model"]
         self.add_input("data:geometry:wing:tip:thickness", val=np.nan, units="m")
         if spar_model == "pipe":
-            self.add_input(
-                "data:structures:wing:spar:diameter:outer", val=np.nan, units="m"
-            )
-            self.add_output(
-                "optimization:constraints:structures:wing:spar:diameter", units=None
-            )
+            self.add_input("data:structures:wing:spar:diameter:outer", val=np.nan, units="m")
+            self.add_output("optimization:constraints:structures:wing:spar:diameter", units=None)
         else:
             self.add_input("data:structures:wing:spar:depth", val=np.nan, units="m")
-            self.add_output(
-                "optimization:constraints:structures:wing:spar:depth", units=None
-            )
+            self.add_output("optimization:constraints:structures:wing:spar:depth", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -38,17 +32,11 @@ class SparsGeometricalConstraint(om.ExplicitComponent):
         t_wingtip = inputs["data:geometry:wing:tip:thickness"]
         if spar_model == "pipe":
             d_out = inputs["data:structures:wing:spar:diameter:outer"]
-            spar_cnstr = (
-                t_wingtip - d_out
-            ) / d_out  # constraint on spar external dimension [-]
-            outputs["optimization:constraints:structures:wing:spar:diameter"] = (
-                spar_cnstr
-            )
+            spar_cnstr = (t_wingtip - d_out) / d_out  # constraint on spar external dimension [-]
+            outputs["optimization:constraints:structures:wing:spar:diameter"] = spar_cnstr
         else:
             h_spar = inputs["data:structures:wing:spar:depth"]
-            spar_cnstr = (
-                t_wingtip - h_spar
-            ) / h_spar  # constraint on spar external dimension [-]
+            spar_cnstr = (t_wingtip - h_spar) / h_spar  # constraint on spar external dimension [-]
             outputs["optimization:constraints:structures:wing:spar:depth"] = spar_cnstr
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
@@ -82,15 +70,9 @@ class SparsStressVTOLConstraint(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:structures:wing:spar:stress:VTOL", val=np.nan, units="N/m**2"
-        )
-        self.add_input(
-            "data:structures:wing:spar:stress:max", val=np.nan, units="N/m**2"
-        )
-        self.add_output(
-            "optimization:constraints:structures:wing:spar:stress:VTOL", units=None
-        )
+        self.add_input("data:structures:wing:spar:stress:VTOL", val=np.nan, units="N/m**2")
+        self.add_input("data:structures:wing:spar:stress:max", val=np.nan, units="N/m**2")
+        self.add_output("optimization:constraints:structures:wing:spar:stress:VTOL", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -101,9 +83,7 @@ class SparsStressVTOLConstraint(om.ExplicitComponent):
 
         stress_cnstr = (sig_max - sig_root) / sig_root
 
-        outputs["optimization:constraints:structures:wing:spar:stress:VTOL"] = (
-            stress_cnstr
-        )
+        outputs["optimization:constraints:structures:wing:spar:stress:VTOL"] = stress_cnstr
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         sig_root = inputs["data:structures:wing:spar:stress:VTOL"]

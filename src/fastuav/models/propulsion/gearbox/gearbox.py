@@ -2,8 +2,8 @@
 Gearbox model
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class Gearbox(om.ExplicitComponent):
@@ -27,12 +27,8 @@ class Gearbox(om.ExplicitComponent):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         T_mot_nom = inputs["data:propulsion:motor:torque:nominal"]
 
-        mg1 = (
-            0.0309 * N_red**2 + 0.1944 * N_red + 0.6389
-        )  # Ratio input pinion to mating gear
-        WF = (
-            1 + 1 / mg1 + mg1 + mg1**2 + N_red**2 / mg1 + N_red**2
-        )  # Weight Factor (ƩFd2/C) [-]
+        mg1 = 0.0309 * N_red**2 + 0.1944 * N_red + 0.6389  # Ratio input pinion to mating gear
+        WF = 1 + 1 / mg1 + mg1 + mg1**2 + N_red**2 / mg1 + N_red**2  # Weight Factor (ƩFd2/C) [-]
         k_sd = 1000  # Surface durability factor [lb/in]
         C = 2 * 8.85 * T_mot_nom / k_sd  # Coefficient (C=2T/K) [in3]
         Fd2 = WF * C  # Solid rotor volume [in3]
@@ -40,9 +36,7 @@ class Gearbox(om.ExplicitComponent):
             Fd2 * 0.3 * 0.4535
         )  # Mass reducer [kg] (0.3 is a coefficient evaluated for aircraft application and 0.4535 to pass from lb to kg)
         Fdp2 = C * (N_red + 1) / N_red  # Solid rotor pinion volume [in3]
-        dp = (Fdp2 / 0.7) ** (
-            1 / 3
-        ) * 0.0254  # Pinion diameter [m] (0.0254 to pass from in to m)
+        dp = (Fdp2 / 0.7) ** (1 / 3) * 0.0254  # Pinion diameter [m] (0.0254 to pass from in to m)
         dg = N_red * dp  # Gear diameter [m]
         di = mg1 * dp  # Inner diameter [m]
 

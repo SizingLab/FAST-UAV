@@ -2,8 +2,9 @@
 Module containing the center of gravity calculations for all components.
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
 
 
@@ -23,9 +24,7 @@ class CoG_airframe(om.Group):
         propulsion_id_list = self.options["propulsion_id_list"]
         self.add_subsystem("fuselage", CoG_fuselage(), promotes=["*"])
         self.add_subsystem("wing", CoG_wing(), promotes=["*"])
-        self.add_subsystem(
-            "horizontal_tail", CoG_tail(tail="horizontal"), promotes=["*"]
-        )
+        self.add_subsystem("horizontal_tail", CoG_tail(tail="horizontal"), promotes=["*"])
         self.add_subsystem("vertical_tail", CoG_tail(tail="vertical"), promotes=["*"])
 
         if MR_PROPULSION in propulsion_id_list:
@@ -55,20 +54,12 @@ class CoG_airframe_component(om.ExplicitComponent):
 
         self.add_input("data:stability:CoG:airframe:fuselage", val=np.nan, units="m")
         self.add_input("data:stability:CoG:airframe:wing", val=np.nan, units="m")
-        self.add_input(
-            "data:stability:CoG:airframe:tail:horizontal", val=np.nan, units="m"
-        )
-        self.add_input(
-            "data:stability:CoG:airframe:tail:vertical", val=np.nan, units="m"
-        )
+        self.add_input("data:stability:CoG:airframe:tail:horizontal", val=np.nan, units="m")
+        self.add_input("data:stability:CoG:airframe:tail:vertical", val=np.nan, units="m")
         self.add_input("data:weight:airframe:fuselage:mass", val=np.nan, units="kg")
         self.add_input("data:weight:airframe:wing:mass", val=np.nan, units="kg")
-        self.add_input(
-            "data:weight:airframe:tail:horizontal:mass", val=np.nan, units="kg"
-        )
-        self.add_input(
-            "data:weight:airframe:tail:vertical:mass", val=np.nan, units="kg"
-        )
+        self.add_input("data:weight:airframe:tail:horizontal:mass", val=np.nan, units="kg")
+        self.add_input("data:weight:airframe:tail:vertical:mass", val=np.nan, units="kg")
 
         if MR_PROPULSION in propulsion_id_list:
             self.add_input("data:stability:CoG:arms", val=np.nan, units="m")
@@ -124,13 +115,9 @@ class CoG_fuselage(om.ExplicitComponent):
         self.add_input("data:geometry:fuselage:length:rear", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:mid", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:tip", val=np.nan, units="m")
-        self.add_input(
-            "data:weight:airframe:fuselage:mass:nose", val=np.nan, units="kg"
-        )
+        self.add_input("data:weight:airframe:fuselage:mass:nose", val=np.nan, units="kg")
         self.add_input("data:weight:airframe:fuselage:mass:mid", val=np.nan, units="kg")
-        self.add_input(
-            "data:weight:airframe:fuselage:mass:rear", val=np.nan, units="kg"
-        )
+        self.add_input("data:weight:airframe:fuselage:mass:rear", val=np.nan, units="kg")
         self.add_input("data:weight:airframe:fuselage:mass", val=np.nan, units="kg")
         self.add_output("data:stability:CoG:airframe:fuselage", units="m")
 
@@ -152,13 +139,9 @@ class CoG_fuselage(om.ExplicitComponent):
         x_cg_nose = l_nose / 2  # [m]
         x_cg_mid = l_nose + l_mid / 2  # [m]
         x_cg_rear = (
-            l_nose
-            + l_mid
-            + l_rear / 3 * (d_fus_mid + 2 * d_fus_tip) / (d_fus_mid + d_fus_tip)
+            l_nose + l_mid + l_rear / 3 * (d_fus_mid + 2 * d_fus_tip) / (d_fus_mid + d_fus_tip)
         )  # [m]
-        x_cg_fus = (
-            m_nose * x_cg_nose + m_mid * x_cg_mid + m_rear * x_cg_rear
-        ) / m_fus  # [m]
+        x_cg_fus = (m_nose * x_cg_nose + m_mid * x_cg_mid + m_rear * x_cg_rear) / m_fus  # [m]
 
         outputs["data:stability:CoG:airframe:fuselage"] = x_cg_fus
 
@@ -220,18 +203,12 @@ class CoG_arms_VTOL(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input(
-            "data:geometry:%s:propeller:x:front" % propulsion_id, val=np.nan, units="m"
-        )
-        self.add_input(
-            "data:geometry:%s:propeller:x:rear" % propulsion_id, val=np.nan, units="m"
-        )
+        self.add_input("data:geometry:%s:propeller:x:front" % propulsion_id, val=np.nan, units="m")
+        self.add_input("data:geometry:%s:propeller:x:rear" % propulsion_id, val=np.nan, units="m")
         self.add_output("data:stability:CoG:arms", units="m")
 
     def setup_partials(self):

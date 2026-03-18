@@ -2,8 +2,8 @@
 Battery constraints
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class BatteryConstraints(om.ExplicitComponent):
@@ -13,9 +13,7 @@ class BatteryConstraints(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
-        self.add_input(
-            "models:propulsion:battery:voltage:tol", val=0.0, units="percent"
-        )
+        self.add_input("models:propulsion:battery:voltage:tol", val=0.0, units="percent")
         self.add_input("data:propulsion:battery:power:max", val=np.nan, units="W")
         self.add_input("data:propulsion:motor:voltage:takeoff", val=np.nan, units="V")
         self.add_input("data:propulsion:motor:voltage:climb", val=np.nan, units="V")
@@ -24,33 +22,15 @@ class BatteryConstraints(om.ExplicitComponent):
         self.add_input("data:propulsion:motor:power:climb", val=np.nan, units="W")
         self.add_input("data:propulsion:motor:power:cruise", val=np.nan, units="W")
         self.add_input("data:propulsion:propeller:number", val=np.nan, units=None)
-        self.add_input(
-            "data:propulsion:esc:efficiency:estimated", val=np.nan, units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:battery:voltage:takeoff", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:battery:voltage:climb", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:battery:voltage:cruise", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:battery:power:takeoff", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:battery:power:climb", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:battery:power:cruise", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:battery:voltage:min", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:battery:voltage:max", units=None
-        )
+        self.add_input("data:propulsion:esc:efficiency:estimated", val=np.nan, units=None)
+        self.add_output("optimization:constraints:propulsion:battery:voltage:takeoff", units=None)
+        self.add_output("optimization:constraints:propulsion:battery:voltage:climb", units=None)
+        self.add_output("optimization:constraints:propulsion:battery:voltage:cruise", units=None)
+        self.add_output("optimization:constraints:propulsion:battery:power:takeoff", units=None)
+        self.add_output("optimization:constraints:propulsion:battery:power:climb", units=None)
+        self.add_output("optimization:constraints:propulsion:battery:power:cruise", units=None)
+        self.add_output("optimization:constraints:propulsion:battery:voltage:min", units=None)
+        self.add_output("optimization:constraints:propulsion:battery:voltage:max", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -87,36 +67,22 @@ class BatteryConstraints(om.ExplicitComponent):
         eps_low = (
             -10.98
         )  # 1st percentile on regression error (i.e., 99% of data are above this value)
-        eps_up = 16.24  # 99th percentile on regression error (i.e., 99% of data are below this value)
+        eps_up = (
+            16.24  # 99th percentile on regression error (i.e., 99% of data are below this value)
+        )
         U_min = U_hat + k * eps_low  # [V] minimum allowable voltage rating
         U_max = U_hat + k * eps_up  # [V] maximum allowable voltage rating
         battery_con7 = (U_bat - U_min) / U_bat
         battery_con8 = (U_max - U_bat) / U_bat
 
-        outputs["optimization:constraints:propulsion:battery:voltage:takeoff"] = (
-            battery_con1
-        )
-        outputs["optimization:constraints:propulsion:battery:voltage:climb"] = (
-            battery_con2
-        )
-        outputs["optimization:constraints:propulsion:battery:voltage:cruise"] = (
-            battery_con3
-        )
-        outputs["optimization:constraints:propulsion:battery:power:takeoff"] = (
-            battery_con4
-        )
-        outputs["optimization:constraints:propulsion:battery:power:climb"] = (
-            battery_con5
-        )
-        outputs["optimization:constraints:propulsion:battery:power:cruise"] = (
-            battery_con6
-        )
-        outputs["optimization:constraints:propulsion:battery:voltage:min"] = (
-            battery_con7
-        )
-        outputs["optimization:constraints:propulsion:battery:voltage:max"] = (
-            battery_con8
-        )
+        outputs["optimization:constraints:propulsion:battery:voltage:takeoff"] = battery_con1
+        outputs["optimization:constraints:propulsion:battery:voltage:climb"] = battery_con2
+        outputs["optimization:constraints:propulsion:battery:voltage:cruise"] = battery_con3
+        outputs["optimization:constraints:propulsion:battery:power:takeoff"] = battery_con4
+        outputs["optimization:constraints:propulsion:battery:power:climb"] = battery_con5
+        outputs["optimization:constraints:propulsion:battery:power:cruise"] = battery_con6
+        outputs["optimization:constraints:propulsion:battery:voltage:min"] = battery_con7
+        outputs["optimization:constraints:propulsion:battery:voltage:max"] = battery_con8
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         U_bat = inputs["data:propulsion:battery:voltage"]
@@ -135,7 +101,9 @@ class BatteryConstraints(om.ExplicitComponent):
         eps_low = (
             -10.98
         )  # 1st percentile on regression error (i.e., 99% of data are above this value)
-        eps_up = 16.24  # 99th percentile on regression error (i.e., 99% of data are below this value)
+        eps_up = (
+            16.24  # 99th percentile on regression error (i.e., 99% of data are below this value)
+        )
         U_min = U_hat + k * eps_low  # [V] minimum allowable voltage rating
         U_max = U_hat + k * eps_up  # [V] maximum allowable voltage rating
 

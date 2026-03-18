@@ -2,8 +2,8 @@
 ESC constraints
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class ESCConstraints(om.ExplicitComponent):
@@ -19,24 +19,12 @@ class ESCConstraints(om.ExplicitComponent):
         self.add_input("data:propulsion:esc:voltage", val=np.nan, units="V")
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
         self.add_input("models:propulsion:esc:voltage:tol", val=0.0, units="percent")
-        self.add_output(
-            "optimization:constraints:propulsion:esc:power:takeoff", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:esc:power:climb", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:esc:power:cruise", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:esc:voltage:battery", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:esc:voltage:min", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:esc:voltage:max", units=None
-        )
+        self.add_output("optimization:constraints:propulsion:esc:power:takeoff", units=None)
+        self.add_output("optimization:constraints:propulsion:esc:power:climb", units=None)
+        self.add_output("optimization:constraints:propulsion:esc:power:cruise", units=None)
+        self.add_output("optimization:constraints:propulsion:esc:voltage:battery", units=None)
+        self.add_output("optimization:constraints:propulsion:esc:voltage:min", units=None)
+        self.add_output("optimization:constraints:propulsion:esc:voltage:max", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -65,7 +53,9 @@ class ESCConstraints(om.ExplicitComponent):
         eps_low = (
             -13.33
         )  # 1st percentile on regression error (i.e., 99% of data are above this value)
-        eps_up = 12.78  # 99th percentile on regression error (i.e., 99% of data are below this value)
+        eps_up = (
+            12.78  # 99th percentile on regression error (i.e., 99% of data are below this value)
+        )
         U_min = U_hat + k * eps_low  # [V] minimum allowable voltage rating
         U_max = U_hat + k * eps_up  # [V] maximum allowable voltage rating
         ESC_con4 = (U_esc - U_min) / U_esc
@@ -93,7 +83,9 @@ class ESCConstraints(om.ExplicitComponent):
         eps_low = (
             -13.33
         )  # 1st percentile on regression error (i.e., 99% of data are above this value)
-        eps_up = 12.78  # 99th percentile on regression error (i.e., 99% of data are below this value)
+        eps_up = (
+            12.78  # 99th percentile on regression error (i.e., 99% of data are below this value)
+        )
         U_min = U_hat + k * eps_low  # [V] minimum allowable voltage rating
         U_max = U_hat + k * eps_up  # [V] maximum allowable voltage rating
 

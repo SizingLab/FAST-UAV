@@ -5,12 +5,12 @@ Main module for propulsion system
 import fastoad.api as oad
 import openmdao.api as om
 
-from fastuav.models.propulsion.propeller.propeller import Propeller
-from fastuav.models.propulsion.motor.motor import Motor
-from fastuav.models.propulsion.gearbox.gearbox import Gearbox, NoGearbox
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.models.propulsion.energy.battery.battery import Battery
 from fastuav.models.propulsion.esc.esc import ESC
-from fastuav.constants import FW_PROPULSION, MR_PROPULSION
+from fastuav.models.propulsion.gearbox.gearbox import Gearbox, NoGearbox
+from fastuav.models.propulsion.motor.motor import Motor
+from fastuav.models.propulsion.propeller.propeller import Propeller
 from fastuav.utils.configurations_versatility import promote_and_rename
 
 
@@ -64,9 +64,7 @@ class Propulsion(om.Group):
             propulsion.add_subsystem(
                 "battery", Battery(off_the_shelf=off_the_shelf_battery), promotes=["*"]
             )
-            propulsion.add_subsystem(
-                "esc", ESC(off_the_shelf=off_the_shelf_esc), promotes=["*"]
-            )
+            propulsion.add_subsystem("esc", ESC(off_the_shelf=off_the_shelf_esc), promotes=["*"])
 
     def configure(self):
         for propulsion_id in self.options["propulsion_id"]:

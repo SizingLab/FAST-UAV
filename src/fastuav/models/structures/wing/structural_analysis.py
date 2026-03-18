@@ -2,8 +2,9 @@
 Structural analysis for the wing
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.constants import MR_PROPULSION
 
 
@@ -25,9 +26,7 @@ class WingStructuralAnalysisModels:
         :return sig_root: Stress at root [Pa]
         """
         sig_root = (
-            M_root
-            * (1 + k_spar)
-            / (h_web**3 * k_spar**2 * (1 + k_spar**2 / 3) / k_flange)
+            M_root * (1 + k_spar) / (h_web**3 * k_spar**2 * (1 + k_spar**2 / 3) / k_flange)
         )  # [Pa]
         return sig_root
 
@@ -52,9 +51,7 @@ class SparsStressVTOL(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("spar_model", default="pipe", values=["pipe", "I_beam"])
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         spar_model = self.options["spar_model"]
@@ -70,13 +67,9 @@ class SparsStressVTOL(om.ExplicitComponent):
             val=np.nan,
             units=None,
         )
-        self.add_input(
-            "data:geometry:%s:propeller:y" % propulsion_id, val=np.nan, units="m"
-        )
+        self.add_input("data:geometry:%s:propeller:y" % propulsion_id, val=np.nan, units="m")
         if spar_model == "pipe":
-            self.add_input(
-                "data:structures:wing:spar:diameter:outer", val=np.nan, units="m"
-            )
+            self.add_input("data:structures:wing:spar:diameter:outer", val=np.nan, units="m")
             self.add_input(
                 "optimization:variables:structures:wing:spar:diameter:k",
                 val=0.9,
@@ -105,9 +98,7 @@ class SparsStressVTOL(om.ExplicitComponent):
         M_root = F_pro_to * N_pro / 2 * y_pro_MR  # bending moment at spar's root [N.m]
 
         if spar_model == "pipe":
-            d_out = inputs[
-                "data:structures:wing:spar:diameter:outer"
-            ]  # outer diameter [m]
+            d_out = inputs["data:structures:wing:spar:diameter:outer"]  # outer diameter [m]
             k_spar = inputs[
                 "optimization:variables:structures:wing:spar:diameter:k"
             ]  # aspect ratio of the spar [-]

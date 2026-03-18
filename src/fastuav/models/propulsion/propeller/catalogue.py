@@ -3,11 +3,12 @@ Off-the-shelf propeller selection.
 """
 
 import os.path as pth
-import openmdao.api as om
-from fastuav.utils.catalogues.estimators import NearestNeighbor
-import pandas as pd
-import numpy as np
 
+import numpy as np
+import openmdao.api as om
+import pandas as pd
+
+from fastuav.utils.catalogues.estimators import NearestNeighbor
 
 PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
@@ -49,12 +50,8 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
 
     def setup(self):
         # inputs: estimated values
-        self.add_input(
-            "data:propulsion:propeller:beta:estimated", val=np.nan, units=None
-        )
-        self.add_input(
-            "data:propulsion:propeller:diameter:estimated", val=np.nan, units="m"
-        )
+        self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
+        self.add_input("data:propulsion:propeller:diameter:estimated", val=np.nan, units="m")
         self.add_input(
             "data:propulsion:propeller:Ct:static:polynomial:estimated",
             shape_by_conn=True,
@@ -79,9 +76,7 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
             val=np.nan,
             units=None,
         )
-        self.add_input(
-            "data:weight:propulsion:propeller:mass:estimated", val=np.nan, units="kg"
-        )
+        self.add_input("data:weight:propulsion:propeller:mass:estimated", val=np.nan, units="kg")
 
         # outputs: catalogue values if off_the_shelf is True
         if self.options["off_the_shelf"]:
@@ -107,9 +102,7 @@ class PropellerCatalogueSelection(om.ExplicitComponent):
                 copy_shape="data:propulsion:propeller:Cp:dynamic:polynomial:estimated",
                 units=None,
             )
-            self.add_output(
-                "data:weight:propulsion:propeller:mass:catalogue", units="kg"
-            )
+            self.add_output("data:weight:propulsion:propeller:mass:catalogue", units="kg")
             # self.add_discrete_output("data:propulsion:propeller:product_name", val='')
 
         # outputs: estimated values if off_the_shelf is False, catalogue values else

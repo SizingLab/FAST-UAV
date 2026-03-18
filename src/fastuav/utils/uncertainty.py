@@ -3,8 +3,9 @@ Methods for adding deviations to the variables of the problem.
 This is useful for sensitivity analysis studies (see utils.postprocessing.sensitivity_analysis module)
 """
 
-import openmdao.api as om
 from typing import List
+
+import openmdao.api as om
 
 
 def add_subsystem_with_deviation(
@@ -105,12 +106,8 @@ class ComponentWithDeviation(om.ExplicitComponent):
                     units=unit,
                     tags="local",
                 )
-                self.add_input(
-                    "uncertainty:" + short_name + ":rel", val=0.0, units=None
-                )
-                self.add_input(
-                    "uncertainty:" + short_name + ":abs", val=0.0, units=unit
-                )
+                self.add_input("uncertainty:" + short_name + ":rel", val=0.0, units=None)
+                self.add_input("uncertainty:" + short_name + ":abs", val=0.0, units=unit)
                 self.add_output(
                     long_name,
                     copy_shape="uncertainty:" + short_name + ":mean",
@@ -231,13 +228,9 @@ class ModelDeviation(om.ExplicitComponent):
         if (
             "uncertain_parameters" in model_attrs.keys()
         ):  # and 'init_uncertain_parameters' in model_attrs.keys():
-            v = model_attrs[
-                "uncertain_parameters"
-            ]  # get the dictionary of uncertain parameters
+            v = model_attrs["uncertain_parameters"]  # get the dictionary of uncertain parameters
             # v_init = model_attrs['init_uncertain_parameters']  # get the dictionary of initial uncertain parameters
-            for i, name in enumerate(
-                self._names
-            ):  # loop through parameters to be modified
+            for i, name in enumerate(self._names):  # loop through parameters to be modified
                 name_rel = "uncertainty:" + name + ":rel"
                 name_abs = "uncertainty:" + name + ":abs"
                 if name_rel in v.keys():

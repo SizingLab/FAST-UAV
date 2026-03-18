@@ -3,11 +3,12 @@ Cruise scenarios
 """
 
 import numpy as np
-from scipy.constants import g
 import openmdao.api as om
+from scipy.constants import g
 from stdatm import AtmosphereSI
-from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
+
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
+from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
 
 
 class MultirotorCruiseThrust(om.ExplicitComponent):
@@ -16,40 +17,28 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input(
-            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
-        )
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input(
             "data:propulsion:%s:propeller:number" % propulsion_id,
             val=np.nan,
             units=None,
         )
-        self.add_input(
-            "data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None
-        )
+        self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
         self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
-        self.add_input(
-            "mission:sizing:main_route:cruise:altitude", val=150.0, units="m"
-        )
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input(
             "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
             val=0.0,
             units="m/s",
         )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_output(
-            "data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N"
-        )
-        self.add_output(
-            "data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad"
-        )
+        self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
+        self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -98,38 +87,24 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input(
-            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
-        )
-        self.add_input(
-            "data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None
-        )
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
-        self.add_input(
-            "optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None
-        )
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
-        self.add_input(
-            "mission:sizing:main_route:cruise:altitude", val=150.0, units="m"
-        )
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input(
             "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
             val=0.0,
             units="m/s",
         )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_output(
-            "data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N"
-        )
-        self.add_output(
-            "data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad"
-        )
+        self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
+        self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="fd")
@@ -163,13 +138,9 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
             q_cruise * CD_0_guess / WS + K / q_cruise * WS
         )  # [-] thrust-to-weight ratio in cruise conditions
         F_pro_cruise = TW_cruise * Weight / Npro  # [N] Thrust per propeller for cruise
-        alpha_cr = (
-            np.pi / 2
-        )  # [rad] Rotor disk Angle of Attack (assumption: axial flight)
+        alpha_cr = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight)
 
-        outputs["data:propulsion:%s:propeller:thrust:cruise" % propulsion_id] = (
-            F_pro_cruise
-        )
+        outputs["data:propulsion:%s:propeller:thrust:cruise" % propulsion_id] = F_pro_cruise
         outputs["data:propulsion:%s:propeller:AoA:cruise" % propulsion_id] = alpha_cr
 
 
@@ -179,18 +150,12 @@ class NoCruise(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_output(
-            "data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N"
-        )
-        self.add_output(
-            "data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad"
-        )
+        self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
+        self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]

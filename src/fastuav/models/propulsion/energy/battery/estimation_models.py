@@ -2,8 +2,9 @@
 Estimation models for the battery.
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
@@ -67,18 +68,10 @@ class Energy(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:battery:power:max:estimated", val=np.nan, units="W"
-        )
-        self.add_input(
-            "models:propulsion:battery:current:max:reference", val=np.nan, units="A"
-        )
-        self.add_input(
-            "models:propulsion:battery:voltage:reference", val=np.nan, units="V"
-        )
-        self.add_input(
-            "models:propulsion:battery:energy:reference", val=np.nan, units="kJ"
-        )
+        self.add_input("data:propulsion:battery:power:max:estimated", val=np.nan, units="W")
+        self.add_input("models:propulsion:battery:current:max:reference", val=np.nan, units="A")
+        self.add_input("models:propulsion:battery:voltage:reference", val=np.nan, units="V")
+        self.add_input("models:propulsion:battery:energy:reference", val=np.nan, units="kJ")
         self.add_output("data:propulsion:battery:energy:estimated", units="kJ")
 
     def setup_partials(self):
@@ -102,18 +95,10 @@ class Power(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:battery:energy:estimated", val=np.nan, units="kJ"
-        )
-        self.add_input(
-            "models:propulsion:battery:current:max:reference", val=np.nan, units="A"
-        )
-        self.add_input(
-            "models:propulsion:battery:voltage:reference", val=np.nan, units="V"
-        )
-        self.add_input(
-            "models:propulsion:battery:energy:reference", val=np.nan, units="kJ"
-        )
+        self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
+        self.add_input("models:propulsion:battery:current:max:reference", val=np.nan, units="A")
+        self.add_input("models:propulsion:battery:voltage:reference", val=np.nan, units="V")
+        self.add_input("models:propulsion:battery:energy:reference", val=np.nan, units="kJ")
         self.add_output("data:propulsion:battery:power:max:estimated", units="W")
 
     def setup_partials(self):
@@ -162,12 +147,8 @@ class Capacity(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:battery:voltage:estimated", val=np.nan, units="V"
-        )
-        self.add_input(
-            "data:propulsion:battery:energy:estimated", val=np.nan, units="kJ"
-        )
+        self.add_input("data:propulsion:battery:voltage:estimated", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
         self.add_output("data:propulsion:battery:capacity:estimated", units="kA*s")
 
     def setup_partials(self):
@@ -202,12 +183,8 @@ class MaxCurrent(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "models:propulsion:battery:capacity:reference", val=np.nan, units="A*s"
-        )
-        self.add_input(
-            "models:propulsion:battery:current:max:reference", val=np.nan, units="A"
-        )
+        self.add_input("models:propulsion:battery:capacity:reference", val=np.nan, units="A*s")
+        self.add_input("models:propulsion:battery:current:max:reference", val=np.nan, units="A")
         self.add_input("data:propulsion:battery:capacity:estimated", units="A*s")
         self.add_output("data:propulsion:battery:current:max:estimated", units="A")
 
@@ -231,15 +208,9 @@ class Weight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:battery:energy:estimated", val=np.nan, units="kJ"
-        )
-        self.add_input(
-            "models:weight:propulsion:battery:mass:reference", val=np.nan, units="kg"
-        )
-        self.add_input(
-            "models:propulsion:battery:energy:reference", val=np.nan, units="kJ"
-        )
+        self.add_input("data:propulsion:battery:energy:estimated", val=np.nan, units="kJ")
+        self.add_input("models:weight:propulsion:battery:mass:reference", val=np.nan, units="kg")
+        self.add_input("models:propulsion:battery:energy:reference", val=np.nan, units="kJ")
         self.add_output("data:weight:propulsion:battery:mass:estimated", units="kg")
 
     def setup_partials(self):
@@ -279,21 +250,11 @@ class Geometry(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:battery:voltage:estimated", val=np.nan, units="V"
-        )
-        self.add_input(
-            "data:propulsion:battery:capacity:estimated", val=np.nan, units="A*s"
-        )
-        self.add_input(
-            "models:propulsion:battery:voltage:reference", val=np.nan, units="V"
-        )
-        self.add_input(
-            "models:propulsion:battery:capacity:reference", val=np.nan, units="A*s"
-        )
-        self.add_input(
-            "models:propulsion:battery:volume:reference", val=np.nan, units="cm**3"
-        )
+        self.add_input("data:propulsion:battery:voltage:estimated", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:capacity:estimated", val=np.nan, units="A*s")
+        self.add_input("models:propulsion:battery:voltage:reference", val=np.nan, units="V")
+        self.add_input("models:propulsion:battery:capacity:reference", val=np.nan, units="A*s")
+        self.add_input("models:propulsion:battery:volume:reference", val=np.nan, units="cm**3")
         self.add_output("data:propulsion:battery:volume:estimated", units="cm**3")
 
     def setup_partials(self):
@@ -320,9 +281,7 @@ class MaxDepthOfDischarge(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "models:propulsion:battery:DoD:max:reference", val=0.8, units=None
-        )
+        self.add_input("models:propulsion:battery:DoD:max:reference", val=0.8, units=None)
         self.add_output("data:propulsion:battery:DoD:max:estimated", units=None)
 
     def setup_partials(self):
@@ -344,9 +303,7 @@ class ESCEfficiency(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "models:propulsion:esc:efficiency:reference", val=0.95, units=None
-        )
+        self.add_input("models:propulsion:esc:efficiency:reference", val=0.95, units=None)
         self.add_output("data:propulsion:esc:efficiency:estimated", units=None)
 
     def setup_partials(self):
@@ -368,12 +325,8 @@ class Energy2(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:battery:voltage:estimated", val=np.nan, units="V"
-        )
-        self.add_input(
-            "data:propulsion:battery:capacity:estimated", val=np.nan, units="kA*s"
-        )
+        self.add_input("data:propulsion:battery:voltage:estimated", val=np.nan, units="V")
+        self.add_input("data:propulsion:battery:capacity:estimated", val=np.nan, units="kA*s")
         self.add_output("data:propulsion:battery:energy:estimated", units="kJ")
 
     def setup_partials(self):

@@ -3,6 +3,7 @@ MTOW for multirotor UAVs
 """
 
 import fastoad.api as oad
+
 from fastuav.constants import MR_PROPULSION
 from fastuav.models.mtow.mtow import MTOW
 

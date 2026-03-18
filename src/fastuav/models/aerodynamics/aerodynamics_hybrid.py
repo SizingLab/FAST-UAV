@@ -3,19 +3,20 @@ Hybrid VTOL Aerodynamics (external)
 """
 
 import fastoad.api as oad
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
+from fastuav.constants import MR_PROPULSION
+from fastuav.models.aerodynamics.aerodynamics_fixedwing import (
+    FuselageParasiticDrag,
+    MaxLiftToDrag,
+    ParasiticDragConstraint,
+    TailParasiticDrag,
+    WingParasiticDrag,
+)
 from fastuav.utils.uncertainty import (
     add_subsystem_with_deviation,
 )
-from fastuav.models.aerodynamics.aerodynamics_fixedwing import (
-    WingParasiticDrag,
-    TailParasiticDrag,
-    FuselageParasiticDrag,
-    ParasiticDragConstraint,
-    MaxLiftToDrag,
-)
-from fastuav.constants import MR_PROPULSION
 
 
 class StoppedPropellersAerodynamicsModel:
@@ -47,9 +48,7 @@ class Aerodynamics(om.Group):
     def setup(self):
 
         # Parasitic drag calculations
-        parasitic_drag = self.add_subsystem(
-            "parasitic_drag", om.Group(), promotes=["*"]
-        )
+        parasitic_drag = self.add_subsystem("parasitic_drag", om.Group(), promotes=["*"])
         parasitic_drag.add_subsystem("wing", WingParasiticDrag(), promotes=["*"])
         parasitic_drag.add_subsystem(
             "horizontal_tail", TailParasiticDrag(tail="horizontal"), promotes=["*"]
@@ -57,9 +56,7 @@ class Aerodynamics(om.Group):
         parasitic_drag.add_subsystem(
             "vertical_tail", TailParasiticDrag(tail="vertical"), promotes=["*"]
         )
-        parasitic_drag.add_subsystem(
-            "fuselage", FuselageParasiticDrag(), promotes=["*"]
-        )
+        parasitic_drag.add_subsystem("fuselage", FuselageParasiticDrag(), promotes=["*"])
         parasitic_drag.add_subsystem(
             "stopped_propellers", StoppedPropellersParasiticDrag(), promotes=["*"]
         )
@@ -69,9 +66,7 @@ class Aerodynamics(om.Group):
             ParasiticDrag(),
             uncertain_outputs={"data:aerodynamics:CD0": None},
         )
-        parasitic_drag.add_subsystem(
-            "constraint", ParasiticDragConstraint(), promotes=["*"]
-        )
+        parasitic_drag.add_subsystem("constraint", ParasiticDragConstraint(), promotes=["*"])
 
         # Lift to drag
         self.add_subsystem("lift_to_drag", MaxLiftToDrag(), promotes=["*"])
@@ -83,9 +78,7 @@ class ParasiticDrag(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:aerodynamics:CD0:stopped_propellers", val=np.nan, units=None
-        )
+        self.add_input("data:aerodynamics:CD0:stopped_propellers", val=np.nan, units=None)
         self.add_input("data:aerodynamics:CD0:wing", val=np.nan, units=None)
         self.add_input("data:aerodynamics:CD0:tail:horizontal", val=np.nan, units=None)
         self.add_input("data:aerodynamics:CD0:tail:vertical", val=np.nan, units=None)
@@ -112,9 +105,7 @@ class StoppedPropellersParasiticDrag(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
@@ -129,9 +120,7 @@ class StoppedPropellersParasiticDrag(om.ExplicitComponent):
             units="m",
         )
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
-        self.add_output(
-            "data:aerodynamics:CD0:stopped_propellers", units=None, lower=0.0
-        )
+        self.add_output("data:aerodynamics:CD0:stopped_propellers", units=None, lower=0.0)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -148,9 +137,8 @@ class StoppedPropellersParasiticDrag(om.ExplicitComponent):
         S_pro = N_pro * np.pi * (D_pro / 2) ** 2
 
         # Parasitic drag coefficient
-        CD_0_pro = (
-            StoppedPropellersAerodynamicsModel.stopped_propeller_drag_coefficient(alpha)
-            * (S_pro / S_ref)
+        CD_0_pro = StoppedPropellersAerodynamicsModel.stopped_propeller_drag_coefficient(alpha) * (
+            S_pro / S_ref
         )
 
         outputs["data:aerodynamics:CD0:stopped_propellers"] = CD_0_pro

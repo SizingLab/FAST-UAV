@@ -2,8 +2,8 @@
 Motor performance analysis
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class MotorPerformanceModel:
@@ -50,14 +50,10 @@ class MotorPerformanceGroup(om.Group):
     """
 
     def setup(self):
-        self.add_subsystem(
-            "takeoff", MotorPerformance(scenario="takeoff"), promotes=["*"]
-        )
+        self.add_subsystem("takeoff", MotorPerformance(scenario="takeoff"), promotes=["*"])
         self.add_subsystem("hover", MotorPerformance(scenario="hover"), promotes=["*"])
         self.add_subsystem("climb", MotorPerformance(scenario="climb"), promotes=["*"])
-        self.add_subsystem(
-            "cruise", MotorPerformance(scenario="cruise"), promotes=["*"]
-        )
+        self.add_subsystem("cruise", MotorPerformance(scenario="cruise"), promotes=["*"])
 
 
 class MotorPerformance(om.Group):
@@ -77,9 +73,7 @@ class MotorPerformance(om.Group):
         self.add_subsystem("current", MotorCurrent(scenario=scenario), promotes=["*"])
         self.add_subsystem("voltage", MotorVoltage(scenario=scenario), promotes=["*"])
         self.add_subsystem("power", MotorPower(scenario=scenario), promotes=["*"])
-        self.add_subsystem(
-            "efficiency", MotorEfficiency(scenario=scenario), promotes=["*"]
-        )
+        self.add_subsystem("efficiency", MotorEfficiency(scenario=scenario), promotes=["*"])
 
 
 class MotorTorque(om.ExplicitComponent):
@@ -95,9 +89,7 @@ class MotorTorque(om.ExplicitComponent):
     def setup(self):
         scenario = self.options["scenario"]
         self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
-        self.add_input(
-            "data:propulsion:propeller:torque:%s" % scenario, val=np.nan, units="N*m"
-        )
+        self.add_input("data:propulsion:propeller:torque:%s" % scenario, val=np.nan, units="N*m")
         self.add_output("data:propulsion:motor:torque:%s" % scenario, units="N*m")
 
     def setup_partials(self):
@@ -108,9 +100,7 @@ class MotorTorque(om.ExplicitComponent):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         Q_pro = inputs["data:propulsion:propeller:torque:%s" % scenario]
 
-        T_mot = MotorPerformanceModel.torque(
-            Q_pro, N_red
-        )  # [N.m] motor torque with reduction
+        T_mot = MotorPerformanceModel.torque(Q_pro, N_red)  # [N.m] motor torque with reduction
 
         outputs["data:propulsion:motor:torque:%s" % scenario] = T_mot
 
@@ -143,9 +133,7 @@ class MotorSpeed(om.ExplicitComponent):
     def setup(self):
         scenario = self.options["scenario"]
         self.add_input("data:propulsion:gearbox:N_red", val=1.0, units=None)
-        self.add_input(
-            "data:propulsion:propeller:speed:%s" % scenario, val=np.nan, units="rad/s"
-        )
+        self.add_input("data:propulsion:propeller:speed:%s" % scenario, val=np.nan, units="rad/s")
         self.add_output("data:propulsion:motor:speed:%s" % scenario, units="rad/s")
 
     def setup_partials(self):
@@ -156,9 +144,7 @@ class MotorSpeed(om.ExplicitComponent):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         W_pro = inputs["data:propulsion:propeller:speed:%s" % scenario]
 
-        W_mot = MotorPerformanceModel.speed(
-            W_pro, N_red
-        )  # [rad/s] Motor speed with reduction
+        W_mot = MotorPerformanceModel.speed(W_pro, N_red)  # [rad/s] Motor speed with reduction
 
         outputs["data:propulsion:motor:speed:%s" % scenario] = W_mot
 
@@ -167,9 +153,9 @@ class MotorSpeed(om.ExplicitComponent):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         W_pro = inputs["data:propulsion:propeller:speed:%s" % scenario]
 
-        partials[
-            "data:propulsion:motor:speed:%s" % scenario, "data:propulsion:gearbox:N_red"
-        ] = W_pro
+        partials["data:propulsion:motor:speed:%s" % scenario, "data:propulsion:gearbox:N_red"] = (
+            W_pro
+        )
 
         partials[
             "data:propulsion:motor:speed:%s" % scenario,
@@ -189,13 +175,9 @@ class MotorCurrent(om.ExplicitComponent):
 
     def setup(self):
         scenario = self.options["scenario"]
-        self.add_input(
-            "data:propulsion:motor:torque:%s" % scenario, val=np.nan, units="N*m"
-        )
+        self.add_input("data:propulsion:motor:torque:%s" % scenario, val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:friction", val=np.nan, units="N*m")
-        self.add_input(
-            "data:propulsion:motor:speed:constant", val=np.nan, units="rad/V/s"
-        )
+        self.add_input("data:propulsion:motor:speed:constant", val=np.nan, units="rad/V/s")
         self.add_output("data:propulsion:motor:current:%s" % scenario, units="A")
 
     def setup_partials(self):
@@ -207,9 +189,7 @@ class MotorCurrent(om.ExplicitComponent):
         Tf_mot = inputs["data:propulsion:motor:torque:friction"]
         Kv = inputs["data:propulsion:motor:speed:constant"]
 
-        I_mot = MotorPerformanceModel.current(
-            T_mot, Tf_mot, Kv
-        )  # [I] Current of the motor
+        I_mot = MotorPerformanceModel.current(T_mot, Tf_mot, Kv)  # [I] Current of the motor
 
         outputs["data:propulsion:motor:current:%s" % scenario] = I_mot
 
@@ -248,15 +228,9 @@ class MotorVoltage(om.ExplicitComponent):
     def setup(self):
         scenario = self.options["scenario"]
         self.add_input("data:propulsion:motor:resistance", val=np.nan, units="V/A")
-        self.add_input(
-            "data:propulsion:motor:speed:constant", val=np.nan, units="rad/V/s"
-        )
-        self.add_input(
-            "data:propulsion:motor:speed:%s" % scenario, val=np.nan, units="rad/s"
-        )
-        self.add_input(
-            "data:propulsion:motor:current:%s" % scenario, val=np.nan, units="A"
-        )
+        self.add_input("data:propulsion:motor:speed:constant", val=np.nan, units="rad/V/s")
+        self.add_input("data:propulsion:motor:speed:%s" % scenario, val=np.nan, units="rad/s")
+        self.add_input("data:propulsion:motor:current:%s" % scenario, val=np.nan, units="A")
         self.add_output("data:propulsion:motor:voltage:%s" % scenario, units="V")
 
     def setup_partials(self):
@@ -269,9 +243,7 @@ class MotorVoltage(om.ExplicitComponent):
         W_mot = inputs["data:propulsion:motor:speed:%s" % scenario]
         I_mot = inputs["data:propulsion:motor:current:%s" % scenario]
 
-        U_mot = MotorPerformanceModel.voltage(
-            I_mot, W_mot, R, Kv
-        )  # [V] Voltage of the motor
+        U_mot = MotorPerformanceModel.voltage(I_mot, W_mot, R, Kv)  # [V] Voltage of the motor
 
         outputs["data:propulsion:motor:voltage:%s" % scenario] = U_mot
 
@@ -315,12 +287,8 @@ class MotorPower(om.ExplicitComponent):
 
     def setup(self):
         scenario = self.options["scenario"]
-        self.add_input(
-            "data:propulsion:motor:voltage:%s" % scenario, val=np.nan, units="V"
-        )
-        self.add_input(
-            "data:propulsion:motor:current:%s" % scenario, val=np.nan, units="A"
-        )
+        self.add_input("data:propulsion:motor:voltage:%s" % scenario, val=np.nan, units="V")
+        self.add_input("data:propulsion:motor:current:%s" % scenario, val=np.nan, units="A")
         self.add_output("data:propulsion:motor:power:%s" % scenario, units="W")
 
     def setup_partials(self):
@@ -363,18 +331,10 @@ class MotorEfficiency(om.ExplicitComponent):
 
     def setup(self):
         scenario = self.options["scenario"]
-        self.add_input(
-            "data:propulsion:motor:voltage:%s" % scenario, val=np.nan, units="V"
-        )
-        self.add_input(
-            "data:propulsion:motor:current:%s" % scenario, val=np.nan, units="A"
-        )
-        self.add_input(
-            "data:propulsion:motor:torque:%s" % scenario, val=np.nan, units="N*m"
-        )
-        self.add_input(
-            "data:propulsion:motor:speed:%s" % scenario, val=np.nan, units="rad/s"
-        )
+        self.add_input("data:propulsion:motor:voltage:%s" % scenario, val=np.nan, units="V")
+        self.add_input("data:propulsion:motor:current:%s" % scenario, val=np.nan, units="A")
+        self.add_input("data:propulsion:motor:torque:%s" % scenario, val=np.nan, units="N*m")
+        self.add_input("data:propulsion:motor:speed:%s" % scenario, val=np.nan, units="rad/s")
         self.add_output("data:propulsion:motor:efficiency:%s" % scenario, units=None)
 
     def setup_partials(self):
@@ -387,9 +347,7 @@ class MotorEfficiency(om.ExplicitComponent):
         T_mot = inputs["data:propulsion:motor:torque:%s" % scenario]
         W_mot = inputs["data:propulsion:motor:speed:%s" % scenario]
 
-        eta_mot = MotorPerformanceModel.efficiency(
-            U_mot, I_mot, T_mot, W_mot
-        )  # [-] efficiency
+        eta_mot = MotorPerformanceModel.efficiency(U_mot, I_mot, T_mot, W_mot)  # [-] efficiency
 
         outputs["data:propulsion:motor:efficiency:%s" % scenario] = eta_mot
 

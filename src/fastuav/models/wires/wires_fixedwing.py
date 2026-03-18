@@ -3,6 +3,7 @@ Fixed wing wires
 """
 
 import fastoad.api as oad
+
 from fastuav.constants import FW_PROPULSION
 from fastuav.models.wires.wires import Wires
 

@@ -2,8 +2,9 @@
 Module containing the center of gravity calculations for all components, on the longitudinal axis
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 
 
@@ -13,12 +14,8 @@ class CoG_propulsion_FW(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION]
-        )
-        self.options.declare(
-            "propulsion_conf", default="tractor", values=["tractor", "pusher"]
-        )
+        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
+        self.options.declare("propulsion_conf", default="tractor", values=["tractor", "pusher"])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
@@ -98,19 +95,13 @@ class CoG_propulsion_MR(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
 
-        self.add_input(
-            "data:geometry:%s:propeller:x:front" % propulsion_id, val=np.nan, units="m"
-        )
-        self.add_input(
-            "data:geometry:%s:propeller:x:rear" % propulsion_id, val=np.nan, units="m"
-        )
+        self.add_input("data:geometry:%s:propeller:x:front" % propulsion_id, val=np.nan, units="m")
+        self.add_input("data:geometry:%s:propeller:x:rear" % propulsion_id, val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:LE:x", val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:TE:x", val=np.nan, units="m")
         self.add_input(

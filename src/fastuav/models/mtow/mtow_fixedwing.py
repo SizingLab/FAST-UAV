@@ -3,6 +3,7 @@ MTOW for fixed wing UAVs
 """
 
 import fastoad.api as oad
+
 from fastuav.constants import FW_PROPULSION
 from fastuav.models.mtow.mtow import MTOW
 

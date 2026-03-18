@@ -2,8 +2,10 @@
 Center of gravity for fixed wing UAVs.
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
 from fastuav.models.stability.static_longitudinal.center_of_gravity.components.cog_airframe import (
     CoG_airframe,
 )
@@ -11,7 +13,6 @@ from fastuav.models.stability.static_longitudinal.center_of_gravity.components.c
     CoG_propulsion_FW,
     CoG_propulsion_MR,
 )
-from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
 
 
 class CenterOfGravity(om.Group):
@@ -40,9 +41,7 @@ class CenterOfGravity(om.Group):
         if MR_PROPULSION in propulsion_id_list:
             self.add_subsystem("propulsion_mr", CoG_propulsion_MR(), promotes=["*"])
 
-        self.add_subsystem(
-            "UAV", CoG_UAV(propulsion_id_list=propulsion_id_list), promotes=["*"]
-        )
+        self.add_subsystem("UAV", CoG_UAV(propulsion_id_list=propulsion_id_list), promotes=["*"])
 
 
 class CoG_UAV(om.ExplicitComponent):
@@ -71,9 +70,7 @@ class CoG_UAV(om.ExplicitComponent):
                 val=np.nan,
                 units="m",
             )
-            self.add_input(
-                "data:weight:propulsion:%s" % propulsion_id, val=np.nan, units="kg"
-            )
+            self.add_input("data:weight:propulsion:%s" % propulsion_id, val=np.nan, units="kg")
 
         self.add_output("data:stability:CoG", units="m")
 

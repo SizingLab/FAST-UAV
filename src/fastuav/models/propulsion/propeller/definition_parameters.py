@@ -2,8 +2,9 @@
 Definition parameters for the propeller.
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
@@ -44,12 +45,8 @@ class TakeOffSpeed(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "models:propulsion:propeller:ND:max:reference", val=np.nan, units="m/s"
-        )
-        self.add_input(
-            "optimization:variables:propulsion:propeller:ND:k", val=np.nan, units=None
-        )
+        self.add_input("models:propulsion:propeller:ND:max:reference", val=np.nan, units="m/s")
+        self.add_input("optimization:variables:propulsion:propeller:ND:k", val=np.nan, units=None)
         self.add_output("data:propulsion:propeller:ND:takeoff", units="m/s")
 
     def setup_partials(self):
@@ -86,9 +83,7 @@ class Beta(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "optimization:variables:propulsion:propeller:beta", val=np.nan, units=None
-        )
+        self.add_input("optimization:variables:propulsion:propeller:beta", val=np.nan, units=None)
         self.add_output("data:propulsion:propeller:beta:estimated", units=None)
 
     def setup_partials(self):

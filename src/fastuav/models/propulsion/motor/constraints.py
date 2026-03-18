@@ -2,8 +2,8 @@
 Motor constraints
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class MotorConstraints(om.ExplicitComponent):
@@ -18,30 +18,14 @@ class MotorConstraints(om.ExplicitComponent):
         self.add_input("data:propulsion:motor:torque:hover", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:climb", val=np.nan, units="N*m")
         self.add_input("data:propulsion:motor:torque:cruise", val=np.nan, units="N*m")
-        self.add_input(
-            "data:propulsion:motor:speed:constant", val=np.nan, units="rad/V/s"
-        )
-        self.add_input(
-            "models:propulsion:motor:speed:constant:tol", val=0.0, units="percent"
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:motor:torque:takeoff", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:motor:torque:climb", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:motor:torque:hover", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:motor:torque:cruise", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:motor:speed:constant:min", units=None
-        )
-        self.add_output(
-            "optimization:constraints:propulsion:motor:speed:constant:max", units=None
-        )
+        self.add_input("data:propulsion:motor:speed:constant", val=np.nan, units="rad/V/s")
+        self.add_input("models:propulsion:motor:speed:constant:tol", val=0.0, units="percent")
+        self.add_output("optimization:constraints:propulsion:motor:torque:takeoff", units=None)
+        self.add_output("optimization:constraints:propulsion:motor:torque:climb", units=None)
+        self.add_output("optimization:constraints:propulsion:motor:torque:hover", units=None)
+        self.add_output("optimization:constraints:propulsion:motor:torque:cruise", units=None)
+        self.add_output("optimization:constraints:propulsion:motor:speed:constant:min", units=None)
+        self.add_output("optimization:constraints:propulsion:motor:speed:constant:max", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -68,7 +52,9 @@ class MotorConstraints(om.ExplicitComponent):
 
         # Speed constant versus max torque : tolerance intervals
         Kv_hat = 51.52 * T_mot_max ** (-0.43)  # speed constant vs torque regression
-        eps_low = -2.21  # 1st percentile on relative regression error (i.e., 99% of data are above this value)
+        eps_low = (
+            -2.21
+        )  # 1st percentile on relative regression error (i.e., 99% of data are above this value)
         eps_up = 0.65  # 99th percentile on relative regression error (i.e., 99% of data are below this value)
         Kv_min = Kv_hat / (1 - k * eps_low)  # minimum bound for Kv
         Kv_max = Kv_hat / (1 - k * eps_up)  # maximum bound for Kv
@@ -79,12 +65,8 @@ class MotorConstraints(om.ExplicitComponent):
         outputs["optimization:constraints:propulsion:motor:torque:climb"] = motor_con2
         outputs["optimization:constraints:propulsion:motor:torque:hover"] = motor_con3
         outputs["optimization:constraints:propulsion:motor:torque:cruise"] = motor_con4
-        outputs["optimization:constraints:propulsion:motor:speed:constant:min"] = (
-            motor_con5
-        )
-        outputs["optimization:constraints:propulsion:motor:speed:constant:max"] = (
-            motor_con6
-        )
+        outputs["optimization:constraints:propulsion:motor:speed:constant:min"] = motor_con5
+        outputs["optimization:constraints:propulsion:motor:speed:constant:max"] = motor_con6
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         T_mot_max = inputs["data:propulsion:motor:torque:max"]
@@ -97,7 +79,9 @@ class MotorConstraints(om.ExplicitComponent):
         k = 1 + inputs["models:propulsion:motor:speed:constant:tol"] / 100
 
         Kv_hat = 51.52 * T_mot_max ** (-0.43)  # speed constant vs torque regression
-        eps_low = -2.21  # 1st percentile on relative regression error (i.e., 99% of data are above this value)
+        eps_low = (
+            -2.21
+        )  # 1st percentile on relative regression error (i.e., 99% of data are above this value)
         eps_up = 0.65  # 99th percentile on relative regression error (i.e., 99% of data are below this value)
         Kv_min = Kv_hat / (1 - k * eps_low)  # minimum bound for Kv
         Kv_max = Kv_hat / (1 - k * eps_up)  # maximum bound for Kv

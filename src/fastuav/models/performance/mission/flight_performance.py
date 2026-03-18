@@ -6,22 +6,23 @@ based on the individual models defined in each discipline.
 from scipy.constants import g
 from scipy.optimize import brentq, newton
 from stdatm import AtmosphereSI
-from fastuav.models.scenarios.thrust.flight_models import (
-    MultirotorFlightModel,
-    FixedwingFlightModel,
-)
+
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.models.propulsion.energy.battery.performance_analysis import (
     BatteryPerformanceModel,
+)
+from fastuav.models.propulsion.esc.performance_analysis import ESCPerformanceModel
+from fastuav.models.propulsion.motor.performance_analysis import MotorPerformanceModel
+from fastuav.models.propulsion.propeller.aerodynamics.surrogate_models import (
+    PropellerAerodynamicsModel,
 )
 from fastuav.models.propulsion.propeller.performance_analysis import (
     PropellerPerformanceModel,
 )
-from fastuav.models.propulsion.propeller.aerodynamics.surrogate_models import (
-    PropellerAerodynamicsModel,
+from fastuav.models.scenarios.thrust.flight_models import (
+    FixedwingFlightModel,
+    MultirotorFlightModel,
 )
-from fastuav.models.propulsion.motor.performance_analysis import MotorPerformanceModel
-from fastuav.models.propulsion.esc.performance_analysis import ESCPerformanceModel
-from fastuav.constants import MR_PROPULSION, FW_PROPULSION
 
 
 class FlightPerformanceModel:
@@ -154,22 +155,18 @@ class FlightPerformanceModel:
                     and self.mr_area_top is not None
                     and self.mr_parasitic_drag_coef is not None
                 ):
-                    self._propeller_angle_of_attack = (
-                        MultirotorFlightModel.get_angle_of_attack(
-                            self.uav_mass,
-                            self.airspeed,
-                            self.climb_rate,
-                            self.mr_area_front,
-                            self.mr_area_top,
-                            self.mr_parasitic_drag_coef,
-                            self.mr_lift_coef,
-                            self.air_density,
-                        )
+                    self._propeller_angle_of_attack = MultirotorFlightModel.get_angle_of_attack(
+                        self.uav_mass,
+                        self.airspeed,
+                        self.climb_rate,
+                        self.mr_area_front,
+                        self.mr_area_top,
+                        self.mr_parasitic_drag_coef,
+                        self.mr_lift_coef,
+                        self.air_density,
                     )
             elif self.uav_model == FW_PROPULSION:
-                self._propeller_angle_of_attack = (
-                    FixedwingFlightModel.get_angle_of_attack()
-                )
+                self._propeller_angle_of_attack = FixedwingFlightModel.get_angle_of_attack()
         return self._propeller_angle_of_attack
 
     @property
@@ -235,9 +232,7 @@ class FlightPerformanceModel:
     def motor_power(self) -> float:
         """Motor power in W."""
         if self._motor_power is None:
-            self._motor_power = MotorPerformanceModel.power(
-                self.motor_voltage, self.motor_current
-            )
+            self._motor_power = MotorPerformanceModel.power(self.motor_voltage, self.motor_current)
         return self._motor_power
 
     @property
@@ -256,14 +251,12 @@ class FlightPerformanceModel:
         ):
 
             def func(x):
-                propeller_ct, _ = (
-                    PropellerAerodynamicsModel.aero_coefficients_incidence(
-                        self.propeller_beta,
-                        x,
-                        self.propeller_angle_of_attack,
-                        ct_model=self.propeller_ct_model,
-                        cp_model=self.propeller_cp_model,
-                    )
+                propeller_ct, _ = PropellerAerodynamicsModel.aero_coefficients_incidence(
+                    self.propeller_beta,
+                    x,
+                    self.propeller_angle_of_attack,
+                    ct_model=self.propeller_ct_model,
+                    cp_model=self.propeller_cp_model,
                 )
                 # res = x - self.airspeed * np.sqrt(
                 #    self.air_density * self.propeller_diameter ** 2 * propeller_ct / self.thrust_per_propeller)
@@ -291,14 +284,12 @@ class FlightPerformanceModel:
     def propeller_ct(self) -> float:
         """Thrust coefficient of the propeller, under the given flight conditions."""
         if self._propeller_ct is None and self.propeller_beta is not None:
-            self._propeller_ct, _ = (
-                PropellerAerodynamicsModel.aero_coefficients_incidence(
-                    self.propeller_beta,
-                    self.advance_ratio,
-                    self.propeller_angle_of_attack,
-                    ct_model=self.propeller_ct_model,
-                    cp_model=self.propeller_cp_model,
-                )
+            self._propeller_ct, _ = PropellerAerodynamicsModel.aero_coefficients_incidence(
+                self.propeller_beta,
+                self.advance_ratio,
+                self.propeller_angle_of_attack,
+                ct_model=self.propeller_ct_model,
+                cp_model=self.propeller_cp_model,
             )
         return self._propeller_ct
 
@@ -306,14 +297,12 @@ class FlightPerformanceModel:
     def propeller_cp(self) -> float:
         """Power coefficient of the propeller, under the given flight conditions."""
         if self._propeller_cp is None and self.propeller_beta is not None:
-            _, self._propeller_cp = (
-                PropellerAerodynamicsModel.aero_coefficients_incidence(
-                    self.propeller_beta,
-                    self.advance_ratio,
-                    self.propeller_angle_of_attack,
-                    ct_model=self.propeller_ct_model,
-                    cp_model=self.propeller_cp_model,
-                )
+            _, self._propeller_cp = PropellerAerodynamicsModel.aero_coefficients_incidence(
+                self.propeller_beta,
+                self.advance_ratio,
+                self.propeller_angle_of_attack,
+                ct_model=self.propeller_ct_model,
+                cp_model=self.propeller_cp_model,
             )
         return self._propeller_cp
 

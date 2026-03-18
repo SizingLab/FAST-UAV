@@ -2,8 +2,8 @@
 Estimation models for the Wing Structures and Weights
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 from scipy.constants import g
 
 
@@ -78,13 +78,9 @@ class WingStructuresEstimationModels:
         :return N_ribs: Number of ribs [-]
         """
         N_ribs = 2 * L / c_MAC  # np.ceil(2 * L / c_MAC)  # number of ribs for wing [-]
-        S_rib_root = (
-            c_root * t_root
-        )  # surface of the rib at wing root (approximation) [m2]
+        S_rib_root = c_root * t_root  # surface of the rib at wing root (approximation) [m2]
         S_rib_tip = c_tip * t_tip  # surface of the rib at wing tip (approximation) [m2]
-        m_ribs = (
-            N_ribs * rho_rib * t_rib * (S_rib_root + S_rib_tip) / 2
-        )  # mass of ribs [kg]
+        m_ribs = N_ribs * rho_rib * t_rib * (S_rib_root + S_rib_tip) / 2  # mass of ribs [kg]
         return m_ribs, N_ribs
 
     @staticmethod
@@ -131,17 +127,11 @@ class Spars(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("mission:sizing:load_factor:ultimate", val=3.0, units=None)
-        self.add_input(
-            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
-        )
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:y", val=np.nan, units="m")
-        self.add_input(
-            "data:structures:wing:spar:stress:max", val=np.nan, units="N/m**2"
-        )
-        self.add_input(
-            "data:weight:airframe:wing:spar:density", val=np.nan, units="kg/m**3"
-        )
+        self.add_input("data:structures:wing:spar:stress:max", val=np.nan, units="N/m**2")
+        self.add_input("data:weight:airframe:wing:spar:density", val=np.nan, units="kg/m**3")
         self.add_output("data:weight:airframe:wing:spar:mass", units="kg", lower=0.0)
 
         if self.options["spar_model"] == "pipe":
@@ -155,12 +145,8 @@ class Spars(om.ExplicitComponent):
                 val=1.0,
                 units=None,
             )
-            self.add_output(
-                "data:structures:wing:spar:diameter:inner", units="m", lower=0.0
-            )
-            self.add_output(
-                "data:structures:wing:spar:diameter:outer", units="m", lower=0.0
-            )
+            self.add_output("data:structures:wing:spar:diameter:inner", units="m", lower=0.0)
+            self.add_output("data:structures:wing:spar:diameter:outer", units="m", lower=0.0)
 
         elif self.options["spar_model"] == "I_beam":
             self.add_input(
@@ -174,15 +160,9 @@ class Spars(om.ExplicitComponent):
                 units=None,
             )
             self.add_output("data:structures:wing:spar:web:depth", units="m", lower=0.0)
-            self.add_output(
-                "data:structures:wing:spar:web:thickness", units="m", lower=0.0
-            )
-            self.add_output(
-                "data:structures:wing:spar:flange:depth", units="m", lower=0.0
-            )
-            self.add_output(
-                "data:structures:wing:spar:flange:thickness", units="m", lower=0.0
-            )
+            self.add_output("data:structures:wing:spar:web:thickness", units="m", lower=0.0)
+            self.add_output("data:structures:wing:spar:flange:depth", units="m", lower=0.0)
+            self.add_output("data:structures:wing:spar:flange:thickness", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:depth", units="m", lower=0.0)
 
     def setup_partials(self):
@@ -208,9 +188,7 @@ class Spars(om.ExplicitComponent):
             # under-sizing coef. [-] on spar outer diameter (1.0 for FW (monotonicity eq.)/ des. var. for Hybrid):
             k_d = inputs["optimization:variables:structures:wing:spar:diameter:outer:k"]
             # Outer diameter calculation [m]:
-            d_out = k_d * ((32 * M_root) / (np.pi * (1 - k_spar**4) * sig_max)) ** (
-                1 / 3
-            )
+            d_out = k_d * ((32 * M_root) / (np.pi * (1 - k_spar**4) * sig_max)) ** (1 / 3)
             # Mass and inner diameter calculations:
             m_spar, d_in = WingStructuresEstimationModels.spar_pipe(
                 d_out, k_spar, b_w / 2, rho_spar
@@ -227,15 +205,11 @@ class Spars(om.ExplicitComponent):
             k_flange = 0.1
             # web depth calculation [m]:
             h_web = k_h * (
-                M_root
-                * (1 + k_spar)
-                / (sig_max * k_spar**2 * (1 + k_spar**2 / 3) / k_flange)
+                M_root * (1 + k_spar) / (sig_max * k_spar**2 * (1 + k_spar**2 / 3) / k_flange)
             ) ** (1 / 3)
             # Mass and secondary geometry calculations:
-            m_spar, t_web, a_flange, b_flange = (
-                WingStructuresEstimationModels.spar_i_beam(
-                    h_web, k_spar, b_w / 2, rho_spar, k_flange=k_flange
-                )
+            m_spar, t_web, a_flange, b_flange = WingStructuresEstimationModels.spar_i_beam(
+                h_web, k_spar, b_w / 2, rho_spar, k_flange=k_flange
             )
             outputs["data:structures:wing:spar:web:depth"] = h_web
             outputs["data:structures:wing:spar:web:thickness"] = t_web
@@ -259,9 +233,7 @@ class Ribs(om.ExplicitComponent):
         self.add_input("data:geometry:wing:root:thickness", val=np.nan, units="m")
         self.add_input("data:geometry:wing:tip:thickness", val=np.nan, units="m")
         self.add_input("data:structures:wing:ribs:thickness", val=np.nan, units="m")
-        self.add_input(
-            "data:weight:airframe:wing:ribs:density", val=np.nan, units="kg/m**3"
-        )
+        self.add_input("data:weight:airframe:wing:ribs:density", val=np.nan, units="kg/m**3")
         self.add_output("data:weight:airframe:wing:ribs:mass", units="kg", lower=0.0)
         self.add_output("data:structures:wing:ribs:number", units=None, lower=0.0)
 
@@ -295,9 +267,7 @@ class Skin(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
-        self.add_input(
-            "data:weight:airframe:wing:skin:density", val=np.nan, units="kg/m**2"
-        )
+        self.add_input("data:weight:airframe:wing:skin:density", val=np.nan, units="kg/m**2")
         self.add_output("data:weight:airframe:wing:skin:mass", units="kg", lower=0.0)
 
     def setup_partials(self):

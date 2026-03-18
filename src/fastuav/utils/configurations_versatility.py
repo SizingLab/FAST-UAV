@@ -2,10 +2,11 @@
 Methods to ensure the OpenMDAO components' versatility for both fixed wing and multirotor configurations.
 """
 
-import openmdao.api as om
 import re
-from typing import List
 import warnings
+from typing import List
+
+import openmdao.api as om
 
 
 def promote_and_rename(
@@ -52,15 +53,11 @@ def promote_and_rename(
     #  (here '*uncertainty:*:mean' are non-promoted variables but still visible so have to be excluded by hand)
     var_in_names = [
         var[0].split(".")[-1]
-        for var in subsys.list_inputs(
-            val=False, out_stream=None, excludes=["*uncertainty:*:mean"]
-        )
+        for var in subsys.list_inputs(val=False, out_stream=None, excludes=["*uncertainty:*:mean"])
     ]
     var_out_names = [
         var[0].split(".")[-1]
-        for var in subsys.list_outputs(
-            val=False, out_stream=None, excludes=["*uncertainty:*:mean"]
-        )
+        for var in subsys.list_outputs(val=False, out_stream=None, excludes=["*uncertainty:*:mean"])
     ]
 
     # Keep only unique values
@@ -71,27 +68,17 @@ def promote_and_rename(
     var_in_names_new = var_in_names
     var_out_names_new = var_out_names
     for old_pattern, new_pattern in zip(old_patterns_list, new_patterns_list):
-        var_in_names_new = [
-            re.sub(old_pattern, new_pattern, name) for name in var_in_names_new
-        ]
-        var_out_names_new = [
-            re.sub(old_pattern, new_pattern, name) for name in var_out_names_new
-        ]
+        var_in_names_new = [re.sub(old_pattern, new_pattern, name) for name in var_in_names_new]
+        var_out_names_new = [re.sub(old_pattern, new_pattern, name) for name in var_out_names_new]
 
     # Promote variables with new name
     inputs = (
-        [
-            (old_name, new_name)
-            for old_name, new_name in zip(var_in_names, var_in_names_new)
-        ]
+        [(old_name, new_name) for old_name, new_name in zip(var_in_names, var_in_names_new)]
         if rename_inputs
         else var_in_names
     )
     outputs = (
-        [
-            (old_name, new_name)
-            for old_name, new_name in zip(var_out_names, var_out_names_new)
-        ]
+        [(old_name, new_name) for old_name, new_name in zip(var_out_names, var_out_names_new)]
         if rename_outputs
         else var_out_names
     )

@@ -3,8 +3,8 @@ Plots for showing convergence of the design of experiments with increasing numbe
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FixedLocator, PercentFormatter
 import numpy as np
+from matplotlib.ticker import FixedLocator, PercentFormatter
 
 
 def saltelli_eval(x, d, second_order):
@@ -82,18 +82,14 @@ def mean_convergence(n_array, mu_array, d, second_order: bool = True):
     ax.set_ylabel("Mean")
     ax.xaxis.set_major_locator(
         FixedLocator(
-            np.logspace(
-                np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)
-            )
+            np.logspace(np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array))
         )
     )
     ax.tick_params(axis="x", labelrotation=-30)
     secax.xaxis.set_major_locator(
         FixedLocator(
             saltelli_eval(
-                np.logspace(
-                    np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)
-                ),
+                np.logspace(np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)),
                 d,
                 second_order,
             )
@@ -139,18 +135,14 @@ def std_convergence(n_array, std_array, d, second_order: bool = True):
     ax.set_ylabel("Standard deviation")
     ax.xaxis.set_major_locator(
         FixedLocator(
-            np.logspace(
-                np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)
-            )
+            np.logspace(np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array))
         )
     )
     ax.tick_params(axis="x", labelrotation=-30)
     secax.xaxis.set_major_locator(
         FixedLocator(
             saltelli_eval(
-                np.logspace(
-                    np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)
-                ),
+                np.logspace(np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)),
                 d,
                 second_order,
             )
@@ -162,9 +154,7 @@ def std_convergence(n_array, std_array, d, second_order: bool = True):
     return fig, ax
 
 
-def sobol_index_convergence(
-    n_array, ST_array, ST_conf_array, d, second_order: bool = True
-):
+def sobol_index_convergence(n_array, ST_array, ST_conf_array, d, second_order: bool = True):
     """
     Create a plot for showing convergence of Sobol total-order index for a given variable.
 
@@ -208,18 +198,14 @@ def sobol_index_convergence(
     ax.set_ylabel("Total-order index (-)")
     ax.xaxis.set_major_locator(
         FixedLocator(
-            np.logspace(
-                np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)
-            )
+            np.logspace(np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array))
         )
     )
     ax.tick_params(axis="x", labelrotation=-30)
     secax.xaxis.set_major_locator(
         FixedLocator(
             saltelli_eval(
-                np.logspace(
-                    np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)
-                ),
+                np.logspace(np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)),
                 d,
                 second_order,
             )
@@ -287,18 +273,14 @@ def sobol_index_error(n_array, ST_array, ST_conf_array, d, second_order: bool = 
     ax.set_ylabel("Margin of error (%)")
     ax.xaxis.set_major_locator(
         FixedLocator(
-            np.logspace(
-                np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)
-            )
+            np.logspace(np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array))
         )
     )
     ax.tick_params(axis="x", labelrotation=-30)
     secax.xaxis.set_major_locator(
         FixedLocator(
             saltelli_eval(
-                np.logspace(
-                    np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)
-                ),
+                np.logspace(np.log2(n_array[0]), np.log2(n_array[-1]), base=2, num=len(n_array)),
                 d,
                 second_order,
             )

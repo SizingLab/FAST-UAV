@@ -3,10 +3,10 @@ Plots for displaying the outputs of a Design of Experiments (e.g., Monte Carlo)
 """
 
 import matplotlib.pyplot as plt
-from scipy.stats import norm
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from scipy.stats import norm
 
 
 def hist_dist_plot(df_output, y):
@@ -37,9 +37,7 @@ def hist_dist_plot(df_output, y):
 
     # Plot the histogram.
     q25, q50, q75 = np.percentile(df_output[y], [25, 50, 75])
-    bin_width = (
-        2 * (q75 - q25) * len(df_output[y]) ** (-1 / 3)
-    )  # Freedman–Diaconis number of bins
+    bin_width = 2 * (q75 - q25) * len(df_output[y]) ** (-1 / 3)  # Freedman–Diaconis number of bins
     bins = round((df_output[y].max() - df_output[y].min()) / bin_width)
     n, bins, patches = axes[1].hist(
         df_output[y],
@@ -96,10 +94,7 @@ def DoE_plot(df_output_array, x, y):
     """
 
     df_concat = pd.concat(
-        [
-            df_output_array[i].assign(dataset="DoE %d" % i)
-            for i in range(len(df_output_array))
-        ]
+        [df_output_array[i].assign(dataset="DoE %d" % i) for i in range(len(df_output_array))]
     )
 
     # Plot results and distributions

@@ -2,8 +2,9 @@
 Route generator.
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.constants import (
     CLIMB_TAG,
     CRUISE_TAG,
@@ -68,9 +69,7 @@ class RouteBuilder(om.Group):
                 mission_name=mission_name,
                 route_name=route_name,
                 phases_dict=phases_dict,
-                propulsion_id_list=RouteBuilder.get_propulsion_id_list(
-                    route_definition
-                ),
+                propulsion_id_list=RouteBuilder.get_propulsion_id_list(route_definition),
             ),
             promotes=["*"],
         )
@@ -146,9 +145,7 @@ class ComputeTOW(om.ExplicitComponent):
         route_name = self.options["route_name"]
         mtow = inputs["data:weight:mtow"]
         m_pay_design = inputs["mission:sizing:payload:mass"]
-        m_pay_mission = inputs[
-            "mission:%s:%s:payload:mass" % (mission_name, route_name)
-        ]
+        m_pay_mission = inputs["mission:%s:%s:payload:mass" % (mission_name, route_name)]
 
         tow = mtow - m_pay_design + m_pay_mission
 
@@ -195,9 +192,7 @@ class RouteComponent(om.ExplicitComponent):
             )
 
         self.add_output("mission:%s:%s:energy" % (mission_name, route_name), units="kJ")
-        self.add_output(
-            "mission:%s:%s:duration" % (mission_name, route_name), units="min"
-        )
+        self.add_output("mission:%s:%s:duration" % (mission_name, route_name), units="min")
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="fd")
@@ -215,25 +210,21 @@ class RouteComponent(om.ExplicitComponent):
         # Loop through propulsion systems to associate energy consumption to corresponding battery
         for propulsion_id in propulsion_id_list:
             E_route_prop_id = sum(
-                inputs[
-                    "mission:%s:%s:%s:energy" % (mission_name, route_name, phase_name)
-                ]
+                inputs["mission:%s:%s:%s:energy" % (mission_name, route_name, phase_name)]
                 for phase_name in phases_dict
                 if phases_dict[phase_name] == propulsion_id
             )
             t_route_prop_id = sum(
-                inputs[
-                    "mission:%s:%s:%s:duration" % (mission_name, route_name, phase_name)
-                ]
+                inputs["mission:%s:%s:%s:duration" % (mission_name, route_name, phase_name)]
                 for phase_name in phases_dict
                 if phases_dict[phase_name] == propulsion_id
             )
-            outputs[
-                "mission:%s:%s:energy:%s" % (mission_name, route_name, propulsion_id)
-            ] = E_route_prop_id
-            outputs[
-                "mission:%s:%s:duration:%s" % (mission_name, route_name, propulsion_id)
-            ] = t_route_prop_id
+            outputs["mission:%s:%s:energy:%s" % (mission_name, route_name, propulsion_id)] = (
+                E_route_prop_id
+            )
+            outputs["mission:%s:%s:duration:%s" % (mission_name, route_name, propulsion_id)] = (
+                t_route_prop_id
+            )
 
             # Add to route
             E_route += E_route_prop_id

@@ -2,8 +2,9 @@
 Definition parameters for the battery.
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
@@ -48,13 +49,9 @@ class Power(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "optimization:variables:propulsion:battery:power:k", val=1.0, units=None
-        )
+        self.add_input("optimization:variables:propulsion:battery:power:k", val=1.0, units=None)
         self.add_input("data:propulsion:motor:power:takeoff", val=np.nan, units="W")
-        self.add_input(
-            "models:propulsion:esc:efficiency:reference", val=0.95, units=None
-        )
+        self.add_input("models:propulsion:esc:efficiency:reference", val=0.95, units=None)
         self.add_input("data:propulsion:propeller:number", val=np.nan, units=None)
         self.add_input("mission:sizing:payload:power", val=np.nan, units="W")
         self.add_output("data:propulsion:battery:power:max:estimated", units="W")
@@ -86,16 +83,10 @@ class CellNumber(om.ExplicitComponent):
             val=np.nan,
             units=None,
         )
-        self.add_input(
-            "data:propulsion:battery:cell:voltage:estimated", val=3.7, units="V"
-        )
+        self.add_input("data:propulsion:battery:cell:voltage:estimated", val=3.7, units="V")
         self.add_output("data:propulsion:battery:cell:number:estimated", units=None)
-        self.add_output(
-            "data:propulsion:battery:cell:number:series:estimated", units=None
-        )
-        self.add_output(
-            "data:propulsion:battery:cell:number:parallel:estimated", units=None
-        )
+        self.add_output("data:propulsion:battery:cell:number:series:estimated", units=None)
+        self.add_output("data:propulsion:battery:cell:number:parallel:estimated", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="fd")
@@ -142,9 +133,7 @@ class Voltage(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:battery:cell:voltage:estimated", val=3.7, units="V"
-        )
+        self.add_input("data:propulsion:battery:cell:voltage:estimated", val=3.7, units="V")
         self.add_input(
             "data:propulsion:battery:cell:number:series:estimated",
             val=np.nan,
@@ -190,12 +179,8 @@ class Capacity(om.ExplicitComponent):
             val=np.nan,
             units=None,
         )
-        self.add_input(
-            "models:weight:propulsion:battery:mass:reference", val=np.nan, units="kg"
-        )
-        self.add_input(
-            "models:propulsion:battery:capacity:reference", val=np.nan, units="A*s"
-        )
+        self.add_input("models:weight:propulsion:battery:mass:reference", val=np.nan, units="kg")
+        self.add_input("models:propulsion:battery:capacity:reference", val=np.nan, units="A*s")
         self.add_output("data:propulsion:battery:capacity:estimated", units="A*s")
 
     def setup_partials(self):
@@ -221,9 +206,9 @@ class Capacity(om.ExplicitComponent):
             "data:propulsion:battery:capacity:estimated",
             "optimization:variables:propulsion:battery:capacity:k",
         ] = m_load * C_bat_ref / m_bat_ref
-        partials[
-            "data:propulsion:battery:capacity:estimated", "mission:sizing:payload:mass"
-        ] = k_mb * C_bat_ref / m_bat_ref
+        partials["data:propulsion:battery:capacity:estimated", "mission:sizing:payload:mass"] = (
+            k_mb * C_bat_ref / m_bat_ref
+        )
         partials[
             "data:propulsion:battery:capacity:estimated",
             "models:weight:propulsion:battery:mass:reference",
@@ -241,15 +226,9 @@ class Energy(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("mission:sizing:payload:mass", val=np.nan, units="kg")
-        self.add_input(
-            "optimization:variables:propulsion:battery:energy:k", val=np.nan, units=None
-        )
-        self.add_input(
-            "models:weight:propulsion:battery:mass:reference", val=np.nan, units="kg"
-        )
-        self.add_input(
-            "models:propulsion:battery:energy:reference", val=np.nan, units="kJ"
-        )
+        self.add_input("optimization:variables:propulsion:battery:energy:k", val=np.nan, units=None)
+        self.add_input("models:weight:propulsion:battery:mass:reference", val=np.nan, units="kg")
+        self.add_input("models:propulsion:battery:energy:reference", val=np.nan, units="kJ")
         self.add_output("data:propulsion:battery:energy:estimated", units="kJ")
 
     def setup_partials(self):
@@ -275,9 +254,9 @@ class Energy(om.ExplicitComponent):
             "data:propulsion:battery:energy:estimated",
             "optimization:variables:propulsion:battery:energy:k",
         ] = m_load * E_bat_ref / m_bat_ref
-        partials[
-            "data:propulsion:battery:energy:estimated", "mission:sizing:payload:mass"
-        ] = k_mb * E_bat_ref / m_bat_ref
+        partials["data:propulsion:battery:energy:estimated", "mission:sizing:payload:mass"] = (
+            k_mb * E_bat_ref / m_bat_ref
+        )
         partials[
             "data:propulsion:battery:energy:estimated",
             "models:weight:propulsion:battery:mass:reference",

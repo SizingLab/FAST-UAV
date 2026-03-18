@@ -4,13 +4,14 @@ Hybrid VTOL Structures
 
 import fastoad.api as oad
 import openmdao.api as om
-from fastuav.models.structures.wing.wing import WingStructuresHybrid
+
+from fastuav.models.structures.fuselage import FuselageStructures
+from fastuav.models.structures.structures_multirotor import ArmsWeight
 from fastuav.models.structures.tails import (
     HorizontalTailStructures,
     VerticalTailStructures,
 )
-from fastuav.models.structures.fuselage import FuselageStructures
-from fastuav.models.structures.structures_multirotor import ArmsWeight
+from fastuav.models.structures.wing.wing import WingStructuresHybrid
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.structures.hybrid")
@@ -28,9 +29,7 @@ class Structures(om.Group):
             WingStructuresHybrid(spar_model=self.options["spar_model"]),
             promotes=["*"],
         )
-        self.add_subsystem(
-            "horizontal_tail", HorizontalTailStructures(), promotes=["*"]
-        )
+        self.add_subsystem("horizontal_tail", HorizontalTailStructures(), promotes=["*"])
         self.add_subsystem("vertical_tail", VerticalTailStructures(), promotes=["*"])
         self.add_subsystem("fuselage", FuselageStructures(), promotes=["*"])
         self.add_subsystem("vtol_arms", ArmsWeight(), promotes=["*"])

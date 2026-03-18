@@ -3,12 +3,13 @@ Off-the-shelf ESC selection.
 """
 
 import os.path as pth
-import openmdao.api as om
-from fastuav.utils.catalogues.estimators import NearestNeighbor
-from fastoad.openmdao.validity_checker import ValidityDomainChecker
-import pandas as pd
-import numpy as np
 
+import numpy as np
+import openmdao.api as om
+import pandas as pd
+from fastoad.openmdao.validity_checker import ValidityDomainChecker
+
+from fastuav.utils.catalogues.estimators import NearestNeighbor
 
 PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
@@ -56,12 +57,8 @@ class ESCCatalogueSelection(om.ExplicitComponent):
         # inputs: estimated values
         self.add_input("data:propulsion:esc:power:max:estimated", val=np.nan, units="W")
         self.add_input("data:propulsion:esc:voltage:estimated", val=np.nan, units="V")
-        self.add_input(
-            "data:weight:propulsion:esc:mass:estimated", val=np.nan, units="kg"
-        )
-        self.add_input(
-            "data:propulsion:esc:efficiency:estimated", val=np.nan, units=None
-        )
+        self.add_input("data:weight:propulsion:esc:mass:estimated", val=np.nan, units="kg")
+        self.add_input("data:propulsion:esc:efficiency:estimated", val=np.nan, units=None)
         # outputs: catalogue values if off_the_shelf is True
         if self.options["off_the_shelf"]:
             self.add_output("data:propulsion:esc:power:max:catalogue", units="W")
@@ -132,9 +129,7 @@ class ESCCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:esc:power:max"] = inputs[
                 "data:propulsion:esc:power:max:estimated"
             ]
-            outputs["data:propulsion:esc:voltage"] = inputs[
-                "data:propulsion:esc:voltage:estimated"
-            ]
+            outputs["data:propulsion:esc:voltage"] = inputs["data:propulsion:esc:voltage:estimated"]
             outputs["data:weight:propulsion:esc:mass"] = inputs[
                 "data:weight:propulsion:esc:mass:estimated"
             ]

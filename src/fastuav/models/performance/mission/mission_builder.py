@@ -2,10 +2,12 @@
 Mission generator.
 """
 
-import fastoad.api as oad
-import openmdao.api as om
-import numpy as np
 from itertools import chain
+
+import fastoad.api as oad
+import numpy as np
+import openmdao.api as om
+
 from fastuav.constants import (
     MISSION_DEFINITION_TAG,
     PARTS_TAG,
@@ -31,14 +33,10 @@ class MissionBuilder(om.Group):
         file_path = self.options["file_path"]
         mission_dict = MissionDefinition(file_path)
 
-        for mission_name, mission_definition in mission_dict[
-            MISSION_DEFINITION_TAG
-        ].items():
+        for mission_name, mission_definition in mission_dict[MISSION_DEFINITION_TAG].items():
             routes_list = []  # list of routes names
             propulsion_id_dict = {}  # list of propulsion systems used to complete the mission
-            is_sizing = (
-                True if mission_name == SIZING_MISSION_TAG else False
-            )  # sizing mission flag
+            is_sizing = True if mission_name == SIZING_MISSION_TAG else False  # sizing mission flag
 
             # Create mission group
             mission_group = self.add_subsystem(mission_name, om.Group(), promotes=["*"])
@@ -104,14 +102,12 @@ class MissionComponent(om.ExplicitComponent):
         for route_name in routes_list:
             for propulsion_id in propulsion_id_dict[route_name]:
                 self.add_input(
-                    "mission:%s:%s:energy:%s"
-                    % (mission_name, route_name, propulsion_id),
+                    "mission:%s:%s:energy:%s" % (mission_name, route_name, propulsion_id),
                     val=np.nan,
                     units="kJ",
                 )
                 self.add_input(
-                    "mission:%s:%s:duration:%s"
-                    % (mission_name, route_name, propulsion_id),
+                    "mission:%s:%s:duration:%s" % (mission_name, route_name, propulsion_id),
                     val=np.nan,
                     units="min",
                 )
@@ -134,12 +130,8 @@ class MissionComponent(om.ExplicitComponent):
         for propulsion_id in list(
             set(chain(*propulsion_id_dict.values()))
         ):  # list of unique propulsion ids
-            self.add_output(
-                "mission:%s:energy:%s" % (mission_name, propulsion_id), units="kJ"
-            )
-            self.add_output(
-                "mission:%s:duration:%s" % (mission_name, propulsion_id), units="min"
-            )
+            self.add_output("mission:%s:energy:%s" % (mission_name, propulsion_id), units="kJ")
+            self.add_output("mission:%s:duration:%s" % (mission_name, propulsion_id), units="min")
         self.add_output("mission:%s:energy" % mission_name, units="kJ")
         self.add_output("mission:%s:duration" % mission_name, units="min")
         self.add_output("mission:%s:distance" % mission_name, units="m")
@@ -156,18 +148,12 @@ class MissionComponent(om.ExplicitComponent):
             set(chain(*propulsion_id_dict.values()))
         ):  # list of unique propulsion ids
             outputs["mission:%s:energy:%s" % (mission_name, propulsion_id)] = sum(
-                inputs[
-                    "mission:%s:%s:energy:%s"
-                    % (mission_name, route_name, propulsion_id)
-                ]
+                inputs["mission:%s:%s:energy:%s" % (mission_name, route_name, propulsion_id)]
                 for route_name in routes_list
                 if propulsion_id in propulsion_id_dict[route_name]
             )
             outputs["mission:%s:duration:%s" % (mission_name, propulsion_id)] = sum(
-                inputs[
-                    "mission:%s:%s:duration:%s"
-                    % (mission_name, route_name, propulsion_id)
-                ]
+                inputs["mission:%s:%s:duration:%s" % (mission_name, route_name, propulsion_id)]
                 for route_name in routes_list
                 if propulsion_id in propulsion_id_dict[route_name]
             )
@@ -208,17 +194,14 @@ class MissionConstraints(om.ExplicitComponent):
                 val=np.nan,
                 units="kJ",
             )
-            self.add_input(
-                "data:propulsion:%s:battery:energy" % propulsion_id, val=0.0, units="kJ"
-            )
+            self.add_input("data:propulsion:%s:battery:energy" % propulsion_id, val=0.0, units="kJ")
             self.add_input(
                 "data:propulsion:%s:battery:DoD:max" % propulsion_id,
                 val=0.8,
                 units=None,
             )
             self.add_output(
-                "optimization:constraints:mission:%s:energy:%s"
-                % (mission_name, propulsion_id),
+                "optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id),
                 units=None,
             )
 
@@ -235,12 +218,9 @@ class MissionConstraints(om.ExplicitComponent):
             E_mission = inputs["mission:%s:energy:%s" % (mission_name, propulsion_id)]
             E_bat = inputs["data:propulsion:%s:battery:energy" % propulsion_id]
             C_ratio = inputs["data:propulsion:%s:battery:DoD:max" % propulsion_id]
-            energy_con = (
-                (E_bat * C_ratio - E_mission) / (E_bat * C_ratio) if E_bat > 0 else -1e6
-            )
+            energy_con = (E_bat * C_ratio - E_mission) / (E_bat * C_ratio) if E_bat > 0 else -1e6
             outputs[
-                "optimization:constraints:mission:%s:energy:%s"
-                % (mission_name, propulsion_id)
+                "optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id)
             ] = energy_con
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
@@ -254,17 +234,14 @@ class MissionConstraints(om.ExplicitComponent):
             E_bat = inputs["data:propulsion:%s:battery:energy" % propulsion_id]
             C_ratio = inputs["data:propulsion:%s:battery:DoD:max" % propulsion_id]
             partials[
-                "optimization:constraints:mission:%s:energy:%s"
-                % (mission_name, propulsion_id),
+                "optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id),
                 "mission:%s:energy:%s" % (mission_name, propulsion_id),
             ] = -1.0 / (E_bat * C_ratio) if E_bat > 0 else 0.0
             partials[
-                "optimization:constraints:mission:%s:energy:%s"
-                % (mission_name, propulsion_id),
+                "optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id),
                 "data:propulsion:%s:battery:energy" % propulsion_id,
             ] = E_mission / (E_bat**2 * C_ratio) if E_bat > 0 else 0.0
             partials[
-                "optimization:constraints:mission:%s:energy:%s"
-                % (mission_name, propulsion_id),
+                "optimization:constraints:mission:%s:energy:%s" % (mission_name, propulsion_id),
                 "data:propulsion:%s:battery:DoD:max" % propulsion_id,
             ] = E_mission / (E_bat * C_ratio**2) if E_bat > 0 else 0.0

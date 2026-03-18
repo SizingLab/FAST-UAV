@@ -5,15 +5,15 @@ Fixed wing UAV stability
 import fastoad.api as oad
 import openmdao.api as om
 
+from fastuav.constants import FW_PROPULSION
+from fastuav.models.stability.static_longitudinal.center_of_gravity.cog import (
+    CenterOfGravity,
+)
+from fastuav.models.stability.static_longitudinal.neutral_point import NeutralPoint
 from fastuav.models.stability.static_longitudinal.static_margin import (
     StaticMargin,
     StaticMarginConstraints,
 )
-from fastuav.models.stability.static_longitudinal.neutral_point import NeutralPoint
-from fastuav.models.stability.static_longitudinal.center_of_gravity.cog import (
-    CenterOfGravity,
-)
-from fastuav.constants import FW_PROPULSION
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.stability.fixedwing")

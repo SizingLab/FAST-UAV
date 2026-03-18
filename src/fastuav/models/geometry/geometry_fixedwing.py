@@ -3,9 +3,10 @@ Fixed Wing Airframe Geometry
 """
 
 import fastoad.api as oad
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 from scipy.constants import g
+
 from fastuav.constants import FW_PROPULSION, PROPULSION_ID_LIST
 
 
@@ -23,9 +24,7 @@ class Geometry(om.Group):
 
         constraints = self.add_subsystem("constraints", om.Group(), promotes=["*"])
         # constraints.add_subsystem("projected_areas", ProjectedAreasConstraint(), promotes=["*"])
-        constraints.add_subsystem(
-            "fuselage_volume", FuselageVolumeConstraint(), promotes=["*"]
-        )
+        constraints.add_subsystem("fuselage_volume", FuselageVolumeConstraint(), promotes=["*"])
 
 
 class WingGeometry(om.ExplicitComponent):
@@ -35,20 +34,12 @@ class WingGeometry(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
-        self.add_input(
-            "optimization:variables:geometry:wing:AR", val=np.nan, units=None
-        )
-        self.add_input(
-            "optimization:variables:geometry:wing:lambda", val=np.nan, units=None
-        )
+        self.add_input("optimization:variables:geometry:wing:AR", val=np.nan, units=None)
+        self.add_input("optimization:variables:geometry:wing:lambda", val=np.nan, units=None)
         self.add_input("data:geometry:wing:sweep:LE", val=np.nan, units="rad")
-        self.add_input(
-            "optimization:variables:geometry:wing:MAC:LE:x:k", val=0.40, units=None
-        )
+        self.add_input("optimization:variables:geometry:wing:MAC:LE:x:k", val=0.40, units=None)
         self.add_input("data:geometry:wing:tc", val=0.15, units=None)
-        self.add_input(
-            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
-        )
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_output("data:geometry:wing:surface", units="m**2", lower=0.0)
         self.add_output("data:geometry:wing:span", units="m", lower=0.0)
         self.add_output("data:geometry:wing:root:chord", units="m", lower=0.0)
@@ -83,9 +74,7 @@ class WingGeometry(om.ExplicitComponent):
         b_w = np.sqrt(AR_w * S_w)  # wing span [m]
         c_root = 2 * S_w / b_w / (1 + lmbda_w)  # chord at root [m]
         c_tip = lmbda_w * c_root  # chord at tip [m]
-        c_MAC = (
-            (2 / 3) * c_root * (1 + lmbda_w + lmbda_w**2) / (1 + lmbda_w)
-        )  # MAC = MGC [m]
+        c_MAC = (2 / 3) * c_root * (1 + lmbda_w + lmbda_w**2) / (1 + lmbda_w)  # MAC = MGC [m]
         t_root = c_root * tc_ratio  # wing thickness at root [m]
         t_tip = c_tip * tc_ratio  # wing thickness at tip [m]
 
@@ -97,18 +86,10 @@ class WingGeometry(om.ExplicitComponent):
             sweep_LE
         )  # x-location of MAC leading edge (from leading edge of root) [m]
         x_MAC_LE = k_xw * b_w  # x-location of MAC leading edge (from nose tip) [m]
-        x_MAC_c4 = (
-            x_MAC_LE + 0.25 * c_MAC
-        )  # x-location of MAC quarter chord (from nose tip) [m]
-        x_root_LE = (
-            x_MAC_LE - x_MAC_LE_loc
-        )  # x-location of root leading edge (from nose tip) [m]
-        x_root_TE = (
-            x_root_LE + c_root
-        )  # x-location of root trailing edge (from nose tip) [m]
-        sweep_TE = np.arctan(
-            np.tan(sweep_LE) - 4 / AR_w * (1 - lmbda_w) / (1 + lmbda_w)
-        )
+        x_MAC_c4 = x_MAC_LE + 0.25 * c_MAC  # x-location of MAC quarter chord (from nose tip) [m]
+        x_root_LE = x_MAC_LE - x_MAC_LE_loc  # x-location of root leading edge (from nose tip) [m]
+        x_root_TE = x_root_LE + c_root  # x-location of root trailing edge (from nose tip) [m]
+        sweep_TE = np.arctan(np.tan(sweep_LE) - 4 / AR_w * (1 - lmbda_w) / (1 + lmbda_w))
 
         outputs["data:geometry:wing:surface"] = S_w
         outputs["data:geometry:wing:span"] = b_w
@@ -131,9 +112,7 @@ class HorizontalTailGeometry(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "optimization:variables:geometry:tail:horizontal:AR", val=4.0, units=None
-        )
+        self.add_input("optimization:variables:geometry:tail:horizontal:AR", val=4.0, units=None)
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:C4:x", val=np.nan, units="m")
@@ -146,24 +125,14 @@ class HorizontalTailGeometry(om.ExplicitComponent):
             val=0.75,
             units=None,
         )
-        self.add_output(
-            "data:geometry:tail:horizontal:surface", units="m**2", lower=0.0
-        )
+        self.add_output("data:geometry:tail:horizontal:surface", units="m**2", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:arm", units="m", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:span", units="m", lower=0.0)
-        self.add_output(
-            "data:geometry:tail:horizontal:root:chord", units="m", lower=0.0
-        )
+        self.add_output("data:geometry:tail:horizontal:root:chord", units="m", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:tip:chord", units="m", lower=0.0)
-        self.add_output(
-            "data:geometry:tail:horizontal:MAC:length", units="m", lower=0.0
-        )
-        self.add_output(
-            "data:geometry:tail:horizontal:root:thickness", units="m", lower=0.0
-        )
-        self.add_output(
-            "data:geometry:tail:horizontal:tip:thickness", units="m", lower=0.0
-        )
+        self.add_output("data:geometry:tail:horizontal:MAC:length", units="m", lower=0.0)
+        self.add_output("data:geometry:tail:horizontal:root:thickness", units="m", lower=0.0)
+        self.add_output("data:geometry:tail:horizontal:tip:thickness", units="m", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:MAC:y", units="m", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:MAC:LE:x", units="m", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:MAC:C4:x", units="m", lower=0.0)
@@ -212,9 +181,7 @@ class HorizontalTailGeometry(om.ExplicitComponent):
             (b_ht / 6) * (1 + 2 * lmbda_ht) / (1 + lmbda_ht)
         )  # y-location of MAC (from the root) [m]
         x_MAC_LE_loc_ht = 0  # x-location of MAC leading edge (from the leading edge of the root) [m] TODO: add sweep
-        x_MAC_c4_ht = (
-            x_MAC_c4_w + l_ht
-        )  # x-location of MAC quarter chord (from nose tip) [m]
+        x_MAC_c4_ht = x_MAC_c4_w + l_ht  # x-location of MAC quarter chord (from nose tip) [m]
         x_MAC_LE_ht = (
             x_MAC_c4_ht - 0.25 * c_MAC_ht
         )  # x-location of MAC leading edge (from nose tip) [m]
@@ -247,9 +214,7 @@ class VerticalTailGeometry(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "optimization:variables:geometry:tail:vertical:AR", val=1.5, units=None
-        )
+        self.add_input("optimization:variables:geometry:tail:vertical:AR", val=1.5, units=None)
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:C4:x", val=np.nan, units="m")
@@ -263,12 +228,8 @@ class VerticalTailGeometry(om.ExplicitComponent):
         self.add_output("data:geometry:tail:vertical:root:chord", units="m", lower=0.0)
         self.add_output("data:geometry:tail:vertical:tip:chord", units="m", lower=0.0)
         self.add_output("data:geometry:tail:vertical:MAC:length", units="m", lower=0.0)
-        self.add_output(
-            "data:geometry:tail:vertical:root:thickness", units="m", lower=0.0
-        )
-        self.add_output(
-            "data:geometry:tail:vertical:tip:thickness", units="m", lower=0.0
-        )
+        self.add_output("data:geometry:tail:vertical:root:thickness", units="m", lower=0.0)
+        self.add_output("data:geometry:tail:vertical:tip:thickness", units="m", lower=0.0)
         self.add_output("data:geometry:tail:vertical:MAC:z", units="m", lower=0.0)
         self.add_output("data:geometry:tail:vertical:MAC:LE:x", units="m", lower=0.0)
         self.add_output("data:geometry:tail:vertical:MAC:C4:x", units="m", lower=0.0)
@@ -312,9 +273,7 @@ class VerticalTailGeometry(om.ExplicitComponent):
             (b_vt / 6) * (1 + 2 * lmbda_vt) / (1 + lmbda_vt)
         )  # z-location of MAC (from the root) [m]
         x_MAC_LE_loc_vt = 0  # x-location of MAC leading edge (from the leading edge of the root) [m] TODO: add sweep
-        x_MAC_c4_vt = (
-            x_MAC_c4_w + l_vt
-        )  # x-location of MAC quarter chord (from nose tip) [m]
+        x_MAC_c4_vt = x_MAC_c4_w + l_vt  # x-location of MAC quarter chord (from nose tip) [m]
         x_MAC_LE_vt = (
             x_MAC_c4_vt - 0.25 * c_MAC_vt
         )  # x-location of MAC leading edge (from nose tip) [m]
@@ -368,12 +327,8 @@ class FuselageGeometry(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        lmbda_f = inputs[
-            "data:geometry:fuselage:fineness"
-        ]  # fuselage fineness ratio [-]
-        k_df = inputs[
-            "data:geometry:fuselage:diameter:k"
-        ]  # tail cone diameters ratio (<1) [-]
+        lmbda_f = inputs["data:geometry:fuselage:fineness"]  # fuselage fineness ratio [-]
+        k_df = inputs["data:geometry:fuselage:diameter:k"]  # tail cone diameters ratio (<1) [-]
         x_root_TE_w = inputs["data:geometry:wing:root:TE:x"]
         x_root_TE_ht = inputs["data:geometry:tail:horizontal:root:TE:x"]
 
@@ -391,14 +346,10 @@ class FuselageGeometry(om.ExplicitComponent):
             np.pi * (d_fus_mid + d_fus_tip) / 2 * l_rear + np.pi * (d_fus_tip / 2) ** 2
         )  # rear part of fuselage (conical) [m2]
         S_mid = np.pi * d_fus_mid * l_mid  # mid part of fuselage (cylindrical) [m2]
-        S_nose = (
-            2 * np.pi * (d_fus_mid / 2) ** 2
-        )  # nose part of fuselage (half spherical) [m2]
+        S_nose = 2 * np.pi * (d_fus_mid / 2) ** 2  # nose part of fuselage (half spherical) [m2]
         S_fus = S_rear + S_mid + S_nose  # total fuselage area [m2]
 
-        V_mid = (
-            np.pi * (d_fus_mid / 2) ** 2 * l_mid
-        )  # mid part of fuselage (cylindrical) [m3]
+        V_mid = np.pi * (d_fus_mid / 2) ** 2 * l_mid  # mid part of fuselage (cylindrical) [m3]
 
         outputs["data:geometry:fuselage:length"] = l_fus
         outputs["data:geometry:fuselage:length:nose"] = l_nose
@@ -420,9 +371,7 @@ class ProjectedAreasGuess(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
-        self.add_input(
-            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
-        )
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input(
             "optimization:variables:geometry:projected_area:top:k",
             val=np.nan,
@@ -451,13 +400,9 @@ class ProjectedAreasConstraint(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
-        self.add_input(
-            "data:geometry:tail:horizontal:surface", val=np.nan, units="m**2"
-        )
+        self.add_input("data:geometry:tail:horizontal:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:fuselage:surface", val=np.nan, units="m**2")
-        self.add_output(
-            "optimization:constraints:geometry:projected_area:top", units=None
-        )
+        self.add_output("optimization:constraints:geometry:projected_area:top", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -473,9 +418,7 @@ class ProjectedAreasConstraint(om.ExplicitComponent):
         S_fus_proj = S_fus / np.pi  # [m**2] projected area of the fuselage
         S_top = S_w + S_ht + S_fus_proj  # [m**2] projected area
 
-        S_constraint = (
-            S_top_guess - S_top
-        ) / S_top  # [-] projected area consistency constraint
+        S_constraint = (S_top_guess - S_top) / S_top  # [-] projected area consistency constraint
 
         outputs["optimization:constraints:geometry:projected_area:top"] = S_constraint
 

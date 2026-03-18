@@ -3,6 +3,7 @@ Propeller surrogate models describing the propeller's aerodynamics performance.
 """
 
 import numpy as np
+
 # from scipy.optimize import fsolve
 
 

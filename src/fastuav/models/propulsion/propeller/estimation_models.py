@@ -2,16 +2,18 @@
 Estimation models for the propeller
 """
 
-import openmdao.api as om
+import logging
+
 import numpy as np
-from fastuav.utils.uncertainty import (
-    add_subsystem_with_deviation,
-)
+import openmdao.api as om
+from stdatm import AtmosphereSI
+
 from fastuav.models.propulsion.propeller.aerodynamics.surrogate_models import (
     PropellerAerodynamicsModel,
 )
-from stdatm import AtmosphereSI
-import logging
+from fastuav.utils.uncertainty import (
+    add_subsystem_with_deviation,
+)
 
 _LOGGER = logging.getLogger(__name__)  # Logger for this module
 
@@ -46,14 +48,10 @@ class Diameter(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:propeller:thrust:takeoff", val=np.nan, units="N"
-        )
+        self.add_input("data:propulsion:propeller:thrust:takeoff", val=np.nan, units="N")
         self.add_input("mission:sizing:main_route:takeoff:altitude", val=0.0, units="m")
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_input(
-            "data:propulsion:propeller:beta:estimated", val=np.nan, units=None
-        )
+        self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
         self.add_input(
             "data:propulsion:propeller:Ct:static:polynomial:estimated",
             shape_by_conn=True,
@@ -101,15 +99,9 @@ class Weight(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:propeller:diameter:estimated", val=np.nan, units="m"
-        )
-        self.add_input(
-            "models:propulsion:propeller:diameter:reference", val=np.nan, units="m"
-        )
-        self.add_input(
-            "models:weight:propulsion:propeller:mass:reference", val=np.nan, units="kg"
-        )
+        self.add_input("data:propulsion:propeller:diameter:estimated", val=np.nan, units="m")
+        self.add_input("models:propulsion:propeller:diameter:reference", val=np.nan, units="m")
+        self.add_input("models:weight:propulsion:propeller:mass:reference", val=np.nan, units="kg")
         self.add_output("data:weight:propulsion:propeller:mass:estimated", units="kg")
 
     def setup_partials(self):
@@ -132,9 +124,7 @@ class FigureOfMerit(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "data:propulsion:propeller:beta:estimated", val=np.nan, units=None
-        )
+        self.add_input("data:propulsion:propeller:beta:estimated", val=np.nan, units=None)
         self.add_input(
             "data:propulsion:propeller:Ct:static:polynomial:estimated",
             shape_by_conn=True,

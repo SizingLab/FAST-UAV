@@ -3,12 +3,13 @@ Off-the-shelf motor selection.
 """
 
 import os.path as pth
-import openmdao.api as om
-from fastuav.utils.catalogues.estimators import NearestNeighbor
-from fastoad.openmdao.validity_checker import ValidityDomainChecker
-import pandas as pd
-import numpy as np
 
+import numpy as np
+import openmdao.api as om
+import pandas as pd
+from fastoad.openmdao.validity_checker import ValidityDomainChecker
+
+from fastuav.utils.catalogues.estimators import NearestNeighbor
 
 PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
@@ -54,38 +55,22 @@ class MotorCatalogueSelection(om.ExplicitComponent):
 
     def setup(self):
         # inputs: estimated values
-        self.add_input(
-            "data:propulsion:motor:torque:max:estimated", val=np.nan, units="N*m"
-        )
+        self.add_input("data:propulsion:motor:torque:max:estimated", val=np.nan, units="N*m")
         self.add_input(
             "data:propulsion:motor:speed:constant:estimated",
             val=np.nan,
             units="rad/V/s",
         )
-        self.add_input(
-            "data:propulsion:motor:torque:nominal:estimated", val=np.nan, units="N*m"
-        )
-        self.add_input(
-            "data:propulsion:motor:torque:friction:estimated", val=np.nan, units="N*m"
-        )
-        self.add_input(
-            "data:propulsion:motor:resistance:estimated", val=np.nan, units="V/A"
-        )
-        self.add_input(
-            "data:weight:propulsion:motor:mass:estimated", val=np.nan, units="kg"
-        )
+        self.add_input("data:propulsion:motor:torque:nominal:estimated", val=np.nan, units="N*m")
+        self.add_input("data:propulsion:motor:torque:friction:estimated", val=np.nan, units="N*m")
+        self.add_input("data:propulsion:motor:resistance:estimated", val=np.nan, units="V/A")
+        self.add_input("data:weight:propulsion:motor:mass:estimated", val=np.nan, units="kg")
         # outputs: catalogue values if off_the_shelf is True
         if self.options["off_the_shelf"]:
             self.add_output("data:propulsion:motor:torque:max:catalogue", units="N*m")
-            self.add_output(
-                "data:propulsion:motor:speed:constant:catalogue", units="rad/V/s"
-            )
-            self.add_output(
-                "data:propulsion:motor:torque:nominal:catalogue", units="N*m"
-            )
-            self.add_output(
-                "data:propulsion:motor:torque:friction:catalogue", units="N*m"
-            )
+            self.add_output("data:propulsion:motor:speed:constant:catalogue", units="rad/V/s")
+            self.add_output("data:propulsion:motor:torque:nominal:catalogue", units="N*m")
+            self.add_output("data:propulsion:motor:torque:friction:catalogue", units="N*m")
             self.add_output("data:propulsion:motor:resistance:catalogue", units="V/A")
             self.add_output("data:weight:propulsion:motor:mass:catalogue", units="kg")
         # outputs: 'real' values (= estimated values if off_the_shelf is False, catalogue values else)

@@ -2,12 +2,14 @@
 Wing loading requirements.
 """
 
+import logging
+
 import numpy as np
 import openmdao.api as om
-import logging
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
-from fastuav.constants import FW_PROPULSION
 from stdatm import AtmosphereSI
+
+from fastuav.constants import FW_PROPULSION
 
 _LOGGER = logging.getLogger(__name__)  # Logger for this module
 WS_MIN = 100  # [N/m2] lower limit for the wing loading. Under this value, increasing CLmax is recommended.
@@ -19,15 +21,11 @@ class WingLoadingStall(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input(
-            "mission:sizing:main_route:cruise:altitude", val=150.0, units="m"
-        )
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input(
             "mission:sizing:main_route:stall:speed:%s" % propulsion_id,
             val=np.nan,
@@ -56,9 +54,7 @@ class WingLoadingStall(om.ExplicitComponent):
         CL_max = inputs["data:aerodynamics:CLmax"]
 
         # Wing loading calculation
-        WS_stall = (
-            q_stall * CL_max
-        )  # wing loading required to meet stall speed requirement [N/m2]
+        WS_stall = q_stall * CL_max  # wing loading required to meet stall speed requirement [N/m2]
 
         outputs["data:geometry:wing:loading:stall"] = WS_stall
 
@@ -69,24 +65,18 @@ class WingLoadingCruise(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input(
-            "mission:sizing:main_route:cruise:altitude", val=150.0, units="m"
-        )
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input(
             "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
             val=0.0,
             units="m/s",
         )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_input(
-            "optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None
-        )
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_output("data:geometry:wing:loading:cruise", units="N/m**2")
 
@@ -136,9 +126,7 @@ class WingLoadingSelection(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:loading:stall", val=np.nan, units="N/m**2")
-        self.add_input(
-            "optimization:variables:geometry:wing:loading:k", val=1.0, units=None
-        )
+        self.add_input("optimization:variables:geometry:wing:loading:k", val=1.0, units=None)
         self.add_output("data:geometry:wing:loading", units="N/m**2")
 
     def setup_partials(self):
@@ -158,9 +146,7 @@ class WingLoadingSelection(om.ExplicitComponent):
         WS_stall = inputs["data:geometry:wing:loading:stall"]
         k_WS = inputs["optimization:variables:geometry:wing:loading:k"]
 
-        partials["data:geometry:wing:loading", "data:geometry:wing:loading:stall"] = (
-            k_WS
-        )
+        partials["data:geometry:wing:loading", "data:geometry:wing:loading:stall"] = k_WS
         partials[
             "data:geometry:wing:loading",
             "optimization:variables:geometry:wing:loading:k",

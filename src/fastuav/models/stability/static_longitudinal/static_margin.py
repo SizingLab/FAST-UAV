@@ -5,8 +5,8 @@ expressed as a percentage of the mean aerodynamic chord of the wing.
 The greater this distance and the narrower the wing, the more stable the aircraft.
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class StaticMargin(om.ExplicitComponent):
@@ -37,9 +37,7 @@ class StaticMargin(om.ExplicitComponent):
         x_cg = inputs["data:stability:CoG"]
         c_MAC = inputs["data:geometry:wing:MAC:length"]
 
-        partials["data:stability:static_margin", "data:stability:neutral_point"] = (
-            1 / c_MAC
-        )
+        partials["data:stability:static_margin", "data:stability:neutral_point"] = 1 / c_MAC
         partials["data:stability:static_margin", "data:stability:CoG"] = -1 / c_MAC
         partials["data:stability:static_margin", "data:geometry:wing:MAC:length"] = (
             -(x_np - x_cg) / c_MAC**2
@@ -53,18 +51,10 @@ class StaticMarginConstraints(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:stability:static_margin", val=np.nan, units=None)
-        self.add_input(
-            "data:stability:static_margin:requirement:min", val=0.10, units=None
-        )
-        self.add_input(
-            "data:stability:static_margin:requirement:max", val=0.40, units=None
-        )
-        self.add_output(
-            "optimization:constraints:stability:static_margin:min", units=None
-        )
-        self.add_output(
-            "optimization:constraints:stability:static_margin:max", units=None
-        )
+        self.add_input("data:stability:static_margin:requirement:min", val=0.10, units=None)
+        self.add_input("data:stability:static_margin:requirement:max", val=0.40, units=None)
+        self.add_output("optimization:constraints:stability:static_margin:min", units=None)
+        self.add_output("optimization:constraints:stability:static_margin:max", units=None)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")

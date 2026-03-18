@@ -3,14 +3,15 @@ Wing Structures and Weights
 """
 
 import openmdao.api as om
-from fastuav.models.structures.wing.estimation_models import (
-    WingStructuresEstimationModelsGroup,
-)
-from fastuav.models.structures.wing.structural_analysis import SparsStressVTOL
+
 from fastuav.models.structures.wing.constraints import (
     SparsGeometricalConstraint,
     SparsStressVTOLConstraint,
 )
+from fastuav.models.structures.wing.estimation_models import (
+    WingStructuresEstimationModelsGroup,
+)
+from fastuav.models.structures.wing.structural_analysis import SparsStressVTOL
 
 
 class WingStructuresFW(om.Group):
@@ -66,6 +67,4 @@ class WingStructuresHybrid(om.Group):
             SparsGeometricalConstraint(spar_model=spar_model),
             promotes=["*"],
         )
-        constraints.add_subsystem(
-            "vtol_stress", SparsStressVTOLConstraint(), promotes=["*"]
-        )
+        constraints.add_subsystem("vtol_stress", SparsStressVTOLConstraint(), promotes=["*"])

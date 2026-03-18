@@ -5,15 +5,14 @@ Adapted from  OpenMDAO / RevHack2020 (https://github.com/OpenMDAO/RevHack2020/)
 New in this version: use of the fmin_con method from pycma for handling constraints with an Augmented Lagrangian.
 """
 
+import importlib.util
 import os
 import time
 
 import numpy as np
-
 import openmdao
 from openmdao.core.driver import Driver, RecordingDebugging
 from openmdao.utils.mpi import MPI
-import importlib.util
 
 if importlib.util.find_spec("openmdao.utils.concurrent_utils") is not None:
     from openmdao.utils.concurrent_utils import concurrent_eval
@@ -21,9 +20,8 @@ elif importlib.util.find_spec("openmdao.utils.concurrent") is not None:
     from openmdao.utils.concurrent import concurrent_eval  # older OpenMDAO (<3.10)
 else:
     concurrent_eval = None
-from openmdao.core.analysis_error import AnalysisError
-
 import cma
+from openmdao.core.analysis_error import AnalysisError
 
 
 class CMAESDriver(Driver):
@@ -112,9 +110,7 @@ class CMAESDriver(Driver):
             lower=0.0,
             desc="Penalty function parameter.",
         )
-        self.options.declare(
-            "penalty_exponent", default=1.0, desc="Penalty function exponent."
-        )
+        self.options.declare("penalty_exponent", default=1.0, desc="Penalty function exponent.")
         self.options.declare(
             "multi_obj_weights",
             default={},
@@ -291,9 +287,7 @@ class CMAESDriver(Driver):
 
         self.CMAOptions["bounds"] = [lower_bound, upper_bound]
 
-        desvar_new, obj = self._cmaes.execute(
-            x0, self.options["sigma0"], self.CMAOptions
-        )
+        desvar_new, obj = self._cmaes.execute(x0, self.options["sigma0"], self.CMAOptions)
         # desvar_new, obj = self._cmaes.execute(lambda: np.random.uniform(lower_bound, upper_bound), self.options['sigma0'], self.CMAOptions)
 
         # Pull optimal parameters back into framework and re-run, so that
@@ -421,28 +415,18 @@ class CMAESDriver(Driver):
                 for name, val in self.get_constraint_values().items():
                     con = self._cons[name]
                     # The not used fields will either None or a very large number
-                    if (con["lower"] is not None) and np.any(
-                        con["lower"] > -almost_inf
-                    ):
+                    if (con["lower"] is not None) and np.any(con["lower"] > -almost_inf):
                         diff = val - con["lower"]
                         violation = np.array([0.0 if d >= 0 else abs(d) for d in diff])
-                        constraint_violations = np.hstack(
-                            (constraint_violations, violation)
-                        )
+                        constraint_violations = np.hstack((constraint_violations, violation))
                     if (con["upper"] is not None) and np.any(con["upper"] < almost_inf):
                         diff = val - con["upper"]
                         violation = np.array([0.0 if d <= 0 else abs(d) for d in diff])
-                        constraint_violations = np.hstack(
-                            (constraint_violations, violation)
-                        )
-                    if (con["equals"] is not None) and np.any(
-                        np.abs(con["equals"]) < almost_inf
-                    ):
+                        constraint_violations = np.hstack((constraint_violations, violation))
+                    if (con["equals"] is not None) and np.any(np.abs(con["equals"]) < almost_inf):
                         diff = val - con["equals"]
                         violation = np.absolute(diff)
-                        constraint_violations = np.hstack(
-                            (constraint_violations, violation)
-                        )
+                        constraint_violations = np.hstack((constraint_violations, violation))
                 fun = obj + penalty * sum(np.power(constraint_violations, exponent))
 
             # Record after getting obj to assure they have
@@ -618,9 +602,7 @@ class CMAESDriver(Driver):
             hfun = np.array([])
             for name, val in self.get_constraint_values().items():
                 con = self._cons[name]
-                if (con["equals"] is not None) and np.any(
-                    np.abs(con["equals"]) < almost_inf
-                ):
+                if (con["equals"] is not None) and np.any(np.abs(con["equals"]) < almost_inf):
                     diff = val - con["equals"]
                     hfun = np.hstack((hfun, diff))
 

@@ -2,8 +2,9 @@
 Definition parameters for the Electronic Speed Controller (ESC).
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
@@ -37,9 +38,7 @@ class Power(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "optimization:variables:propulsion:esc:power:k", val=1.0, units=None
-        )
+        self.add_input("optimization:variables:propulsion:esc:power:k", val=1.0, units=None)
         self.add_input("data:propulsion:motor:power:takeoff", val=np.nan, units="W")
         self.add_input("data:propulsion:motor:voltage:takeoff", val=np.nan, units="V")
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
@@ -54,9 +53,7 @@ class Power(om.ExplicitComponent):
         U_bat = inputs["data:propulsion:battery:voltage"]
         U_mot_to = inputs["data:propulsion:motor:voltage:takeoff"]
 
-        P_esc = (
-            k_pesc * (P_mot_to / U_mot_to) * U_bat
-        )  # [W] power electronic power max thrust
+        P_esc = k_pesc * (P_mot_to / U_mot_to) * U_bat  # [W] power electronic power max thrust
 
         outputs["data:propulsion:esc:power:max:estimated"] = P_esc
 
@@ -76,9 +73,9 @@ class Power(om.ExplicitComponent):
             "data:propulsion:motor:power:takeoff",
         ] = k_pesc * U_bat / U_mot_to
 
-        partials[
-            "data:propulsion:esc:power:max:estimated", "data:propulsion:battery:voltage"
-        ] = k_pesc * P_mot_to / U_mot_to
+        partials["data:propulsion:esc:power:max:estimated", "data:propulsion:battery:voltage"] = (
+            k_pesc * P_mot_to / U_mot_to
+        )
 
         partials[
             "data:propulsion:esc:power:max:estimated",
@@ -92,9 +89,7 @@ class Voltage(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "optimization:variables:propulsion:esc:voltage:k", val=1.0, units=None
-        )
+        self.add_input("optimization:variables:propulsion:esc:voltage:k", val=1.0, units=None)
         self.add_input("data:propulsion:battery:voltage", val=np.nan, units="V")
         self.add_output("data:propulsion:esc:voltage:estimated", units="V")
 
@@ -118,9 +113,9 @@ class Voltage(om.ExplicitComponent):
             "optimization:variables:propulsion:esc:voltage:k",
         ] = U_bat
 
-        partials[
-            "data:propulsion:esc:voltage:estimated", "data:propulsion:battery:voltage"
-        ] = k_vesc
+        partials["data:propulsion:esc:voltage:estimated", "data:propulsion:battery:voltage"] = (
+            k_vesc
+        )
 
 
 class Voltage_2(om.ExplicitComponent):

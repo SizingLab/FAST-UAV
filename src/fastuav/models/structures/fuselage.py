@@ -2,8 +2,8 @@
 Fuselage Structures and Weights
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class FuselageStructures(om.ExplicitComponent):
@@ -16,17 +16,11 @@ class FuselageStructures(om.ExplicitComponent):
         self.add_input("data:geometry:fuselage:surface:nose", val=np.nan, units="m**2")
         self.add_input("data:geometry:fuselage:surface:mid", val=np.nan, units="m**2")
         self.add_input("data:geometry:fuselage:surface:rear", val=np.nan, units="m**2")
-        self.add_input(
-            "data:weight:airframe:fuselage:mass:density", val=np.nan, units="kg/m**2"
-        )
+        self.add_input("data:weight:airframe:fuselage:mass:density", val=np.nan, units="kg/m**2")
         self.add_output("data:weight:airframe:fuselage:mass", units="kg", lower=0.0)
-        self.add_output(
-            "data:weight:airframe:fuselage:mass:nose", units="kg", lower=0.0
-        )
+        self.add_output("data:weight:airframe:fuselage:mass:nose", units="kg", lower=0.0)
         self.add_output("data:weight:airframe:fuselage:mass:mid", units="kg", lower=0.0)
-        self.add_output(
-            "data:weight:airframe:fuselage:mass:rear", units="kg", lower=0.0
-        )
+        self.add_output("data:weight:airframe:fuselage:mass:rear", units="kg", lower=0.0)
 
     def setup_partials(self):
         # Finite difference all partials.

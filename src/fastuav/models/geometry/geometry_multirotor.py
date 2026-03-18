@@ -3,8 +3,9 @@ Multirotor Airframe Geometry
 """
 
 import fastoad.api as oad
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.constants import MR_PROPULSION
 
 
@@ -15,15 +16,11 @@ class Geometry(om.Group):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_subsystem(
-            "arms", ArmsGeometry(propulsion_id=propulsion_id), promotes=["*"]
-        )
+        self.add_subsystem("arms", ArmsGeometry(propulsion_id=propulsion_id), promotes=["*"])
         # + Body geometry is estimated in the "Scenarios" module instead of here to avoid algebraic loop.
         # See 'ProjectedAreasGuess' class.
         # self.add_subsystem("body", BodyGeometry(), promotes=["*"])
@@ -35,9 +32,7 @@ class ArmsGeometry(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            "propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION]
-        )
+        self.options.declare("propulsion_id", default=MR_PROPULSION, values=[MR_PROPULSION])
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
@@ -98,12 +93,8 @@ class BodyGeometry(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        outputs["data:geometry:body:surface:top"] = inputs[
-            "data:geometry:projected_area:top"
-        ]
-        outputs["data:geometry:body:surface:front"] = inputs[
-            "data:geometry:projected_area:front"
-        ]
+        outputs["data:geometry:body:surface:top"] = inputs["data:geometry:projected_area:top"]
+        outputs["data:geometry:body:surface:front"] = inputs["data:geometry:projected_area:front"]
 
 
 class ProjectedAreasGuess(om.ExplicitComponent):
@@ -113,19 +104,11 @@ class ProjectedAreasGuess(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input(
-            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
-        )
-        self.add_input(
-            "models:geometry:body:surface:top:reference", val=np.nan, units="m**2"
-        )
-        self.add_input(
-            "models:geometry:body:surface:front:reference", val=np.nan, units="m**2"
-        )
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("models:geometry:body:surface:top:reference", val=np.nan, units="m**2")
+        self.add_input("models:geometry:body:surface:front:reference", val=np.nan, units="m**2")
         self.add_input("models:weight:mtow:reference", val=np.nan, units="kg")
-        self.add_input(
-            "optimization:variables:geometry:projected_area:top:k", val=1.0, units=None
-        )
+        self.add_input("optimization:variables:geometry:projected_area:top:k", val=1.0, units=None)
         self.add_input(
             "optimization:variables:geometry:projected_area:front:k",
             val=1.0,

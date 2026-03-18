@@ -3,9 +3,10 @@ MTOW calculations
 """
 
 import fastoad.api as oad
-import openmdao.api as om
 import numpy as np
-from fastuav.constants import MR_PROPULSION, FW_PROPULSION
+import openmdao.api as om
+
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.mtow")
@@ -61,9 +62,7 @@ class MtowGuess(om.ExplicitComponent):
             "optimization:variables:weight:mtow:guess",
             "optimization:variables:weight:mtow:k",
         ] = m_load
-        partials[
-            "optimization:variables:weight:mtow:guess", "mission:sizing:payload:mass"
-        ] = k_M
+        partials["optimization:variables:weight:mtow:guess", "mission:sizing:payload:mass"] = k_M
 
 
 class MtowCalculation(om.ExplicitComponent):
@@ -125,12 +124,8 @@ class MtowCalculation(om.ExplicitComponent):
             self.add_input("data:weight:airframe:arms:mass", val=0.0, units="kg")
         if FW_PROPULSION in propulsion_id_list:
             self.add_input("data:weight:airframe:wing:mass", val=0.0, units="kg")
-            self.add_input(
-                "data:weight:airframe:tail:horizontal:mass", val=0.0, units="kg"
-            )
-            self.add_input(
-                "data:weight:airframe:tail:vertical:mass", val=0.0, units="kg"
-            )
+            self.add_input("data:weight:airframe:tail:horizontal:mass", val=0.0, units="kg")
+            self.add_input("data:weight:airframe:tail:vertical:mass", val=0.0, units="kg")
             self.add_input("data:weight:airframe:fuselage:mass", val=0.0, units="kg")
 
         self.add_output("data:weight:mtow", units="kg")
@@ -157,8 +152,7 @@ class MtowCalculation(om.ExplicitComponent):
 
         if MR_PROPULSION in propulsion_id_list:
             mtow += (
-                inputs["data:weight:airframe:body:mass"]
-                + inputs["data:weight:airframe:arms:mass"]
+                inputs["data:weight:airframe:body:mass"] + inputs["data:weight:airframe:arms:mass"]
             )
 
         if FW_PROPULSION in propulsion_id_list:
@@ -182,9 +176,7 @@ class MtowCalculation(om.ExplicitComponent):
             m_gearbox = inputs["data:weight:propulsion:%s:gearbox:mass" % propulsion_id]
             m_motor = inputs["data:weight:propulsion:%s:motor:mass" % propulsion_id]
             m_esc = inputs["data:weight:propulsion:%s:esc:mass" % propulsion_id]
-            m_propeller = inputs[
-                "data:weight:propulsion:%s:propeller:mass" % propulsion_id
-            ]
+            m_propeller = inputs["data:weight:propulsion:%s:propeller:mass" % propulsion_id]
             partials[
                 "data:weight:mtow",
                 "data:weight:propulsion:%s:gearbox:mass" % propulsion_id,
@@ -193,9 +185,9 @@ class MtowCalculation(om.ExplicitComponent):
                 "data:weight:mtow",
                 "data:weight:propulsion:%s:motor:mass" % propulsion_id,
             ] = N_pro
-            partials[
-                "data:weight:mtow", "data:weight:propulsion:%s:esc:mass" % propulsion_id
-            ] = N_pro
+            partials["data:weight:mtow", "data:weight:propulsion:%s:esc:mass" % propulsion_id] = (
+                N_pro
+            )
             partials[
                 "data:weight:mtow",
                 "data:weight:propulsion:%s:propeller:mass" % propulsion_id,
@@ -220,12 +212,8 @@ class MtowCalculation(om.ExplicitComponent):
         if FW_PROPULSION in propulsion_id_list:
             partials["data:weight:mtow", "data:weight:airframe:wing:mass"] = 1.0
             partials["data:weight:mtow", "data:weight:airframe:fuselage:mass"] = 1.0
-            partials[
-                "data:weight:mtow", "data:weight:airframe:tail:horizontal:mass"
-            ] = 1.0
-            partials["data:weight:mtow", "data:weight:airframe:tail:vertical:mass"] = (
-                1.0
-            )
+            partials["data:weight:mtow", "data:weight:airframe:tail:horizontal:mass"] = 1.0
+            partials["data:weight:mtow", "data:weight:airframe:tail:vertical:mass"] = 1.0
 
 
 class MtowConstraints(om.ExplicitComponent):
@@ -236,9 +224,7 @@ class MtowConstraints(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:weight:mtow:requirement", val=np.nan, units="kg")
         self.add_input("data:weight:mtow", val=np.nan, units="kg")
-        self.add_input(
-            "optimization:variables:weight:mtow:guess", val=np.nan, units="kg"
-        )
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_output("optimization:constraints:weight:mtow:consistency", units=None)
         self.add_output("optimization:constraints:weight:mtow:requirement", units=None)
 
@@ -267,14 +253,14 @@ class MtowConstraints(om.ExplicitComponent):
             "optimization:constraints:weight:mtow:consistency",
             "optimization:variables:weight:mtow:guess",
         ] = 1.0 / m_uav
-        partials[
-            "optimization:constraints:weight:mtow:consistency", "data:weight:mtow"
-        ] = -m_uav_guess / m_uav**2
+        partials["optimization:constraints:weight:mtow:consistency", "data:weight:mtow"] = (
+            -m_uav_guess / m_uav**2
+        )
 
         partials[
             "optimization:constraints:weight:mtow:requirement",
             "data:weight:mtow:requirement",
         ] = 1.0 / m_uav
-        partials[
-            "optimization:constraints:weight:mtow:requirement", "data:weight:mtow"
-        ] = -MTOW / m_uav**2
+        partials["optimization:constraints:weight:mtow:requirement", "data:weight:mtow"] = (
+            -MTOW / m_uav**2
+        )
