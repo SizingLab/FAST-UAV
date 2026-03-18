@@ -105,6 +105,11 @@ requires      = ["poetry-core>=2.0.0,<3.0.0", "poetry-dynamic-versioning>=1.0.0,
 build-backend = "poetry_dynamic_versioning.backend"
 
 
+# Ruff settings ================================================================
+[tool.ruff.lint.per-file-ignores]
+"**/*.ipynb" = ["E402", "F403", "F405"]
+
+
 # Pytest settings ==============================================================
 [tool.pytest.ini_options]
 minversion     = "6.0"

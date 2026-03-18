@@ -4,7 +4,18 @@ Route generator.
 
 import openmdao.api as om
 import numpy as np
-from fastuav.constants import *
+from fastuav.constants import (
+    CLIMB_TAG,
+    CRUISE_TAG,
+    FW_CLIMB_TAG,
+    FW_CRUISE_TAG,
+    FW_PROPULSION,
+    HOVER_TAG,
+    MR_CLIMB_TAG,
+    MR_CRUISE_TAG,
+    MR_PROPULSION,
+    PHASE_ID_TAG,
+)
 from fastuav.models.performance.mission.phase_builder import PhaseBuilder
 
 

@@ -868,7 +868,6 @@ def fixedwing_geometry_plot(
     fuselage_length = variables["data:geometry:fuselage:length"].value[0]
     fuselage_nose_length = variables["data:geometry:fuselage:length:nose"].value[0]
     fuselage_mid_length = variables["data:geometry:fuselage:length:mid"].value[0]
-    fuselage_rear_length = variables["data:geometry:fuselage:length:rear"].value[0]
     fuselage_front_length = fuselage_nose_length + fuselage_mid_length
 
     x_fuselage = np.array(

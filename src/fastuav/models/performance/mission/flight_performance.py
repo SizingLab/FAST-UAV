@@ -281,7 +281,7 @@ class FlightPerformanceModel:
                 self._advance_ratio = (
                     brentq(func, 0.0, 3.0) if self.airspeed > 0 else 0.0
                 )  # [-] solving for advance ratio
-            except:
+            except Exception:
                 self._advance_ratio = (
                     newton(func, 0.0) if self.airspeed > 0 else 0.0
                 )  # [-] solving for advance ratio

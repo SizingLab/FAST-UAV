@@ -283,7 +283,7 @@ def sobol_analysis(conf_file, data_file):
     )
     # Remove variables whose shape is different from a single value (i.e., n-dimensional arrays).
     table["type"] = [type(x) for x in table.Value.values]
-    table = table[table["type"] == float].drop("type", axis=1)
+    table = table[table["type"] == float].drop("type", axis=1)  # noqa: E721
     # Uncertain variables table
     x_table = table.loc[table["is_input"]]  # select inputs only
     x_table = x_table.loc[
@@ -325,18 +325,6 @@ def sobol_analysis(conf_file, data_file):
             button_style="",
         )
         # Distribution laws parameters
-        var_box_normal = widgets.FloatSlider(
-            value=0.1,
-            min=0.0,
-            max=0.5,
-            step=0.01,
-            description="error std:",
-            disabled=False,
-            continuous_update=False,
-            readout=True,
-            readout_format=".0%",
-            style={"description_width": "initial"},
-        )
         var_box_uniform = widgets.FloatRangeSlider(
             value=[-0.1, 0.1],
             min=-0.5,
@@ -908,7 +896,7 @@ def morris_analysis(conf_file, data_file):
     )
     # Remove variables whose shape is different from a single value (i.e., n-dimensional arrays).
     table["type"] = [type(x) for x in table.Value.values]
-    table = table[table["type"] == float].drop("type", axis=1)
+    table = table[table["type"] == float].drop("type", axis=1)  # noqa: E721
     # Uncertain variables table
     x_table = table.loc[table["is_input"]]  # select inputs only
     x_table = x_table.loc[
@@ -950,18 +938,6 @@ def morris_analysis(conf_file, data_file):
             button_style="",
         )
         # Distribution laws parameters
-        var_box_normal = widgets.FloatSlider(
-            value=0.1,
-            min=0.0,
-            max=0.5,
-            step=0.01,
-            description="error std:",
-            disabled=False,
-            continuous_update=False,
-            readout=True,
-            readout_format=".0%",
-            style={"description_width": "initial"},
-        )
         var_box_uniform = widgets.FloatRangeSlider(
             value=[-0.1, 0.1],
             min=-0.5,

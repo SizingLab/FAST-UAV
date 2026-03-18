@@ -91,11 +91,11 @@ class Radius(om.ExplicitComponent):
         I_ref = inputs[
             "models:propulsion:wires:current:reference"
         ]  # [A] nominal current of reference wire
-        I = inputs[
+        I_wire = inputs[
             "data:propulsion:%s:current:cruise" % sizing_component
         ]  # [A] nominal current
 
-        r = r_ref * (I / I_ref) ** (2 / 3)  # [m] radius of wire
+        r = r_ref * (I_wire / I_ref) ** (2 / 3)  # [m] radius of wire
 
         outputs["data:propulsion:wires:radius"] = r
 

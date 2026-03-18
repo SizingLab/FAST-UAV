@@ -388,7 +388,6 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             obj_values = self.get_objective_values()
             if is_single_objective:  # Single objective optimization
@@ -501,9 +500,6 @@ class CMAESDriver(Driver):
             i, j = self._desvar_idx[name]
             self.set_design_var(name, x[i:j])
 
-        # a very large number, but smaller than the result of nan_to_num in Numpy
-        almost_inf = openmdao.INF_BOUND
-
         # Execute the model
         with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
             self.iter_count += 1
@@ -513,7 +509,6 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             obj_values = self.get_objective_values()
             if is_single_objective:  # Single objective optimization
@@ -564,7 +559,7 @@ class CMAESDriver(Driver):
         almost_inf = openmdao.INF_BOUND
 
         # Execute the model
-        with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
+        with RecordingDebugging(self._get_name(), self.iter_count, self) as _:
             self.iter_count += 1
             try:
                 model.run_solve_nonlinear()
@@ -572,18 +567,15 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             gfun = np.array([])
             for name, val in self.get_constraint_values().items():
                 con = self._cons[name]
                 if (con["lower"] is not None) and np.any(con["lower"] > -almost_inf):
                     diff = -(val - con["lower"])
-                    violation = np.array([0.0 if d >= 0 else abs(d) for d in diff])
                     gfun = np.hstack((gfun, diff))
                 if (con["upper"] is not None) and np.any(con["upper"] < almost_inf):
                     diff = val - con["upper"]
-                    violation = np.array([0.0 if d <= 0 else abs(d) for d in diff])
                     gfun = np.hstack((gfun, diff))
 
             # Record after getting obj to assure they have
@@ -614,7 +606,7 @@ class CMAESDriver(Driver):
         almost_inf = openmdao.INF_BOUND
 
         # Execute the model
-        with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
+        with RecordingDebugging(self._get_name(), self.iter_count, self) as _:
             self.iter_count += 1
             try:
                 model.run_solve_nonlinear()
@@ -622,7 +614,6 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             hfun = np.array([])
             for name, val in self.get_constraint_values().items():
@@ -631,7 +622,6 @@ class CMAESDriver(Driver):
                     np.abs(con["equals"]) < almost_inf
                 ):
                     diff = val - con["equals"]
-                    violation = np.absolute(diff)
                     hfun = np.hstack((hfun, diff))
 
             # Record after getting obj to assure they have

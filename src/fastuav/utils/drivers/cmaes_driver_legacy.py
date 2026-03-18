@@ -318,7 +318,6 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             obj_values = self.get_objective_values()
             if is_single_objective:  # Single objective optimization

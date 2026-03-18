@@ -43,13 +43,12 @@ class PropellerPerformanceModel:
         """
         Computes the induced velocity from Glauert's model
         """
-        func = lambda x: (
-            x
-            - F_pro
-            / (2 * rho_air * np.pi * (D_pro / 2) ** 2)
-            / ((V_inf * np.cos(alpha)) ** 2 + (V_inf * np.sin(alpha) + x) ** 2)
-            ** (1 / 2)
-        )
+
+        def func(x):
+            return x - F_pro / (2 * rho_air * np.pi * (D_pro / 2) ** 2) / (
+                (V_inf * np.cos(alpha)) ** 2 + (V_inf * np.sin(alpha) + x) ** 2
+            ) ** (1 / 2)
+
         v_i = fsolve(func, x0=1)[0]
         return v_i
 

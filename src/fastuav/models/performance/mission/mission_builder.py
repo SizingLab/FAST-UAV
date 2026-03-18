@@ -6,7 +6,12 @@ import fastoad.api as oad
 import openmdao.api as om
 import numpy as np
 from itertools import chain
-from fastuav.constants import *
+from fastuav.constants import (
+    MISSION_DEFINITION_TAG,
+    PARTS_TAG,
+    ROUTE_DEFINITION_TAG,
+    SIZING_MISSION_TAG,
+)
 from fastuav.models.performance.mission.mission_definition.schema import (
     MissionDefinition,
 )
