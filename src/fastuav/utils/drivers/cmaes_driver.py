@@ -12,8 +12,15 @@ import numpy as np
 
 import openmdao
 from openmdao.core.driver import Driver, RecordingDebugging
-from openmdao.utils.concurrent import concurrent_eval
 from openmdao.utils.mpi import MPI
+import importlib.util
+
+if importlib.util.find_spec("openmdao.utils.concurrent_utils") is not None:
+    from openmdao.utils.concurrent_utils import concurrent_eval
+elif importlib.util.find_spec("openmdao.utils.concurrent") is not None:
+    from openmdao.utils.concurrent import concurrent_eval  # older OpenMDAO (<3.10)
+else:
+    concurrent_eval = None
 from openmdao.core.analysis_error import AnalysisError
 
 import cma
@@ -757,6 +764,11 @@ class CMAES(object):
                         cases.append(cases[-1])
 
                 # evaluate candidate solutions concurrently
+                if concurrent_eval is None:
+                    raise RuntimeError(
+                        "Parallel execution requires 'openmdao.utils.concurrent', "
+                        "which was removed in newer versions of OpenMDAO."
+                    )
                 results = concurrent_eval(
                     self.objfun, cases, comm, allgather=True, model_mpi=self.model_mpi
                 )
