@@ -1,0 +1,126 @@
+
+//==== Create A Multi Section Wing and Change Some Parameters ====//
+
+void main()
+{
+   //==== Add Wing ====//
+   
+   string wid = AddGeom( "WING", "");
+   string xsec_surf = GetXSecSurf( wid, 0 );
+   string xsec = GetXSec( xsec_surf, 0 );
+   
+   //===== Define wing globale dimensions =====//
+   
+   InsertXSec( wid, 1, XS_FILE_AIRFOIL );
+   SetParmVal( GetParm(wid, "Tess_W", "Shape"), 41 );
+   SetParmVal( GetParm(wid, "LECluster", "WingGeom"), 0.7 );
+   SetParmVal( GetParm(wid, "TECluster", "WingGeom"), 0.9 );
+   SetParmVal( GetParm(wid, "X_Rel_Location", "XForm"), x_wing );
+   SetParmVal( GetParm(wid, "Z_Rel_Location", "XForm"), z_wing );
+   Update();
+   
+   //===== Define wing 1st Section ====//
+   
+   SetParmVal( GetParm(wid, "Span", "XSec_1"), y1_wing );
+   SetParmVal( GetParm(wid, "Root_Chord", "XSec_1"), l2_wing );
+   SetParmVal( GetParm(wid, "Tip_Chord", "XSec_1"), l2_wing );
+   SetParmVal( GetParm(wid, "Sweep", "XSec_1"), 0.0 );
+   SetParmVal( GetParm(wid, "Sec_Sweep_Location", "XSec_1"), 0.7 );
+   SetParmVal( GetParm(wid, "Sweep_Location", "XSec_1"), 0 );
+   SetParmVal( GetParm(wid, "SectTess_U", "XSec_1"), 8 );
+   SetParmVal( GetParm(wid, "Twist", "XSec_1"), 0 );
+   SetParmVal( GetParm(wid, "Twist_Location", "XSec_1"), 0.25 );
+   SetParmVal( GetParm(wid, "Dihedral", "XSec_1"), 0 );
+   Update();
+   
+   //===== Define wing 2nd Section ====//
+   
+   SetParmVal( GetParm(wid, "Span", "XSec_2"), span2_wing );
+   SetParmVal( GetParm(wid, "Root_Chord", "XSec_2"), l2_wing );
+   SetParmVal( GetParm(wid, "Tip_Chord", "XSec_2"), l4_wing );
+   SetParmVal( GetParm(wid, "Sweep", "XSec_2"), sweep_0_wing );
+   SetParmVal( GetParm(wid, "Sec_Sweep_Location", "XSec_2"), 0.7 );
+   SetParmVal( GetParm(wid, "Sweep_Location", "XSec_2"), 0 );
+   SetParmVal( GetParm(wid, "SectTess_U", "XSec_2"), 33 );
+   SetParmVal( GetParm(wid, "OutCluster", "XSec_2"), 0.9 );
+   SetParmVal( GetParm(wid, "Twist", "XSec_2"), twist );
+   SetParmVal( GetParm(wid, "Twist_Location", "XSec_2"), 0.25 );
+   SetParmVal( GetParm(wid, "Dihedral", "XSec_2"), dihedral_angle );
+   Update();
+   
+   //==== Change Airfoil 0 shape ====//
+   
+   ChangeXSecShape( xsec_surf, 0, XS_FILE_AIRFOIL );
+   xsec = GetXSec( xsec_surf, 0 );
+   ReadFileAirfoil( xsec, airfoil_0_file );
+   Update();
+   
+   //==== Change Airfoil 1 (y=y2) shape ====//
+   
+   ChangeXSecShape( xsec_surf, 1, XS_FILE_AIRFOIL );
+   xsec = GetXSec( xsec_surf, 1 );
+   ReadFileAirfoil( xsec, airfoil_1_file );
+   Update();
+   
+   //==== Change Airfoil 2 (y=y4) shape ====//
+   
+   ChangeXSecShape( xsec_surf, 2, XS_FILE_AIRFOIL );
+   xsec = GetXSec( xsec_surf, 2 );
+   ReadFileAirfoil( xsec, airfoil_2_file );
+   Update();
+   
+   //==== Add wing (HTP) ====//
+   
+   string hid = AddGeom("WING", "");
+   xsec_surf = GetXSecSurf( hid, 0 );
+   
+   //===== Define htp globale dimensions =====//
+   
+   SetParmVal(hid, "Tess_W", "Shape", 31);
+   SetParmVal( GetParm(hid, "LECluster", "WingGeom"), 0.7 );
+   SetParmVal( GetParm(hid, "TECluster", "WingGeom"), 0.9 );
+   SetParmVal( GetParm(hid, "X_Rel_Location", "XForm"), distance_htp );
+   SetParmVal( GetParm(hid, "Z_Rel_Location", "XForm"), height_htp );
+   Update();
+   
+   //===== Define HTP 1st Section ====//
+   
+   SetParmVal( GetParm(hid, "Span", "XSec_1"), span_htp );
+   SetParmVal( GetParm(hid, "Root_Chord", "XSec_1"), root_chord_htp );
+   SetParmVal( GetParm(hid, "Tip_Chord", "XSec_1"), tip_chord_htp );
+   SetParmVal( GetParm(hid, "Sweep", "XSec_1"), sweep_25_htp );
+   SetParmVal( GetParm(hid, "Sweep_Location", "XSec_1"), 0.25 );
+   SetParmVal( GetParm(hid, "SectTess_U", "XSec_1"), 25 );
+   Update();
+   
+   //==== Change Airfoils 0 shape  ====//
+   
+   ChangeXSecShape( xsec_surf, 0, XS_FILE_AIRFOIL );
+   xsec = GetXSec( xsec_surf, 0 );
+   ReadFileAirfoil( xsec, airfoil_3_file );
+   Update();
+   
+   //==== Change Airfoils 1 shape  ====//
+   
+   ChangeXSecShape( xsec_surf, 1, XS_FILE_AIRFOIL );
+   xsec = GetXSec( xsec_surf, 1 );
+   ReadFileAirfoil( xsec, airfoil_4_file );
+   Update();
+   
+   //==== Check For API Errors ====//
+   
+   while ( GetNumTotalErrors() > 0 )
+   {
+        ErrorObj err = PopLastError();
+        Print(err.GetErrorString());
+    }
+	
+	//==== Set File Name ====//
+	
+	SetComputationFileName( DEGEN_GEOM_CSV_TYPE, csv_file );
+	
+	//==== Run Degen Geom ====//
+	ComputeDegenGeom( SET_ALL, DEGEN_GEOM_CSV_TYPE );
+
+}
+   
