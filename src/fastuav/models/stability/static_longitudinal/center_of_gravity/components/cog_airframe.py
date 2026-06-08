@@ -57,8 +57,7 @@ class CoG_airframe_component(om.ExplicitComponent):
         self.add_output("data:stability:CoG:airframe", units="m")
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         propulsion_id_list = self.options["propulsion_id_list"]
@@ -88,6 +87,76 @@ class CoG_airframe_component(om.ExplicitComponent):
 
         outputs["data:weight:airframe"] = m_airframe
         outputs["data:stability:CoG:airframe"] = x_cg_airframe
+    
+    def compute_partials(self, inputs, partials):
+        propulsion_id_list = self.options["propulsion_id_list"]
+
+        x_cg_fus = inputs["data:stability:CoG:airframe:fuselage"]
+        x_cg_w = inputs["data:stability:CoG:airframe:wing"]
+        x_cg_ht = inputs["data:stability:CoG:airframe:tail:horizontal"]
+        x_cg_vt = inputs["data:stability:CoG:airframe:tail:vertical"]
+        m_fus = inputs["data:weight:airframe:fuselage:mass"]
+        m_wing = inputs["data:weight:airframe:wing:mass"]
+        m_ht = inputs["data:weight:airframe:tail:horizontal:mass"]
+        m_vt = inputs["data:weight:airframe:tail:vertical:mass"]
+
+        if MR_PROPULSION in propulsion_id_list:
+            x_cg_arms = inputs["data:stability:CoG:arms"]
+            m_arms = inputs["data:weight:airframe:arms:mass"]
+        else:
+            x_cg_arms = 0.0
+            m_arms = 0.0
+
+        # Total mass and weighted CoG
+        m_airframe = m_fus + m_wing + m_ht + m_vt + m_arms
+        numerator = x_cg_fus * m_fus + x_cg_w * m_wing + x_cg_ht * m_ht + x_cg_vt * m_vt + x_cg_arms * m_arms
+        x_cg_airframe = numerator / m_airframe
+
+        # ========== Partials for m_airframe ==========
+        partials["data:weight:airframe", "data:weight:airframe:fuselage:mass"] = 1.0
+        partials["data:weight:airframe", "data:weight:airframe:wing:mass"] = 1.0
+        partials["data:weight:airframe", "data:weight:airframe:tail:horizontal:mass"] = 1.0
+        partials["data:weight:airframe", "data:weight:airframe:tail:vertical:mass"] = 1.0
+        partials["data:weight:airframe", "data:stability:CoG:airframe:fuselage"] = 0.0
+        partials["data:weight:airframe", "data:stability:CoG:airframe:wing"] = 0.0
+        partials["data:weight:airframe", "data:stability:CoG:airframe:tail:horizontal"] = 0.0
+        partials["data:weight:airframe", "data:stability:CoG:airframe:tail:vertical"] = 0.0
+
+        if MR_PROPULSION in propulsion_id_list:
+            partials["data:weight:airframe", "data:weight:airframe:arms:mass"] = 1.0
+            partials["data:weight:airframe", "data:stability:CoG:arms"] = 0.0
+
+        # ========== Partials for x_cg_airframe ==========
+        # Using quotient rule: d(num/denom)/dx = (d(num)/dx * denom - num * d(denom)/dx) / denom^2
+
+        # d(x_cg_airframe) / d(CG inputs) = mass_component / m_airframe
+        partials["data:stability:CoG:airframe", "data:stability:CoG:airframe:fuselage"] = m_fus / m_airframe
+        partials["data:stability:CoG:airframe", "data:stability:CoG:airframe:wing"] = m_wing / m_airframe
+        partials["data:stability:CoG:airframe", "data:stability:CoG:airframe:tail:horizontal"] = m_ht / m_airframe
+        partials["data:stability:CoG:airframe", "data:stability:CoG:airframe:tail:vertical"] = m_vt / m_airframe
+
+        # d(x_cg_airframe) / d(mass inputs) = (x_cg_component * m_airframe - numerator) / m_airframe^2
+        partials["data:stability:CoG:airframe", "data:weight:airframe:fuselage:mass"] = (
+            (x_cg_fus * m_airframe - numerator) / (m_airframe ** 2)
+        )
+        partials["data:stability:CoG:airframe", "data:weight:airframe:wing:mass"] = (
+            (x_cg_w * m_airframe - numerator) / (m_airframe ** 2)
+        )
+        partials["data:stability:CoG:airframe", "data:weight:airframe:tail:horizontal:mass"] = (
+            (x_cg_ht * m_airframe - numerator) / (m_airframe ** 2)
+        )
+        partials["data:stability:CoG:airframe", "data:weight:airframe:tail:vertical:mass"] = (
+            (x_cg_vt * m_airframe - numerator) / (m_airframe ** 2)
+        )
+
+        if MR_PROPULSION in propulsion_id_list:
+            partials["data:stability:CoG:airframe", "data:stability:CoG:arms"] = m_arms / m_airframe
+            partials["data:stability:CoG:airframe", "data:weight:airframe:arms:mass"] = (
+                (x_cg_arms * m_airframe - numerator) / (m_airframe ** 2)
+            )
+
+ 
+        
 
 
 class CoG_fuselage(om.ExplicitComponent):
@@ -109,7 +178,7 @@ class CoG_fuselage(om.ExplicitComponent):
 
     def setup_partials(self):
         # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         l_nose = inputs["data:geometry:fuselage:length:nose"]
@@ -131,6 +200,90 @@ class CoG_fuselage(om.ExplicitComponent):
 
         outputs["data:stability:CoG:airframe:fuselage"] = x_cg_fus
 
+    def compute_partials(self, inputs, partials):
+        l_nose = inputs["data:geometry:fuselage:length:nose"]
+        l_mid = inputs["data:geometry:fuselage:length:mid"]
+        l_rear = inputs["data:geometry:fuselage:length:rear"]
+        d_fus_mid = inputs["data:geometry:fuselage:diameter:mid"]
+        d_fus_tip = inputs["data:geometry:fuselage:diameter:tip"]
+        m_nose = inputs["data:weight:airframe:fuselage:mass:nose"]
+        m_mid = inputs["data:weight:airframe:fuselage:mass:mid"]
+        m_rear = inputs["data:weight:airframe:fuselage:mass:rear"]
+        m_fus = inputs["data:weight:airframe:fuselage:mass"]
+
+        # CG positions
+        x_cg_nose = l_nose / 2
+        x_cg_mid = l_nose + l_mid / 2
+        
+        # For x_cg_rear, denote the ratio term
+        diam_ratio = (d_fus_mid + 2 * d_fus_tip) / (d_fus_mid + d_fus_tip)
+        x_cg_rear = l_nose + l_mid + l_rear / 3 * diam_ratio
+        
+        # Numerator of weighted sum
+        numerator = m_nose * x_cg_nose + m_mid * x_cg_mid + m_rear * x_cg_rear
+        x_cg_fus = numerator / m_fus
+
+        # ========== Partial derivatives wrt geometry ==========
+        
+        # d(x_cg_fus) / d(l_nose)
+        # d(x_cg_nose)/d(l_nose) = 1/2, d(x_cg_mid)/d(l_nose) = 1, d(x_cg_rear)/d(l_nose) = 1
+        partials["data:stability:CoG:airframe:fuselage", "data:geometry:fuselage:length:nose"] = (
+            m_nose * 0.5 + m_mid * 1.0 + m_rear * 1.0
+        ) / m_fus
+
+        # d(x_cg_fus) / d(l_mid)
+        # d(x_cg_nose)/d(l_mid) = 0, d(x_cg_mid)/d(l_mid) = 1/2, d(x_cg_rear)/d(l_mid) = 1
+        partials["data:stability:CoG:airframe:fuselage", "data:geometry:fuselage:length:mid"] = (
+            m_mid * 0.5 + m_rear * 1.0
+        ) / m_fus
+
+        # d(x_cg_fus) / d(l_rear)
+        # d(x_cg_nose)/d(l_rear) = 0, d(x_cg_mid)/d(l_rear) = 0, d(x_cg_rear)/d(l_rear) = 1/3 * diam_ratio
+        partials["data:stability:CoG:airframe:fuselage", "data:geometry:fuselage:length:rear"] = (
+            m_rear * (1.0 / 3.0) * diam_ratio
+        ) / m_fus
+
+        # d(x_cg_fus) / d(d_fus_mid)
+        # d(diam_ratio)/d(d_fus_mid) = [1*(d_fus_mid+d_fus_tip) - (d_fus_mid+2*d_fus_tip)*1] / (d_fus_mid+d_fus_tip)^2
+        #                             = -d_fus_tip / (d_fus_mid+d_fus_tip)^2
+        denom_sq = (d_fus_mid + d_fus_tip) ** 2
+        d_diam_ratio_d_mid = -d_fus_tip / denom_sq
+        
+        partials["data:stability:CoG:airframe:fuselage", "data:geometry:fuselage:diameter:mid"] = (
+            m_rear * (l_rear / 3.0) * d_diam_ratio_d_mid
+        ) / m_fus
+
+        # d(x_cg_fus) / d(d_fus_tip)
+        # d(diam_ratio)/d(d_fus_tip) = [2*(d_fus_mid+d_fus_tip) - (d_fus_mid+2*d_fus_tip)*1] / (d_fus_mid+d_fus_tip)^2
+        #                             = d_fus_mid / (d_fus_mid+d_fus_tip)^2
+        d_diam_ratio_d_tip = d_fus_mid / denom_sq
+        
+        partials["data:stability:CoG:airframe:fuselage", "data:geometry:fuselage:diameter:tip"] = (
+            m_rear * (l_rear / 3.0) * d_diam_ratio_d_tip
+        ) / m_fus
+
+        # ========== Partial derivatives wrt masses ==========
+        
+        # d(x_cg_fus) / d(m_nose) = x_cg_nose / m_fus
+        partials["data:stability:CoG:airframe:fuselage", "data:weight:airframe:fuselage:mass:nose"] = (
+            x_cg_nose / m_fus
+        )
+
+        # d(x_cg_fus) / d(m_mid) = x_cg_mid / m_fus
+        partials["data:stability:CoG:airframe:fuselage", "data:weight:airframe:fuselage:mass:mid"] = (
+            x_cg_mid / m_fus
+        )
+
+        # d(x_cg_fus) / d(m_rear) = x_cg_rear / m_fus
+        partials["data:stability:CoG:airframe:fuselage", "data:weight:airframe:fuselage:mass:rear"] = (
+            x_cg_rear / m_fus
+        )
+
+        # d(x_cg_fus) / d(m_fus) = -numerator / m_fus^2 = -x_cg_fus / m_fus
+        partials["data:stability:CoG:airframe:fuselage", "data:weight:airframe:fuselage:mass"] = (
+            -numerator / (m_fus ** 2)
+        )
+
 
 class CoG_wing(om.ExplicitComponent):
     """
@@ -143,8 +296,7 @@ class CoG_wing(om.ExplicitComponent):
         self.add_output("data:stability:CoG:airframe:wing", units="m")
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         c_MAC = inputs["data:geometry:wing:MAC:length"]
@@ -153,6 +305,16 @@ class CoG_wing(om.ExplicitComponent):
         x_cg_w = x_MAC_LE + 0.4 * c_MAC  # [m]
 
         outputs["data:stability:CoG:airframe:wing"] = x_cg_w
+    
+    def compute_partials(self, inputs, partials):
+        c_MAC = inputs["data:geometry:wing:MAC:length"]
+        x_MAC_LE = inputs["data:geometry:wing:MAC:LE:x"]
+
+        # d(x_cg_w) / d(c_MAC) = 0.4
+        partials["data:stability:CoG:airframe:wing", "data:geometry:wing:MAC:length"] = 0.4
+
+        # d(x_cg_w) / d(x_MAC_LE) = 1
+        partials["data:stability:CoG:airframe:wing", "data:geometry:wing:MAC:LE:x"] = 1.0
 
 
 class CoG_tail(om.ExplicitComponent):
@@ -170,8 +332,7 @@ class CoG_tail(om.ExplicitComponent):
         self.add_output("data:stability:CoG:airframe:tail:%s" % tail, units="m")
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         tail = self.options["tail"]
@@ -181,6 +342,17 @@ class CoG_tail(om.ExplicitComponent):
         x_cg_tail = x_MAC_LE + 0.4 * c_MAC  # [m]
 
         outputs["data:stability:CoG:airframe:tail:%s" % tail] = x_cg_tail
+    
+    def compute_partials(self, inputs, partials):
+        tail = self.options["tail"]
+        c_MAC = inputs["data:geometry:tail:%s:MAC:length" % tail]
+        x_MAC_LE = inputs["data:geometry:tail:%s:MAC:LE:x" % tail]
+
+        # d(x_cg_tail) / d(c_MAC) = 0.4
+        partials["data:stability:CoG:airframe:tail:%s" % tail, "data:geometry:tail:%s:MAC:length" % tail] = 0.4
+
+        # d(x_cg_tail) / d(x_MAC_LE) = 1
+        partials["data:stability:CoG:airframe:tail:%s" % tail, "data:geometry:tail:%s:MAC:LE:x" % tail] = 1.0
 
 
 class CoG_arms_VTOL(om.ExplicitComponent):

@@ -75,7 +75,7 @@ class SetFlightParameters(om.ExplicitComponent):
             self.add_output("mission:%s:%s:cruise:speed" % (mission_name, route_name), val=np.nan, units="m/s")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         mission_name = self.options["mission_name"]
@@ -95,6 +95,36 @@ class SetFlightParameters(om.ExplicitComponent):
             outputs["mission:%s:%s:cruise:speed" % (mission_name, route_name)] = inputs[
                 "mission:sizing:main_route:cruise:speed:%s" % propulsion_id]  # [m/s]
 
+    def setup_partials(self):
+        mission_name = self.options["mission_name"]
+        route_name = self.options["route_name"]
+        phase_name = self.options["phase_name"]
+        propulsion_id = self.options["propulsion_id"]
+
+        # All partials are identity (pure pass-through)
+        if phase_name == HOVER_TAG:
+            self.declare_partials(
+                of="mission:%s:%s:hover:altitude" % (mission_name, route_name),
+                wrt="mission:sizing:main_route:cruise:altitude",
+                val=1.0
+            )
+        elif phase_name == CLIMB_TAG:
+            self.declare_partials(
+                of="mission:%s:%s:climb:speed" % (mission_name, route_name),
+                wrt="mission:sizing:main_route:climb:speed:%s" % propulsion_id,
+                val=1.0
+            )
+            self.declare_partials(
+                of="mission:%s:%s:climb:rate" % (mission_name, route_name),
+                wrt="mission:sizing:main_route:climb:rate:%s" % propulsion_id,
+                val=1.0
+            )
+        elif phase_name == CRUISE_TAG:
+            self.declare_partials(
+                of="mission:%s:%s:cruise:speed" % (mission_name, route_name),
+                wrt="mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+                val=1.0
+            )
 
 class PhaseComponent(om.ExplicitComponent):
     """
@@ -158,13 +188,19 @@ class PhaseComponent(om.ExplicitComponent):
                 self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
             elif propulsion_id == FW_PROPULSION:
                 self.add_input("data:aerodynamics:CD0", val=np.nan, units=None)
-                self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
+                self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=0.035, units=None)
                 self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
 
         self.add_output("mission:%s:%s:%s:energy" % (mission_name, route_name, phase_name), units="kJ")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        is_sizing = self.options["is_sizing"]
+        if is_sizing:
+            self.declare_partials("*", "*", method="exact")
+        else:
+            # Non-sizing uses FlightPerformanceModel (implicit) → keep FD
+            self.declare_partials("*", "*", method="fd")
+
 
     def compute(self, inputs, outputs):
         mission_name = self.options["mission_name"]
@@ -226,7 +262,8 @@ class PhaseComponent(om.ExplicitComponent):
                 flight_model.mr_area_top = inputs["data:geometry:projected_area:top"]
 
             elif propulsion_id == FW_PROPULSION:
-                flight_model.fw_induced_drag_constant = inputs["data:aerodynamics:CDi:K"]
+                # flight_model.fw_induced_drag_constant = inputs["data:aerodynamics:CDi:K"]
+                flight_model.fw_induced_drag_constant = inputs["optimization:variables:aerodynamics:CDi:K:guess"]
                 flight_model.fw_parasitic_drag_coef = inputs["data:aerodynamics:CD0"]
                 flight_model.wing_area = inputs["data:geometry:wing:surface"]
 
@@ -235,3 +272,88 @@ class PhaseComponent(om.ExplicitComponent):
         energy = power * t  # [J] required energy to complete the flight phase_name
 
         outputs["mission:%s:%s:%s:energy" % (mission_name, route_name, phase_name)] = energy / 1000  # [kJ]
+
+    def compute_partials(self, inputs, partials):
+        mission_name = self.options["mission_name"]
+        is_sizing = self.options["is_sizing"]
+        route_name = self.options["route_name"]
+        phase_name = self.options["phase_name"]
+        propulsion_id = self.options["propulsion_id"]
+
+        # Only compute analytic partials in sizing mode (non-sizing handled by FD)
+        if not is_sizing:
+            return
+
+        energy_key = "mission:%s:%s:%s:energy" % (mission_name, route_name, phase_name)
+        power_key = "data:propulsion:%s:battery:power:%s" % (propulsion_id, phase_name)
+        power = inputs[power_key]
+
+        # ========== HOVER ==========
+        # t = duration_input * 60 [s]
+        # energy_kJ = power * t / 1000 = power * duration * 0.06
+        if phase_name == HOVER_TAG:
+            altitude_key = "mission:%s:%s:cruise:altitude" % (mission_name, route_name)
+            duration_key = "mission:%s:%s:hover:duration" % (mission_name, route_name)
+
+            duration = inputs[duration_key]  # [min]
+
+            # Altitude is read but not used in sizing energy calc
+            partials[energy_key, altitude_key] = 0.0
+            partials[energy_key, duration_key] = power * 60.0 / 1000.0  # power * 0.06
+            partials[energy_key, power_key] = duration * 60.0 / 1000.0  # duration * 0.06
+
+        # ========== CRUISE ==========
+        # t = d / V [s]
+        # duration_min = t / 60 = d / (V * 60)
+        # energy_kJ = power * t / 1000 = power * d / (V * 1000)
+        elif phase_name == CRUISE_TAG:
+            altitude_key = "mission:%s:%s:cruise:altitude" % (mission_name, route_name)
+            distance_key = "mission:%s:%s:cruise:distance" % (mission_name, route_name)
+            speed_key = "mission:%s:%s:cruise:speed" % (mission_name, route_name)
+            duration_key = "mission:%s:%s:cruise:duration" % (mission_name, route_name)
+
+            d = inputs[distance_key]
+            V = inputs[speed_key]
+
+            # Duration output partials
+            partials[duration_key, altitude_key] = 0.0
+            partials[duration_key, distance_key] = 1.0 / (V * 60.0)
+            partials[duration_key, speed_key] = -d / (V ** 2 * 60.0)
+            partials[duration_key, power_key] = 0.0
+
+            # Energy output partials
+            partials[energy_key, altitude_key] = 0.0
+            partials[energy_key, distance_key] = power / (V * 1000.0)
+            partials[energy_key, speed_key] = -power * d / (V ** 2 * 1000.0)
+            partials[energy_key, power_key] = d / (V * 1000.0)
+
+        # ========== CLIMB ==========
+        # IMPORTANT: V cancels! d = Δh*V/V_v, t = d/V = Δh/V_v
+        # t = (altitude_max - altitude_min) / V_v [s]
+        # duration_min = t / 60 = Δh / (V_v * 60)
+        # energy_kJ = power * t / 1000 = power * Δh / (V_v * 1000)
+        elif phase_name == CLIMB_TAG:
+            takeoff_alt_key = "mission:%s:%s:takeoff:altitude" % (mission_name, route_name)
+            cruise_alt_key = "mission:%s:%s:cruise:altitude" % (mission_name, route_name)
+            rate_key = "mission:%s:%s:climb:rate" % (mission_name, route_name)
+            speed_key = "mission:%s:%s:climb:speed" % (mission_name, route_name)
+            duration_key = "mission:%s:%s:climb:duration" % (mission_name, route_name)
+
+            altitude_min = inputs[takeoff_alt_key]
+            altitude_max = inputs[cruise_alt_key]
+            V_v = inputs[rate_key]
+            delta_h = altitude_max - altitude_min
+
+            # Duration output partials
+            partials[duration_key, takeoff_alt_key] = -1.0 / (V_v * 60.0)
+            partials[duration_key, cruise_alt_key] = 1.0 / (V_v * 60.0)
+            partials[duration_key, rate_key] = -delta_h / (V_v ** 2 * 60.0)
+            partials[duration_key, speed_key] = 0.0  # V cancels in t = d/V
+            partials[duration_key, power_key] = 0.0
+
+            # Energy output partials
+            partials[energy_key, takeoff_alt_key] = -power / (V_v * 1000.0)
+            partials[energy_key, cruise_alt_key] = power / (V_v * 1000.0)
+            partials[energy_key, rate_key] = -power * delta_h / (V_v ** 2 * 1000.0)
+            partials[energy_key, speed_key] = 0.0  # V cancels
+            partials[energy_key, power_key] = delta_h / (V_v * 1000.0)

@@ -176,7 +176,7 @@ class MaxCurrent(om.ExplicitComponent):
 
     def setup_partials(self):
         # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         C_bat_ref = inputs["models:propulsion:battery:capacity:reference"]
@@ -186,6 +186,15 @@ class MaxCurrent(om.ExplicitComponent):
         I_bat_max = I_bat_max_ref * C_bat / C_bat_ref  # [A] max current battery
 
         outputs["data:propulsion:battery:current:max:estimated"] = I_bat_max
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        C_bat_ref = inputs["models:propulsion:battery:capacity:reference"]
+        I_bat_max_ref = inputs["models:propulsion:battery:current:max:reference"]
+        C_bat = inputs["data:propulsion:battery:capacity:estimated"]
+
+        partials["data:propulsion:battery:current:max:estimated","models:propulsion:battery:capacity:reference"] = - I_bat_max_ref * C_bat / C_bat_ref ** 2
+        partials["data:propulsion:battery:current:max:estimated","models:propulsion:battery:current:max:reference"] = C_bat / C_bat_ref
+        partials["data:propulsion:battery:current:max:estimated","data:propulsion:battery:capacity:estimated"] = I_bat_max_ref / C_bat_ref
 
 
 class Weight(om.ExplicitComponent):
@@ -245,7 +254,7 @@ class Geometry(om.ExplicitComponent):
 
     def setup_partials(self):
         # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         C_bat = inputs["data:propulsion:battery:capacity:estimated"]
@@ -254,11 +263,23 @@ class Geometry(om.ExplicitComponent):
         U_bat_ref = inputs["models:propulsion:battery:voltage:reference"]
         Volbat_ref = inputs["models:propulsion:battery:volume:reference"]
 
-        Vol_bat = Volbat_ref * (
-            C_bat * U_bat / (C_bat_ref * U_bat_ref)
-        )  # [cm**3] Volume of the battery (estimated)
+        Vol_bat = Volbat_ref * C_bat * U_bat / (C_bat_ref * U_bat_ref)  # [cm**3] Volume of the battery (estimated)
 
         outputs["data:propulsion:battery:volume:estimated"] = Vol_bat
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        C_bat = inputs["data:propulsion:battery:capacity:estimated"]
+        U_bat = inputs["data:propulsion:battery:voltage:estimated"]
+        C_bat_ref = inputs["models:propulsion:battery:capacity:reference"]
+        U_bat_ref = inputs["models:propulsion:battery:voltage:reference"]
+        Volbat_ref = inputs["models:propulsion:battery:volume:reference"]
+        out_ID = "data:propulsion:battery:volume:estimated"
+
+        partials[out_ID, "data:propulsion:battery:capacity:estimated"] = Volbat_ref * U_bat / (C_bat_ref * U_bat_ref)
+        partials[out_ID, "data:propulsion:battery:voltage:estimated"] = Volbat_ref * C_bat / (C_bat_ref * U_bat_ref)
+        partials[out_ID, "models:propulsion:battery:capacity:reference"] = - Volbat_ref * C_bat * U_bat / (C_bat_ref ** 2 * U_bat_ref)
+        partials[out_ID, "models:propulsion:battery:voltage:reference"] = - Volbat_ref * C_bat * U_bat / (C_bat_ref * U_bat_ref ** 2)
+        partials[out_ID, "models:propulsion:battery:volume:reference"] = C_bat * U_bat / (C_bat_ref * U_bat_ref)
+
 
 
 class MaxDepthOfDischarge(om.ExplicitComponent):
@@ -271,8 +292,7 @@ class MaxDepthOfDischarge(om.ExplicitComponent):
         self.add_output("data:propulsion:battery:DoD:max:estimated", units=None)
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         C_ratio_ref = inputs["models:propulsion:battery:DoD:max:reference"]
@@ -281,6 +301,10 @@ class MaxDepthOfDischarge(om.ExplicitComponent):
         C_ratio = C_ratio_ref
 
         outputs["data:propulsion:battery:DoD:max:estimated"] = C_ratio
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        C_ratio_ref = inputs["models:propulsion:battery:DoD:max:reference"]
+
+        partials["data:propulsion:battery:DoD:max:estimated", "models:propulsion:battery:DoD:max:reference"] = 1.0
 
 
 class ESCEfficiency(om.ExplicitComponent):
@@ -293,8 +317,7 @@ class ESCEfficiency(om.ExplicitComponent):
         self.add_output("data:propulsion:esc:efficiency:estimated", units=None)
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         eta_ref = inputs["models:propulsion:esc:efficiency:reference"]
@@ -303,6 +326,11 @@ class ESCEfficiency(om.ExplicitComponent):
         eta = eta_ref
 
         outputs["data:propulsion:esc:efficiency:estimated"] = eta
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        eta_ref = inputs["models:propulsion:esc:efficiency:reference"]
+
+        partials["data:propulsion:esc:efficiency:estimated", "models:propulsion:esc:efficiency:reference"] = 1.0
 
 
 class Energy2(om.ExplicitComponent):

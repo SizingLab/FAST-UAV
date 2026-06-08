@@ -60,8 +60,7 @@ class Radius(om.ExplicitComponent):
         self.add_output("data:propulsion:wires:radius", units="m")
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         sizing_component = self.options["sizing_component"]
@@ -72,6 +71,20 @@ class Radius(om.ExplicitComponent):
         r = r_ref * (I / I_ref) ** (2 / 3)  # [m] radius of wire
 
         outputs["data:propulsion:wires:radius"] = r
+    
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        sizing_component = self.options["sizing_component"]
+        r_ref = inputs["models:propulsion:wires:radius:reference"]  # [m] radius of reference wire
+        I_ref = inputs["models:propulsion:wires:current:reference"]  # [A] nominal current of reference wire
+        I = inputs["data:propulsion:%s:current:cruise" % sizing_component]  # [A] nominal current
+
+
+        partials["data:propulsion:wires:radius",
+                 "data:propulsion:%s:current:cruise" % sizing_component] = (2 / 3) * r_ref * (I / I_ref) ** (-1 / 3) / I_ref
+        partials["data:propulsion:wires:radius",
+                 "models:propulsion:wires:current:reference"] = -(2 / 3) * r_ref * (I / I_ref) ** (-1 / 3) * I / I_ref ** 2
+        partials["data:propulsion:wires:radius",
+                 "models:propulsion:wires:radius:reference"] = (I / I_ref) ** (2 / 3)
 
 
 class Length(om.ExplicitComponent):

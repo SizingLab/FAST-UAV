@@ -7,7 +7,6 @@ import fastoad.api as oad
 import openmdao.api as om
 from fastuav.models.mtow.mtow import MtowGuess
 from fastuav.models.geometry.geometry_fixedwing import ProjectedAreasGuess
-from fastuav.models.aerodynamics.aerodynamics_fixedwing import SpanEfficiency, InducedDragConstant
 from fastuav.models.scenarios.thrust.takeoff import VerticalTakeoffThrust, LauncherTakeoff
 from fastuav.models.scenarios.thrust.cruise import FixedwingCruiseThrust, NoCruise
 from fastuav.models.scenarios.thrust.climb import MultirotorClimbThrust, FixedwingClimbThrust
@@ -26,6 +25,7 @@ class SizingScenariosHybrid(om.Group):
     """
 
     def setup(self):
+        from fastuav.models.aerodynamics.aerodynamics_fixedwing import SpanEfficiency, InducedDragConstant
         preliminary = self.add_subsystem("preliminary", om.Group(), promotes=["*"])
         preliminary.add_subsystem("mtow_guess", MtowGuess(), promotes=["*"])
         preliminary.add_subsystem("span_efficiency", SpanEfficiency(), promotes=["*"])

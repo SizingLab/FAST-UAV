@@ -52,16 +52,13 @@ class BatteryPerformance(om.ExplicitComponent):
         self.add_output("data:propulsion:battery:power:%s" % scenario, units="W")
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         scenario = self.options["scenario"]
         N_pro = inputs["data:propulsion:propeller:number"]
         P_mot = inputs["data:propulsion:motor:power:%s" % scenario]
-        eta_ESC = inputs[
-            "data:propulsion:esc:efficiency:estimated"
-        ]  #TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
+        eta_ESC = inputs["data:propulsion:esc:efficiency:estimated"]  #TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
         U_bat = inputs["data:propulsion:battery:voltage"]
         P_payload = inputs["mission:sizing:payload:power"]
 
@@ -70,3 +67,28 @@ class BatteryPerformance(om.ExplicitComponent):
 
         outputs["data:propulsion:battery:power:%s" % scenario] = P_bat
         outputs["data:propulsion:battery:current:%s" % scenario] = I_bat
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        scenario = self.options["scenario"]
+        N_pro = inputs["data:propulsion:propeller:number"]
+        P_mot = inputs["data:propulsion:motor:power:%s" % scenario]
+        eta_ESC = inputs["data:propulsion:esc:efficiency:estimated"]
+        U_bat = inputs["data:propulsion:battery:voltage"]
+        P_payload = inputs["mission:sizing:payload:power"]
+
+        P_bat = BatteryPerformanceModel.power(P_mot, N_pro, eta_ESC, P_payload)
+        I_bat = BatteryPerformanceModel.current(P_bat, U_bat)
+
+
+        partials["data:propulsion:battery:power:%s" % scenario, "data:propulsion:motor:power:%s" % scenario] = N_pro / eta_ESC
+        partials["data:propulsion:battery:power:%s" % scenario, "data:propulsion:propeller:number"] = P_mot / eta_ESC
+        partials["data:propulsion:battery:power:%s" % scenario, "data:propulsion:esc:efficiency:estimated"] = - P_mot * N_pro / (eta_ESC ** 2)
+        partials["data:propulsion:battery:power:%s" % scenario, "data:propulsion:battery:voltage"] = 0.0
+        partials["data:propulsion:battery:power:%s" % scenario, "mission:sizing:payload:power"] = 1.0
+
+
+        partials["data:propulsion:battery:current:%s" % scenario, "data:propulsion:motor:power:%s" % scenario] = N_pro / eta_ESC / U_bat if U_bat > 0 else 0.0
+        partials["data:propulsion:battery:current:%s" % scenario, "data:propulsion:propeller:number"] = P_mot / eta_ESC / U_bat if U_bat > 0 else 0.0
+        partials["data:propulsion:battery:current:%s" % scenario, "data:propulsion:esc:efficiency:estimated"] = - P_mot * N_pro / (eta_ESC ** 2) / U_bat if U_bat > 0 else 0.0
+        partials["data:propulsion:battery:current:%s" % scenario, "mission:sizing:payload:power"] = 1 / U_bat if U_bat > 0 else 0.0
+        partials["data:propulsion:battery:current:%s" % scenario, "data:propulsion:battery:voltage"] = -I_bat / U_bat if U_bat > 0 else 0.0

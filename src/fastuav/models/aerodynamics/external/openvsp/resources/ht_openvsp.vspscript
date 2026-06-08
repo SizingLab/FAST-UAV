@@ -1,0 +1,63 @@
+
+//==== Create A Multi Section Wing and Change Some Parameters ====//
+
+void main()
+{
+   //==== Add Wing ====//
+   
+   string wid = AddGeom( "WING", "");
+   string xsec_surf = GetXSecSurf( wid, 0 );
+   string xsec = GetXSec( xsec_surf, 0 );
+   
+   //===== Define wing globale dimensions =====//
+   
+   InsertXSec( wid, 0, XS_FILE_AIRFOIL );
+   SetParmVal( GetParm(wid, "Tess_W", "Shape"), 31 );
+   SetParmVal( GetParm(wid, "LECluster", "WingGeom"), 0.7 );
+   SetParmVal( GetParm(wid, "TECluster", "WingGeom"), 0.9 );
+   SetParmVal( GetParm(wid, "X_Rel_Location", "XForm"), x_htp );
+   SetParmVal( GetParm(wid, "Z_Rel_Location", "XForm"), z_htp );
+   Update();
+   
+   //===== Define wing 1st Section ====//
+   
+   SetParmVal( GetParm(wid, "Span", "XSec_1"), semi_span_htp );
+   SetParmVal( GetParm(wid, "Root_Chord", "XSec_1"), root_chord_htp );
+   SetParmVal( GetParm(wid, "Tip_Chord", "XSec_1"), tip_chord_htp );
+   SetParmVal( GetParm(wid, "Sweep", "XSec_1"), sweep_25_htp );
+   SetParmVal( GetParm(wid, "Sweep_Location", "XSec_1"), 0.25 );
+   SetParmVal( GetParm(wid, "SectTess_U", "XSec_1"), 8 );
+   SetParmVal( GetParm(wid, "OutCluster", "XSec_2"), 0.9 );
+   Update();
+   
+   //==== Change Airfoil 0 shape ====//
+   
+   ChangeXSecShape( xsec_surf, 0, XS_FILE_AIRFOIL );
+   xsec = GetXSec( xsec_surf, 0 );
+   ReadFileAirfoil( xsec, airfoil_0_file );
+   Update();
+   
+   //==== Change Airfoil 1 (y=y2) shape ====//
+   
+   ChangeXSecShape( xsec_surf, 1, XS_FILE_AIRFOIL );
+   xsec = GetXSec( xsec_surf, 1 );
+   ReadFileAirfoil( xsec, airfoil_1_file );
+   Update();
+   
+   //==== Check For API Errors ====//
+   
+   while ( GetNumTotalErrors() > 0 )
+   {
+        ErrorObj err = PopLastError();
+        Print(err.GetErrorString());
+    }
+	
+	//==== Set File Name ====//
+	
+	SetComputationFileName( DEGEN_GEOM_CSV_TYPE, csv_file );
+	
+	//==== Run Degen Geom ====//
+	ComputeDegenGeom( SET_ALL, DEGEN_GEOM_CSV_TYPE );
+
+}
+   

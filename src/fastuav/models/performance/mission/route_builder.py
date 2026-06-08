@@ -159,7 +159,32 @@ class RouteComponent(om.ExplicitComponent):
         self.add_output("mission:%s:%s:duration" % (mission_name, route_name), units="min")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        mission_name = self.options["mission_name"]
+        route_name = self.options["route_name"]
+        phases_dict = self.options["phases_dict"]
+        propulsion_id_list = self.options["propulsion_id_list"]
+
+        # Per-propulsion route outputs: sum only phases assigned to that propulsion
+        for propulsion_id in propulsion_id_list:
+            energy_prop_key = "mission:%s:%s:energy:%s" % (mission_name, route_name, propulsion_id)
+            duration_prop_key = "mission:%s:%s:duration:%s" % (mission_name, route_name, propulsion_id)
+
+            for phase_name, phase_propulsion in phases_dict.items():
+                if phase_propulsion == propulsion_id:
+                    energy_phase_key = "mission:%s:%s:%s:energy" % (mission_name, route_name, phase_name)
+                    duration_phase_key = "mission:%s:%s:%s:duration" % (mission_name, route_name, phase_name)
+                    self.declare_partials(of=energy_prop_key, wrt=energy_phase_key, val=1.0)
+                    self.declare_partials(of=duration_prop_key, wrt=duration_phase_key, val=1.0)
+            # phases not belonging to this propulsion → undeclared (sparse zero)
+
+        # Total route outputs: sum across all phases
+        energy_total_key = "mission:%s:%s:energy" % (mission_name, route_name)
+        duration_total_key = "mission:%s:%s:duration" % (mission_name, route_name)
+        for phase_name in phases_dict.keys():
+            energy_phase_key = "mission:%s:%s:%s:energy" % (mission_name, route_name, phase_name)
+            duration_phase_key = "mission:%s:%s:%s:duration" % (mission_name, route_name, phase_name)
+            self.declare_partials(of=energy_total_key, wrt=energy_phase_key, val=1.0)
+            self.declare_partials(of=duration_total_key, wrt=duration_phase_key, val=1.0)
 
     def compute(self, inputs, outputs):
         mission_name = self.options["mission_name"]

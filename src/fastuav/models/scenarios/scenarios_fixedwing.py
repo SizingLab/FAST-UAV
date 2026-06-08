@@ -6,7 +6,7 @@ The sizing scenarios are extracted from a sizing mission defined by the user.
 import fastoad.api as oad
 import openmdao.api as om
 from fastuav.models.mtow.mtow import MtowGuess
-from fastuav.models.aerodynamics.aerodynamics_fixedwing import SpanEfficiency, InducedDragConstant
+# from fastuav.models.aerodynamics.aerodynamics_fixedwing import SpanEfficiency#, InducedDragConstant
 from fastuav.models.scenarios.thrust.takeoff import LauncherTakeoff
 from fastuav.models.scenarios.thrust.cruise import FixedwingCruiseThrust
 from fastuav.models.scenarios.thrust.climb import FixedwingClimbThrust
@@ -27,12 +27,12 @@ class SizingScenariosFixedWing(om.Group):
     def setup(self):
         preliminary = self.add_subsystem("preliminary", om.Group(), promotes=["*"])
         preliminary.add_subsystem("mtow_guess", MtowGuess(), promotes=["*"])
-        preliminary.add_subsystem("span_efficiency", SpanEfficiency(), promotes=["*"])
-        preliminary.add_subsystem("induced_drag_constant", InducedDragConstant(), promotes=["*"])
+        # preliminary.add_subsystem("span_efficiency", SpanEfficiency(), promotes=["*"])
+        # preliminary.add_subsystem("induced_drag_constant", InducedDragConstant(), promotes=["*"])
 
         wingloading = self.add_subsystem("wing_loading", om.Group(), promotes=["*"])
         wingloading.add_subsystem("stall", WingLoadingStall(), promotes=["*"])
-        wingloading.add_subsystem("cruise", WingLoadingCruise(), promotes=["*"])
+        # wingloading.add_subsystem("cruise", WingLoadingCruise(), promotes=["*"])
         wingloading.add_subsystem("selection", WingLoadingSelection(), promotes=["*"])
 
         thrust = self.add_subsystem("thrust", om.Group(), promotes=["*"])

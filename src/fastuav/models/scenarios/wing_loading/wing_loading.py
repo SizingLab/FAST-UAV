@@ -11,6 +11,10 @@ from stdatm import AtmosphereSI
 
 _LOGGER = logging.getLogger(__name__)  # Logger for this module
 WS_MIN = 100  # [N/m2] lower limit for the wing loading. Under this value, increasing CLmax is recommended.
+T0 = 288.15  # Sea level temperature (K)
+L = 0.0065   # Lapse rate (K/m)
+from scipy.constants import g
+R = 287.05287  # Specific gas constant for dry air (J/(kg·K))
 
 
 class WingLoadingStall(om.ExplicitComponent):
@@ -30,7 +34,7 @@ class WingLoadingStall(om.ExplicitComponent):
         self.add_output("data:geometry:wing:loading:stall", units="N/m**2")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         # UAV configuration
@@ -52,6 +56,47 @@ class WingLoadingStall(om.ExplicitComponent):
 
         outputs["data:geometry:wing:loading:stall"] = WS_stall
 
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        propulsion_id = self.options["propulsion_id"]
+        V_stall_ID = "mission:sizing:main_route:stall:speed:%s" % propulsion_id
+        V_stall = inputs[V_stall_ID]
+    
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
+
+        CL_max_ID = "data:aerodynamics:CLmax"
+        CL_max = inputs[CL_max_ID]
+
+        
+        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm.true_airspeed = V_stall
+        q_stall = atm.dynamic_pressure # q = 0.5 * rho * V**2
+        rho = atm.density
+
+        # ===== DENSITY DERIVATIVES (Analytic, Troposphere) =====
+        # Temperature profile: T = T0 - L * h + dISA
+        # Density varies as: rho ∝ (T/T0)^(g/RL - 1) --> (g/(R*L) - 1) ≈ -5.256 for ISA
+        from stdatm import AtmosphereWithPartials
+        datm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
+        # drho = datm.density
+        # d(rho)/d(h):   chain rule through T
+        # d(rho)/d(h) = d(rho)/d(T) * d(T)/d(h) = (g/(R*L) - 1) * rho / T * (-L)
+        drho_dh = datm.partial_density_altitude # d(rho)/d(altitude)
+        # d(rho)/d(dISA): stdatm treats dISA as a pure temperature offset at fixed pressure
+        drho_ddISA = -rho / (T0 - L * altitude_cruise + dISA)
+        
+
+        out_ID = "data:geometry:wing:loading:stall"
+        # ===== PARTIAL DERIVATIVES =====
+        # ∂(WS)/∂(V_stall) = ∂(q_stall)/∂(V_stall) * CL_max = ρ * V * CL_max
+        partials[out_ID, V_stall_ID] = rho * V_stall * CL_max
+        # ∂(WS)/∂(CL_max) = q = 0.5 * ρ * V^2
+        partials[out_ID, CL_max_ID] = q_stall
+        # ∂(WS)/∂(altitude) = 0.5 * V^2 * CL_max * d(rho)/d(h)
+        partials[out_ID, "mission:sizing:main_route:cruise:altitude"] = 0.5 * V_stall**2 * CL_max * drho_dh
+        # ∂(WS)/∂(dISA) = 0.5 * V^2 * CL_max * d(rho)/d(dISA)
+        partials[out_ID, "mission:sizing:dISA"] = 0.5 * V_stall**2 * CL_max * drho_ddISA
+
 
 class WingLoadingCruise(om.ExplicitComponent):
     """
@@ -67,7 +112,7 @@ class WingLoadingCruise(om.ExplicitComponent):
         self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
-        self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
+        self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=0.035, units=None)
         self.add_output("data:geometry:wing:loading:cruise", units="N/m**2")
 
     def setup_partials(self):
@@ -86,7 +131,7 @@ class WingLoadingCruise(om.ExplicitComponent):
         q_cruise = atm.dynamic_pressure
 
         # Induced drag parameter
-        K = inputs["data:aerodynamics:CDi:K"]
+        K = inputs["optimization:variables:aerodynamics:CDi:K:guess"]
 
         # Parasitic drag parameter
         CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]

@@ -100,7 +100,33 @@ class MissionComponent(om.ExplicitComponent):
         self.add_output("mission:%s:distance" % mission_name, units="m")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        mission_name = self.options["mission_name"]
+        routes_list = self.options["routes_list"]
+        propulsion_id_dict = self.options["propulsion_id_dict"]
+
+        # Per-propulsion energy/duration: ones where propulsion is in route, zeros elsewhere
+        for propulsion_id in list(set(chain(*propulsion_id_dict.values()))):
+            energy_prop_key = "mission:%s:energy:%s" % (mission_name, propulsion_id)
+            duration_prop_key = "mission:%s:duration:%s" % (mission_name, propulsion_id)
+            for route_name in routes_list:
+                if propulsion_id in propulsion_id_dict[route_name]:
+                    energy_route_key = "mission:%s:%s:energy:%s" % (mission_name, route_name, propulsion_id)
+                    duration_route_key = "mission:%s:%s:duration:%s" % (mission_name, route_name, propulsion_id)
+                    self.declare_partials(of=energy_prop_key, wrt=energy_route_key, val=1.0)
+                    self.declare_partials(of=duration_prop_key, wrt=duration_route_key, val=1.0)
+                # else: undeclared (sparse zero)
+
+        # Total mission energy/duration: ones across all routes
+        energy_total_key = "mission:%s:energy" % mission_name
+        duration_total_key = "mission:%s:duration" % mission_name
+        distance_total_key = "mission:%s:distance" % mission_name
+        for route_name in routes_list:
+            energy_route_key = "mission:%s:%s:energy" % (mission_name, route_name)
+            duration_route_key = "mission:%s:%s:duration" % (mission_name, route_name)
+            distance_route_key = "mission:%s:%s:cruise:distance" % (mission_name, route_name)
+            self.declare_partials(of=energy_total_key, wrt=energy_route_key, val=1.0)
+            self.declare_partials(of=duration_total_key, wrt=duration_route_key, val=1.0)
+            self.declare_partials(of=distance_total_key, wrt=distance_route_key, val=1.0)
 
     def compute(self, inputs, outputs):
         mission_name = self.options["mission_name"]

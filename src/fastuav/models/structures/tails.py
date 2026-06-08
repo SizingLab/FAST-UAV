@@ -17,8 +17,7 @@ class HorizontalTailStructures(om.ExplicitComponent):
         self.add_output("data:weight:airframe:tail:horizontal:mass", units="kg", lower=0.0)
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         S_ht = inputs["data:geometry:tail:horizontal:surface"]
@@ -28,6 +27,22 @@ class HorizontalTailStructures(om.ExplicitComponent):
         m_wing = 2 * m_skin  # total mass (both sides) [kg]
 
         outputs["data:weight:airframe:tail:horizontal:mass"] = m_wing
+    
+    def compute_partials(self, inputs, partials):
+        S_ht = inputs["data:geometry:tail:horizontal:surface"]
+        rho_skin = inputs["data:weight:airframe:tail:density"]
+
+        # Output: m_wing = 2 * skin(S_ht/2, rho_skin) = 2 * 2 * (S_ht/2) * rho_skin = 2*S_ht*rho_skin
+        # dm_wing/dS_ht = 2 * rho_skin
+        # dm_wing/drho_skin = 2 * S_ht
+
+        partials["data:weight:airframe:tail:horizontal:mass", "data:geometry:tail:horizontal:surface"] = (
+            2.0 * rho_skin
+        )
+        partials["data:weight:airframe:tail:horizontal:mass", "data:weight:airframe:tail:density"] = (
+            2.0 * S_ht
+        )
+
 
 
 class VerticalTailStructures(om.ExplicitComponent):
@@ -41,8 +56,7 @@ class VerticalTailStructures(om.ExplicitComponent):
         self.add_output("data:weight:airframe:tail:vertical:mass", units="kg", lower=0.0)
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         S_vt = inputs["data:geometry:tail:vertical:surface"]
@@ -52,3 +66,18 @@ class VerticalTailStructures(om.ExplicitComponent):
         m_wing = m_skin  # total mass (both sides) [kg]
 
         outputs["data:weight:airframe:tail:vertical:mass"] = m_wing
+
+    def compute_partials(self, inputs, partials):
+        S_vt = inputs["data:geometry:tail:vertical:surface"]
+        rho_skin = inputs["data:weight:airframe:tail:density"]
+
+        # Output: m_wing = skin(S_vt, rho_skin) = 2*S_vt*rho_skin
+        # dm_wing/dS_vt = 2*rho_skin
+        # dm_wing/drho_skin = 2*S_vt
+
+        partials["data:weight:airframe:tail:vertical:mass", "data:geometry:tail:vertical:surface"] = (
+            2.0 * rho_skin
+        )
+        partials["data:weight:airframe:tail:vertical:mass", "data:weight:airframe:tail:density"] = (
+            2.0 * S_vt
+        )

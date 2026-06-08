@@ -83,7 +83,7 @@ class CellNumber(om.ExplicitComponent):
         self.add_output("data:propulsion:battery:cell:number:parallel:estimated", units=None)
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         U_cell = inputs["data:propulsion:battery:cell:voltage:estimated"]
@@ -100,7 +100,27 @@ class CellNumber(om.ExplicitComponent):
         outputs["data:propulsion:battery:cell:number:parallel:estimated"] = N_parallel
         outputs["data:propulsion:battery:cell:number:estimated"] = N_cell
 
-    # def compute_partials(self, inputs, partials, discrete_inputs=None):
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        U_cell = inputs['data:propulsion:battery:cell:voltage:estimated']
+        k_vb = inputs['optimization:variables:propulsion:battery:voltage:k']
+        U_mot_to = inputs['data:propulsion:motor:voltage:takeoff']
+
+        N_parallel = 1
+
+        partials['data:propulsion:battery:cell:number:series:estimated', 'data:propulsion:battery:cell:voltage:estimated'] = -k_vb * U_mot_to / U_cell ** 2
+        partials['data:propulsion:battery:cell:number:series:estimated', 'optimization:variables:propulsion:battery:voltage:k'] = U_mot_to / U_cell
+        partials['data:propulsion:battery:cell:number:series:estimated', 'data:propulsion:motor:voltage:takeoff'] = k_vb / U_cell
+
+        partials['data:propulsion:battery:cell:number:parallel:estimated', 'data:propulsion:battery:cell:voltage:estimated'] = 0
+        partials['data:propulsion:battery:cell:number:parallel:estimated', 'optimization:variables:propulsion:battery:voltage:k'] = 0
+        partials['data:propulsion:battery:cell:number:parallel:estimated', 'data:propulsion:motor:voltage:takeoff'] = 0
+
+        partials['data:propulsion:battery:cell:number:estimated', 'data:propulsion:battery:cell:voltage:estimated'] = -k_vb * U_mot_to / U_cell ** 2* N_parallel
+        partials['data:propulsion:battery:cell:number:estimated', 'optimization:variables:propulsion:battery:voltage:k'] =  U_mot_to / U_cell * N_parallel
+        partials['data:propulsion:battery:cell:number:estimated', 'data:propulsion:motor:voltage:takeoff'] = k_vb / U_cell * N_parallel
+
+
+    # TODO: def compute_partials(self, inputs, partials, discrete_inputs=None):
     #     """
     #     Defining approximates from partials helps avoiding local minima but may increase the number of iterations
     #     if the derivatives are not well defined (or cause convergence issues).

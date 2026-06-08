@@ -7,7 +7,6 @@ import numpy as np
 from fastuav.utils.uncertainty import (
     add_subsystem_with_deviation,
 )
-from fastuav.models.aerodynamics.aerodynamics_fixedwing import WingParasiticDrag, TailParasiticDrag, FuselageParasiticDrag, ParasiticDragConstraint, MaxLiftToDrag
 from fastuav.constants import MR_PROPULSION
 
 
@@ -36,6 +35,10 @@ class Aerodynamics(om.Group):
     """
 
     def setup(self):
+        from fastuav.models.aerodynamics.aerodynamics_fixedwing import (
+            WingParasiticDrag, TailParasiticDrag, FuselageParasiticDrag,
+            ParasiticDragConstraint, MaxLiftToDrag,
+        )
 
         # Parasitic drag calculations
         parasitic_drag = self.add_subsystem("parasitic_drag", om.Group(), promotes=["*"])
