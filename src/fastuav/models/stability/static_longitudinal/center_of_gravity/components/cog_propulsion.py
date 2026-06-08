@@ -33,7 +33,7 @@ class CoG_propulsion_FW(om.ExplicitComponent):
         self.add_output("data:stability:CoG:propulsion:%s" % propulsion_id, units="m")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
@@ -61,6 +61,66 @@ class CoG_propulsion_FW(om.ExplicitComponent):
 
         outputs["data:weight:propulsion:%s" % propulsion_id] = m_propulsion
         outputs["data:stability:CoG:propulsion:%s" % propulsion_id] = x_cg_propulsion
+        
+    def compute_partials(self, inputs, partials):
+        propulsion_id = self.options["propulsion_id"]
+        propulsion_conf = self.options["propulsion_conf"]
+        x_root_LE_w = inputs["data:geometry:wing:root:LE:x"]
+        x_root_TE_w = inputs["data:geometry:wing:root:TE:x"]
+        l_mot = inputs["data:propulsion:%s:motor:length:estimated" % propulsion_id]
+        m_pro = inputs["data:weight:propulsion:%s:propeller:mass" % propulsion_id]
+        m_mot = inputs["data:weight:propulsion:%s:motor:mass" % propulsion_id]
+        m_bat = inputs["data:weight:propulsion:%s:battery:mass" % propulsion_id]
+        N_pro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
+
+        if propulsion_conf == "pusher":
+            l_fus = inputs["data:geometry:fuselage:length"]
+            x_cg_pro = l_fus  # propeller located at fuselage rear [m]
+            x_cg_mot = l_fus - l_mot / 2  # motor located at fuselage rear [m]
+            partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:geometry:fuselage:length"] = (
+                N_pro * m_pro + N_pro * m_mot
+            ) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+            partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:propulsion:%s:motor:length:estimated" % propulsion_id] = (
+                -N_pro * m_mot / 2
+            ) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        else:
+            x_cg_pro = 0  # propeller located at nose tip [m]
+            x_cg_mot = l_mot / 2  # motor located at the nose tip [m]
+            partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:propulsion:%s:motor:length:estimated" % propulsion_id] = (
+                N_pro * m_mot / 2
+            ) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        x_cg_bat = (x_root_LE_w + x_root_TE_w) / 2  # [m] wing-integrated or centered at wing position
+        partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:geometry:wing:root:LE:x"] = (
+            m_bat / 2
+        ) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:geometry:wing:root:TE:x"] = (
+            m_bat / 2
+        ) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:weight:propulsion:%s:propeller:mass" % propulsion_id] = (
+            N_pro * x_cg_pro
+            - (N_pro * m_pro * x_cg_pro + N_pro * m_mot * x_cg_mot + m_bat * x_cg_bat) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        ) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:weight:propulsion:%s:motor:mass" % propulsion_id] = (
+            N_pro * x_cg_mot
+            - (N_pro * m_pro * x_cg_pro + N_pro * m_mot * x_cg_mot + m_bat * x_cg_bat) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        ) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:weight:propulsion:%s:battery:mass" % propulsion_id] = (
+            x_cg_bat
+            - (N_pro * m_pro * x_cg_pro + N_pro * m_mot * x_cg_mot + m_bat * x_cg_bat) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        ) / (N_pro * m_pro + N_pro * m_mot + m_bat)
+        partials["data:weight:propulsion:%s" % propulsion_id, "data:weight:propulsion:%s:propeller:mass" % propulsion_id] = N_pro
+        partials["data:weight:propulsion:%s" % propulsion_id, "data:weight:propulsion:%s:motor:mass" % propulsion_id] = N_pro
+        partials["data:weight:propulsion:%s" % propulsion_id, "data:weight:propulsion:%s:battery:mass" % propulsion_id] = 1
+        partials["data:weight:propulsion:%s" % propulsion_id, "data:propulsion:%s:propeller:number" % propulsion_id] = m_pro + m_mot
+        partials["data:stability:CoG:propulsion:%s" % propulsion_id, "data:propulsion:%s:propeller:number" % propulsion_id] = (
+            (m_pro * x_cg_pro + m_mot * x_cg_mot)*(N_pro * m_pro + N_pro * m_mot + m_bat)
+            - (N_pro * x_cg_pro * m_pro + N_pro * x_cg_mot * m_mot + x_cg_bat * m_bat) * (m_pro + m_mot)
+        ) / (N_pro * m_pro + N_pro * m_mot + m_bat)**2
+
+
+        
+
+
 
 
 class CoG_propulsion_MR(om.ExplicitComponent):

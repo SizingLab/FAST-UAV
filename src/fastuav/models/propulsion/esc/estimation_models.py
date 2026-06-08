@@ -33,8 +33,7 @@ class Weight(om.ExplicitComponent):
         self.add_output("data:weight:propulsion:esc:mass:estimated", units="kg")
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         m_esc_ref = inputs["models:weight:propulsion:esc:mass:reference"]
@@ -44,3 +43,13 @@ class Weight(om.ExplicitComponent):
         m_esc = m_esc_ref * (P_esc / P_esc_ref)  # [kg] Mass ESC
 
         outputs["data:weight:propulsion:esc:mass:estimated"] = m_esc
+        
+    def compute_partials(self, inputs, partials):
+        m_esc_ref = inputs["models:weight:propulsion:esc:mass:reference"]
+        P_esc_ref = inputs["models:propulsion:esc:power:reference"]
+        P_esc = inputs["data:propulsion:esc:power:max:estimated"]
+
+        # Partial derivatives
+        partials["data:weight:propulsion:esc:mass:estimated", "models:weight:propulsion:esc:mass:reference"] = P_esc / P_esc_ref
+        partials["data:weight:propulsion:esc:mass:estimated", "models:propulsion:esc:power:reference"] = -m_esc_ref * (P_esc / P_esc_ref**2)
+        partials["data:weight:propulsion:esc:mass:estimated", "data:propulsion:esc:power:max:estimated"] = m_esc_ref / P_esc_ref

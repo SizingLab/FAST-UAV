@@ -207,3 +207,18 @@ class PropellerAerodynamicsModel:
         return max(1e-10, c_t), max(
             1e-10, c_p
         )  # set minimum value to avoid negative thrust or power
+    
+
+    @staticmethod
+    def aero_coefficients_static_derivatives(beta, ct_model, cp_model):
+        """
+        Partials of the static thrust/power coefficients.
+        Static model is linear in beta:  c = model[0] + model[1]*beta.
+        dc/dbeta  = model[1]
+        dc/dmodel = [1, beta, 0, ...]   (row over the coefficient array)
+        Returns two dicts (c_t, c_p), each with keys 'dbeta' and 'dmodel'.
+        """
+        beta = float(np.asarray(beta).reshape(-1)[0])
+        dct = {"dbeta": ct_model[1], "dmodel": np.array([1.0, beta] + [0.0] * (ct_model.size - 2))}
+        dcp = {"dbeta": cp_model[1], "dmodel": np.array([1.0, beta] + [0.0] * (cp_model.size - 2))}
+        return dct, dcp

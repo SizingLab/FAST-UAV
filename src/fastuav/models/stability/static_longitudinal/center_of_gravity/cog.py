@@ -54,8 +54,7 @@ class CoG_UAV(om.ExplicitComponent):
         self.add_output("data:stability:CoG", units="m")
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         propulsion_id_list = self.options["propulsion_id_list"]
@@ -74,3 +73,45 @@ class CoG_UAV(om.ExplicitComponent):
         x_cg_uav = (x_cg_airframe * m_airframe + x_cg_propulsion * m_propulsion) / (m_propulsion + m_airframe)
 
         outputs["data:stability:CoG"] = x_cg_uav
+
+    def compute_partials(self, inputs, partials):
+        propulsion_id_list = self.options["propulsion_id_list"]
+
+        # Airframe
+        x_cg_airframe = inputs["data:stability:CoG:airframe"]
+        m_airframe = inputs["data:weight:airframe"]
+
+        # Propulsion systems
+        m_propulsion = sum(inputs["data:weight:propulsion:%s" % propulsion_id] 
+                        for propulsion_id in propulsion_id_list)
+        
+        numerator_propulsion = sum(inputs["data:stability:CoG:propulsion:%s" % propulsion_id]
+                                * inputs["data:weight:propulsion:%s" % propulsion_id]
+                                for propulsion_id in propulsion_id_list)
+        
+        x_cg_propulsion = numerator_propulsion / m_propulsion
+
+        # UAV CoG
+        m_total = m_propulsion + m_airframe
+        x_cg_uav = (x_cg_airframe * m_airframe + x_cg_propulsion * m_propulsion) / m_total
+
+        # ========== Partials for airframe ==========
+        partials["data:stability:CoG", "data:stability:CoG:airframe"] = m_airframe / m_total
+        partials["data:stability:CoG", "data:weight:airframe"] = (x_cg_airframe - x_cg_uav) / m_total
+
+        # ========== Partials for propulsion systems ==========
+        for propulsion_id in propulsion_id_list:
+            x_cg_prop_i = inputs["data:stability:CoG:propulsion:%s" % propulsion_id]
+            m_prop_i = inputs["data:weight:propulsion:%s" % propulsion_id]
+
+            # d(x_cg_uav) / d(x_cg_propulsion:i) = m_prop_i / m_total
+            partials["data:stability:CoG", "data:stability:CoG:propulsion:%s" % propulsion_id] = (
+                m_prop_i / m_total
+            )
+
+            # d(x_cg_uav) / d(m_propulsion:i) = (x_cg_prop_i - x_cg_uav) / m_total
+            partials["data:stability:CoG", "data:weight:propulsion:%s" % propulsion_id] = (
+                (x_cg_prop_i - x_cg_uav) / m_total
+            )
+
+  

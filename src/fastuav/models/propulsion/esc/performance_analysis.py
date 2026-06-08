@@ -45,7 +45,7 @@ class ESCPerformance(om.ExplicitComponent):
 
     def setup_partials(self):
         # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         scenario = self.options["scenario"]
@@ -56,4 +56,19 @@ class ESCPerformance(om.ExplicitComponent):
         P_esc = ESCPerformanceModel.power(P_mot, U_mot, U_bat)  # [W] electronic power
 
         outputs["data:propulsion:esc:power:%s" % scenario] = P_esc
+
+    def compute_partials(self, inputs, partials):
+        scenario = self.options["scenario"]
+        P_mot = inputs["data:propulsion:motor:power:%s" % scenario]
+        U_mot = inputs["data:propulsion:motor:voltage:%s" % scenario]
+        U_bat = inputs["data:propulsion:battery:voltage"]
+
+        # Compute partial derivatives
+        dP_esc_dP_mot = U_bat / U_mot if U_mot > 0 else 0.0
+        dP_esc_dU_mot = -P_mot * U_bat / (U_mot**2) if U_mot > 0 else 0.0
+        dP_esc_dU_bat = P_mot / U_mot if U_mot > 0 else 0.0
+
+        partials["data:propulsion:esc:power:%s" % scenario, "data:propulsion:motor:power:%s" % scenario] = dP_esc_dP_mot
+        partials["data:propulsion:esc:power:%s" % scenario, "data:propulsion:motor:voltage:%s" % scenario] = dP_esc_dU_mot
+        partials["data:propulsion:esc:power:%s" % scenario, "data:propulsion:battery:voltage"] = dP_esc_dU_bat
 

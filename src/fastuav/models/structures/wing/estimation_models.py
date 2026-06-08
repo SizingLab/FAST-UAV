@@ -95,6 +95,22 @@ class WingStructuresEstimationModels:
         S_skin = 2 * S  # surface of skin (two times the planform area) [m2]
         m_skin = S_skin * rho_skin  # mass of skin [kg]
         return m_skin
+    
+    @staticmethod
+    def skin_dS(S, rho_skin):
+        """
+        Derivative of skin mass wrt surface area S.
+        m_skin = 2*S*rho_skin, so dm_skin/dS = 2*rho_skin
+        """
+        return 2.0 * rho_skin
+
+    @staticmethod
+    def skin_drho(S, rho_skin):
+        """
+        Derivative of skin mass wrt area density rho_skin.
+        m_skin = 2*S*rho_skin, so dm_skin/drho_skin = 2*S
+        """
+        return 2.0 * S
 
 
 class WingStructuresEstimationModelsGroup(om.Group):
@@ -150,8 +166,7 @@ class Spars(om.ExplicitComponent):
             self.add_output("data:structures:wing:spar:depth", units="m", lower=0.0)
 
     def setup_partials(self):
-        # Finite difference all partials.
-        self.declare_partials("*", "*", method="fd")
+        self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
         spar_model = self.options["spar_model"]
@@ -205,6 +220,255 @@ class Spars(om.ExplicitComponent):
             outputs["data:structures:wing:spar:depth"] = h_web + a_flange
 
         outputs["data:weight:airframe:wing:spar:mass"] = 2 * m_spar
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        spar_model = self.options["spar_model"]
+        
+        n_ult = inputs["mission:sizing:load_factor:ultimate"]
+        m_uav = inputs["optimization:variables:weight:mtow:guess"]
+        b_w = inputs["data:geometry:wing:span"]
+        y_MAC = inputs["data:geometry:wing:MAC:y"]
+        sig_max = inputs["data:structures:wing:spar:stress:max"]
+        rho_spar = inputs["data:weight:airframe:wing:spar:density"]
+        
+        g = 9.80665  # m/s^2
+        
+        # Common computations
+        F_max = n_ult * m_uav * g / 2
+        M_root = F_max * y_MAC
+        L_spar = b_w / 2
+        
+        # dM_root / d(...)
+        dM_root_dn_ult = m_uav * g / 2 * y_MAC
+        dM_root_dm_uav = n_ult * g / 2 * y_MAC
+        dM_root_dy_MAC = n_ult * m_uav * g / 2
+        
+        if spar_model == "pipe":
+            # Pipe model
+            k_spar = inputs["optimization:variables:structures:wing:spar:diameter:k"]
+            k_d = inputs["optimization:variables:structures:wing:spar:diameter:outer:k"]
+            
+            # Outer diameter: d_out = k_d * (32*M_root / (π*(1-k_spar^4)*sig_max))^(1/3)
+            X = 32 * M_root / (np.pi * (1 - k_spar ** 4) * sig_max)
+            d_out = k_d * (X ** (1.0 / 3.0))
+            
+            # Derivatives of X wrt inputs
+            dX_dM_root = 32 / (np.pi * (1 - k_spar ** 4) * sig_max)
+            dX_dk_spar = 32 * M_root / (np.pi * sig_max) * (4 * k_spar ** 3) / ((1 - k_spar ** 4) ** 2)
+            dX_dsig_max = -32 * M_root / (np.pi * (1 - k_spar ** 4) * sig_max ** 2)
+            
+            # Derivatives of d_out wrt X and k_d
+            dd_out_dX = (k_d / 3.0) * (X ** (-2.0 / 3.0))
+            dd_out_dk_d = X ** (1.0 / 3.0)
+            
+            # Inner diameter: d_in = k_spar * d_out
+            d_in = k_spar * d_out
+            
+            # Cross-sectional area: A = π/4 * (d_out^2 - d_in^2) = π/4 * d_out^2 * (1 - k_spar^2)
+            A_spar = np.pi / 4 * (d_out ** 2 - d_in ** 2)
+            
+            # Mass: m_spar = rho_spar * L_spar * A_spar
+            m_spar = rho_spar * L_spar * A_spar
+            
+            # Derivatives of A_spar
+            dA_dd_out = np.pi / 4 * (2 * d_out - 2 * d_in * (dM_root_dn_ult / dM_root_dn_ult if dM_root_dn_ult != 0 else 0))
+            # Actually, d_in = k_spar * d_out, so:
+            # A = π/4 * (d_out^2 - k_spar^2 * d_out^2) = π/4 * d_out^2 * (1 - k_spar^2)
+            # dA/dd_out = π/2 * d_out * (1 - k_spar^2)
+            # dA/dk_spar = π/4 * d_out^2 * (-2*k_spar) = -π/2 * d_out^2 * k_spar
+            
+            dA_dd_out = np.pi / 2 * d_out * (1 - k_spar ** 2)
+            dA_dk_spar = -np.pi / 2 * d_out ** 2 * k_spar
+            
+            # Mass derivatives
+            dm_spar_drho = L_spar * A_spar
+            dm_spar_db_w = rho_spar * 0.5 * A_spar
+            dm_spar_dA = rho_spar * L_spar
+            
+            # Chain rule: d(d_out) / d(various inputs)
+            dd_out_dn_ult = dd_out_dX * dX_dM_root * dM_root_dn_ult
+            dd_out_dm_uav = dd_out_dX * dX_dM_root * dM_root_dm_uav
+            dd_out_dy_MAC = dd_out_dX * dX_dM_root * dM_root_dy_MAC
+            dd_out_dsig_max = dd_out_dX * dX_dsig_max
+            dd_out_dk_spar = dd_out_dX * dX_dk_spar
+            
+            # d_in derivatives: d_in = k_spar * d_out
+            # dd_in/dk_spar = d_out + k_spar * dd_out/dk_spar
+            # dd_in/dd_out = k_spar
+            dd_in_dk_spar = d_out + k_spar * dd_out_dk_spar
+            dd_in_dn_ult = k_spar * dd_out_dn_ult
+            dd_in_dm_uav = k_spar * dd_out_dm_uav
+            dd_in_dy_MAC = k_spar * dd_out_dy_MAC
+            dd_in_dsig_max = k_spar * dd_out_dsig_max
+            dd_in_dk_d = k_spar * dd_out_dk_d
+            
+            # m_spar derivatives (via chain rule through A and d_out)
+            # dm/d(...) = dm/dA * dA/d(...) + dm/dA * dA/dd_out * dd_out/d(...)
+            
+            partials["data:weight:airframe:wing:spar:mass", "mission:sizing:load_factor:ultimate"] = (
+                2*dm_spar_dA * (dA_dd_out * dd_out_dn_ult + dA_dk_spar * 0)  # k_spar doesn't depend on n_ult
+            )
+            partials["data:weight:airframe:wing:spar:mass", "optimization:variables:weight:mtow:guess"] = (
+                2*dm_spar_dA * dA_dd_out * dd_out_dm_uav
+            )
+            partials["data:weight:airframe:wing:spar:mass", "data:geometry:wing:span"] = (
+                2*dm_spar_db_w + 2*dm_spar_dA * dA_dd_out * 0  # b_w doesn't affect d_out after M_root
+            )
+            partials["data:weight:airframe:wing:spar:mass", "data:geometry:wing:MAC:y"] = (
+                2*dm_spar_dA * dA_dd_out * dd_out_dy_MAC
+            )
+            partials["data:weight:airframe:wing:spar:mass", "data:structures:wing:spar:stress:max"] = (
+                2*dm_spar_dA * dA_dd_out * dd_out_dsig_max
+            )
+            partials["data:weight:airframe:wing:spar:mass", "data:weight:airframe:wing:spar:density"] = (
+                2*dm_spar_drho
+            )
+            partials["data:weight:airframe:wing:spar:mass", "optimization:variables:structures:wing:spar:diameter:k"] = (
+                2*dm_spar_dA * (dA_dd_out * dd_out_dk_spar + dA_dk_spar)
+            )
+            partials["data:weight:airframe:wing:spar:mass", "optimization:variables:structures:wing:spar:diameter:outer:k"] = (
+                2*dm_spar_dA * dA_dd_out * dd_out_dk_d
+            )
+            
+            # d_out partials
+            partials["data:structures:wing:spar:diameter:outer", "mission:sizing:load_factor:ultimate"] = dd_out_dn_ult
+            partials["data:structures:wing:spar:diameter:outer", "optimization:variables:weight:mtow:guess"] = dd_out_dm_uav
+            partials["data:structures:wing:spar:diameter:outer", "data:geometry:wing:MAC:y"] = dd_out_dy_MAC
+            partials["data:structures:wing:spar:diameter:outer", "data:structures:wing:spar:stress:max"] = dd_out_dsig_max
+            partials["data:structures:wing:spar:diameter:outer", "optimization:variables:structures:wing:spar:diameter:k"] = dd_out_dk_spar
+            partials["data:structures:wing:spar:diameter:outer", "optimization:variables:structures:wing:spar:diameter:outer:k"] = dd_out_dk_d
+            
+            # d_in partials
+            partials["data:structures:wing:spar:diameter:inner", "mission:sizing:load_factor:ultimate"] = dd_in_dn_ult
+            partials["data:structures:wing:spar:diameter:inner", "optimization:variables:weight:mtow:guess"] = dd_in_dm_uav
+            partials["data:structures:wing:spar:diameter:inner", "data:geometry:wing:MAC:y"] = dd_in_dy_MAC
+            partials["data:structures:wing:spar:diameter:inner", "data:structures:wing:spar:stress:max"] = dd_in_dsig_max
+            partials["data:structures:wing:spar:diameter:inner", "optimization:variables:structures:wing:spar:diameter:k"] = dd_in_dk_spar
+            partials["data:structures:wing:spar:diameter:inner", "optimization:variables:structures:wing:spar:diameter:outer:k"] = dd_in_dk_d
+    
+        else:  # I-beam model
+            k_spar = inputs["optimization:variables:structures:wing:spar:depth:k"]
+            k_h = inputs["optimization:variables:structures:wing:spar:web:depth:k"]
+            k_flange = 0.1
+            k_web = 30
+            
+            # Web depth: h_web = k_h * (M_root * (1+k_spar) / (sig_max * k_spar^2 * (1+k_spar^2/3) / k_flange))^(1/3)
+            # Simplify: Y = M_root * (1+k_spar) / (sig_max * k_spar^2 * (1+k_spar^2/3) / k_flange)
+            # Y = M_root * (1+k_spar) * k_flange / [sig_max * k_spar^2 * (1+k_spar^2/3)]
+            Y = M_root * (1 + k_spar) * k_flange / (sig_max * k_spar ** 2 * (1 + k_spar ** 2 / 3))
+            h_web = k_h * (Y ** (1.0 / 3.0))
+
+            # Geometry
+            t_web = h_web / k_web
+            a_flange = k_spar * h_web
+            b_flange = a_flange / k_flange
+            cross_section = 2 * a_flange * b_flange + (h_web - a_flange) * t_web
+            m_spar = rho_spar * L_spar * cross_section
+
+            # Y derivatives — use log derivative for cleanliness
+            dY_dM_root = Y / M_root
+            dY_dsig_max = -Y / sig_max
+            dY_dk_spar = Y * (
+                1.0 / (1 + k_spar)
+                - 2.0 / k_spar
+                - (2 * k_spar / 3) / (1 + k_spar ** 2 / 3)
+            )
+
+            # h_web = k_h * Y^(1/3)
+            # dh_web/dY = (k_h/3) * Y^(-2/3) = h_web / (3*Y)
+            dh_web_dY = h_web / (3 * Y)
+
+            dh_web_dM_root = dh_web_dY * dY_dM_root
+            dh_web_dk_spar = dh_web_dY * dY_dk_spar
+            dh_web_dk_h = h_web / k_h
+            dh_web_dsig_max = dh_web_dY * dY_dsig_max
+
+            dh_web_dn_ult = dh_web_dM_root * dM_root_dn_ult
+            dh_web_dm_uav = dh_web_dM_root * dM_root_dm_uav
+            dh_web_dy_MAC = dh_web_dM_root * dM_root_dy_MAC          
+           
+            
+            # Cross-section derivative
+            # cross_section = 2*k_spar*h_web * k_spar*h_web/k_flange + (h_web - k_spar*h_web)*h_web/k_web
+            #              = 2*k_spar^2*h_web^2/k_flange + (1-k_spar)*h_web^2/k_web
+            
+            dcs_dh_web = 4 * k_spar ** 2 * h_web / k_flange + 2 * (1 - k_spar) * h_web / k_web
+            dcs_dk_spar = 4 * k_spar * h_web ** 2 / k_flange - h_web ** 2 / k_web
+
+
+            dm_spar_drho = L_spar * cross_section
+            dm_spar_db_w = rho_spar * 0.5 * cross_section
+            dm_spar_dcs = rho_spar * L_spar
+
+            
+            # h_web partials
+            partials["data:structures:wing:spar:web:depth", "mission:sizing:load_factor:ultimate"] = dh_web_dn_ult
+            partials["data:structures:wing:spar:web:depth", "optimization:variables:weight:mtow:guess"] = dh_web_dm_uav
+            partials["data:structures:wing:spar:web:depth", "data:geometry:wing:MAC:y"] = dh_web_dy_MAC
+            partials["data:structures:wing:spar:web:depth", "data:structures:wing:spar:stress:max"] = dh_web_dsig_max
+            partials["data:structures:wing:spar:web:depth", "optimization:variables:structures:wing:spar:depth:k"] = dh_web_dk_spar
+            partials["data:structures:wing:spar:web:depth", "optimization:variables:structures:wing:spar:web:depth:k"] = dh_web_dk_h
+            
+            # t_web partials: t_web = h_web / k_web
+            partials["data:structures:wing:spar:web:thickness", "mission:sizing:load_factor:ultimate"] = dh_web_dn_ult / k_web
+            partials["data:structures:wing:spar:web:thickness", "optimization:variables:weight:mtow:guess"] = dh_web_dm_uav / k_web
+            partials["data:structures:wing:spar:web:thickness", "data:geometry:wing:MAC:y"] = dh_web_dy_MAC / k_web
+            partials["data:structures:wing:spar:web:thickness", "data:structures:wing:spar:stress:max"] = dh_web_dsig_max / k_web
+            partials["data:structures:wing:spar:web:thickness", "optimization:variables:structures:wing:spar:depth:k"] = dh_web_dk_spar / k_web
+            partials["data:structures:wing:spar:web:thickness", "optimization:variables:structures:wing:spar:web:depth:k"] = dh_web_dk_h / k_web
+            
+            # a_flange partials: a_flange = k_spar * h_web
+            partials["data:structures:wing:spar:flange:depth", "mission:sizing:load_factor:ultimate"] = k_spar * dh_web_dn_ult
+            partials["data:structures:wing:spar:flange:depth", "optimization:variables:weight:mtow:guess"] = k_spar * dh_web_dm_uav
+            partials["data:structures:wing:spar:flange:depth", "data:geometry:wing:MAC:y"] = k_spar * dh_web_dy_MAC
+            partials["data:structures:wing:spar:flange:depth", "data:structures:wing:spar:stress:max"] = k_spar * dh_web_dsig_max
+            partials["data:structures:wing:spar:flange:depth", "optimization:variables:structures:wing:spar:depth:k"] = h_web + k_spar * dh_web_dk_spar
+            partials["data:structures:wing:spar:flange:depth", "optimization:variables:structures:wing:spar:web:depth:k"] = k_spar * dh_web_dk_h
+            
+            # b_flange partials: b_flange = a_flange / k_flange = k_spar * h_web / k_flange
+            partials["data:structures:wing:spar:flange:thickness", "mission:sizing:load_factor:ultimate"] = k_spar * dh_web_dn_ult / k_flange
+            partials["data:structures:wing:spar:flange:thickness", "optimization:variables:weight:mtow:guess"] = k_spar * dh_web_dm_uav / k_flange
+            partials["data:structures:wing:spar:flange:thickness", "data:geometry:wing:MAC:y"] = k_spar * dh_web_dy_MAC / k_flange
+            partials["data:structures:wing:spar:flange:thickness", "data:structures:wing:spar:stress:max"] = k_spar * dh_web_dsig_max / k_flange
+            partials["data:structures:wing:spar:flange:thickness", "optimization:variables:structures:wing:spar:depth:k"] = (h_web + k_spar * dh_web_dk_spar) / k_flange
+            partials["data:structures:wing:spar:flange:thickness", "optimization:variables:structures:wing:spar:web:depth:k"] = k_spar * dh_web_dk_h / k_flange
+            
+            # depth (h_web + a_flange) partials
+            partials["data:structures:wing:spar:depth", "mission:sizing:load_factor:ultimate"] = dh_web_dn_ult * (1 + k_spar)
+            partials["data:structures:wing:spar:depth", "optimization:variables:weight:mtow:guess"] = dh_web_dm_uav * (1 + k_spar)
+            partials["data:structures:wing:spar:depth", "data:geometry:wing:MAC:y"] = dh_web_dy_MAC * (1 + k_spar)
+            partials["data:structures:wing:spar:depth", "data:structures:wing:spar:stress:max"] = dh_web_dsig_max * (1 + k_spar)
+            partials["data:structures:wing:spar:depth", "optimization:variables:structures:wing:spar:depth:k"] = dh_web_dk_spar * (1 + k_spar) + h_web
+            partials["data:structures:wing:spar:depth", "optimization:variables:structures:wing:spar:web:depth:k"] = dh_web_dk_h * (1 + k_spar)
+            
+            # m_spar partials (chain rule via cross_section and h_web)
+            dm_spar_dh_web = rho_spar * L_spar * dcs_dh_web
+            
+            partials["data:weight:airframe:wing:spar:mass", "mission:sizing:load_factor:ultimate"] = (
+                2*dm_spar_db_w * 0 + 2*dm_spar_dcs * (dcs_dh_web * dh_web_dn_ult + dcs_dk_spar * 0)
+            )
+            partials["data:weight:airframe:wing:spar:mass", "optimization:variables:weight:mtow:guess"] = (
+                2*dm_spar_dcs * dcs_dh_web * dh_web_dm_uav
+            )
+            partials["data:weight:airframe:wing:spar:mass", "data:geometry:wing:span"] = (
+                2*dm_spar_db_w
+            )
+            partials["data:weight:airframe:wing:spar:mass", "data:geometry:wing:MAC:y"] = (
+                2*dm_spar_dcs * dcs_dh_web * dh_web_dy_MAC
+            )
+            partials["data:weight:airframe:wing:spar:mass", "data:structures:wing:spar:stress:max"] = (
+                2*dm_spar_dcs * dcs_dh_web * dh_web_dsig_max
+            )
+            partials["data:weight:airframe:wing:spar:mass", "data:weight:airframe:wing:spar:density"] = (
+                2*dm_spar_drho
+            )
+            partials["data:weight:airframe:wing:spar:mass", "optimization:variables:structures:wing:spar:depth:k"] = (
+                2*dm_spar_dcs * (dcs_dh_web * dh_web_dk_spar + dcs_dk_spar)
+            )
+            partials["data:weight:airframe:wing:spar:mass", "optimization:variables:structures:wing:spar:web:depth:k"] = (
+                2*dm_spar_dcs * dcs_dh_web * dh_web_dk_h
+            )
+
 
 
 class Ribs(om.ExplicitComponent):
