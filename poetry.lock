@@ -1086,14 +1086,14 @@ tests = ["asttokens (>=2.1.0)", "coverage", "coverage-enable-subprocess", "ipyth
 
 [[package]]
 name = "fast-oad-core"
-version = "1.9.0"
+version = "1.10.0"
 description = "FAST-OAD is a framework for performing rapid Overall Aircraft Design"
 optional = false
 python-versions = "<3.15,>=3.10"
 groups = ["main"]
 files = [
-    {file = "fast_oad_core-1.9.0-py3-none-any.whl", hash = "sha256:34fe5f84dd266dbe2e6f6d5f85600375bbe1983b24dfdde38215d8de731f6b5c"},
-    {file = "fast_oad_core-1.9.0.tar.gz", hash = "sha256:bd8f5458d7d0b6a3d7c73472e764d1e445e88fe70b8915e4776007a152ec3d9e"},
+    {file = "fast_oad_core-1.10.0-py3-none-any.whl", hash = "sha256:9c9882acf6e30e862f9b37a9030b71d15e5788eb905fb362f72b44fb73539359"},
+    {file = "fast_oad_core-1.10.0.tar.gz", hash = "sha256:dfc7892ef77ee6bd3391d848970f0f8f843ab6c7a000c8cb6a48cebb73648428"},
 ]
 
 [package.dependencies]
@@ -1107,6 +1107,7 @@ ipysheet = ">=0.5.0,<1"
 ipywidgets = ">=7.7.0,<9"
 jsonschema = ">=3.2.0,<5"
 jupyterlab = ">=4.2,<5"
+jupyterlab-widgets = "3.0.15"
 lxml = ">=4.9.3,<7"
 numpy = ">=1.23.2,<3"
 openmdao = ">=3.40,<3.43"
@@ -1958,14 +1959,14 @@ test = ["hatch", "ipykernel", "openapi-core (>=0.18.0,<0.19.0)", "openapi-spec-v
 
 [[package]]
 name = "jupyterlab-widgets"
-version = "3.0.16"
+version = "3.0.15"
 description = "Jupyter interactive widgets for JupyterLab"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "jupyterlab_widgets-3.0.16-py3-none-any.whl", hash = "sha256:45fa36d9c6422cf2559198e4db481aa243c7a32d9926b500781c830c80f7ecf8"},
-    {file = "jupyterlab_widgets-3.0.16.tar.gz", hash = "sha256:423da05071d55cf27a9e602216d35a3a65a3e41cdf9c5d3b643b814ce38c19e0"},
+    {file = "jupyterlab_widgets-3.0.15-py3-none-any.whl", hash = "sha256:d59023d7d7ef71400d51e6fee9a88867f6e65e10a4201605d2d7f3e8f012a31c"},
+    {file = "jupyterlab_widgets-3.0.15.tar.gz", hash = "sha256:2920888a0c2922351a9202817957a68c07d99673504d6cd37345299e971bb08b"},
 ]
 
 [[package]]
@@ -5415,4 +5416,4 @@ jupyterlab = ["jupyterlab"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.15"
-content-hash = "76e8a4ac7ee0d2eb6d9c4989141470c99e80107d05bae409ab9d26de3a545065"
+content-hash = "ba8cb187b506bcc3158a7b66deac288789cd4fd4d6fd8190c55c499366cd6d50"
