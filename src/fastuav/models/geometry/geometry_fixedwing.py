@@ -320,7 +320,9 @@ class FuselageGeometry(om.ExplicitComponent):
         self.add_output("data:geometry:fuselage:surface:nose", units="m**2", lower=0.0)
         self.add_output("data:geometry:fuselage:surface:mid", units="m**2", lower=0.0)
         self.add_output("data:geometry:fuselage:surface:rear", units="m**2", lower=0.0)
+        self.add_output("data:geometry:fuselage:volume:nose", units="m**3", lower=0.0)
         self.add_output("data:geometry:fuselage:volume:mid", units="m**3", lower=0.0)
+        self.add_output("data:geometry:fuselage:volume:rear", units="m**3", lower=0.0)
 
     def setup_partials(self):
         # Finite difference all partials.
@@ -349,7 +351,16 @@ class FuselageGeometry(om.ExplicitComponent):
         S_nose = 2 * np.pi * (d_fus_mid / 2) ** 2  # nose part of fuselage (half spherical) [m2]
         S_fus = S_rear + S_mid + S_nose  # total fuselage area [m2]
 
+        V_nose = (
+            np.pi * (4 / 6) * l_nose * (0.5 * d_fus_mid) ** 2
+        )  # nose part of fuselage (half ellipsoid) [m3]
         V_mid = np.pi * (d_fus_mid / 2) ** 2 * l_mid  # mid part of fuselage (cylindrical) [m3]
+        V_rear = (
+            np.pi
+            * l_rear
+            * ((0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip)
+            / 3
+        )  # rear part of fuselage (truncated cone) [m3]
 
         outputs["data:geometry:fuselage:length"] = l_fus
         outputs["data:geometry:fuselage:length:nose"] = l_nose
@@ -361,7 +372,9 @@ class FuselageGeometry(om.ExplicitComponent):
         outputs["data:geometry:fuselage:surface:nose"] = S_nose
         outputs["data:geometry:fuselage:surface:mid"] = S_mid
         outputs["data:geometry:fuselage:surface:rear"] = S_rear
+        outputs["data:geometry:fuselage:volume:nose"] = V_nose
         outputs["data:geometry:fuselage:volume:mid"] = V_mid
+        outputs["data:geometry:fuselage:volume:rear"] = V_rear
 
 
 class ProjectedAreasGuess(om.ExplicitComponent):
