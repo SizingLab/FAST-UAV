@@ -16,7 +16,7 @@ class StaticMargin(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:stability:neutral_point", val=np.nan, units="m")
-        self.add_input("data:stability:CoG", val=np.nan, units="m")
+        self.add_input("data:stability:CoG:x", val=np.nan, units="m")
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_output("data:stability:static_margin", units=None)
 
@@ -25,7 +25,7 @@ class StaticMargin(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         x_np = inputs["data:stability:neutral_point"]
-        x_cg = inputs["data:stability:CoG"]
+        x_cg = inputs["data:stability:CoG:x"]
         c_MAC = inputs["data:geometry:wing:MAC:length"]
 
         SM = (x_np - x_cg) / c_MAC  # static margin [-]
@@ -34,11 +34,11 @@ class StaticMargin(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         x_np = inputs["data:stability:neutral_point"]
-        x_cg = inputs["data:stability:CoG"]
+        x_cg = inputs["data:stability:CoG:x"]
         c_MAC = inputs["data:geometry:wing:MAC:length"]
 
         partials["data:stability:static_margin", "data:stability:neutral_point"] = 1 / c_MAC
-        partials["data:stability:static_margin", "data:stability:CoG"] = -1 / c_MAC
+        partials["data:stability:static_margin", "data:stability:CoG:x"] = -1 / c_MAC
         partials["data:stability:static_margin", "data:geometry:wing:MAC:length"] = (
             -(x_np - x_cg) / c_MAC**2
         )
@@ -51,7 +51,7 @@ class StaticMarginConstraints(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:stability:static_margin", val=np.nan, units=None)
-        self.add_input("data:stability:static_margin:requirement:min", val=0.10, units=None)
+        self.add_input("data:stability:static_margin:requirement:min", val=0.05, units=None)
         self.add_input("data:stability:static_margin:requirement:max", val=0.40, units=None)
         self.add_output("optimization:constraints:stability:static_margin:min", units=None)
         self.add_output("optimization:constraints:stability:static_margin:max", units=None)

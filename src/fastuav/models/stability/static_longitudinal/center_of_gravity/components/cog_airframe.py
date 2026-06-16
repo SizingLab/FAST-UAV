@@ -118,7 +118,6 @@ class CoG_fuselage(om.ExplicitComponent):
         self.add_input("data:weight:airframe:fuselage:mass:nose", val=np.nan, units="kg")
         self.add_input("data:weight:airframe:fuselage:mass:mid", val=np.nan, units="kg")
         self.add_input("data:weight:airframe:fuselage:mass:rear", val=np.nan, units="kg")
-        self.add_input("data:weight:airframe:fuselage:mass", val=np.nan, units="kg")
         self.add_output("data:stability:CoG:airframe:fuselage", units="m")
 
     def setup_partials(self):
@@ -129,19 +128,24 @@ class CoG_fuselage(om.ExplicitComponent):
         l_nose = inputs["data:geometry:fuselage:length:nose"]
         l_mid = inputs["data:geometry:fuselage:length:mid"]
         l_rear = inputs["data:geometry:fuselage:length:rear"]
-        d_fus_mid = inputs["data:geometry:fuselage:diameter:mid"]
-        d_fus_tip = inputs["data:geometry:fuselage:diameter:tip"]
+        r_fus_mid = inputs["data:geometry:fuselage:diameter:mid"] / 2
+        r_fus_tip = inputs["data:geometry:fuselage:diameter:tip"] / 2
         m_nose = inputs["data:weight:airframe:fuselage:mass:nose"]
         m_mid = inputs["data:weight:airframe:fuselage:mass:mid"]
         m_rear = inputs["data:weight:airframe:fuselage:mass:rear"]
-        m_fus = inputs["data:weight:airframe:fuselage:mass"]
 
-        x_cg_nose = l_nose / 2  # [m]
+        x_cg_nose = l_nose * (3 / 4)  # [m] centroid of a half-ellipsoid (nose)
         x_cg_mid = l_nose + l_mid / 2  # [m]
         x_cg_rear = (
-            l_nose + l_mid + l_rear / 3 * (d_fus_mid + 2 * d_fus_tip) / (d_fus_mid + d_fus_tip)
+            l_nose
+            + l_mid
+            + (l_rear / 4)
+            * (r_fus_mid**2 + 2 * r_fus_tip * r_fus_mid + 3 * r_fus_tip**2)
+            / (r_fus_mid**2 + r_fus_tip * r_fus_mid + r_fus_tip**2)
+        )  # [m] centroid of a truncated cone (rear)
+        x_cg_fus = (m_nose * x_cg_nose + m_mid * x_cg_mid + m_rear * x_cg_rear) / (
+            m_nose + m_mid + m_rear
         )  # [m]
-        x_cg_fus = (m_nose * x_cg_nose + m_mid * x_cg_mid + m_rear * x_cg_rear) / m_fus  # [m]
 
         outputs["data:stability:CoG:airframe:fuselage"] = x_cg_fus
 

@@ -21,24 +21,24 @@ class CoG_propulsion_FW(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         propulsion_conf = self.options["propulsion_conf"]
 
+        self.add_input(
+            "data:weight:propulsion:%s:gearbox:mass" % propulsion_id,
+            val=0.0,
+            units="kg",
+        )
         self.add_input("data:geometry:wing:root:LE:x", val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:TE:x", val=np.nan, units="m")
-        self.add_input(
-            "data:propulsion:%s:motor:length:estimated" % propulsion_id,
-            val=np.nan,
-            units="m",
-        )
-        if propulsion_conf == "pusher":
-            self.add_input("data:geometry:fuselage:length", val=np.nan, units="m")
-        self.add_input(
-            "data:propulsion:%s:propeller:number" % propulsion_id,
-            val=np.nan,
-            units=None,
-        )
         self.add_input(
             "data:weight:propulsion:%s:propeller:mass" % propulsion_id,
             val=np.nan,
             units="kg",
+        )
+        if propulsion_conf == "pusher":
+            self.add_input("data:geometry:fuselage:length", val=np.nan, units="m")
+        self.add_input(
+            "data:propulsion:%s:motor:length:estimated" % propulsion_id,
+            val=np.nan,
+            units="m",
         )
         self.add_input(
             "data:weight:propulsion:%s:motor:mass" % propulsion_id,
@@ -62,11 +62,11 @@ class CoG_propulsion_FW(om.ExplicitComponent):
         propulsion_conf = self.options["propulsion_conf"]
         x_root_LE_w = inputs["data:geometry:wing:root:LE:x"]
         x_root_TE_w = inputs["data:geometry:wing:root:TE:x"]
-        l_mot = inputs["data:propulsion:%s:motor:length:estimated" % propulsion_id]
+        m_gearbox = inputs["data:weight:propulsion:%s:gearbox:mass" % propulsion_id]
         m_pro = inputs["data:weight:propulsion:%s:propeller:mass" % propulsion_id]
+        l_mot = inputs["data:propulsion:%s:motor:length:estimated" % propulsion_id]
         m_mot = inputs["data:weight:propulsion:%s:motor:mass" % propulsion_id]
         m_bat = inputs["data:weight:propulsion:%s:battery:mass" % propulsion_id]
-        N_pro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
         if propulsion_conf == "pusher":
             l_fus = inputs["data:geometry:fuselage:length"]
@@ -80,9 +80,9 @@ class CoG_propulsion_FW(om.ExplicitComponent):
             x_root_LE_w + x_root_TE_w
         ) / 2  # [m] wing-integrated or centered at wing position
 
-        m_propulsion = N_pro * m_pro + N_pro * m_mot + m_bat
+        m_propulsion = m_pro + m_mot + m_bat + m_gearbox
         x_cg_propulsion = (
-            N_pro * x_cg_pro * m_pro + N_pro * x_cg_mot * m_mot + x_cg_bat * m_bat
+            x_cg_pro * m_pro + x_cg_mot * (m_mot + m_gearbox) + x_cg_bat * m_bat
         ) / m_propulsion
 
         outputs["data:weight:propulsion:%s" % propulsion_id] = m_propulsion
@@ -142,16 +142,13 @@ class CoG_propulsion_MR(om.ExplicitComponent):
         m_bat = inputs["data:weight:propulsion:%s:battery:mass" % propulsion_id]
         N_pro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
 
-        x_cg_pro = x_cg_mot = (
-            x_pro_front + x_pro_rear
-        ) / 2  # [m] average position of the propellers / motors
         x_cg_bat = (
             x_root_LE_w + x_root_TE_w
         ) / 2  # [m] wing-integrated or centered at wing position
 
         m_propulsion = N_pro * m_pro + N_pro * m_mot + m_bat
         x_cg_propulsion = (
-            N_pro * x_cg_pro * m_pro + N_pro * x_cg_mot * m_mot + x_cg_bat * m_bat
+            2 * x_pro_front * (m_pro + m_mot) + 2 * x_pro_rear * (m_pro + m_mot) + x_cg_bat * m_bat
         ) / m_propulsion
 
         outputs["data:weight:propulsion:%s" % propulsion_id] = m_propulsion
