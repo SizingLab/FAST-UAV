@@ -5,7 +5,7 @@ Climb scenarios
 import numpy as np
 import openmdao.api as om
 from scipy.constants import g
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
 
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
@@ -64,7 +64,7 @@ class MultirotorClimbThrust(om.ExplicitComponent):
             "mission:sizing:main_route:cruise:altitude"
         ]  # conservative assumption
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_climb, dISA)
+        atm = AtmosphereWithPartials(altitude_climb, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_climb
         rho_air = atm.density
 
@@ -137,7 +137,7 @@ class FixedwingClimbThrust(om.ExplicitComponent):
             "mission:sizing:main_route:cruise:altitude"
         ]  # conservative assumption
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_climb, dISA)
+        atm = AtmosphereWithPartials(altitude_climb, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_climb
         q_climb = atm.dynamic_pressure
 

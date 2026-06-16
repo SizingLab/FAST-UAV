@@ -6,7 +6,7 @@ import logging
 
 import numpy as np
 import openmdao.api as om
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
 
 from fastuav.models.propulsion.propeller.aerodynamics.surrogate_models import (
     PropellerAerodynamicsModel,
@@ -80,8 +80,8 @@ class Diameter(om.ExplicitComponent):
 
         altitude_takeoff = inputs["mission:sizing:main_route:takeoff:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        rho_air = AtmosphereSI(
-            altitude_takeoff, dISA
+        rho_air = AtmosphereWithPartials(
+            altitude_takeoff, dISA, altitude_in_feet=False
         ).density  # [kg/m3] Air density at takeoff level
 
         c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_static(

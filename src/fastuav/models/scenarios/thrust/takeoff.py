@@ -5,7 +5,7 @@ Takeoff scenarios
 import numpy as np
 import openmdao.api as om
 from scipy.constants import g
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
 
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 
@@ -86,7 +86,7 @@ class LauncherTakeoff(om.ExplicitComponent):
         V_stall = inputs["mission:sizing:main_route:stall:speed:%s" % propulsion_id]
         altitude_takeoff = inputs["mission:sizing:main_route:takeoff:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_takeoff, dISA)
+        atm = AtmosphereWithPartials(altitude_takeoff, dISA, altitude_in_feet=False)
         atm.true_airspeed = 1.1 * V_stall  # 10% margin on the stall speed [kg/ms2]
         q_takeoff = atm.dynamic_pressure
 

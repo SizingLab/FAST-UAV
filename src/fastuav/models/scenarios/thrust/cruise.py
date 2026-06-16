@@ -5,7 +5,7 @@ Cruise scenarios
 import numpy as np
 import openmdao.api as om
 from scipy.constants import g
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
 
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
@@ -53,7 +53,7 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         rho_air = atm.density
 
@@ -119,7 +119,7 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         q_cruise = atm.dynamic_pressure
 

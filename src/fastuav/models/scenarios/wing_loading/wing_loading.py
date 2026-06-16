@@ -7,7 +7,7 @@ import logging
 import numpy as np
 import openmdao.api as om
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
 
 from fastuav.constants import FW_PROPULSION
 
@@ -46,7 +46,7 @@ class WingLoadingStall(om.ExplicitComponent):
         V_stall = inputs["mission:sizing:main_route:stall:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_stall
         q_stall = atm.dynamic_pressure
 
@@ -91,7 +91,7 @@ class WingLoadingCruise(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         q_cruise = atm.dynamic_pressure
 

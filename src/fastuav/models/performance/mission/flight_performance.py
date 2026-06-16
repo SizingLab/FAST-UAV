@@ -5,7 +5,7 @@ based on the individual models defined in each discipline.
 
 from scipy.constants import g
 from scipy.optimize import brentq, newton
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
 
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.models.propulsion.energy.battery.performance_analysis import (
@@ -352,5 +352,7 @@ class FlightPerformanceModel:
     def air_density(self) -> float:
         """Air density in kg/m**3."""
         if self._air_density is None:
-            self._air_density = AtmosphereSI(self.altitude, self.delta_isa).density
+            self._air_density = AtmosphereWithPartials(
+                self.altitude, self.delta_isa, altitude_in_feet=False
+            ).density
         return self._air_density

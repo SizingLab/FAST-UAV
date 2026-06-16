@@ -5,7 +5,7 @@ Propeller performances
 import numpy as np
 import openmdao.api as om
 from scipy.optimize import fsolve
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
 
 from fastuav.models.propulsion.propeller.aerodynamics.surrogate_models import (
     PropellerAerodynamicsModel,
@@ -190,7 +190,9 @@ class PropellerPerformance(om.ExplicitComponent):
                 beta, J, alpha, ct_model=ct_model_dyn, cp_model=cp_model_dyn
             )
 
-        rho_air = AtmosphereSI(altitude, dISA).density  # [kg/m3] Air density
+        rho_air = AtmosphereWithPartials(
+            altitude, dISA, altitude_in_feet=False
+        ).density  # [kg/m3] Air density
         W_pro = PropellerPerformanceModel.speed(F_pro, D_pro, c_t, rho_air)
         P_pro = PropellerPerformanceModel.power(W_pro, D_pro, c_p, rho_air)
         Q_pro = PropellerPerformanceModel.torque(P_pro, W_pro)

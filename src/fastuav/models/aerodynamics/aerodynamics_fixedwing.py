@@ -5,7 +5,7 @@ Fixed Wing Aerodynamics (external)
 import fastoad.api as oad
 import numpy as np
 import openmdao.api as om
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
 
 from fastuav.constants import FW_PROPULSION
 from fastuav.utils.uncertainty import (
@@ -120,7 +120,7 @@ class WingParasiticDrag(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound
         nu_air = atm.kinematic_viscosity
@@ -183,7 +183,7 @@ class TailParasiticDrag(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound
         nu_air = atm.kinematic_viscosity
@@ -244,7 +244,7 @@ class FuselageParasiticDrag(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound
         nu_air = atm.kinematic_viscosity
