@@ -129,14 +129,14 @@ class WingParasiticDrag(om.ExplicitComponent):
         cf_wing = AirframeAerodynamicsModel.friction_flatplate(V_cruise, c_MAC_w, nu_air, a_air)
 
         # Form drag factor
-        FF_w = 1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4
+        ff_w = 1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4
         # * (1.34 * (V_cruise / a_air) ** 0.18)  # compressibility effects
 
         # Wetted area
         S_wet_w = 2 * S_w
 
         # Parasitic drag coefficient
-        CD_0_wing = (cf_wing * FF_w * S_wet_w) / S_ref
+        CD_0_wing = (cf_wing * ff_w * S_wet_w) / S_ref
 
         outputs["data:aerodynamics:CD0:wing"] = CD_0_wing
 
@@ -192,7 +192,7 @@ class TailParasiticDrag(om.ExplicitComponent):
         cf_tail = AirframeAerodynamicsModel.friction_flatplate(V_cruise, c_MAc_t, nu_air, a_air)
 
         # Form drag factors TODO: add sweep @ 0.3
-        FF_tail = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4) * (
+        ff_tail = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4) * (
             1.34 * (V_cruise / a_air) ** 0.18
         )
 
@@ -200,7 +200,7 @@ class TailParasiticDrag(om.ExplicitComponent):
         S_wet_t = 2 * S_t
 
         # Parasitic drag coefficient
-        CD_0_tail = (cf_tail * FF_tail * S_wet_t) / S_ref
+        CD_0_tail = (cf_tail * ff_tail * S_wet_t) / S_ref
 
         outputs["data:aerodynamics:CD0:tail:%s" % tail] = CD_0_tail
 
@@ -253,7 +253,7 @@ class FuselageParasiticDrag(om.ExplicitComponent):
         cf_fus = AirframeAerodynamicsModel.friction_flatplate(V_cruise, l_fus, nu_air, a_air)
 
         # Form drag factors
-        FF_fus = 1 + 60 / lmbda_f**3 + lmbda_f / 400
+        ff_fus = 1 + 60 / lmbda_f**3 + lmbda_f / 400
 
         # Wetted areas
         S_wet_fus = (
@@ -261,7 +261,7 @@ class FuselageParasiticDrag(om.ExplicitComponent):
         )
 
         # Parasitic drag coefficient
-        CD_0_fus = (cf_fus * S_wet_fus * FF_fus) / S_ref
+        CD_0_fus = (cf_fus * S_wet_fus * ff_fus) / S_ref
 
         outputs["data:aerodynamics:CD0:fuselage"] = CD_0_fus
 
