@@ -46,7 +46,9 @@ class PropellerPerformanceModel:
                 (V_inf * np.cos(alpha)) ** 2 + (V_inf * np.sin(alpha) + x) ** 2
             ) ** (1 / 2)
 
-        v_i = fsolve(func, x0=1)[0]
+        # Tight tolerance: the result is finite-differenced upstream, so the solver
+        # residual must be well below the FD step to avoid noisy/inconsistent gradients.
+        v_i = fsolve(func, x0=1, xtol=1e-12)[0]
         return v_i
 
     @staticmethod
@@ -56,9 +58,13 @@ class PropellerPerformanceModel:
         Valid in any condition (hover and forward flight).
         """
         v_i = PropellerPerformanceModel.induced_velocity(F_pro, D_pro, V_inf, alpha, rho_air)
-        try:
-            eta = (V_inf * np.sin(alpha) + v_i) / (W_pro / (2 * np.pi) * D_pro) * c_t / c_p
-        except (ZeroDivisionError, ValueError):
+        denom = (W_pro / (2 * np.pi)) * D_pro
+        # Guard against a stopped propeller (e.g. VTOL rotors in cruise): W_pro -> 0
+        # would otherwise yield a NaN efficiency (numpy division by zero is not caught
+        # by ZeroDivisionError).
+        if denom > 1e-12 and c_p > 1e-12:
+            eta = (V_inf * np.sin(alpha) + v_i) / denom * c_t / c_p
+        else:
             eta = 0.0
         return eta
 
