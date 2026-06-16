@@ -28,7 +28,7 @@ dependencies = [
     "kaleido==0.2.1",
     "SALib>=1.5.0,<2.0.0",
     "seaborn>=0.13.0,<0.14.0",
-    "pyzmq>=26,<27", # Issue with Ubuntu 24.04 and Python 3.12
+    "pyzmq>=26", # Lower bound for Ubuntu 24.04 / Python 3.12 issue; 27+ needed for Python 3.14 wheels (esp. Windows)
     "plotly>=6.0.0,<7.0.0",
     "ipywidgets>=8.1.8,<9.0.0",
 ]
