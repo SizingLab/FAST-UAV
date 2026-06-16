@@ -71,9 +71,11 @@ class StaticMarginConstraints(om.ExplicitComponent):
         outputs["optimization:constraints:stability:static_margin:max"] = SM_con_max
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
+        SM = inputs["data:stability:static_margin"]
         SM_min = inputs["data:stability:static_margin:requirement:min"]
         SM_max = inputs["data:stability:static_margin:requirement:max"]
 
+        # SM_con_min = (SM - SM_min) / SM_min = SM / SM_min - 1
         partials[
             "optimization:constraints:stability:static_margin:min",
             "data:stability:static_margin",
@@ -81,7 +83,8 @@ class StaticMarginConstraints(om.ExplicitComponent):
         partials[
             "optimization:constraints:stability:static_margin:min",
             "data:stability:static_margin:requirement:min",
-        ] = -1 / SM_min**2 if SM_min != 0 else -1.0
+        ] = -SM / SM_min**2 if SM_min != 0 else -1.0
+        # SM_con_max = (SM_max - SM) / SM_max = 1 - SM / SM_max
         partials[
             "optimization:constraints:stability:static_margin:max",
             "data:stability:static_margin",
@@ -89,4 +92,4 @@ class StaticMarginConstraints(om.ExplicitComponent):
         partials[
             "optimization:constraints:stability:static_margin:max",
             "data:stability:static_margin:requirement:max",
-        ] = 1 / SM_max**2 if SM_max != 0 else 1.0
+        ] = SM / SM_max**2 if SM_max != 0 else 1.0
