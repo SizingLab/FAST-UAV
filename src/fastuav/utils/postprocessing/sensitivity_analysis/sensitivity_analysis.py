@@ -8,23 +8,25 @@ Two sensitivity analysis methods are available:
 For the Sobol' SA, the uncertain inputs are generated using Saltelli's sampling.
 """
 
-
 import contextlib
+import itertools
 import os
 import os.path as pth
+import tempfile
 import warnings
+from typing import List
 
-from fastuav.utils.drivers.salib_doe_driver import SalibDOEDriver
 import fastoad.api as oad
-from fastoad.io.variable_io import DataFile
+import numpy as np
 import openmdao.api as om
 import pandas as pd
-import numpy as np
-from ipywidgets import widgets, Layout
 import plotly.graph_objects as go
-from SALib.analyze import sobol, morris
-from typing import List
-import itertools
+from SALib.analyze import morris, sobol
+from fastoad.io.variable_io import DataFile
+from ipywidgets import Layout, widgets
+
+from fastuav.utils.drivers.salib_doe_driver import SalibDOEDriver
+
 # from openmdao_drivers.cmaes_driver import CMAESDriver
 
 SA_PATH = pth.join(
@@ -86,7 +88,9 @@ def doe_fast(
             # create a sub-problem to use later in the compute
             # sub_conf = oad.FASTOADProblemConfigurator(conf_file)
             conf = self.options["conf"]
-            prob = conf.get_problem(read_inputs=True)  # get conf file (design variables, objective, driver...)
+            prob = conf.get_problem(
+                read_inputs=True
+            )  # get conf file (design variables, objective, driver...)
 
             # UNCOMMENT THESE LINES IF USING CMA-ES Driver for solving sub-problem
             # TODO: automatically detect use of CMA-ES driver
@@ -110,7 +114,7 @@ def doe_fast(
 
             # set counter and output variable for recording optimization failure or success
             self._fail_count = 0
-            self.add_output('optim_failed')
+            self.add_output("optim_failed")
 
             self.declare_partials("*", "*", method="fd")
 
@@ -122,8 +126,9 @@ def doe_fast(
             for x in x_list:
                 p[x] = inputs[x]
 
-            with open(os.devnull, "w") as f, contextlib.redirect_stdout(
-                f
+            with (
+                open(os.devnull, "w") as f,
+                contextlib.redirect_stdout(f),
             ):  # turn off all convergence messages (including failures)
                 fail = not p.run_driver().success
 
@@ -132,7 +137,7 @@ def doe_fast(
 
             if fail:
                 self._fail_count += 1
-            outputs['optim_failed'] = float(fail)
+            outputs["optim_failed"] = float(fail)
 
     conf = oad.FASTOADProblemConfigurator(conf_file)
     prob_definition = conf.get_optimization_definition()
@@ -161,57 +166,40 @@ def doe_fast(
     if method_name == "list":
         # add input parameters for DoE
         for x_name, x_value in x_dict.items():
-            prob.model.add_design_var(
-                x_name, lower=x_value.min(), upper=x_value.max()
-            )
+            prob.model.add_design_var(x_name, lower=x_value.min(), upper=x_value.max())
         # generate all combinations from values in the dict of parameters
         keys, values = zip(*x_dict.items())
         permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
-        case_list = [[(key, val) for key, val in permut_dict.items()] for permut_dict in permutations_dicts]
-        prob.driver = om.DOEDriver(
-            om.ListGenerator(
-                data=case_list
-            )
-        )
+        case_list = [
+            [(key, val) for key, val in permut_dict.items()] for permut_dict in permutations_dicts
+        ]
+        prob.driver = om.DOEDriver(om.ListGenerator(data=case_list))
     elif method_name in ("uniform", "lhs", "fullfactorial"):
         # add input parameters for DoE
         for x_name, x_value in x_dict.items():
-            prob.model.add_design_var(
-                x_name, lower=x_value[0], upper=x_value[1]
-            )
+            prob.model.add_design_var(x_name, lower=x_value[0], upper=x_value[1])
         # setup driver
         if method_name == "uniform":
-            prob.driver = om.DOEDriver(
-                om.UniformGenerator(
-                    num_samples=ns
-                )
-            )
+            prob.driver = om.DOEDriver(om.UniformGenerator(num_samples=ns))
         elif method_name == "lhs":
-            prob.driver = om.DOEDriver(
-                om.LatinHypercubeGenerator(
-                    samples=ns
-                )
-            )
+            prob.driver = om.DOEDriver(om.LatinHypercubeGenerator(samples=ns))
         elif method_name == "fullfactorial":
-            prob.driver = om.DOEDriver(
-                om.FullFactorialGenerator(
-                    levels=ns
-                )
-            )
+            prob.driver = om.DOEDriver(om.FullFactorialGenerator(levels=ns))
     elif method_name in ("Sobol", "Morris"):
         # add input parameters for DoE
         dists = []
         for x_name, x_value in x_dict.items():
-            prob.model.add_design_var(
-                x_name, lower=x_value[0], upper=x_value[1]
-            )
+            prob.model.add_design_var(x_name, lower=x_value[0], upper=x_value[1])
             dist = x_value[2]  # add distribution type ('unif' or 'norm')
             dists.append(dist)
         # setup driver
         if method_name == "Sobol":
             prob.driver = SalibDOEDriver(
                 sa_method_name=method_name,
-                sa_doe_options={"n_samples": ns, "calc_second_order": calc_second_order},
+                sa_doe_options={
+                    "n_samples": ns,
+                    "calc_second_order": calc_second_order,
+                },
                 distributions=dists,
             )
         elif method_name == "Morris":
@@ -224,17 +212,15 @@ def doe_fast(
     elif method_name == "custom":
         # add input parameters for DoE
         for x_name, x_value in x_dict.items():
-            prob.model.add_design_var(
-                x_name, lower=x_value.min(), upper=x_value.max()
-            )
+            prob.model.add_design_var(x_name, lower=x_value.min(), upper=x_value.max())
         # setup driver
         prob.driver = custom_driver
 
-    # Attach recorder to the driver
-    if os.path.exists("cases.sql"):
-        os.remove("cases.sql")
-    prob.driver.add_recorder(om.SqliteRecorder("cases.sql"))
-    recorded_variables = [f'*{x}' for x in x_list + y_list]
+    # Attach recorder to the driver (use a temp file to avoid CWD dependency)
+    cases_sql_fd, cases_sql_path = tempfile.mkstemp(suffix=".sql")
+    os.close(cases_sql_fd)
+    prob.driver.add_recorder(om.SqliteRecorder(cases_sql_path))
+    recorded_variables = [f"*{x}" for x in x_list + y_list]
     if nested_optimization:
         recorded_variables.append("optim_failed")
     prob.driver.recording_options["includes"] = recorded_variables
@@ -246,12 +232,12 @@ def doe_fast(
 
     # Get results from recorded cases
     df = pd.DataFrame()
-    cr = om.CaseReader("cases.sql")
+    cr = om.CaseReader(cases_sql_path)
     cases = cr.list_cases("driver", out_stream=None)
     for case in cases:
         values = cr.get_case(case).outputs
-        # df = df.append(values, ignore_index=True)
         df = pd.concat([df, pd.DataFrame(values)], ignore_index=True)
+    os.remove(cases_sql_path)  # clean up temp file
 
     # for i in df.columns:
     #     df[i] = df[i].apply(lambda x: x[0])
@@ -266,7 +252,7 @@ def doe_fast(
     # If SA_PATH does not exist, create it
     if not pth.exists(SA_PATH):
         os.makedirs(SA_PATH)
-    
+
     # Create figures subdirectory if it doesn't exist
     figures_path = pth.join(SA_PATH, "figures")
     if not pth.exists(figures_path):
@@ -295,8 +281,8 @@ def sobol_analysis(conf_file, data_file):
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
     # Remove variables whose shape is different from a single value (i.e., n-dimensional arrays).
-    table['type'] = [type(x) for x in table.Value.values]
-    table = table[table['type'] == float].drop('type', axis=1)
+    table["type"] = [type(x) for x in table.Value.values]
+    table = table[table["type"] == float].drop("type", axis=1)  # noqa: E721
     # Uncertain variables table
     x_table = table.loc[table["is_input"]]  # select inputs only
     x_table = x_table.loc[
@@ -338,18 +324,6 @@ def sobol_analysis(conf_file, data_file):
             button_style="",
         )
         # Distribution laws parameters
-        var_box_normal = widgets.FloatSlider(
-            value=0.1,
-            min=0.0,
-            max=0.5,
-            step=0.01,
-            description="error std:",
-            disabled=False,
-            continuous_update=False,
-            readout=True,
-            readout_format=".0%",
-            style={"description_width": "initial"},
-        )
         var_box_uniform = widgets.FloatRangeSlider(
             value=[-0.1, 0.1],
             min=-0.5,
@@ -441,12 +415,11 @@ def sobol_analysis(conf_file, data_file):
         layout=go.Layout(title=dict(text="Output Distribution")),
     )
 
-    # Parallel coordinates plot
+    # Parallel coordinates plot (requires WebGL — use JupyterLab or Jupyter Notebook)
     fig5 = go.FigureWidget(
         data=go.Parcoords(labelangle=0, labelside="top"),
-        layout=go.Layout(title=dict(text="Parallel Coordinates Plot")),
+        layout=go.Layout(title=dict(text="Parallel Coordinates Plot"), width=1000),
     )
-    fig5.update_layout(width=1000)
 
     # Inputs distribution (deprecated)
     # fig6 = go.FigureWidget(data=[],
@@ -706,22 +679,24 @@ def sobol_analysis(conf_file, data_file):
                 y_data["Unit"].unique()[0] if y_data["Unit"].unique()[0] is not None else "-"
             )
 
-        with fig5.batch_update():  # Parallel coordinate plot
-            dimensions = []
-            for x in x_dict:
-                if x.split(":")[-1] == "rel":
-                    dimensions.append(
-                        dict(
-                            label=get_short_name(x) + ":error",
-                            values=df[x],
-                            tickformat="%",
-                        )
-                    )  # add relative error in percentage
-                else:
-                    dimensions.append(
-                        dict(label=get_short_name(x) + ":error", values=df[x])
-                    )  # add absolute error with unit
-            dimensions.append(dict(label=y, values=df[y]))
+        # Parallel coordinate plot (rebuilt as static PNG to avoid WebGL dependency)
+        dimensions = []
+        for x in x_dict:
+            if x.split(":")[-1] == "rel":
+                dimensions.append(
+                    dict(
+                        label=get_short_name(x) + ":error",
+                        values=df[x],
+                        tickformat="%",
+                    )
+                )  # add relative error in percentage
+            else:
+                dimensions.append(
+                    dict(label=get_short_name(x) + ":error", values=df[x])
+                )  # add absolute error with unit
+        dimensions.append(dict(label=y, values=df[y]))
+
+        with fig5.batch_update():
             fig5.data[0].dimensions = dimensions
             fig5.data[0].line = dict(color=df[y], colorscale="Viridis")
 
@@ -858,8 +833,8 @@ def morris_analysis(conf_file, data_file):
         columns={"name": "Name", "val": "Value", "units": "Unit", "desc": "Description"}
     )
     # Remove variables whose shape is different from a single value (i.e., n-dimensional arrays).
-    table['type'] = [type(x) for x in table.Value.values]
-    table = table[table['type'] == float].drop('type', axis=1)
+    table["type"] = [type(x) for x in table.Value.values]
+    table = table[table["type"] == float].drop("type", axis=1)  # noqa: E721
     # Uncertain variables table
     x_table = table.loc[table["is_input"]]  # select inputs only
     x_table = x_table.loc[
@@ -893,24 +868,14 @@ def morris_analysis(conf_file, data_file):
         )
         # Distribution laws
         law_buttons = widgets.ToggleButtons(
-            options=["Uniform"],  # Alternate distributions are not support yet in SALib (https://github.com/SALib/SALib/issues/515)
+            options=[
+                "Uniform"
+            ],  # Alternate distributions are not support yet in SALib (https://github.com/SALib/SALib/issues/515)
             description="Distribution:",
             disabled=True,
             button_style="",
         )
         # Distribution laws parameters
-        var_box_normal = widgets.FloatSlider(
-            value=0.1,
-            min=0.0,
-            max=0.5,
-            step=0.01,
-            description="error std:",
-            disabled=False,
-            continuous_update=False,
-            readout=True,
-            readout_format=".0%",
-            style={"description_width": "initial"},
-        )
         var_box_uniform = widgets.FloatRangeSlider(
             value=[-0.1, 0.1],
             min=-0.5,
@@ -1246,7 +1211,10 @@ def morris_analysis(conf_file, data_file):
             # export
             fig1.write_html(pth.join(SA_PATH, "figures", "morris_mu.html"), include_mathjax="cdn")
             fig1.write_image(pth.join(SA_PATH, "figures", "morris_mu.pdf"))
-            fig2.write_html(pth.join(SA_PATH, "figures", "morris_mu_sigma.html"), include_mathjax="cdn")
+            fig2.write_html(
+                pth.join(SA_PATH, "figures", "morris_mu_sigma.html"),
+                include_mathjax="cdn",
+            )
             fig2.write_image(pth.join(SA_PATH, "figures", "morris_mu_sigma.pdf"))
 
     def update_all(change):

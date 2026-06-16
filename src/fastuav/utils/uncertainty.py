@@ -3,8 +3,9 @@ Methods for adding deviations to the variables of the problem.
 This is useful for sensitivity analysis studies (see utils.postprocessing.sensitivity_analysis module)
 """
 
-import openmdao.api as om
 from typing import List
+
+import openmdao.api as om
 
 
 def add_subsystem_with_deviation(
@@ -99,15 +100,19 @@ class ComponentWithDeviation(om.ExplicitComponent):
             if long_names not in self._long_names:
                 short_name = short_names[i]
                 unit = units[i]
-                self.add_input("uncertainty:" + short_name + ":mean",
-                               shape_by_conn=True,
-                               units=unit,
-                               tags="local")
+                self.add_input(
+                    "uncertainty:" + short_name + ":mean",
+                    shape_by_conn=True,
+                    units=unit,
+                    tags="local",
+                )
                 self.add_input("uncertainty:" + short_name + ":rel", val=0.0, units=None)
                 self.add_input("uncertainty:" + short_name + ":abs", val=0.0, units=unit)
-                self.add_output(long_name,
-                                copy_shape="uncertainty:" + short_name + ":mean",
-                                units=unit)
+                self.add_output(
+                    long_name,
+                    copy_shape="uncertainty:" + short_name + ":mean",
+                    units=unit,
+                )
                 self._long_names.append(long_name)
                 self._short_names.append(short_name)
 

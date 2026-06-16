@@ -3,6 +3,7 @@ Propeller surrogate models describing the propeller's aerodynamics performance.
 """
 
 import numpy as np
+
 # from scipy.optimize import fsolve
 
 
@@ -22,9 +23,11 @@ class PropellerAerodynamicsModel:
     """
 
     @staticmethod
-    def aero_coefficients_static(beta,
-                                 ct_model: np.array = np.array([4.27e-02, 1.44e-01]),
-                                 cp_model: np.array = np.array([-1.48e-03, 9.72e-02])):
+    def aero_coefficients_static(
+        beta,
+        ct_model: np.array = np.array([4.27e-02, 1.44e-01]),
+        cp_model: np.array = np.array([-1.48e-03, 9.72e-02]),
+    ):
         """
         Compute the thrust and power coefficient in static conditions (zero advance ratio)
 
@@ -49,12 +52,38 @@ class PropellerAerodynamicsModel:
         return c_t_static, c_p_static
 
     @staticmethod
-    def aero_coefficients_axial(beta,
-                                J,
-                                ct_model: np.array = np.array(
-                                    [0.02791, 0.11867, 0.27334, - 0.28852, - 0.06543, - 0.23504, 0.02104, 0.0, 0.0, 0.18677]),
-                                cp_model: np.array = np.array(
-                                    [0.01813, - 0.06218, 0.35712, - 0.23774, 0.00343, - 0.1235, 0.0, 0.07549, 0.0, 0.0])):
+    def aero_coefficients_axial(
+        beta,
+        J,
+        ct_model: np.array = np.array(
+            [
+                0.02791,
+                0.11867,
+                0.27334,
+                -0.28852,
+                -0.06543,
+                -0.23504,
+                0.02104,
+                0.0,
+                0.0,
+                0.18677,
+            ]
+        ),
+        cp_model: np.array = np.array(
+            [
+                0.01813,
+                -0.06218,
+                0.35712,
+                -0.23774,
+                0.00343,
+                -0.1235,
+                0.0,
+                0.07549,
+                0.0,
+                0.0,
+            ]
+        ),
+    ):
         """
         Compute the thrust and power coefficients in axial flight conditions (non-zero advance ratio, axial flow).
 
@@ -101,19 +130,46 @@ class PropellerAerodynamicsModel:
         return max(1e-10, c_t_axial), max(1e-10, c_p_axial)
 
     @staticmethod
-    def aero_coefficients_incidence(beta,
-                                    J,
-                                    alpha,
-                                    n_blades: int = 2,
-                                    chord_to_radius: float = 0.15,
-                                    r_norm: float = 0.75,
-                                    ct_model: np.array = np.array(
-                                        [0.02791, 0.11867, 0.27334, - 0.28852, - 0.06543, - 0.23504, 0.02104, 0.0, 0.0, 0.18677,
-                                         0.197, 1.094]),
-                                    cp_model: np.array = np.array([
-                                        0.01813, - 0.06218, 0.35712, - 0.23774, 0.00343, - 0.1235, 0.0, 0.07549, 0.0, 0.0,
-                                        0.286, 0.993]),
-                                    ):
+    def aero_coefficients_incidence(
+        beta,
+        J,
+        alpha,
+        n_blades: int = 2,
+        chord_to_radius: float = 0.15,
+        r_norm: float = 0.75,
+        ct_model: np.array = np.array(
+            [
+                0.02791,
+                0.11867,
+                0.27334,
+                -0.28852,
+                -0.06543,
+                -0.23504,
+                0.02104,
+                0.0,
+                0.0,
+                0.18677,
+                0.197,
+                1.094,
+            ]
+        ),
+        cp_model: np.array = np.array(
+            [
+                0.01813,
+                -0.06218,
+                0.35712,
+                -0.23774,
+                0.00343,
+                -0.1235,
+                0.0,
+                0.07549,
+                0.0,
+                0.0,
+                0.286,
+                0.993,
+            ]
+        ),
+    ):
         """
         Generalized model to compute the thrust and power coefficient in any operating conditions, i.e. non-zero
         advance ratio and non-axial flow. The non-axial flow correction is based on the analytical model provided by
@@ -146,10 +202,9 @@ class PropellerAerodynamicsModel:
 
         # Parameters at zero incidence propeller angle (axial flight)
         J_axial = J * np.sin(alpha)
-        c_t_axial, c_p_axial = PropellerAerodynamicsModel.aero_coefficients_axial(beta,
-                                                                                  J_axial,
-                                                                                  ct_model=ct_model[:-2],
-                                                                                  cp_model=cp_model[:-2])
+        c_t_axial, c_p_axial = PropellerAerodynamicsModel.aero_coefficients_axial(
+            beta, J_axial, ct_model=ct_model[:-2], cp_model=cp_model[:-2]
+        )
         # Zero thrust advance ratios in axial flight
 
         # 1) With solver

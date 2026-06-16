@@ -2,12 +2,14 @@
 Wing loading requirements.
 """
 
+import logging
+
 import numpy as np
 import openmdao.api as om
-import logging
 from fastoad.openmdao.validity_checker import ValidityDomainChecker
+from stdatm import AtmosphereWithPartials
+
 from fastuav.constants import FW_PROPULSION
-from stdatm import AtmosphereSI
 
 _LOGGER = logging.getLogger(__name__)  # Logger for this module
 WS_MIN = 100  # [N/m2] lower limit for the wing loading. Under this value, increasing CLmax is recommended.
@@ -24,7 +26,11 @@ class WingLoadingStall(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:stall:speed:%s" % propulsion_id, val=np.nan, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:stall:speed:%s" % propulsion_id,
+            val=np.nan,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:aerodynamics:CLmax", val=1.3, units=None)
         self.add_output("data:geometry:wing:loading:stall", units="N/m**2")
@@ -40,7 +46,7 @@ class WingLoadingStall(om.ExplicitComponent):
         V_stall = inputs["mission:sizing:main_route:stall:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_stall
         q_stall = atm.dynamic_pressure
 
@@ -64,7 +70,11 @@ class WingLoadingCruise(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+            val=0.0,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
@@ -81,7 +91,7 @@ class WingLoadingCruise(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         q_cruise = atm.dynamic_pressure
 
@@ -92,8 +102,8 @@ class WingLoadingCruise(om.ExplicitComponent):
         CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
 
         # Wing loading calculation
-        WS_cruise = q_cruise * np.sqrt(
-            CD_0_guess / K
+        WS_cruise = (
+            q_cruise * np.sqrt(CD_0_guess / K)
         )  # wing loading that maximizes range during cruise [N/m2] (simplified drag model CD = CD_0 + K * CL^2)
 
         outputs["data:geometry:wing:loading:cruise"] = WS_cruise
@@ -101,7 +111,10 @@ class WingLoadingCruise(om.ExplicitComponent):
 
 @ValidityDomainChecker(
     {
-        "data:geometry:wing:loading": (WS_MIN, None),  # defines a lower bound for wing loading
+        "data:geometry:wing:loading": (
+            WS_MIN,
+            None,
+        ),  # defines a lower bound for wing loading
     }
 )
 class WingLoadingSelection(om.ExplicitComponent):
@@ -134,7 +147,10 @@ class WingLoadingSelection(om.ExplicitComponent):
         k_WS = inputs["optimization:variables:geometry:wing:loading:k"]
 
         partials["data:geometry:wing:loading", "data:geometry:wing:loading:stall"] = k_WS
-        partials["data:geometry:wing:loading", "optimization:variables:geometry:wing:loading:k"] = WS_stall
+        partials[
+            "data:geometry:wing:loading",
+            "optimization:variables:geometry:wing:loading:k",
+        ] = WS_stall
 
 
 # @ValidityDomainChecker(

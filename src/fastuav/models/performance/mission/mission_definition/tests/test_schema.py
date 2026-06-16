@@ -49,24 +49,14 @@ def _get_expected_dict():
     return {
         "routes": {
             "main_route": {
-                "takeoff_part": {
-                    "phase_id": "vertical_takeoff"
-                },
-                "climb_part": {
-                    "phase_id": "multirotor_climb"
-                },
-                "cruise_part": {
-                    "phase_id": "fixedwing_cruise"
-                },
+                "takeoff_part": {"phase_id": "vertical_takeoff"},
+                "climb_part": {"phase_id": "multirotor_climb"},
+                "cruise_part": {"phase_id": "fixedwing_cruise"},
             },
             "diversion": {
-                "climb_part": {
-                    "phase_id": "fixedwing_climb"
-                },
-                "cruise_part": {
-                    "phase_id": "fixedwing_cruise"
-                },
-            }
+                "climb_part": {"phase_id": "fixedwing_climb"},
+                "cruise_part": {"phase_id": "fixedwing_cruise"},
+            },
         },
         "missions": {
             "sizing": {
@@ -75,5 +65,5 @@ def _get_expected_dict():
                     {"route": "diversion"},
                 ]
             }
-        }
+        },
     }

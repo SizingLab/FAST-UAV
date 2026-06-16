@@ -1,11 +1,16 @@
 """
 Fixed Wing Structures
 """
+
 import fastoad.api as oad
 import openmdao.api as om
-from fastuav.models.structures.wing.wing import WingStructuresFW
-from fastuav.models.structures.tails import HorizontalTailStructures, VerticalTailStructures
+
 from fastuav.models.structures.fuselage import FuselageStructures
+from fastuav.models.structures.tails import (
+    HorizontalTailStructures,
+    VerticalTailStructures,
+)
+from fastuav.models.structures.wing.wing import WingStructuresFW
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.structures.fixedwing")
@@ -19,7 +24,9 @@ class Structures(om.Group):
 
     def setup(self):
         self.add_subsystem(
-            "wing", WingStructuresFW(spar_model=self.options["spar_model"]), promotes=["*"]
+            "wing",
+            WingStructuresFW(spar_model=self.options["spar_model"]),
+            promotes=["*"],
         )
         self.add_subsystem("horizontal_tail", HorizontalTailStructures(), promotes=["*"])
         self.add_subsystem("vertical_tail", VerticalTailStructures(), promotes=["*"])

@@ -3,6 +3,7 @@ Fixed wing propulsion system
 """
 
 import fastoad.api as oad
+
 from fastuav.constants import FW_PROPULSION
 from fastuav.models.propulsion.propulsion import Propulsion
 

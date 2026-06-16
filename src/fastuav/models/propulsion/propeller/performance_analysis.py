@@ -1,11 +1,15 @@
 """
 Propeller performances
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 from scipy.optimize import fsolve
-from fastuav.models.propulsion.propeller.aerodynamics.surrogate_models import PropellerAerodynamicsModel
-from stdatm import AtmosphereSI
+from stdatm import AtmosphereWithPartials
+
+from fastuav.models.propulsion.propeller.aerodynamics.surrogate_models import (
+    PropellerAerodynamicsModel,
+)
 
 
 class PropellerPerformanceModel:
@@ -36,8 +40,12 @@ class PropellerPerformanceModel:
         """
         Computes the induced velocity from Glauert's model
         """
-        func = lambda x: x - F_pro / (2 * rho_air * np.pi * (D_pro / 2) ** 2) / (
-                    (V_inf * np.cos(alpha)) ** 2 + (V_inf * np.sin(alpha) + x) ** 2) ** (1 / 2)
+
+        def func(x):
+            return x - F_pro / (2 * rho_air * np.pi * (D_pro / 2) ** 2) / (
+                (V_inf * np.cos(alpha)) ** 2 + (V_inf * np.sin(alpha) + x) ** 2
+            ) ** (1 / 2)
+
         v_i = fsolve(func, x0=1)[0]
         return v_i
 
@@ -78,18 +86,10 @@ class PropellerPerformanceGroup(om.Group):
     """
 
     def setup(self):
-        self.add_subsystem("takeoff",
-                           PropellerPerformance(scenario="takeoff"),
-                           promotes=["*"])
-        self.add_subsystem("hover",
-                           PropellerPerformance(scenario="hover"),
-                           promotes=["*"])
-        self.add_subsystem("climb",
-                           PropellerPerformance(scenario="climb"),
-                           promotes=["*"])
-        self.add_subsystem("cruise",
-                           PropellerPerformance(scenario="cruise"),
-                           promotes=["*"])
+        self.add_subsystem("takeoff", PropellerPerformance(scenario="takeoff"), promotes=["*"])
+        self.add_subsystem("hover", PropellerPerformance(scenario="hover"), promotes=["*"])
+        self.add_subsystem("climb", PropellerPerformance(scenario="climb"), promotes=["*"])
+        self.add_subsystem("cruise", PropellerPerformance(scenario="cruise"), promotes=["*"])
 
 
 class PropellerPerformance(om.ExplicitComponent):
@@ -98,24 +98,54 @@ class PropellerPerformance(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
         self.add_input("data:propulsion:propeller:diameter", val=np.nan, units="m")
         self.add_input("data:propulsion:propeller:beta", val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Ct:static:polynomial", shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Cp:static:polynomial", shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Ct:dynamic:polynomial", shape_by_conn=True, val=np.nan, units=None)
-        self.add_input("data:propulsion:propeller:Cp:dynamic:polynomial", shape_by_conn=True, val=np.nan, units=None)
+        self.add_input(
+            "data:propulsion:propeller:Ct:static:polynomial",
+            shape_by_conn=True,
+            val=np.nan,
+            units=None,
+        )
+        self.add_input(
+            "data:propulsion:propeller:Cp:static:polynomial",
+            shape_by_conn=True,
+            val=np.nan,
+            units=None,
+        )
+        self.add_input(
+            "data:propulsion:propeller:Ct:dynamic:polynomial",
+            shape_by_conn=True,
+            val=np.nan,
+            units=None,
+        )
+        self.add_input(
+            "data:propulsion:propeller:Cp:dynamic:polynomial",
+            shape_by_conn=True,
+            val=np.nan,
+            units=None,
+        )
         if scenario == "takeoff":
             self.add_input("mission:sizing:main_route:takeoff:altitude", val=0.0, units="m")
         elif scenario == "hover":
-            self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")  # conservative assumption
+            self.add_input(
+                "mission:sizing:main_route:cruise:altitude", val=150.0, units="m"
+            )  # conservative assumption
         else:
-            self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")  # conservative assumption
+            self.add_input(
+                "mission:sizing:main_route:cruise:altitude", val=150.0, units="m"
+            )  # conservative assumption
             self.add_input("mission:sizing:main_route:%s:speed" % scenario, val=np.nan, units="m/s")
-            self.add_input("optimization:variables:propulsion:propeller:advance_ratio:%s" % scenario, val=np.nan, units=None)
+            self.add_input(
+                "optimization:variables:propulsion:propeller:advance_ratio:%s" % scenario,
+                val=np.nan,
+                units=None,
+            )
             self.add_input("data:propulsion:propeller:AoA:%s" % scenario, val=np.nan, units="rad")
             self.add_output("data:propulsion:propeller:efficiency:%s" % scenario, units=None)
         self.add_input("mission:sizing:dISA", val=np.nan, units="K")
@@ -142,34 +172,36 @@ class PropellerPerformance(om.ExplicitComponent):
 
         if scenario == "takeoff":
             altitude = inputs["mission:sizing:main_route:takeoff:altitude"]
-            c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_static(beta,
-                                                                           ct_model=ct_model_sta,
-                                                                           cp_model=cp_model_sta)
+            c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_static(
+                beta, ct_model=ct_model_sta, cp_model=cp_model_sta
+            )
 
         elif scenario == "hover":
             altitude = inputs["mission:sizing:main_route:cruise:altitude"]
-            c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_static(beta,
-                                                                           ct_model=ct_model_sta,
-                                                                           cp_model=cp_model_sta)
+            c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_static(
+                beta, ct_model=ct_model_sta, cp_model=cp_model_sta
+            )
 
         else:
             altitude = inputs["mission:sizing:main_route:cruise:altitude"]
             J = inputs["optimization:variables:propulsion:propeller:advance_ratio:%s" % scenario]
             alpha = inputs["data:propulsion:propeller:AoA:%s" % scenario]
-            c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_incidence(beta,
-                                                                              J,
-                                                                              alpha,
-                                                                              ct_model=ct_model_dyn,
-                                                                              cp_model=cp_model_dyn)
+            c_t, c_p = PropellerAerodynamicsModel.aero_coefficients_incidence(
+                beta, J, alpha, ct_model=ct_model_dyn, cp_model=cp_model_dyn
+            )
 
-        rho_air = AtmosphereSI(altitude, dISA).density  # [kg/m3] Air density
+        rho_air = AtmosphereWithPartials(
+            altitude, dISA, altitude_in_feet=False
+        ).density  # [kg/m3] Air density
         W_pro = PropellerPerformanceModel.speed(F_pro, D_pro, c_t, rho_air)
         P_pro = PropellerPerformanceModel.power(W_pro, D_pro, c_p, rho_air)
         Q_pro = PropellerPerformanceModel.torque(P_pro, W_pro)
 
         if scenario in ["climb", "cruise"]:
             V_inf = inputs["mission:sizing:main_route:%s:speed" % scenario]
-            eta = PropellerPerformanceModel.efficiency(F_pro, W_pro, D_pro, c_p, c_t, V_inf, alpha, rho_air)
+            eta = PropellerPerformanceModel.efficiency(
+                F_pro, W_pro, D_pro, c_p, c_t, V_inf, alpha, rho_air
+            )
             outputs["data:propulsion:propeller:efficiency:%s" % scenario] = eta
 
         outputs["data:propulsion:propeller:speed:%s" % scenario] = W_pro

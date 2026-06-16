@@ -3,14 +3,16 @@ Sizing scenarios definition for multirotor drones.
 The sizing scenarios return the thrusts and loads requirements to size the UAV.
 The sizing scenarios are extracted from a sizing mission defined by the user.
 """
+
 import fastoad.api as oad
 import openmdao.api as om
-from fastuav.models.mtow.mtow import MtowGuess
+
 from fastuav.models.geometry.geometry_multirotor import ProjectedAreasGuess
-from fastuav.models.scenarios.thrust.takeoff import VerticalTakeoffThrust
-from fastuav.models.scenarios.thrust.cruise import MultirotorCruiseThrust
+from fastuav.models.mtow.mtow import MtowGuess
 from fastuav.models.scenarios.thrust.climb import MultirotorClimbThrust
+from fastuav.models.scenarios.thrust.cruise import MultirotorCruiseThrust
 from fastuav.models.scenarios.thrust.hover import HoverThrust
+from fastuav.models.scenarios.thrust.takeoff import VerticalTakeoffThrust
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.scenarios.multirotor")

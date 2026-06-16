@@ -3,9 +3,10 @@ Takeoff scenarios
 """
 
 import numpy as np
-from scipy.constants import g
 import openmdao.api as om
-from stdatm import AtmosphereSI
+from scipy.constants import g
+from stdatm import AtmosphereWithPartials
+
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 
 
@@ -19,9 +20,17 @@ class VerticalTakeoffThrust(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("mission:sizing:thrust_weight_ratio:%s" % propulsion_id, val=np.nan, units=None)
+        self.add_input(
+            "mission:sizing:thrust_weight_ratio:%s" % propulsion_id,
+            val=np.nan,
+            units=None,
+        )
         self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
+        self.add_input(
+            "data:propulsion:%s:propeller:number" % propulsion_id,
+            val=np.nan,
+            units=None,
+        )
         self.add_output("data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id, units="N")
 
     def setup_partials(self):
@@ -54,7 +63,11 @@ class LauncherTakeoff(om.ExplicitComponent):
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
         self.add_input("mission:sizing:main_route:takeoff:altitude", val=0.0, units="m")
-        self.add_input("mission:sizing:main_route:stall:speed:%s" % propulsion_id, val=np.nan, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:stall:speed:%s" % propulsion_id,
+            val=np.nan,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
@@ -73,7 +86,7 @@ class LauncherTakeoff(om.ExplicitComponent):
         V_stall = inputs["mission:sizing:main_route:stall:speed:%s" % propulsion_id]
         altitude_takeoff = inputs["mission:sizing:main_route:takeoff:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_takeoff, dISA)
+        atm = AtmosphereWithPartials(altitude_takeoff, dISA, altitude_in_feet=False)
         atm.true_airspeed = 1.1 * V_stall  # 10% margin on the stall speed [kg/ms2]
         q_takeoff = atm.dynamic_pressure
 

@@ -1,8 +1,10 @@
 """
 Estimation models for the Electronic Speed Controller (ESC)
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
+
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 

@@ -58,7 +58,7 @@ def covariance_plot(ax, Si, unit="", legend=None, opts=None):
             r"$\sigma / \mu^{\star} = 0.5$",
             r"$\sigma / \mu^{\star} = 0.1$",
         ]
-        legend = Si["names"]
+        legend = list(Si["names"])
 
         if legend is not None:
             # ax.legend([line1, line2, line3] + out.legend_elements()[0], legend_0 + legend)
@@ -108,7 +108,12 @@ def horizontal_bar_plot(ax, Si, opts=None, sortby="mu_star", unit="", legend=Non
     plot_names = names_sorted
 
     out = ax.barh(
-        y_pos, mu_star_sorted, xerr=mu_star_conf_sorted, align="center", ecolor="black", **opts
+        y_pos,
+        mu_star_sorted,
+        xerr=mu_star_conf_sorted,
+        align="center",
+        ecolor="black",
+        **opts,
     )
 
     ax.set_yticks(y_pos)

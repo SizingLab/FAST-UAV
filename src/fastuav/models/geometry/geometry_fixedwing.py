@@ -1,10 +1,12 @@
 """
 Fixed Wing Airframe Geometry
 """
+
 import fastoad.api as oad
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 from scipy.constants import g
+
 from fastuav.constants import FW_PROPULSION, PROPULSION_ID_LIST
 
 
@@ -80,12 +82,14 @@ class WingGeometry(om.ExplicitComponent):
         y_MAC = (
             (b_w / 6) * (1 + 2 * lmbda_w) / (1 + lmbda_w)
         )  # y-location of MAC (from wing root, i.e. symmetry axis of the UAV) [m]
-        x_MAC_LE_loc = y_MAC * np.tan(sweep_LE)  # x-location of MAC leading edge (from leading edge of root) [m]
+        x_MAC_LE_loc = y_MAC * np.tan(
+            sweep_LE
+        )  # x-location of MAC leading edge (from leading edge of root) [m]
         x_MAC_LE = k_xw * b_w  # x-location of MAC leading edge (from nose tip) [m]
         x_MAC_c4 = x_MAC_LE + 0.25 * c_MAC  # x-location of MAC quarter chord (from nose tip) [m]
         x_root_LE = x_MAC_LE - x_MAC_LE_loc  # x-location of root leading edge (from nose tip) [m]
         x_root_TE = x_root_LE + c_root  # x-location of root trailing edge (from nose tip) [m]
-        sweep_TE = np.arctan(np.tan(sweep_LE) - 4 / AR_w * (1 - lmbda_w)/(1 + lmbda_w))
+        sweep_TE = np.arctan(np.tan(sweep_LE) - 4 / AR_w * (1 - lmbda_w) / (1 + lmbda_w))
 
         outputs["data:geometry:wing:surface"] = S_w
         outputs["data:geometry:wing:span"] = b_w
@@ -116,7 +120,11 @@ class HorizontalTailGeometry(om.ExplicitComponent):
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:coefficient", val=0.5, units=None)
         self.add_input("data:geometry:tail:horizontal:lambda", val=0.9, units=None)
-        self.add_input("optimization:variables:geometry:tail:horizontal:arm:k", val=0.75, units=None)
+        self.add_input(
+            "optimization:variables:geometry:tail:horizontal:arm:k",
+            val=0.75,
+            units=None,
+        )
         self.add_output("data:geometry:tail:horizontal:surface", units="m**2", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:arm", units="m", lower=0.0)
         self.add_output("data:geometry:tail:horizontal:span", units="m", lower=0.0)
@@ -364,7 +372,11 @@ class ProjectedAreasGuess(om.ExplicitComponent):
     def setup(self):
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
         self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_input("optimization:variables:geometry:projected_area:top:k", val=np.nan, units=None)
+        self.add_input(
+            "optimization:variables:geometry:projected_area:top:k",
+            val=np.nan,
+            units=None,
+        )
         self.add_output("data:geometry:projected_area:top", units="m**2")
 
     def setup_partials(self):
@@ -396,7 +408,9 @@ class ProjectedAreasConstraint(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        S_top_guess = inputs["data:geometry:projected_area:top"]  # [m**2] projected area initial guess
+        S_top_guess = inputs[
+            "data:geometry:projected_area:top"
+        ]  # [m**2] projected area initial guess
 
         S_w = inputs["data:geometry:wing:surface"]
         S_ht = inputs["data:geometry:tail:horizontal:surface"]
@@ -409,21 +423,31 @@ class ProjectedAreasConstraint(om.ExplicitComponent):
         outputs["optimization:constraints:geometry:projected_area:top"] = S_constraint
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        S_top_guess = inputs["data:geometry:projected_area:top"]  # [m**2] projected area initial guess
+        S_top_guess = inputs[
+            "data:geometry:projected_area:top"
+        ]  # [m**2] projected area initial guess
         S_w = inputs["data:geometry:wing:surface"]
         S_ht = inputs["data:geometry:tail:horizontal:surface"]
         S_fus = inputs["data:geometry:fuselage:surface"]
         S_fus_proj = S_fus / np.pi  # [m**2] projected area of the fuselage
         S_top = S_w + S_ht + S_fus_proj  # [m**2] projected area
 
-        partials["optimization:constraints:geometry:projected_area:top",
-                 "data:geometry:projected_area:top"] = 1 / S_top
-        partials["optimization:constraints:geometry:projected_area:top",
-                 "data:geometry:wing:surface"] = - S_top_guess / S_top ** 2
-        partials["optimization:constraints:geometry:projected_area:top",
-                 "data:geometry:tail:horizontal:surface"] = - S_top_guess / S_top ** 2
-        partials["optimization:constraints:geometry:projected_area:top",
-                 "data:geometry:fuselage:surface"] = - S_top_guess / np.pi / S_top ** 2
+        partials[
+            "optimization:constraints:geometry:projected_area:top",
+            "data:geometry:projected_area:top",
+        ] = 1 / S_top
+        partials[
+            "optimization:constraints:geometry:projected_area:top",
+            "data:geometry:wing:surface",
+        ] = -S_top_guess / S_top**2
+        partials[
+            "optimization:constraints:geometry:projected_area:top",
+            "data:geometry:tail:horizontal:surface",
+        ] = -S_top_guess / S_top**2
+        partials[
+            "optimization:constraints:geometry:projected_area:top",
+            "data:geometry:fuselage:surface",
+        ] = -S_top_guess / np.pi / S_top**2
 
 
 class FuselageVolumeConstraint(om.ExplicitComponent):
@@ -432,15 +456,22 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
     The mid fuselage part has to house the payload and the batteries.
     Therefore, a constraint is set on the volume of the mid fuselage part.
     """
+
     def initialize(self):
-        self.options.declare("propulsion_id_list",
-                             default=[FW_PROPULSION],
-                             values=[[FW_PROPULSION], PROPULSION_ID_LIST])
+        self.options.declare(
+            "propulsion_id_list",
+            default=[FW_PROPULSION],
+            values=[[FW_PROPULSION], PROPULSION_ID_LIST],
+        )
 
     def setup(self):
         propulsion_id_list = self.options["propulsion_id_list"]
         for propulsion_id in propulsion_id_list:
-            self.add_input("data:propulsion:%s:battery:volume" % propulsion_id, val=np.nan, units="m**3")
+            self.add_input(
+                "data:propulsion:%s:battery:volume" % propulsion_id,
+                val=np.nan,
+                units="m**3",
+            )
         self.add_input("data:geometry:fuselage:volume:mid", val=np.nan, units="m**3")
         self.add_input("mission:sizing:payload:volume", val=np.nan, units="m**3")
         self.add_output("optimization:constraints:geometry:fuselage:volume", units=None)
@@ -450,9 +481,13 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         propulsion_id_list = self.options["propulsion_id_list"]
-        V_bat = sum(inputs["data:propulsion:%s:battery:volume" % propulsion_id]
-                    for propulsion_id in propulsion_id_list)
-        V_fus = inputs["data:geometry:fuselage:volume:mid"]  # only the mid-fuselage part is considered
+        V_bat = sum(
+            inputs["data:propulsion:%s:battery:volume" % propulsion_id]
+            for propulsion_id in propulsion_id_list
+        )
+        V_fus = inputs[
+            "data:geometry:fuselage:volume:mid"
+        ]  # only the mid-fuselage part is considered
         V_pay = inputs["mission:sizing:payload:volume"]
         V_req = V_pay + V_bat
 
@@ -462,18 +497,25 @@ class FuselageVolumeConstraint(om.ExplicitComponent):
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         propulsion_id_list = self.options["propulsion_id_list"]
-        V_bat = sum(inputs["data:propulsion:%s:battery:volume" % propulsion_id]
-                    for propulsion_id in propulsion_id_list)
+        V_bat = sum(
+            inputs["data:propulsion:%s:battery:volume" % propulsion_id]
+            for propulsion_id in propulsion_id_list
+        )
         V_fus = inputs["data:geometry:fuselage:volume:mid"]
         V_pay = inputs["mission:sizing:payload:volume"]
         V_req = V_pay + V_bat
 
         partials[
             "optimization:constraints:geometry:fuselage:volume",
-            "data:geometry:fuselage:volume:mid"] = 1 / V_req
-        partials["optimization:constraints:geometry:fuselage:volume",
-                 "mission:sizing:payload:volume"] = - V_fus / V_req ** 2
+            "data:geometry:fuselage:volume:mid",
+        ] = 1 / V_req
+        partials[
+            "optimization:constraints:geometry:fuselage:volume",
+            "mission:sizing:payload:volume",
+        ] = -V_fus / V_req**2
 
         for propulsion_id in propulsion_id_list:
-            partials["optimization:constraints:geometry:fuselage:volume",
-                     "data:propulsion:%s:battery:volume" % propulsion_id] = - V_fus / V_req ** 2
+            partials[
+                "optimization:constraints:geometry:fuselage:volume",
+                "data:propulsion:%s:battery:volume" % propulsion_id,
+            ] = -V_fus / V_req**2

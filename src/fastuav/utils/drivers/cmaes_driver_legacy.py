@@ -1,19 +1,17 @@
 """
 Driver that uses Covariance Matrix Adaptation Evolution Strategy (CMAES).
 """
+
 import os
-import copy
 import time
 
+import cma
 import numpy as np
-
 import openmdao
+from openmdao.core.analysis_error import AnalysisError
 from openmdao.core.driver import Driver, RecordingDebugging
 from openmdao.utils.concurrent import concurrent_eval
 from openmdao.utils.mpi import MPI
-from openmdao.core.analysis_error import AnalysisError
-
-import cma
 
 
 class CMAESDriver(Driver):
@@ -154,7 +152,6 @@ class CMAESDriver(Driver):
         """
         procs_per_model = self.options["procs_per_model"]
         if MPI and self.options["run_parallel"]:
-
             full_size = comm.size
             size = full_size // procs_per_model
             if full_size != size * procs_per_model:
@@ -315,7 +312,6 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             obj_values = self.get_objective_values()
             if is_single_objective:  # Single objective optimization

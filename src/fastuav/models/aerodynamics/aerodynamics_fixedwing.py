@@ -1,14 +1,16 @@
 """
 Fixed Wing Aerodynamics (external)
 """
+
 import fastoad.api as oad
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+from stdatm import AtmosphereWithPartials
+
+from fastuav.constants import FW_PROPULSION
 from fastuav.utils.uncertainty import (
     add_subsystem_with_deviation,
 )
-from fastuav.constants import FW_PROPULSION
-from stdatm import AtmosphereSI
 
 
 class AirframeAerodynamicsModel:
@@ -21,7 +23,7 @@ class AirframeAerodynamicsModel:
         re = V_air * L / nu_air  # Reynolds number [-]
         # mach = V_air / a_air  # mach number [-]
         cf_turb = 0.455 / (
-            np.log10(re) ** 2.58 #* (1 + 0.144 * mach**2) ** (-0.65)
+            np.log10(re) ** 2.58  # * (1 + 0.144 * mach**2) ** (-0.65)
         )  # flat-plate skin friction [-]
         return cf_turb
 
@@ -37,8 +39,12 @@ class Aerodynamics(om.Group):
         # Parasitic drag calculations
         parasitic_drag = self.add_subsystem("parasitic_drag", om.Group(), promotes=["*"])
         parasitic_drag.add_subsystem("wing", WingParasiticDrag(), promotes=["*"])
-        parasitic_drag.add_subsystem("horizontal_tail", TailParasiticDrag(tail="horizontal"), promotes=["*"])
-        parasitic_drag.add_subsystem("vertical_tail", TailParasiticDrag(tail="vertical"), promotes=["*"])
+        parasitic_drag.add_subsystem(
+            "horizontal_tail", TailParasiticDrag(tail="horizontal"), promotes=["*"]
+        )
+        parasitic_drag.add_subsystem(
+            "vertical_tail", TailParasiticDrag(tail="vertical"), promotes=["*"]
+        )
         parasitic_drag.add_subsystem("fuselage", FuselageParasiticDrag(), promotes=["*"])
         add_subsystem_with_deviation(
             parasitic_drag,
@@ -69,10 +75,12 @@ class ParasiticDrag(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd")
 
     def compute(self, inputs, outputs):
-        outputs["data:aerodynamics:CD0"] = inputs["data:aerodynamics:CD0:wing"] \
-                                           + inputs["data:aerodynamics:CD0:tail:horizontal"] \
-                                           + inputs["data:aerodynamics:CD0:tail:vertical"] \
-                                           + inputs["data:aerodynamics:CD0:fuselage"]
+        outputs["data:aerodynamics:CD0"] = (
+            inputs["data:aerodynamics:CD0:wing"]
+            + inputs["data:aerodynamics:CD0:tail:horizontal"]
+            + inputs["data:aerodynamics:CD0:tail:vertical"]
+            + inputs["data:aerodynamics:CD0:fuselage"]
+        )
 
 
 class WingParasiticDrag(om.ExplicitComponent):
@@ -86,7 +94,11 @@ class WingParasiticDrag(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+            val=0.0,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:geometry:wing:tc", val=0.15, units=None)
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
@@ -108,7 +120,7 @@ class WingParasiticDrag(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound
         nu_air = atm.kinematic_viscosity
@@ -117,14 +129,14 @@ class WingParasiticDrag(om.ExplicitComponent):
         cf_wing = AirframeAerodynamicsModel.friction_flatplate(V_cruise, c_MAC_w, nu_air, a_air)
 
         # Form drag factor
-        FF_w = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4)
+        ff_w = 1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4
         # * (1.34 * (V_cruise / a_air) ** 0.18)  # compressibility effects
 
         # Wetted area
         S_wet_w = 2 * S_w
 
         # Parasitic drag coefficient
-        CD_0_wing = (cf_wing * FF_w * S_wet_w) / S_ref
+        CD_0_wing = (cf_wing * ff_w * S_wet_w) / S_ref
 
         outputs["data:aerodynamics:CD0:wing"] = CD_0_wing
 
@@ -142,7 +154,11 @@ class TailParasiticDrag(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         tail = self.options["tail"]
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+            val=0.0,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:geometry:wing:tc", val=0.15, units=None)
         self.add_input("data:geometry:tail:%s:MAC:length" % tail, val=np.nan, units="m")
@@ -167,7 +183,7 @@ class TailParasiticDrag(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound
         nu_air = atm.kinematic_viscosity
@@ -176,7 +192,7 @@ class TailParasiticDrag(om.ExplicitComponent):
         cf_tail = AirframeAerodynamicsModel.friction_flatplate(V_cruise, c_MAc_t, nu_air, a_air)
 
         # Form drag factors TODO: add sweep @ 0.3
-        FF_tail = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4) * (
+        ff_tail = (1 + 0.6 / 0.3 * tc_ratio + 100 * tc_ratio**4) * (
             1.34 * (V_cruise / a_air) ** 0.18
         )
 
@@ -184,7 +200,7 @@ class TailParasiticDrag(om.ExplicitComponent):
         S_wet_t = 2 * S_t
 
         # Parasitic drag coefficient
-        CD_0_tail = (cf_tail * FF_tail * S_wet_t) / S_ref
+        CD_0_tail = (cf_tail * ff_tail * S_wet_t) / S_ref
 
         outputs["data:aerodynamics:CD0:tail:%s" % tail] = CD_0_tail
 
@@ -200,7 +216,11 @@ class FuselageParasiticDrag(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+            val=0.0,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("data:geometry:fuselage:length", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:mid", val=np.nan, units="m")
@@ -224,7 +244,7 @@ class FuselageParasiticDrag(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         a_air = atm.speed_of_sound
         nu_air = atm.kinematic_viscosity
@@ -233,7 +253,7 @@ class FuselageParasiticDrag(om.ExplicitComponent):
         cf_fus = AirframeAerodynamicsModel.friction_flatplate(V_cruise, l_fus, nu_air, a_air)
 
         # Form drag factors
-        FF_fus = 1 + 60 / lmbda_f**3 + lmbda_f / 400
+        ff_fus = 1 + 60 / lmbda_f**3 + lmbda_f / 400
 
         # Wetted areas
         S_wet_fus = (
@@ -241,7 +261,7 @@ class FuselageParasiticDrag(om.ExplicitComponent):
         )
 
         # Parasitic drag coefficient
-        CD_0_fus = (cf_fus * S_wet_fus * FF_fus) / S_ref
+        CD_0_fus = (cf_fus * S_wet_fus * ff_fus) / S_ref
 
         outputs["data:aerodynamics:CD0:fuselage"] = CD_0_fus
 
@@ -271,12 +291,14 @@ class ParasiticDragConstraint(om.ExplicitComponent):
         CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
         CD_0 = inputs["data:aerodynamics:CD0"]
 
-        partials["optimization:constraints:aerodynamics:CD0:consistency", "optimization:variables:aerodynamics:CD0:guess"] = (
-            1 / CD_0
-        )
-        partials["optimization:constraints:aerodynamics:CD0:consistency", "data:aerodynamics:CD0"] = (
-            - CD_0_guess / CD_0 ** 2
-        )
+        partials[
+            "optimization:constraints:aerodynamics:CD0:consistency",
+            "optimization:variables:aerodynamics:CD0:guess",
+        ] = 1 / CD_0
+        partials[
+            "optimization:constraints:aerodynamics:CD0:consistency",
+            "data:aerodynamics:CD0",
+        ] = -CD_0_guess / CD_0**2
 
 
 class MaxLiftToDrag(om.ExplicitComponent):
@@ -359,7 +381,7 @@ class InducedDragConstant(om.ExplicitComponent):
         AR_w = inputs["optimization:variables:geometry:wing:AR"]
         e = inputs["data:aerodynamics:CDi:e"]
 
-        partials["data:aerodynamics:CDi:K", "optimization:variables:geometry:wing:AR"] = -1 / (np.pi * e * AR_w**2)
-        partials["data:aerodynamics:CDi:K", "data:aerodynamics:CDi:e"] = -1 / (
-            np.pi * e**2 * AR_w
+        partials["data:aerodynamics:CDi:K", "optimization:variables:geometry:wing:AR"] = -1 / (
+            np.pi * e * AR_w**2
         )
+        partials["data:aerodynamics:CDi:K", "data:aerodynamics:CDi:e"] = -1 / (np.pi * e**2 * AR_w)

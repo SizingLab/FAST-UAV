@@ -1,8 +1,9 @@
 """
 Motor constraints
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 
 
 class MotorConstraints(om.ExplicitComponent):
@@ -37,7 +38,9 @@ class MotorConstraints(om.ExplicitComponent):
         T_mot_cl = inputs["data:propulsion:motor:torque:climb"]
         T_mot_cr = inputs["data:propulsion:motor:torque:cruise"]
         Kv = inputs["data:propulsion:motor:speed:constant"]
-        k = 1 + inputs["models:propulsion:motor:speed:constant:tol"] / 100  # tolerance multiplier on prediction intervals
+        k = (
+            1 + inputs["models:propulsion:motor:speed:constant:tol"] / 100
+        )  # tolerance multiplier on prediction intervals
 
         # transient torque
         motor_con1 = (T_mot_max - T_mot_to) / T_mot_max  # transient torque
@@ -49,7 +52,9 @@ class MotorConstraints(om.ExplicitComponent):
 
         # Speed constant versus max torque : tolerance intervals
         Kv_hat = 51.52 * T_mot_max ** (-0.43)  # speed constant vs torque regression
-        eps_low = -2.21  # 1st percentile on relative regression error (i.e., 99% of data are above this value)
+        eps_low = (
+            -2.21
+        )  # 1st percentile on relative regression error (i.e., 99% of data are above this value)
         eps_up = 0.65  # 99th percentile on relative regression error (i.e., 99% of data are below this value)
         Kv_min = Kv_hat / (1 - k * eps_low)  # minimum bound for Kv
         Kv_max = Kv_hat / (1 - k * eps_up)  # maximum bound for Kv
@@ -74,7 +79,9 @@ class MotorConstraints(om.ExplicitComponent):
         k = 1 + inputs["models:propulsion:motor:speed:constant:tol"] / 100
 
         Kv_hat = 51.52 * T_mot_max ** (-0.43)  # speed constant vs torque regression
-        eps_low = -2.21  # 1st percentile on relative regression error (i.e., 99% of data are above this value)
+        eps_low = (
+            -2.21
+        )  # 1st percentile on relative regression error (i.e., 99% of data are above this value)
         eps_up = 0.65  # 99th percentile on relative regression error (i.e., 99% of data are below this value)
         Kv_min = Kv_hat / (1 - k * eps_low)  # minimum bound for Kv
         Kv_max = Kv_hat / (1 - k * eps_up)  # maximum bound for Kv
@@ -83,97 +90,69 @@ class MotorConstraints(om.ExplicitComponent):
         partials[
             "optimization:constraints:propulsion:motor:torque:takeoff",
             "data:propulsion:motor:torque:max",
-        ] = (
-            T_mot_to / T_mot_max**2
-        )
+        ] = T_mot_to / T_mot_max**2
         partials[
             "optimization:constraints:propulsion:motor:torque:takeoff",
             "data:propulsion:motor:torque:takeoff",
-        ] = (
-            -1.0 / T_mot_max
-        )
+        ] = -1.0 / T_mot_max
 
         # Climb torque
         partials[
             "optimization:constraints:propulsion:motor:torque:climb",
             "data:propulsion:motor:torque:max",
-        ] = (
-            T_mot_cl / T_mot_max**2
-        )
+        ] = T_mot_cl / T_mot_max**2
         partials[
             "optimization:constraints:propulsion:motor:torque:climb",
             "data:propulsion:motor:torque:climb",
-        ] = (
-            -1.0 / T_mot_max
-        )
+        ] = -1.0 / T_mot_max
 
         # Hover torque
         partials[
             "optimization:constraints:propulsion:motor:torque:hover",
             "data:propulsion:motor:torque:nominal",
-        ] = (
-            T_mot_hov / T_mot_nom**2
-        )
+        ] = T_mot_hov / T_mot_nom**2
         partials[
             "optimization:constraints:propulsion:motor:torque:hover",
             "data:propulsion:motor:torque:hover",
-        ] = (
-            -1.0 / T_mot_nom
-        )
+        ] = -1.0 / T_mot_nom
 
         # Cruise torque
         partials[
             "optimization:constraints:propulsion:motor:torque:cruise",
             "data:propulsion:motor:torque:nominal",
-        ] = (
-            T_mot_cr / T_mot_nom**2
-        )
+        ] = T_mot_cr / T_mot_nom**2
         partials[
             "optimization:constraints:propulsion:motor:torque:cruise",
             "data:propulsion:motor:torque:cruise",
-        ] = (
-            -1.0 / T_mot_nom
-        )
+        ] = -1.0 / T_mot_nom
 
         # Tolerance intervals
         partials[
             "optimization:constraints:propulsion:motor:speed:constant:min",
             "data:propulsion:motor:speed:constant",
-        ] = (
-                Kv_min / Kv ** 2
-        )
+        ] = Kv_min / Kv**2
 
         partials[
             "optimization:constraints:propulsion:motor:speed:constant:min",
             "models:propulsion:motor:speed:constant:tol",
-        ] = (
-                - Kv_hat * eps_low / Kv / (1 - k * eps_low) ** 2 / 100
-        )
+        ] = -Kv_hat * eps_low / Kv / (1 - k * eps_low) ** 2 / 100
 
         partials[
             "optimization:constraints:propulsion:motor:speed:constant:min",
             "data:propulsion:motor:torque:max",
-        ] = (
-                - (- 0.43) * Kv_min / Kv * T_mot_max ** (-1)
-        )
+        ] = -(-0.43) * Kv_min / Kv * T_mot_max ** (-1)
 
         partials[
             "optimization:constraints:propulsion:motor:speed:constant:max",
             "data:propulsion:motor:speed:constant",
-        ] = (
-                - Kv_max / Kv ** 2
-        )
+        ] = -Kv_max / Kv**2
 
         partials[
             "optimization:constraints:propulsion:motor:speed:constant:max",
             "models:propulsion:motor:speed:constant:tol",
-        ] = (
-                Kv_hat * eps_up / Kv / (1 - k * eps_up) ** 2 / 100
-        )
+        ] = Kv_hat * eps_up / Kv / (1 - k * eps_up) ** 2 / 100
 
         partials[
             "optimization:constraints:propulsion:motor:speed:constant:max",
             "data:propulsion:motor:torque:max",
-        ] = (
-                (- 0.43) * Kv_max / Kv * T_mot_max ** (-1)
-        )
+        ] = (-0.43) * Kv_max / Kv * T_mot_max ** (-1)

@@ -2,9 +2,11 @@
 Main module for wires component.
 Wires are used to connect the battery to the ESCs, and the ESCs to the motors.
 """
+
 import fastoad.api as oad
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
+
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
 from fastuav.utils.configurations_versatility import promote_and_rename
 
@@ -16,15 +18,18 @@ class Wires(om.Group):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id",
-                             default=[MR_PROPULSION],
-                             values=[[MR_PROPULSION], [FW_PROPULSION], [MR_PROPULSION, FW_PROPULSION]])
+        self.options.declare(
+            "propulsion_id",
+            default=[MR_PROPULSION],
+            values=[[MR_PROPULSION], [FW_PROPULSION], [MR_PROPULSION, FW_PROPULSION]],
+        )
 
     def setup(self):
         for propulsion_id in self.options["propulsion_id"]:
-            wires = self.add_subsystem(propulsion_id,
-                                       om.Group(),
-                                       )
+            wires = self.add_subsystem(
+                propulsion_id,
+                om.Group(),
+            )
             wires.add_subsystem("radius", Radius(), promotes=["*"])
             wires.add_subsystem("length", Length(propulsion_id=propulsion_id), promotes=["*"])
             wires.add_subsystem("weight", Weight(), promotes=["*"])
@@ -33,10 +38,12 @@ class Wires(om.Group):
         for propulsion_id in self.options["propulsion_id"]:
             old_patterns_list = [":propeller", ":motor", ":battery", ":wires"]
             new_patterns_list = [":" + propulsion_id + varname for varname in old_patterns_list]
-            promote_and_rename(group=self,
-                               subsys=getattr(self, propulsion_id),
-                               old_patterns_list=old_patterns_list,
-                               new_patterns_list=new_patterns_list)
+            promote_and_rename(
+                group=self,
+                subsys=getattr(self, propulsion_id),
+                old_patterns_list=old_patterns_list,
+                new_patterns_list=new_patterns_list,
+            )
 
 
 class Radius(om.ExplicitComponent):
@@ -56,7 +63,11 @@ class Radius(om.ExplicitComponent):
         sizing_component = self.options["sizing_component"]
         self.add_input("models:propulsion:wires:radius:reference", val=np.nan, units="m")
         self.add_input("models:propulsion:wires:current:reference", val=np.nan, units="A")
-        self.add_input("data:propulsion:%s:current:cruise" % sizing_component, val=np.nan, units="A")
+        self.add_input(
+            "data:propulsion:%s:current:cruise" % sizing_component,
+            val=np.nan,
+            units="A",
+        )
         self.add_output("data:propulsion:wires:radius", units="m")
 
     def setup_partials(self):
@@ -66,10 +77,14 @@ class Radius(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         sizing_component = self.options["sizing_component"]
         r_ref = inputs["models:propulsion:wires:radius:reference"]  # [m] radius of reference wire
-        I_ref = inputs["models:propulsion:wires:current:reference"]  # [A] nominal current of reference wire
-        I = inputs["data:propulsion:%s:current:cruise" % sizing_component]  # [A] nominal current
+        I_ref = inputs[
+            "models:propulsion:wires:current:reference"
+        ]  # [A] nominal current of reference wire
+        I_wire = inputs[
+            "data:propulsion:%s:current:cruise" % sizing_component
+        ]  # [A] nominal current
 
-        r = r_ref * (I / I_ref) ** (2 / 3)  # [m] radius of wire
+        r = r_ref * (I_wire / I_ref) ** (2 / 3)  # [m] radius of wire
 
         outputs["data:propulsion:wires:radius"] = r
 
@@ -99,7 +114,7 @@ class Length(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
-        L_wir = .0
+        L_wir = 0.0
         if propulsion_id == MR_PROPULSION:
             L_wir = inputs["data:geometry:arms:length"]
         elif propulsion_id == FW_PROPULSION:
@@ -113,13 +128,10 @@ class Length(om.ExplicitComponent):
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         propulsion_id = self.options["propulsion_id"]
         if propulsion_id == MR_PROPULSION:
-            partials["data:propulsion:wires:length",
-                     "data:geometry:arms:length"] = 1.0
+            partials["data:propulsion:wires:length", "data:geometry:arms:length"] = 1.0
         elif propulsion_id == FW_PROPULSION:
-            partials["data:propulsion:wires:length",
-                     "data:geometry:fuselage:length"] = 0.5
-        partials["data:propulsion:wires:number",
-                 "data:propulsion:propeller:number"] = 3.0
+            partials["data:propulsion:wires:length", "data:geometry:fuselage:length"] = 0.5
+        partials["data:propulsion:wires:number", "data:propulsion:propeller:number"] = 3.0
 
 
 class Weight(om.ExplicitComponent):
@@ -140,7 +152,9 @@ class Weight(om.ExplicitComponent):
         self.declare_partials("*", "*", method="exact")
 
     def compute(self, inputs, outputs):
-        mu_ref = inputs["models:weight:propulsion:wires:density:reference"]  # [kg/m] linear mass of reference cable
+        mu_ref = inputs[
+            "models:weight:propulsion:wires:density:reference"
+        ]  # [kg/m] linear mass of reference cable
         r_ref = inputs["models:propulsion:wires:radius:reference"]  # [m] radius of reference wire
         r = inputs["data:propulsion:wires:radius"]
         N_wir = inputs["data:propulsion:wires:number"]
@@ -153,26 +167,36 @@ class Weight(om.ExplicitComponent):
         outputs["data:weight:propulsion:wires:mass"] = m_wir
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
-        mu_ref = inputs["models:weight:propulsion:wires:density:reference"]  # [kg/m] linear mass of reference cable
+        mu_ref = inputs[
+            "models:weight:propulsion:wires:density:reference"
+        ]  # [kg/m] linear mass of reference cable
         r_ref = inputs["models:propulsion:wires:radius:reference"]  # [m] radius of reference wire
         r = inputs["data:propulsion:wires:radius"]
         N_wir = inputs["data:propulsion:wires:number"]
         L_wir = inputs["data:propulsion:wires:length"]
         mu = mu_ref * (r / r_ref) ** 2
 
-        partials["data:weight:propulsion:wires:density",
-                 "data:propulsion:wires:radius"] = 2 * mu_ref / r_ref ** 2 * r
-        partials["data:weight:propulsion:wires:density",
-                 "models:weight:propulsion:wires:density:reference"] = (r / r_ref) ** 2
-        partials["data:weight:propulsion:wires:density",
-                 "models:propulsion:wires:radius:reference"] = -2 * mu_ref * r ** 2 / r_ref ** 3
-        partials["data:weight:propulsion:wires:mass",
-                 "data:propulsion:wires:radius"] = 2 * mu_ref / r_ref ** 2 * r * L_wir * N_wir
-        partials["data:weight:propulsion:wires:mass",
-                 "models:weight:propulsion:wires:density:reference"] = (r / r_ref) ** 2 * L_wir * N_wir
-        partials["data:weight:propulsion:wires:mass",
-                 "models:propulsion:wires:radius:reference"] = -2 * mu_ref * r ** 2 / r_ref ** 3 * L_wir * N_wir
-        partials["data:weight:propulsion:wires:mass",
-                 "data:propulsion:wires:number"] = mu * L_wir
-        partials["data:weight:propulsion:wires:mass",
-                 "data:propulsion:wires:length"] = mu * N_wir
+        partials["data:weight:propulsion:wires:density", "data:propulsion:wires:radius"] = (
+            2 * mu_ref / r_ref**2 * r
+        )
+        partials[
+            "data:weight:propulsion:wires:density",
+            "models:weight:propulsion:wires:density:reference",
+        ] = (r / r_ref) ** 2
+        partials[
+            "data:weight:propulsion:wires:density",
+            "models:propulsion:wires:radius:reference",
+        ] = -2 * mu_ref * r**2 / r_ref**3
+        partials["data:weight:propulsion:wires:mass", "data:propulsion:wires:radius"] = (
+            2 * mu_ref / r_ref**2 * r * L_wir * N_wir
+        )
+        partials[
+            "data:weight:propulsion:wires:mass",
+            "models:weight:propulsion:wires:density:reference",
+        ] = (r / r_ref) ** 2 * L_wir * N_wir
+        partials[
+            "data:weight:propulsion:wires:mass",
+            "models:propulsion:wires:radius:reference",
+        ] = -2 * mu_ref * r**2 / r_ref**3 * L_wir * N_wir
+        partials["data:weight:propulsion:wires:mass", "data:propulsion:wires:number"] = mu * L_wir
+        partials["data:weight:propulsion:wires:mass", "data:propulsion:wires:length"] = mu * N_wir

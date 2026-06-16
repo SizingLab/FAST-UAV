@@ -1,8 +1,10 @@
 """
 Module containing the center of gravity calculations for all components.
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
+
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
 
 
@@ -12,7 +14,11 @@ class CoG_airframe(om.Group):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id_list", default=None, values=[[FW_PROPULSION], PROPULSION_ID_LIST])
+        self.options.declare(
+            "propulsion_id_list",
+            default=None,
+            values=[[FW_PROPULSION], PROPULSION_ID_LIST],
+        )
 
     def setup(self):
         propulsion_id_list = self.options["propulsion_id_list"]
@@ -24,9 +30,11 @@ class CoG_airframe(om.Group):
         if MR_PROPULSION in propulsion_id_list:
             self.add_subsystem("arms_VTOL", CoG_arms_VTOL(), promotes=["*"])
 
-        self.add_subsystem("airframe",
-                           CoG_airframe_component(propulsion_id_list=propulsion_id_list),
-                           promotes=["*"])
+        self.add_subsystem(
+            "airframe",
+            CoG_airframe_component(propulsion_id_list=propulsion_id_list),
+            promotes=["*"],
+        )
 
 
 class CoG_airframe_component(om.ExplicitComponent):
@@ -35,7 +43,11 @@ class CoG_airframe_component(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("propulsion_id_list", default=None, values=[[FW_PROPULSION], PROPULSION_ID_LIST])
+        self.options.declare(
+            "propulsion_id_list",
+            default=None,
+            values=[[FW_PROPULSION], PROPULSION_ID_LIST],
+        )
 
     def setup(self):
         propulsion_id_list = self.options["propulsion_id_list"]
@@ -76,15 +88,17 @@ class CoG_airframe_component(om.ExplicitComponent):
             x_cg_arms = inputs["data:stability:CoG:arms"]
             m_arms = inputs["data:weight:airframe:arms:mass"]
         else:
-            x_cg_arms = .0
-            m_arms = .0
+            x_cg_arms = 0.0
+            m_arms = 0.0
 
         m_airframe = m_fus + m_wing + m_ht + m_vt + m_arms
-        x_cg_airframe = (x_cg_fus * m_fus
-                         + x_cg_w * m_wing
-                         + x_cg_ht * m_ht
-                         + x_cg_vt * m_vt
-                         + x_cg_arms * m_arms) / m_airframe
+        x_cg_airframe = (
+            x_cg_fus * m_fus
+            + x_cg_w * m_wing
+            + x_cg_ht * m_ht
+            + x_cg_vt * m_vt
+            + x_cg_arms * m_arms
+        ) / m_airframe
 
         outputs["data:weight:airframe"] = m_airframe
         outputs["data:stability:CoG:airframe"] = x_cg_airframe
@@ -209,5 +223,3 @@ class CoG_arms_VTOL(om.ExplicitComponent):
         x_cg_arms = (x_front + x_rear) / 2  # [m]
 
         outputs["data:stability:CoG:arms"] = x_cg_arms
-
-

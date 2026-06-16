@@ -3,9 +3,10 @@ Hover scenarios
 """
 
 import numpy as np
-from scipy.constants import g
 import openmdao.api as om
-from fastuav.constants import MR_PROPULSION, FW_PROPULSION
+from scipy.constants import g
+
+from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 
 
 class HoverThrust(om.ExplicitComponent):
@@ -19,7 +20,11 @@ class HoverThrust(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
+        self.add_input(
+            "data:propulsion:%s:propeller:number" % propulsion_id,
+            val=np.nan,
+            units=None,
+        )
         self.add_output("data:propulsion:%s:propeller:thrust:hover" % propulsion_id, units="N")
 
     def setup_partials(self):

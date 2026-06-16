@@ -2,11 +2,11 @@
 Decision Tree for discrete optimization from catalogues
 """
 
+import numpy as np
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
-import numpy as np
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
 
 class DecisionTreeRgr:
@@ -57,9 +57,7 @@ class DecisionTreeRgr:
                         sorted_xy.iloc[:, i] - sorted_xy.iloc[:, i].min() / dist,
                         sorted_xy.iloc[:, i] + sorted_xy.iloc[:, i].min() / dist,
                     )
-                ).ravel(
-                    "F"
-                )  # create a sequence of supplementary points
+                ).ravel("F")  # create a sequence of supplementary points
                 D = np.repeat(C, 2)  # repeat each element of the column twice
                 df_X_Next = np.column_stack(D[:-2]).reshape(-1, 1)  # convert an array in column
 
@@ -312,7 +310,7 @@ class NearestNeighbor:
                     ]  # assign closest lower value to input parameter
 
         # predict output
-        df_X = pd.DataFrame({x_name: [x] for x_name, x in zip(X_names, X)})
+        df_X = pd.DataFrame({x_name: [np.asarray(x).flat[0]] for x_name, x in zip(X_names, X)})
         df_X = scaler.transform(df_X)
         distances, indices = clf.kneighbors(df_X)
         df_y = df.iloc[[indices[0][0]]]  # get corresponding product data
@@ -334,7 +332,9 @@ class NearestNeighbor:
 
         # enforce upper or lower values if asked by user
         closest_feasible_id = indices[0][0]
-        for j in range(0, len(indices[0]) - 1):  # iterate from nearest neighbor to farthest until criteria are met
+        for j in range(
+            0, len(indices[0]) - 1
+        ):  # iterate from nearest neighbor to farthest until criteria are met
             is_feasible = True
             idx = indices[0][j]
             neigh = df.iloc[idx]

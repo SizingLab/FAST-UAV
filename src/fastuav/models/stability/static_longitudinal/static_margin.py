@@ -4,8 +4,9 @@ Static margin is defined as the distance between the center of gravity and the n
 expressed as a percentage of the mean aerodynamic chord of the wing.
 The greater this distance and the narrower the wing, the more stable the aircraft.
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 
 
 class StaticMargin(om.ExplicitComponent):
@@ -36,12 +37,11 @@ class StaticMargin(om.ExplicitComponent):
         x_cg = inputs["data:stability:CoG"]
         c_MAC = inputs["data:geometry:wing:MAC:length"]
 
-        partials["data:stability:static_margin",
-                 "data:stability:neutral_point"] = 1 / c_MAC
-        partials["data:stability:static_margin",
-                 "data:stability:CoG"] = - 1 / c_MAC
-        partials["data:stability:static_margin",
-                 "data:geometry:wing:MAC:length"] = - (x_np - x_cg) / c_MAC ** 2
+        partials["data:stability:static_margin", "data:stability:neutral_point"] = 1 / c_MAC
+        partials["data:stability:static_margin", "data:stability:CoG"] = -1 / c_MAC
+        partials["data:stability:static_margin", "data:geometry:wing:MAC:length"] = (
+            -(x_np - x_cg) / c_MAC**2
+        )
 
 
 class StaticMarginConstraints(om.ExplicitComponent):
@@ -74,12 +74,19 @@ class StaticMarginConstraints(om.ExplicitComponent):
         SM_min = inputs["data:stability:static_margin:requirement:min"]
         SM_max = inputs["data:stability:static_margin:requirement:max"]
 
-        partials["optimization:constraints:stability:static_margin:min",
-                 "data:stability:static_margin"] = 1 / SM_min if SM_min != 0 else 1.0
-        partials["optimization:constraints:stability:static_margin:min",
-                 "data:stability:static_margin:requirement:min"] = - 1 / SM_min**2 if SM_min != 0 else -1.0
-        partials["optimization:constraints:stability:static_margin:max",
-                 "data:stability:static_margin"] = - 1 / SM_max if SM_max != 0 else -1.0
-        partials["optimization:constraints:stability:static_margin:max",
-                 "data:stability:static_margin:requirement:max"] = 1 / SM_max ** 2 if SM_max != 0 else 1.0
-
+        partials[
+            "optimization:constraints:stability:static_margin:min",
+            "data:stability:static_margin",
+        ] = 1 / SM_min if SM_min != 0 else 1.0
+        partials[
+            "optimization:constraints:stability:static_margin:min",
+            "data:stability:static_margin:requirement:min",
+        ] = -1 / SM_min**2 if SM_min != 0 else -1.0
+        partials[
+            "optimization:constraints:stability:static_margin:max",
+            "data:stability:static_margin",
+        ] = -1 / SM_max if SM_max != 0 else -1.0
+        partials[
+            "optimization:constraints:stability:static_margin:max",
+            "data:stability:static_margin:requirement:max",
+        ] = 1 / SM_max**2 if SM_max != 0 else 1.0

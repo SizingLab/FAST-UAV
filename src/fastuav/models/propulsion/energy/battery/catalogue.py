@@ -1,12 +1,15 @@
 """
 Off-the-shelf Battery selection.
 """
+
 import os.path as pth
-import openmdao.api as om
-from fastuav.utils.catalogues.estimators import NearestNeighbor
-from fastoad.openmdao.validity_checker import ValidityDomainChecker
-import pandas as pd
+
 import numpy as np
+import openmdao.api as om
+import pandas as pd
+from fastoad.openmdao.validity_checker import ValidityDomainChecker
+
+from fastuav.utils.catalogues.estimators import NearestNeighbor
 
 # Database import
 PATH = pth.join(
@@ -26,7 +29,10 @@ DF = pd.read_csv(PATH, sep=";")
 
 @ValidityDomainChecker(
     {
-        "data:propulsion:battery:voltage:estimated": (DF["Voltage_V"].min(), DF["Voltage_V"].max()),
+        "data:propulsion:battery:voltage:estimated": (
+            DF["Voltage_V"].min(),
+            DF["Voltage_V"].max(),
+        ),
         "data:propulsion:battery:capacity:estimated": (
             DF["Capacity_As"].min(),
             DF["Capacity_As"].max(),
@@ -47,7 +53,9 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
         U_bat_selection = "next"
         # E_bat_selection = 'next'
         self._clf = NearestNeighbor(
-            df=DF, X_names=["Voltage_V", "Capacity_As"], crits=[U_bat_selection, C_bat_selection]
+            df=DF,
+            X_names=["Voltage_V", "Capacity_As"],
+            crits=[U_bat_selection, C_bat_selection],
         )
         # self._clf = NearestNeighbor(df=DF, X_names=['Voltage_V', 'Energy_kJ'],
         #                             crits=[U_bat_selection, E_bat_selection])
@@ -56,10 +64,14 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
     def setup(self):
         # inputs: estimated values
         self.add_input(
-            "data:propulsion:battery:cell:number:series:estimated", val=np.nan, units=None
+            "data:propulsion:battery:cell:number:series:estimated",
+            val=np.nan,
+            units=None,
         )
         self.add_input(
-            "data:propulsion:battery:cell:number:parallel:estimated", val=np.nan, units=None
+            "data:propulsion:battery:cell:number:parallel:estimated",
+            val=np.nan,
+            units=None,
         )
         self.add_input("data:propulsion:battery:cell:number:estimated", val=np.nan, units=None)
         self.add_input("data:propulsion:battery:cell:voltage:estimated", val=np.nan, units="V")
@@ -103,7 +115,7 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
         self.declare_partials(
             "data:propulsion:battery:voltage",
             "data:propulsion:battery:voltage:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:capacity",
@@ -113,12 +125,12 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
         self.declare_partials(
             "data:propulsion:battery:power:max",
             "data:propulsion:battery:power:max:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:energy",
             "data:propulsion:battery:energy:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:current:max",
@@ -128,37 +140,37 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
         self.declare_partials(
             "data:weight:propulsion:battery:mass",
             "data:weight:propulsion:battery:mass:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:DoD:max",
             "data:propulsion:battery:DoD:max:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:cell:number",
             "data:propulsion:battery:cell:number:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:cell:number:series",
             "data:propulsion:battery:cell:number:series:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:cell:number:parallel",
             "data:propulsion:battery:cell:number:parallel:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:cell:voltage",
             "data:propulsion:battery:cell:voltage:estimated",
-            val=1.0
+            val=1.0,
         )
         self.declare_partials(
             "data:propulsion:battery:volume",
             "data:propulsion:battery:volume:estimated",
-            val=1.0
+            val=1.0,
         )
 
     def compute(self, inputs, outputs):
@@ -215,7 +227,7 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             ] = m_bat
             outputs["data:propulsion:battery:cell:voltage"] = outputs[
                 "data:propulsion:battery:cell:voltage:catalogue"
-            ] = (U_bat / N_series)
+            ] = U_bat / N_series
             outputs["data:propulsion:battery:volume"] = outputs[
                 "data:propulsion:battery:volume:catalogue"
             ] = Vol_bat
@@ -249,7 +261,9 @@ class BatteryCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:battery:current:max"] = inputs[
                 "data:propulsion:battery:current:max:estimated"
             ]
-            outputs["data:weight:propulsion:battery:mass"] = inputs["data:weight:propulsion:battery:mass:estimated"]
+            outputs["data:weight:propulsion:battery:mass"] = inputs[
+                "data:weight:propulsion:battery:mass:estimated"
+            ]
             outputs["data:propulsion:battery:cell:voltage"] = inputs[
                 "data:propulsion:battery:cell:voltage:estimated"
             ]

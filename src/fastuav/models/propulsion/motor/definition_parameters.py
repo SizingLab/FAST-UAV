@@ -1,8 +1,10 @@
 """
 Definition parameters for the motor.
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
+
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
@@ -60,17 +62,17 @@ class MaxTorque(om.ExplicitComponent):
         k_mot = inputs["optimization:variables:propulsion:motor:torque:k"]
 
         partials[
-            "data:propulsion:motor:torque:max:estimated", "data:propulsion:gearbox:N_red"
-        ] = (-k_mot * Q_pro_to / N_red**2)
+            "data:propulsion:motor:torque:max:estimated",
+            "data:propulsion:gearbox:N_red",
+        ] = -k_mot * Q_pro_to / N_red**2
         partials[
             "data:propulsion:motor:torque:max:estimated",
             "data:propulsion:propeller:torque:takeoff",
-        ] = (
-            k_mot / N_red
-        )
+        ] = k_mot / N_red
         partials[
-            "data:propulsion:motor:torque:max:estimated", "optimization:variables:propulsion:motor:torque:k"
-        ] = (Q_pro_to / N_red)
+            "data:propulsion:motor:torque:max:estimated",
+            "optimization:variables:propulsion:motor:torque:k",
+        ] = Q_pro_to / N_red
 
 
 class VelocityConstant(om.ExplicitComponent):
@@ -96,7 +98,7 @@ class VelocityConstant(om.ExplicitComponent):
 
         # TODO: replace W_mot_to / U_bat_guess by Kv_hat = 41.59 T_nom ** (-0.35)  (datasheet regression)
         W_mot_to = W_pro_to * N_red  # [rad/s] Motor take-off speed
-        U_bat_guess = 1.84 * P_pro_to ** 0.36  # [V] battery voltage estimation
+        U_bat_guess = 1.84 * P_pro_to**0.36  # [V] battery voltage estimation
         Kv = k_speed_mot * W_mot_to / U_bat_guess  # [rad/V/s]
 
         outputs["data:propulsion:motor:speed:constant:estimated"] = Kv
@@ -107,16 +109,17 @@ class VelocityConstant(om.ExplicitComponent):
         W_pro_to = inputs["data:propulsion:propeller:speed:takeoff"]
         k_speed_mot = inputs["optimization:variables:propulsion:motor:speed:k"]
 
-        U_bat_guess = 1.84 * P_pro_to ** 0.36  # [V] battery voltage estimation
+        U_bat_guess = 1.84 * P_pro_to**0.36  # [V] battery voltage estimation
 
         partials[
-            "data:propulsion:motor:speed:constant:estimated", "data:propulsion:gearbox:N_red"
+            "data:propulsion:motor:speed:constant:estimated",
+            "data:propulsion:gearbox:N_red",
         ] = k_speed_mot * W_pro_to / U_bat_guess
 
         partials[
             "data:propulsion:motor:speed:constant:estimated",
             "data:propulsion:propeller:power:takeoff",
-        ] = - 0.36 * k_speed_mot * W_pro_to * N_red * P_pro_to ** (-1.36) / 1.84
+        ] = -0.36 * k_speed_mot * W_pro_to * N_red * P_pro_to ** (-1.36) / 1.84
 
         partials[
             "data:propulsion:motor:speed:constant:estimated",
@@ -124,5 +127,6 @@ class VelocityConstant(om.ExplicitComponent):
         ] = k_speed_mot / U_bat_guess
 
         partials[
-            "data:propulsion:motor:speed:constant:estimated", "optimization:variables:propulsion:motor:speed:k"
+            "data:propulsion:motor:speed:constant:estimated",
+            "optimization:variables:propulsion:motor:speed:k",
         ] = W_pro_to * N_red / U_bat_guess

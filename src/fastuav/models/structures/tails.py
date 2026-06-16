@@ -1,9 +1,13 @@
 """
 Tails Structures and Weights
 """
-import openmdao.api as om
+
 import numpy as np
-from fastuav.models.structures.wing.estimation_models import WingStructuresEstimationModels
+import openmdao.api as om
+
+from fastuav.models.structures.wing.estimation_models import (
+    WingStructuresEstimationModels,
+)
 
 
 class HorizontalTailStructures(om.ExplicitComponent):

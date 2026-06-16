@@ -1,8 +1,9 @@
 """
 Gearbox model
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 
 
 class Gearbox(om.ExplicitComponent):
@@ -27,9 +28,7 @@ class Gearbox(om.ExplicitComponent):
         T_mot_nom = inputs["data:propulsion:motor:torque:nominal"]
 
         mg1 = 0.0309 * N_red**2 + 0.1944 * N_red + 0.6389  # Ratio input pinion to mating gear
-        WF = (
-            1 + 1 / mg1 + mg1 + mg1**2 + N_red**2 / mg1 + N_red**2
-        )  # Weight Factor (ƩFd2/C) [-]
+        WF = 1 + 1 / mg1 + mg1 + mg1**2 + N_red**2 / mg1 + N_red**2  # Weight Factor (ƩFd2/C) [-]
         k_sd = 1000  # Surface durability factor [lb/in]
         C = 2 * 8.85 * T_mot_nom / k_sd  # Coefficient (C=2T/K) [in3]
         Fd2 = WF * C  # Solid rotor volume [in3]

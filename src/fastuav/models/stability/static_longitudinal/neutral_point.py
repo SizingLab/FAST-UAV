@@ -2,8 +2,9 @@
 Neutral Point module.
 The neutral point (NP) is the position of center of mass where the UAV would be on the edge of stability.
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 
 
 class NeutralPoint(om.ExplicitComponent):

@@ -1,13 +1,15 @@
 """
 Off-the-shelf ESC selection.
 """
-import os.path as pth
-import openmdao.api as om
-from fastuav.utils.catalogues.estimators import NearestNeighbor
-from fastoad.openmdao.validity_checker import ValidityDomainChecker
-import pandas as pd
-import numpy as np
 
+import os.path as pth
+
+import numpy as np
+import openmdao.api as om
+import pandas as pd
+from fastoad.openmdao.validity_checker import ValidityDomainChecker
+
+from fastuav.utils.catalogues.estimators import NearestNeighbor
 
 PATH = pth.join(
     pth.dirname(pth.abspath(__file__)),
@@ -25,8 +27,14 @@ DF = pd.read_csv(PATH, sep=";")
 
 @ValidityDomainChecker(
     {
-        "data:propulsion:esc:power:max:estimated": (DF["Pmax_W"].min(), DF["Pmax_W"].max()),
-        "data:propulsion:esc:voltage:estimated": (DF["Vmax_V"].min(), DF["Vmax_V"].max()),
+        "data:propulsion:esc:power:max:estimated": (
+            DF["Pmax_W"].min(),
+            DF["Pmax_W"].max(),
+        ),
+        "data:propulsion:esc:voltage:estimated": (
+            DF["Vmax_V"].min(),
+            DF["Vmax_V"].max(),
+        ),
     },
 )
 class ESCCatalogueSelection(om.ExplicitComponent):
@@ -109,7 +117,9 @@ class ESCCatalogueSelection(om.ExplicitComponent):
             outputs["data:propulsion:esc:voltage"] = outputs[
                 "data:propulsion:esc:voltage:catalogue"
             ] = U_esc
-            outputs["data:weight:propulsion:esc:mass"] = outputs["data:weight:propulsion:esc:mass:catalogue"] = m_esc
+            outputs["data:weight:propulsion:esc:mass"] = outputs[
+                "data:weight:propulsion:esc:mass:catalogue"
+            ] = m_esc
             outputs["data:propulsion:esc:efficiency"] = inputs[
                 "data:propulsion:esc:efficiency:estimated"
             ]
@@ -120,7 +130,9 @@ class ESCCatalogueSelection(om.ExplicitComponent):
                 "data:propulsion:esc:power:max:estimated"
             ]
             outputs["data:propulsion:esc:voltage"] = inputs["data:propulsion:esc:voltage:estimated"]
-            outputs["data:weight:propulsion:esc:mass"] = inputs["data:weight:propulsion:esc:mass:estimated"]
+            outputs["data:weight:propulsion:esc:mass"] = inputs[
+                "data:weight:propulsion:esc:mass:estimated"
+            ]
             outputs["data:propulsion:esc:efficiency"] = inputs[
                 "data:propulsion:esc:efficiency:estimated"
             ]

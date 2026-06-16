@@ -1,8 +1,9 @@
 """
 ESC performances
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 
 
 class ESCPerformanceModel:
@@ -34,7 +35,9 @@ class ESCPerformance(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -56,4 +59,3 @@ class ESCPerformance(om.ExplicitComponent):
         P_esc = ESCPerformanceModel.power(P_mot, U_mot, U_bat)  # [W] electronic power
 
         outputs["data:propulsion:esc:power:%s" % scenario] = P_esc
-

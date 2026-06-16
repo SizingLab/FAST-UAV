@@ -23,3 +23,4 @@
 /src/fastuav/notebooks/04_LCA.ipynb
 .python-version
 **/__pycache__/
+.vscode/

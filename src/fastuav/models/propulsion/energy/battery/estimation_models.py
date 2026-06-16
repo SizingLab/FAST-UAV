@@ -1,8 +1,10 @@
 """
 Estimation models for the battery.
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
+
 from fastuav.utils.uncertainty import add_subsystem_with_deviation
 
 
@@ -118,17 +120,25 @@ class Power(om.ExplicitComponent):
         U_bat_ref = inputs["models:propulsion:battery:voltage:reference"]
         I_bat_max_ref = inputs["models:propulsion:battery:current:max:reference"]
 
-        partials["data:propulsion:battery:power:max:estimated",
-                 "data:propulsion:battery:energy:estimated"] = (U_bat_ref * I_bat_max_ref) / E_bat_ref
+        partials[
+            "data:propulsion:battery:power:max:estimated",
+            "data:propulsion:battery:energy:estimated",
+        ] = (U_bat_ref * I_bat_max_ref) / E_bat_ref
 
-        partials["data:propulsion:battery:power:max:estimated",
-                 "models:propulsion:battery:energy:reference"] = - (U_bat_ref * I_bat_max_ref) * E_bat / E_bat_ref ** 2
+        partials[
+            "data:propulsion:battery:power:max:estimated",
+            "models:propulsion:battery:energy:reference",
+        ] = -(U_bat_ref * I_bat_max_ref) * E_bat / E_bat_ref**2
 
-        partials["data:propulsion:battery:power:max:estimated",
-                 "models:propulsion:battery:voltage:reference"] = I_bat_max_ref * E_bat / E_bat_ref
+        partials[
+            "data:propulsion:battery:power:max:estimated",
+            "models:propulsion:battery:voltage:reference",
+        ] = I_bat_max_ref * E_bat / E_bat_ref
 
-        partials["data:propulsion:battery:power:max:estimated",
-                 "models:propulsion:battery:current:max:reference"] = U_bat_ref * E_bat / E_bat_ref
+        partials[
+            "data:propulsion:battery:power:max:estimated",
+            "models:propulsion:battery:current:max:reference",
+        ] = U_bat_ref * E_bat / E_bat_ref
 
 
 class Capacity(om.ExplicitComponent):
@@ -156,11 +166,15 @@ class Capacity(om.ExplicitComponent):
         U_bat = inputs["data:propulsion:battery:voltage:estimated"]
         E_bat = inputs["data:propulsion:battery:energy:estimated"]
 
-        partials["data:propulsion:battery:capacity:estimated",
-                 "data:propulsion:battery:voltage:estimated"] = - E_bat / U_bat ** 2
+        partials[
+            "data:propulsion:battery:capacity:estimated",
+            "data:propulsion:battery:voltage:estimated",
+        ] = -E_bat / U_bat**2
 
-        partials["data:propulsion:battery:capacity:estimated",
-                 "data:propulsion:battery:energy:estimated"] = 1 / U_bat
+        partials[
+            "data:propulsion:battery:capacity:estimated",
+            "data:propulsion:battery:energy:estimated",
+        ] = 1 / U_bat
 
 
 class MaxCurrent(om.ExplicitComponent):
@@ -218,16 +232,16 @@ class Weight(om.ExplicitComponent):
 
         partials[
             "data:weight:propulsion:battery:mass:estimated",
-            "data:propulsion:battery:energy:estimated"
+            "data:propulsion:battery:energy:estimated",
         ] = m_bat_ref / E_bat_ref
         partials[
             "data:weight:propulsion:battery:mass:estimated",
-            "models:weight:propulsion:battery:mass:reference"
+            "models:weight:propulsion:battery:mass:reference",
         ] = E_bat / E_bat_ref
         partials[
             "data:weight:propulsion:battery:mass:estimated",
-            "models:propulsion:battery:energy:reference"
-        ] = - m_bat_ref * E_bat / E_bat_ref ** 2
+            "models:propulsion:battery:energy:reference",
+        ] = -m_bat_ref * E_bat / E_bat_ref**2
 
 
 class Geometry(om.ExplicitComponent):
@@ -331,9 +345,11 @@ class Energy2(om.ExplicitComponent):
         C_bat = inputs["data:propulsion:battery:capacity:estimated"]
 
         partials[
-            "data:propulsion:battery:energy:estimated", "data:propulsion:battery:voltage:estimated"
+            "data:propulsion:battery:energy:estimated",
+            "data:propulsion:battery:voltage:estimated",
         ] = C_bat
 
         partials[
-            "data:propulsion:battery:energy:estimated", "data:propulsion:battery:capacity:estimated"
+            "data:propulsion:battery:energy:estimated",
+            "data:propulsion:battery:capacity:estimated",
         ] = U_bat

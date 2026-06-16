@@ -3,18 +3,23 @@ Sizing scenarios definition for fixed wing drones.
 The sizing scenarios return the thrusts and loads requirements to size the UAV.
 The sizing scenarios are extracted from a sizing mission defined by the user.
 """
+
 import fastoad.api as oad
 import openmdao.api as om
+
+from fastuav.models.aerodynamics.aerodynamics_fixedwing import (
+    InducedDragConstant,
+    SpanEfficiency,
+)
 from fastuav.models.mtow.mtow import MtowGuess
-from fastuav.models.aerodynamics.aerodynamics_fixedwing import SpanEfficiency, InducedDragConstant
-from fastuav.models.scenarios.thrust.takeoff import LauncherTakeoff
-from fastuav.models.scenarios.thrust.cruise import FixedwingCruiseThrust
 from fastuav.models.scenarios.thrust.climb import FixedwingClimbThrust
+from fastuav.models.scenarios.thrust.cruise import FixedwingCruiseThrust
 from fastuav.models.scenarios.thrust.hover import NoHover
+from fastuav.models.scenarios.thrust.takeoff import LauncherTakeoff
 from fastuav.models.scenarios.wing_loading.wing_loading import (
     WingLoadingCruise,
-    WingLoadingStall,
     WingLoadingSelection,
+    WingLoadingStall,
 )
 
 
@@ -40,4 +45,3 @@ class SizingScenariosFixedWing(om.Group):
         thrust.add_subsystem("climb", FixedwingClimbThrust(), promotes=["*"])
         thrust.add_subsystem("cruise", FixedwingCruiseThrust(), promotes=["*"])
         thrust.add_subsystem("no_hover", NoHover(), promotes=["*"])
-

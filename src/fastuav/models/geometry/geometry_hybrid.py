@@ -1,11 +1,20 @@
 """
 Hybrid VTOL Airframe Geometry
 """
+
 import fastoad.api as oad
-import openmdao.api as om
 import numpy as np
-from fastuav.models.geometry.geometry_fixedwing import WingGeometry, HorizontalTailGeometry, VerticalTailGeometry, FuselageGeometry, ProjectedAreasConstraint, FuselageVolumeConstraint
+import openmdao.api as om
+
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION, PROPULSION_ID_LIST
+from fastuav.models.geometry.geometry_fixedwing import (
+    FuselageGeometry,
+    FuselageVolumeConstraint,
+    HorizontalTailGeometry,
+    ProjectedAreasConstraint,
+    VerticalTailGeometry,
+    WingGeometry,
+)
 
 
 @oad.RegisterOpenMDAOSystem("fastuav.geometry.hybrid")
@@ -23,15 +32,13 @@ class Geometry(om.Group):
         self.add_subsystem("vtol_arms", ArmsVTOL(), promotes=["*"])
 
         constraints = self.add_subsystem("constraints", om.Group(), promotes=["*"])
-        constraints.add_subsystem("projected_areas",
-                                  ProjectedAreasConstraint(),
-                                  promotes=["*"])
-        constraints.add_subsystem("fuselage_volume",
-                                  FuselageVolumeConstraint(propulsion_id_list=PROPULSION_ID_LIST),
-                                  promotes=["*"])
-        constraints.add_subsystem("vtol_location",
-                                  PropellersVTOLConstraint(),
-                                  promotes=["*"])
+        constraints.add_subsystem("projected_areas", ProjectedAreasConstraint(), promotes=["*"])
+        constraints.add_subsystem(
+            "fuselage_volume",
+            FuselageVolumeConstraint(propulsion_id_list=PROPULSION_ID_LIST),
+            promotes=["*"],
+        )
+        constraints.add_subsystem("vtol_location", PropellersVTOLConstraint(), promotes=["*"])
 
 
 class PropellersVTOL(om.ExplicitComponent):
@@ -47,11 +54,27 @@ class PropellersVTOL(om.ExplicitComponent):
         propulsion_fw = self.options["propulsion_fw"]
         propulsion_mr = self.options["propulsion_mr"]
 
-        self.add_input("optimization:variables:geometry:%s:propeller:y:k" % propulsion_mr, val=1.0, units=None)
+        self.add_input(
+            "optimization:variables:geometry:%s:propeller:y:k" % propulsion_mr,
+            val=1.0,
+            units=None,
+        )
 
-        self.add_input("data:propulsion:%s:propeller:diameter" % propulsion_fw, val=np.nan, units="m")
-        self.add_input("data:propulsion:%s:propeller:diameter" % propulsion_mr, val=np.nan, units="m")
-        self.add_input("data:geometry:%s:propeller:clearance" % propulsion_mr, val=np.nan, units="m")
+        self.add_input(
+            "data:propulsion:%s:propeller:diameter" % propulsion_fw,
+            val=np.nan,
+            units="m",
+        )
+        self.add_input(
+            "data:propulsion:%s:propeller:diameter" % propulsion_mr,
+            val=np.nan,
+            units="m",
+        )
+        self.add_input(
+            "data:geometry:%s:propeller:clearance" % propulsion_mr,
+            val=np.nan,
+            units="m",
+        )
         self.add_input("data:geometry:wing:root:LE:x", val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:TE:x", val=np.nan, units="m")
         self.add_input("data:geometry:wing:sweep:LE", val=np.nan, units="rad")
@@ -82,7 +105,7 @@ class PropellersVTOL(om.ExplicitComponent):
         # the position of the propellers along the y-axis is driven by the structural loads.
         # It is minimal for k_y = 1.
         y = k_y * (D_pro_FW / 2 + c_pro_MR + D_pro_MR / 2)  # [m] y-location
-        
+
         # x-location of front propellers
         x_front = x_root_LE + y * np.tan(sweep_LE) - (D_pro_MR / 2 + c_pro_MR) / np.cos(sweep_LE)
 
@@ -106,7 +129,10 @@ class PropellersVTOLConstraint(om.ExplicitComponent):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("data:geometry:%s:propeller:y" % propulsion_id, val=np.nan, units="m")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
-        self.add_output("optimization:constraints:geometry:%s:propeller:y" % propulsion_id, units=None)
+        self.add_output(
+            "optimization:constraints:geometry:%s:propeller:y" % propulsion_id,
+            units=None,
+        )
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -125,11 +151,15 @@ class PropellersVTOLConstraint(om.ExplicitComponent):
         y = inputs["data:geometry:%s:propeller:y" % propulsion_id]
         b_w = inputs["data:geometry:wing:span"]
 
-        partials["optimization:constraints:geometry:%s:propeller:y" % propulsion_id,
-                 "data:geometry:%s:propeller:y" % propulsion_id] = - b_w / 2 / y ** 2
+        partials[
+            "optimization:constraints:geometry:%s:propeller:y" % propulsion_id,
+            "data:geometry:%s:propeller:y" % propulsion_id,
+        ] = -b_w / 2 / y**2
 
-        partials["optimization:constraints:geometry:%s:propeller:y" % propulsion_id,
-                 "data:geometry:wing:span"] = 1 / 2 / y
+        partials[
+            "optimization:constraints:geometry:%s:propeller:y" % propulsion_id,
+            "data:geometry:wing:span",
+        ] = 1 / 2 / y
 
 
 class ArmsVTOL(om.ExplicitComponent):
@@ -142,7 +172,11 @@ class ArmsVTOL(om.ExplicitComponent):
 
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
-        self.add_input("data:propulsion:%s:propeller:is_coaxial" % propulsion_id, val=np.nan, units=None)
+        self.add_input(
+            "data:propulsion:%s:propeller:is_coaxial" % propulsion_id,
+            val=np.nan,
+            units=None,
+        )
         self.add_input("data:geometry:%s:propeller:x:front" % propulsion_id, val=np.nan, units="m")
         self.add_input("data:geometry:%s:propeller:x:rear" % propulsion_id, val=np.nan, units="m")
         self.add_output("data:geometry:arms:number", units=None)

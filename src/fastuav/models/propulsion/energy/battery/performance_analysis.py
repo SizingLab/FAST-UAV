@@ -1,8 +1,9 @@
 """
 Battery performance analysis
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 
 
 class BatteryPerformanceModel:
@@ -39,7 +40,9 @@ class BatteryPerformance(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default="cruise", values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -61,7 +64,7 @@ class BatteryPerformance(om.ExplicitComponent):
         P_mot = inputs["data:propulsion:motor:power:%s" % scenario]
         eta_ESC = inputs[
             "data:propulsion:esc:efficiency:estimated"
-        ]  #TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
+        ]  # TODO: replace by 'real' efficiency (ESC catalogue output, but be careful to algebraic loops...)
         U_bat = inputs["data:propulsion:battery:voltage"]
         P_payload = inputs["mission:sizing:payload:power"]
 

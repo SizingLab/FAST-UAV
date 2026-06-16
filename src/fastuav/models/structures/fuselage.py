@@ -1,8 +1,9 @@
 """
 Fuselage Structures and Weights
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 
 
 class FuselageStructures(om.ExplicitComponent):
@@ -41,5 +42,3 @@ class FuselageStructures(om.ExplicitComponent):
         outputs["data:weight:airframe:fuselage:mass:nose"] = m_nose
         outputs["data:weight:airframe:fuselage:mass:mid"] = m_mid
         outputs["data:weight:airframe:fuselage:mass:rear"] = m_rear
-
-

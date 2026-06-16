@@ -3,11 +3,12 @@ Cruise scenarios
 """
 
 import numpy as np
-from scipy.constants import g
 import openmdao.api as om
-from stdatm import AtmosphereSI
-from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
+from scipy.constants import g
+from stdatm import AtmosphereWithPartials
+
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
+from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
 
 
 class MultirotorCruiseThrust(om.ExplicitComponent):
@@ -21,12 +22,20 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
-        self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=np.nan, units=None)
+        self.add_input(
+            "data:propulsion:%s:propeller:number" % propulsion_id,
+            val=np.nan,
+            units=None,
+        )
         self.add_input("data:aerodynamics:%s:CD0" % propulsion_id, val=np.nan, units=None)
         self.add_input("data:geometry:projected_area:top", val=np.nan, units="m**2")
         self.add_input("data:geometry:projected_area:front", val=np.nan, units="m**2")
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+            val=0.0,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
         self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
@@ -44,7 +53,7 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         rho_air = atm.density
 
@@ -58,23 +67,15 @@ class MultirotorCruiseThrust(om.ExplicitComponent):
         S_front = inputs["data:geometry:projected_area:front"]
 
         V_v = 0.0  # [m/s] rate of climb (assumption: horizontal flight)
-        alpha_cr = MultirotorFlightModel.get_angle_of_attack(m_uav_guess,
-                                                             V_cruise,
-                                                             V_v,
-                                                             S_front,
-                                                             S_top,
-                                                             C_D0,
-                                                             C_L,
-                                                             rho_air)  # [rad] angle of attack
-        F_pro_cr = MultirotorFlightModel.get_thrust(m_uav_guess,
-                                                    V_cruise,
-                                                    V_v,
-                                                    alpha_cr,
-                                                    S_front,
-                                                    S_top,
-                                                    C_D0,
-                                                    C_L,
-                                                    rho_air) / Npro  # [N] thrust per propeller
+        alpha_cr = MultirotorFlightModel.get_angle_of_attack(
+            m_uav_guess, V_cruise, V_v, S_front, S_top, C_D0, C_L, rho_air
+        )  # [rad] angle of attack
+        F_pro_cr = (
+            MultirotorFlightModel.get_thrust(
+                m_uav_guess, V_cruise, V_v, alpha_cr, S_front, S_top, C_D0, C_L, rho_air
+            )
+            / Npro
+        )  # [N] thrust per propeller
 
         outputs["data:propulsion:%s:propeller:thrust:cruise" % propulsion_id] = F_pro_cr
         outputs["data:propulsion:%s:propeller:AoA:cruise" % propulsion_id] = alpha_cr
@@ -96,7 +97,11 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
         self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:speed:%s" % propulsion_id,
+            val=0.0,
+            units="m/s",
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
         self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
@@ -114,7 +119,7 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
         V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
         altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
         dISA = inputs["mission:sizing:dISA"]
-        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
         atm.true_airspeed = V_cruise
         q_cruise = atm.dynamic_pressure
 

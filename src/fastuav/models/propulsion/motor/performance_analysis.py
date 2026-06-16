@@ -1,8 +1,9 @@
 """
 Motor performance analysis
 """
-import openmdao.api as om
+
 import numpy as np
+import openmdao.api as om
 
 
 class MotorPerformanceModel:
@@ -61,7 +62,9 @@ class MotorPerformance(om.Group):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default=None, values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default=None, values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -79,7 +82,9 @@ class MotorTorque(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default=None, values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default=None, values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -104,12 +109,14 @@ class MotorTorque(om.ExplicitComponent):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         Q_pro = inputs["data:propulsion:propeller:torque:%s" % scenario]
 
-        partials["data:propulsion:motor:torque:%s" % scenario,
-                 "data:propulsion:gearbox:N_red"
-        ] = - Q_pro / N_red ** 2
+        partials[
+            "data:propulsion:motor:torque:%s" % scenario,
+            "data:propulsion:gearbox:N_red",
+        ] = -Q_pro / N_red**2
 
-        partials["data:propulsion:motor:torque:%s" % scenario,
-                 "data:propulsion:propeller:torque:%s" % scenario
+        partials[
+            "data:propulsion:motor:torque:%s" % scenario,
+            "data:propulsion:propeller:torque:%s" % scenario,
         ] = 1 / N_red
 
 
@@ -119,7 +126,9 @@ class MotorSpeed(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default=None, values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default=None, values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -144,12 +153,13 @@ class MotorSpeed(om.ExplicitComponent):
         N_red = inputs["data:propulsion:gearbox:N_red"]
         W_pro = inputs["data:propulsion:propeller:speed:%s" % scenario]
 
-        partials["data:propulsion:motor:speed:%s" % scenario,
-                 "data:propulsion:gearbox:N_red"
-        ] = W_pro
+        partials["data:propulsion:motor:speed:%s" % scenario, "data:propulsion:gearbox:N_red"] = (
+            W_pro
+        )
 
-        partials["data:propulsion:motor:speed:%s" % scenario,
-                 "data:propulsion:propeller:speed:%s" % scenario
+        partials[
+            "data:propulsion:motor:speed:%s" % scenario,
+            "data:propulsion:propeller:speed:%s" % scenario,
         ] = N_red
 
 
@@ -159,7 +169,9 @@ class MotorCurrent(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default=None, values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default=None, values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -187,16 +199,19 @@ class MotorCurrent(om.ExplicitComponent):
         Tf_mot = inputs["data:propulsion:motor:torque:friction"]
         Kv = inputs["data:propulsion:motor:speed:constant"]
 
-        partials["data:propulsion:motor:current:%s" % scenario,
-                 "data:propulsion:motor:torque:%s" % scenario
+        partials[
+            "data:propulsion:motor:current:%s" % scenario,
+            "data:propulsion:motor:torque:%s" % scenario,
         ] = Kv
 
-        partials["data:propulsion:motor:current:%s" % scenario,
-                 "data:propulsion:motor:torque:friction"
+        partials[
+            "data:propulsion:motor:current:%s" % scenario,
+            "data:propulsion:motor:torque:friction",
         ] = Kv
 
-        partials["data:propulsion:motor:current:%s" % scenario,
-                 "data:propulsion:motor:speed:constant"
+        partials[
+            "data:propulsion:motor:current:%s" % scenario,
+            "data:propulsion:motor:speed:constant",
         ] = T_mot + Tf_mot
 
 
@@ -206,7 +221,9 @@ class MotorVoltage(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default=None, values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default=None, values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -237,20 +254,24 @@ class MotorVoltage(om.ExplicitComponent):
         W_mot = inputs["data:propulsion:motor:speed:%s" % scenario]
         I_mot = inputs["data:propulsion:motor:current:%s" % scenario]
 
-        partials["data:propulsion:motor:voltage:%s" % scenario,
-                 "data:propulsion:motor:resistance"
+        partials[
+            "data:propulsion:motor:voltage:%s" % scenario,
+            "data:propulsion:motor:resistance",
         ] = I_mot
 
-        partials["data:propulsion:motor:voltage:%s" % scenario,
-                 "data:propulsion:motor:speed:constant"
-        ] = - W_mot / Kv ** 2
+        partials[
+            "data:propulsion:motor:voltage:%s" % scenario,
+            "data:propulsion:motor:speed:constant",
+        ] = -W_mot / Kv**2
 
-        partials["data:propulsion:motor:voltage:%s" % scenario,
-                 "data:propulsion:motor:speed:%s" % scenario
+        partials[
+            "data:propulsion:motor:voltage:%s" % scenario,
+            "data:propulsion:motor:speed:%s" % scenario,
         ] = 1 / Kv
 
-        partials["data:propulsion:motor:voltage:%s" % scenario,
-                 "data:propulsion:motor:current:%s" % scenario
+        partials[
+            "data:propulsion:motor:voltage:%s" % scenario,
+            "data:propulsion:motor:current:%s" % scenario,
         ] = R
 
 
@@ -260,7 +281,9 @@ class MotorPower(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default=None, values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default=None, values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -285,12 +308,14 @@ class MotorPower(om.ExplicitComponent):
         U_mot = inputs["data:propulsion:motor:voltage:%s" % scenario]
         I_mot = inputs["data:propulsion:motor:current:%s" % scenario]
 
-        partials["data:propulsion:motor:power:%s" % scenario,
-                 "data:propulsion:motor:voltage:%s" % scenario
+        partials[
+            "data:propulsion:motor:power:%s" % scenario,
+            "data:propulsion:motor:voltage:%s" % scenario,
         ] = I_mot
 
-        partials["data:propulsion:motor:power:%s" % scenario,
-                 "data:propulsion:motor:current:%s" % scenario
+        partials[
+            "data:propulsion:motor:power:%s" % scenario,
+            "data:propulsion:motor:current:%s" % scenario,
         ] = U_mot
 
 
@@ -300,7 +325,9 @@ class MotorEfficiency(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare("scenario", default=None, values=["takeoff", "climb", "hover", "cruise"])
+        self.options.declare(
+            "scenario", default=None, values=["takeoff", "climb", "hover", "cruise"]
+        )
 
     def setup(self):
         scenario = self.options["scenario"]
@@ -331,18 +358,22 @@ class MotorEfficiency(om.ExplicitComponent):
         T_mot = inputs["data:propulsion:motor:torque:%s" % scenario]
         W_mot = inputs["data:propulsion:motor:speed:%s" % scenario]
 
-        partials["data:propulsion:motor:efficiency:%s" % scenario,
-                 "data:propulsion:motor:voltage:%s" % scenario
-        ] = - T_mot * W_mot / (U_mot**2 * I_mot)
+        partials[
+            "data:propulsion:motor:efficiency:%s" % scenario,
+            "data:propulsion:motor:voltage:%s" % scenario,
+        ] = -T_mot * W_mot / (U_mot**2 * I_mot)
 
-        partials["data:propulsion:motor:efficiency:%s" % scenario,
-                 "data:propulsion:motor:voltage:%s" % scenario
-        ] = - T_mot * W_mot / (U_mot * I_mot**2)
+        partials[
+            "data:propulsion:motor:efficiency:%s" % scenario,
+            "data:propulsion:motor:voltage:%s" % scenario,
+        ] = -T_mot * W_mot / (U_mot * I_mot**2)
 
-        partials["data:propulsion:motor:efficiency:%s" % scenario,
-                 "data:propulsion:motor:torque:%s" % scenario
+        partials[
+            "data:propulsion:motor:efficiency:%s" % scenario,
+            "data:propulsion:motor:torque:%s" % scenario,
         ] = W_mot / (U_mot * I_mot)
 
-        partials["data:propulsion:motor:efficiency:%s" % scenario,
-                 "data:propulsion:motor:speed:%s" % scenario
+        partials[
+            "data:propulsion:motor:efficiency:%s" % scenario,
+            "data:propulsion:motor:speed:%s" % scenario,
         ] = T_mot / (U_mot * I_mot)

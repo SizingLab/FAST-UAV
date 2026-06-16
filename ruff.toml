@@ -1,0 +1,47 @@
+line-length    = 100
+target-version = "py310"
+extend-exclude = ["*.ipynb"]
+
+[lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+select = [
+    "E4",
+    "E7",
+    "E9",
+    "F",
+    "I",   # Import sorting using isort rules
+]
+ignore = []
+# Allow fix for all enabled rules (when `--fix` is provided).
+fixable   = ["ALL"]
+unfixable = []
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.isort] # Add optional configurations for import organization
+case-sensitive = true
+relative-imports-order = "closest-to-furthest"
+
+[lint.pylint] # Add optional configurations for pylint
+max-args = 8
+
+[lint.pep8-naming] # A list of names (or patterns) to ignore when considering pep8-naming violations.
+ignore-names = [
+    "*MTOW*",
+    "*TOW*",
+    "*OWE*",
+    "*2D*",
+    "*3D*",
+    "*AR*",
+    "*CL*",
+    "*CD*",
+    "*TAS*",
+    "*EAS*",
+    "*IAS*",
+    "*CAS*",
+    "*Mach*",
+    "*MPI*",
+    "I_*",
+]

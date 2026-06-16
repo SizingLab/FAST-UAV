@@ -1,88 +1,141 @@
-[tool.poetry]
+# Project metadata (PEP 621) ===================================================
+[project]
 name = "FASTUAV"
-version = "0.1.1"
 description = "FAST-UAV is a framework for performing rapid Overall Aircraft Design for Unmanned Aerial Vehicles"
 readme = "README.md"
+license = "GPL-3.0-only"
+keywords = ["uav", "design", "multi-disciplinary"]
 authors = [
-    "Félix POLLET <felix.pollet@isae-supaero.fr>",
-    "Scott DELBECQ <scott.delbecq@isae-supaero.fr>",
-    "Marc BUDINGER <marc.budinger@insa-toulouse.fr>"
+    {name = "Félix POLLET", email = "felix.pollet@isae-supaero.fr"},
+    {name = "Scott DELBECQ", email = "scott.delbecq@isae-supaero.fr"},
+    {name = "Marc BUDINGER", email = "marc.budinger@insa-toulouse.fr"},
 ]
-packages = [
-    { include = "fastuav", from = "src" },
+requires-python = ">=3.10,<3.15"
+dynamic = ["classifiers", "version"] # Needed to use poetry-dynamic-versioning
+
+# User dependencies ------------------------------------------------------------
+dependencies = [
+    # IMPORTANT: when modifying this list, docs/requirements.txt must be updated for
+    # ReadTheDocs to be able to compile the documentation.
+    # A pre-commit hook has been added to do this task. As a result, any modification
+    # of poetry.lock file will modify docs/requirements.txt and make
+    # the commit fail because "files were modified by this hook". In that case,
+    # doing again the commit including changes in docs/requirements.txt will succeed.
+    "fast-oad-core>=1.10.0; python_version<'3.15'",
+    "cma>=4.0.0,<5.0.0",
+    "scikit-learn>=1.0.2,<2.0.0",
+    "psutil",
+    "kaleido==0.2.1",
+    "SALib>=1.5.0,<2.0.0",
+    "seaborn>=0.13.0,<0.14.0",
+    "pyzmq>=26", # Lower bound for Ubuntu 24.04 / Python 3.12 issue; 27+ needed for Python 3.14 wheels (esp. Windows)
+    "plotly>=6.0.0,<7.0.0",
+    "ipywidgets>=8.1.8,<9.0.0",
 ]
 
+[project.optional-dependencies]
+jupyterlab = ["jupyterlab"]
+
+[project.urls]
 homepage = "https://github.com/SizingLab/FAST-UAV"
-keywords = [
-    "uav",
-    "design",
-    "multi-disciplinary"
-]
-license = "GPL-3.0-only"
+
+# Entry points -----------------------------------------------------------------
+[project.entry-points."fastoad.plugins"]
+uav = "fastuav"
+
+
+# Poetry settings ==============================================================
+[tool.poetry]
+requires-poetry = ">=2.0"
+version         = "0.0.0"                              # This version number is overwritten by GitHub packaging workflow
+packages        = [{include = "fastuav", from = "src"}]
+exclude         = ["**/tests/**"]
+
+# Suitable classifiers based on python requirement and license are not automatically added if classifiers are statically defined in the project section
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
-    "Intended Audience :: Science/Research",
     "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Natural Language :: English",
+    "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
-    "Operating System :: MacOS",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Topic :: Scientific/Engineering :: Physics"
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Physics",
 ]
 
-[tool.poetry.dependencies]
-# IMPORTANT: when modifying this list, docs/requirements.txt must be updated for
-# ReadTheDocs to be able to compile the documentation.
-# A pre-commit hook has been added to do this task. As a result, any modification
-# of poetry.lock file will modify docs/requirements.txt and make
-# the commit fail because "files were modified by this hook". In that case,
-# doing again the commit including changes in docs/requirements.txt will succeed.
-python = "^3.9, <3.13"
-fast-oad-core = "^1.8.3"
-openmdao = "<=3.33.0"
-cma = "^3.1.0"
-scikit-learn = "^1.0.2"
-psutil = "*"
-kaleido = "0.2.1"
-SALib = "1.4.5"
-seaborn = "^0.13"
-pyzmq = ">=26,<27" # Issue with Ubuntu 24.04 and Python 3.12
-plotly = "^6"
-ipywidgets = "^8.1.8"
+# Development dependencies -----------------------------------------------------
+[tool.poetry.group.test.dependencies]
+pytest     = "^8.0"
+pytest-cov = "^6.0"
+coverage   = {version = "^7.0", extras = ["toml"]}
+nbval      = "^0.9.6"
 
-[tool.poetry.extras]
-jupyterlab = ["jupyterlab"]
-
-[tool.poetry.plugins."fastoad.plugins"]
-"uav" = "fastuav"
-
-[tool.poetry.dev-dependencies]
-pytest = "^6.2"
-pytest-cov = "^3.0"
-coverage = { extras = ["toml"], version = "^5.5" }
-pre-commit = "^2.14.1"
-black = { version = "22.3.0", extras = ["jupyter"], allow-prereleases = true }
-pylint = "^2.10.2"
-nbval = "^0.9.6"
-sphinx = "^4.1.2"
-sphinx-rtd-theme = "^1.0"
+[tool.poetry.group.doc.dependencies]
+sphinx               = "^4.1.2"
+sphinx-rtd-theme     = "^1.0"
 sphinxcontrib-bibtex = "^2.3.0"
-flake8 = "^4.0.1"
+
+[tool.poetry.group.lint.dependencies]
+pre-commit = "^2.14.1"
 nbstripout = "^0.5.0"
+ruff       = "0.15.0"
 
-[tool.black]
-line-length = 100
+# Poetry plugins ===============================================================
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.9" # Used for the poetry export hook in pre-commit
 
-# For installing with 'poetry install' command.
+
+# Dynamic versioning settings ==================================================
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs    = "git"
+style  = "semver"
+
+
+# Packaging system =============================================================
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires      = ["poetry-core>=2.0.0,<3.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
 
-# For installing with 'pip install -e .' command.
-#[build-system]
-#requires = ["setuptools", "setuptools-scm"]
-#build-backend = "setuptools.build_meta"
+
+# Pytest settings ==============================================================
+[tool.pytest.ini_options]
+minversion     = "8.0"
+addopts        = "--cov-report term-missing --cov-report html --verbose"
+testpaths      = ["src"]
+norecursedirs  = ["dist", "build", ".tox", ".ipynb_checkpoints"]
+filterwarnings = ["default"]
+
+
+# Coverage settings ============================================================
+[tool.coverage.run]
+branch = true
+source = ["fastuav"]
+omit   = ["*/test/*", "*/tests/*"]
+
+[tool.coverage.paths]
+source = ["src/"]
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_lines = [
+    # Have to re-enable the standard pragma
+    "pragma: no cover",
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+]

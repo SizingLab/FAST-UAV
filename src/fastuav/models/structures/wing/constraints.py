@@ -2,8 +2,8 @@
 Structural constraints for the wing
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 
 class SparsGeometricalConstraint(om.ExplicitComponent):
@@ -44,16 +44,24 @@ class SparsGeometricalConstraint(om.ExplicitComponent):
         t_wingtip = inputs["data:geometry:wing:tip:thickness"]
         if spar_model == "pipe":
             d_out = inputs["data:structures:wing:spar:diameter:outer"]
-            partials["optimization:constraints:structures:wing:spar:diameter",
-                     "data:geometry:wing:tip:thickness"] = 1 / d_out
-            partials["optimization:constraints:structures:wing:spar:diameter",
-                     "data:structures:wing:spar:diameter:outer"] = - t_wingtip / d_out ** 2
+            partials[
+                "optimization:constraints:structures:wing:spar:diameter",
+                "data:geometry:wing:tip:thickness",
+            ] = 1 / d_out
+            partials[
+                "optimization:constraints:structures:wing:spar:diameter",
+                "data:structures:wing:spar:diameter:outer",
+            ] = -t_wingtip / d_out**2
         else:
             h_spar = inputs["data:structures:wing:spar:depth"]
-            partials["optimization:constraints:structures:wing:spar:depth",
-                     "data:geometry:wing:tip:thickness"] = 1 / h_spar
-            partials["optimization:constraints:structures:wing:spar:depth",
-                     "data:structures:wing:spar:depth"] = - t_wingtip / h_spar ** 2
+            partials[
+                "optimization:constraints:structures:wing:spar:depth",
+                "data:geometry:wing:tip:thickness",
+            ] = 1 / h_spar
+            partials[
+                "optimization:constraints:structures:wing:spar:depth",
+                "data:structures:wing:spar:depth",
+            ] = -t_wingtip / h_spar**2
 
 
 class SparsStressVTOLConstraint(om.ExplicitComponent):
@@ -81,11 +89,12 @@ class SparsStressVTOLConstraint(om.ExplicitComponent):
         sig_root = inputs["data:structures:wing:spar:stress:VTOL"]
         sig_max = inputs["data:structures:wing:spar:stress:max"]
 
-        partials["optimization:constraints:structures:wing:spar:stress:VTOL",
-                 "data:structures:wing:spar:stress:VTOL"] = - sig_max / sig_root ** 2
+        partials[
+            "optimization:constraints:structures:wing:spar:stress:VTOL",
+            "data:structures:wing:spar:stress:VTOL",
+        ] = -sig_max / sig_root**2
 
-        partials["optimization:constraints:structures:wing:spar:stress:VTOL",
-                 "data:structures:wing:spar:stress:max"] = 1 / sig_root
-
-
-
+        partials[
+            "optimization:constraints:structures:wing:spar:stress:VTOL",
+            "data:structures:wing:spar:stress:max",
+        ] = 1 / sig_root

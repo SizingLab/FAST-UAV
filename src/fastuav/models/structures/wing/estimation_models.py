@@ -2,8 +2,8 @@
 Estimation models for the Wing Structures and Weights
 """
 
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 from scipy.constants import g
 
 
@@ -135,14 +135,30 @@ class Spars(om.ExplicitComponent):
         self.add_output("data:weight:airframe:wing:spar:mass", units="kg", lower=0.0)
 
         if self.options["spar_model"] == "pipe":
-            self.add_input("optimization:variables:structures:wing:spar:diameter:k", val=0.9, units=None)
-            self.add_input("optimization:variables:structures:wing:spar:diameter:outer:k", val=1.0, units=None)
+            self.add_input(
+                "optimization:variables:structures:wing:spar:diameter:k",
+                val=0.9,
+                units=None,
+            )
+            self.add_input(
+                "optimization:variables:structures:wing:spar:diameter:outer:k",
+                val=1.0,
+                units=None,
+            )
             self.add_output("data:structures:wing:spar:diameter:inner", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:diameter:outer", units="m", lower=0.0)
 
         elif self.options["spar_model"] == "I_beam":
-            self.add_input("optimization:variables:structures:wing:spar:depth:k", val=0.1, units=None)
-            self.add_input("optimization:variables:structures:wing:spar:web:depth:k", val=1.0, units=None)
+            self.add_input(
+                "optimization:variables:structures:wing:spar:depth:k",
+                val=0.1,
+                units=None,
+            )
+            self.add_input(
+                "optimization:variables:structures:wing:spar:web:depth:k",
+                val=1.0,
+                units=None,
+            )
             self.add_output("data:structures:wing:spar:web:depth", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:web:thickness", units="m", lower=0.0)
             self.add_output("data:structures:wing:spar:flange:depth", units="m", lower=0.0)
@@ -172,12 +188,11 @@ class Spars(om.ExplicitComponent):
             # under-sizing coef. [-] on spar outer diameter (1.0 for FW (monotonicity eq.)/ des. var. for Hybrid):
             k_d = inputs["optimization:variables:structures:wing:spar:diameter:outer:k"]
             # Outer diameter calculation [m]:
-            d_out = k_d * ((32 * M_root) / (np.pi * (1 - k_spar ** 4) * sig_max)) ** (1 / 3)
+            d_out = k_d * ((32 * M_root) / (np.pi * (1 - k_spar**4) * sig_max)) ** (1 / 3)
             # Mass and inner diameter calculations:
-            m_spar, d_in = WingStructuresEstimationModels.spar_pipe(d_out,
-                                                                    k_spar,
-                                                                    b_w / 2,
-                                                                    rho_spar)
+            m_spar, d_in = WingStructuresEstimationModels.spar_pipe(
+                d_out, k_spar, b_w / 2, rho_spar
+            )
             outputs["data:structures:wing:spar:diameter:inner"] = d_in
             outputs["data:structures:wing:spar:diameter:outer"] = d_out
 
@@ -189,15 +204,13 @@ class Spars(om.ExplicitComponent):
             # flange depth-to-thickness ratio [-]: b_flange = a_flange / k_flange
             k_flange = 0.1
             # web depth calculation [m]:
-            h_web = k_h * (M_root * (1 + k_spar) / (sig_max * k_spar ** 2 * (1 + k_spar ** 2 / 3) / k_flange)) ** (
-                    1 / 3
-            )
+            h_web = k_h * (
+                M_root * (1 + k_spar) / (sig_max * k_spar**2 * (1 + k_spar**2 / 3) / k_flange)
+            ) ** (1 / 3)
             # Mass and secondary geometry calculations:
-            m_spar, t_web, a_flange, b_flange = WingStructuresEstimationModels.spar_i_beam(h_web,
-                                                                                           k_spar,
-                                                                                           b_w / 2,
-                                                                                           rho_spar,
-                                                                                           k_flange=k_flange)
+            m_spar, t_web, a_flange, b_flange = WingStructuresEstimationModels.spar_i_beam(
+                h_web, k_spar, b_w / 2, rho_spar, k_flange=k_flange
+            )
             outputs["data:structures:wing:spar:web:depth"] = h_web
             outputs["data:structures:wing:spar:web:thickness"] = t_web
             outputs["data:structures:wing:spar:flange:depth"] = a_flange

@@ -4,19 +4,24 @@ Based on pycma (https://github.com/CMA-ES/pycma)
 Adapted from  OpenMDAO / RevHack2020 (https://github.com/OpenMDAO/RevHack2020/)
 New in this version: use of the fmin_con method from pycma for handling constraints with an Augmented Lagrangian.
 """
+
+import importlib.util
 import os
-import copy
 import time
 
 import numpy as np
-
 import openmdao
 from openmdao.core.driver import Driver, RecordingDebugging
-from openmdao.utils.concurrent import concurrent_eval
 from openmdao.utils.mpi import MPI
-from openmdao.core.analysis_error import AnalysisError
 
+if importlib.util.find_spec("openmdao.utils.concurrent_utils") is not None:
+    from openmdao.utils.concurrent_utils import concurrent_eval
+elif importlib.util.find_spec("openmdao.utils.concurrent") is not None:
+    from openmdao.utils.concurrent import concurrent_eval  # older OpenMDAO (<3.10)
+else:
+    concurrent_eval = None
 import cma
+from openmdao.core.analysis_error import AnalysisError
 
 
 class CMAESDriver(Driver):
@@ -216,7 +221,6 @@ class CMAESDriver(Driver):
         """
         procs_per_model = self.options["procs_per_model"]
         if MPI and self.options["run_parallel"]:
-
             full_size = comm.size
             size = full_size // procs_per_model
             if full_size != size * procs_per_model:
@@ -378,7 +382,6 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             obj_values = self.get_objective_values()
             if is_single_objective:  # Single objective optimization
@@ -481,9 +484,6 @@ class CMAESDriver(Driver):
             i, j = self._desvar_idx[name]
             self.set_design_var(name, x[i:j])
 
-        # a very large number, but smaller than the result of nan_to_num in Numpy
-        almost_inf = openmdao.INF_BOUND
-
         # Execute the model
         with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
             self.iter_count += 1
@@ -493,7 +493,6 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             obj_values = self.get_objective_values()
             if is_single_objective:  # Single objective optimization
@@ -544,7 +543,7 @@ class CMAESDriver(Driver):
         almost_inf = openmdao.INF_BOUND
 
         # Execute the model
-        with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
+        with RecordingDebugging(self._get_name(), self.iter_count, self) as _:
             self.iter_count += 1
             try:
                 model.run_solve_nonlinear()
@@ -552,18 +551,15 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             gfun = np.array([])
             for name, val in self.get_constraint_values().items():
                 con = self._cons[name]
                 if (con["lower"] is not None) and np.any(con["lower"] > -almost_inf):
                     diff = -(val - con["lower"])
-                    violation = np.array([0.0 if d >= 0 else abs(d) for d in diff])
                     gfun = np.hstack((gfun, diff))
                 if (con["upper"] is not None) and np.any(con["upper"] < almost_inf):
                     diff = val - con["upper"]
-                    violation = np.array([0.0 if d <= 0 else abs(d) for d in diff])
                     gfun = np.hstack((gfun, diff))
 
             # Record after getting obj to assure they have
@@ -594,7 +590,7 @@ class CMAESDriver(Driver):
         almost_inf = openmdao.INF_BOUND
 
         # Execute the model
-        with RecordingDebugging(self._get_name(), self.iter_count, self) as rec:
+        with RecordingDebugging(self._get_name(), self.iter_count, self) as _:
             self.iter_count += 1
             try:
                 model.run_solve_nonlinear()
@@ -602,14 +598,12 @@ class CMAESDriver(Driver):
             # Tell the optimizer that this is a bad point.
             except AnalysisError:
                 model._clear_iprint()
-                success = 0
 
             hfun = np.array([])
             for name, val in self.get_constraint_values().items():
                 con = self._cons[name]
                 if (con["equals"] is not None) and np.any(np.abs(con["equals"]) < almost_inf):
                     diff = val - con["equals"]
-                    violation = np.absolute(diff)
                     hfun = np.hstack((hfun, diff))
 
             # Record after getting obj to assure they have
@@ -757,6 +751,11 @@ class CMAES(object):
                         cases.append(cases[-1])
 
                 # evaluate candidate solutions concurrently
+                if concurrent_eval is None:
+                    raise RuntimeError(
+                        "Parallel execution requires 'openmdao.utils.concurrent', "
+                        "which was removed in newer versions of OpenMDAO."
+                    )
                 results = concurrent_eval(
                     self.objfun, cases, comm, allgather=True, model_mpi=self.model_mpi
                 )
