@@ -63,10 +63,11 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Physics",
 ]
 
@@ -109,8 +110,8 @@ build-backend = "poetry_dynamic_versioning.backend"
 [tool.pytest.ini_options]
 minversion     = "8.0"
 addopts        = "--cov-report term-missing --cov-report html --verbose"
-testpaths      = ["src", "tests"]
-norecursedirs  = [".tox", "build", "dist"]
+testpaths      = ["src"]
+norecursedirs  = ["dist", "build", ".tox", ".ipynb_checkpoints"]
 filterwarnings = ["default"]
 
 

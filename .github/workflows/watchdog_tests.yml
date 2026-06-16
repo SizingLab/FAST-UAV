@@ -1,4 +1,7 @@
-name: watchdog-tests
+name: Watchdog Tests
+# This workflow will run tests with an up-to-date production environment instead
+# of the locked one.
+# It will warn developers if any update of a dependency broke something.
 
 on:
   workflow_dispatch:
@@ -13,31 +16,46 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [ '3.14' ]
+        python-version: [ "3.14" ]
         os: [ ubuntu-latest, windows-latest, macos-latest ]
+    timeout-minutes: 25
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install poetry
-        run: pipx install poetry==${{ vars.POETRY_VERSION }}
+      - uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'poetry'
 
-      - name: Install latest version of dependencies
+      - name: Install
+        # The latest production version of dependencies is installed instead of the locked one.
         run: |
-          poetry env use ${{ matrix.python-version }}
-          poetry update
-          poetry install
-
-      - name: Unit tests
-        run: poetry run pytest src
+          pip install .
+          pip install pytest pytest-cov nbval
         shell: bash
 
+      - name: List installed packages
+        # List packages and versions for postmortem analysis.
+        run: pip list --format=freeze | tee requirements.txt
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pip package list for ${{ matrix.os }}
+          path: requirements.txt
+
+      - name: Unit tests
+        run: |
+          pytest --no-cov src | tee pytest.log
+          awk 'BEGIN{pr=0};/warnings summary/{pr=1};pr==1' pytest.log > warnings.log  # The warning summary is put in a dedicated file.
+        shell: bash
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Warnings summary from unit test for ${{ matrix.os }}
+          path: warnings.log
+
       - name: Notebook tests
-        run: poetry run pytest --no-cov --nbval-lax -p no:python src/fastuav/notebooks
+        run: pytest --no-cov --nbval-lax -p no:python src/fastuav/notebooks
         shell: bash

@@ -15,7 +15,12 @@ jobs:
                 os: [ ubuntu-latest ]
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
+
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ matrix.python-version }}
 
             - name: Install Poetry
               run: |
@@ -23,13 +28,10 @@ jobs:
                   pipx inject poetry poetry-dynamic-versioning[plugin]
               shell: bash
 
-            - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ matrix.python-version }}
-
             - name: Build
-              run: poetry build
+              run: |
+                  poetry build
+                  ls -la dist/ # list the contents of the dist folder to check that the package was built correctly
               shell: bash
 
             - uses: actions/upload-artifact@v4
@@ -47,5 +49,5 @@ jobs:
                   TOKEN: ${{ secrets.PyPI }} # do not use the secret directly in run command, it would write it plainly in the log
               run: |
                   poetry config pypi-token.pypi "$TOKEN"
-                  poetry publish
+                  poetry publish --skip-existing --dist-dir dist
               shell: bash

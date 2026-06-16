@@ -15,50 +15,75 @@ on:
 jobs:
   tests:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     if: ${{ !contains(github.event.head_commit.message, '[ci skip]') && !contains(github.event.head_commit.message, '[skip ci]') }}
     strategy:
       matrix:
-        python-version: [ '3.10', '3.12' , '3.14' ]
+        python-version: [ "3.10", "3.12", "3.14" ]
         os: ${{ fromJson(github.event_name == 'push' && '["ubuntu-latest"]' || '["ubuntu-latest","windows-latest","macos-latest"]') }}
+    timeout-minutes: 25
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install poetry
-        run: pipx install poetry==${{ vars.POETRY_VERSION }}
+      - uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'poetry'
 
-      - name: Activate environment and install dependencies
-        run: |
-          poetry env use ${{ matrix.python-version }}
-          poetry install
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ vars.POETRY_VERSION }}
+          virtualenvs-create: true
+          installer-parallel: true
+
+      - name: Load cached venv # Copied from https://github.com/snok/install-poetry
+        # load cached venv if cache exists
+        # restore-keys allow fallback cache hits when the exact key is not found.
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            venv-${{ matrix.os }}-${{ matrix.python-version }}-
+
+      - name: Install dependencies # Heavy dependencies (cached) - only runs on cache miss
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install --no-interaction --no-root
+
+      - name: Install library # Light project install (always runs)
+        run: poetry install --no-interaction
 
       - name: Check with Ruff
         run: |
           poetry run ruff check .           # Check coding rules
-          poetry run ruff format --check .  # Check format
-        shell: bash
+          poetry run ruff format --check .  # Check format and import sorting
 
       - name: Unit tests without coverage
         # Runners that won't send coverage report are run without coverage overhead
-        if: ${{ runner.os == 'macOS' || matrix.python-version != '3.9' }}
+        if: ${{ runner.os != 'Linux' || matrix.python-version != '3.10' }}
         run: poetry run pytest src
-        shell: bash
 
       - name: Unit tests with coverage
         # Only for the runner that will send coverage reports (see below)
-        if: ${{ runner.os != 'macOS' && matrix.python-version == '3.9' }}
+        if: ${{ runner.os == 'Linux' && matrix.python-version == '3.10' }}
         run: |
           poetry run pytest src --cov
           poetry run coverage xml  # for sending coverage report
-        shell: bash
+
+      - name: Publish code coverage on Codecov
+        uses: codecov/codecov-action@v4
+        if: ${{ runner.os == 'Linux' && matrix.python-version == '3.10' }}
+        with:
+          name: codecov-FAST-UAV  # optional
+          fail_ci_if_error: false  # optional (default = false)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV }} # do not use the secret directly in run command, it would write it plainly in the log
 
       - name: Notebook tests
         if: ${{ github.event_name == 'pull_request' || contains(github.event.head_commit.message, '[test nb]') || github.ref == 'refs/heads/main' }}
         run: poetry run pytest --no-cov --nbval-lax -p no:python src/fastuav/notebooks
-        shell: bash
