@@ -554,7 +554,9 @@ data:geometry:fuselage:diameter:k || Tail cone diameter ratio (mid to tip)
 data:geometry:fuselage:diameter:mid || Diameter of fuselage mid-section
 data:geometry:fuselage:diameter:tip || Tip diameter of fuselage
 optimization:constraints:geometry:fuselage:volume || Constraint on fuselage volume to house batteries and payload
+data:geometry:fuselage:volume:nose || Volume of fuselage nose-section
 data:geometry:fuselage:volume:mid || Volume of fuselage mid-section
+data:geometry:fuselage:volume:rear || Volume of fuselage rear-section
 optimization:variables:geometry:wing:AR || Aspect ratio of wing
 optimization:variables:geometry:wing:lambda || Taper ratio of wing
 data:geometry:wing:loading || Wing loading
@@ -646,6 +648,13 @@ data:weight:airframe:wing:spar:mass || Spars mass
 
 # Stability
 data:stability:CoG || Center of gravity (longitudinal)
+data:stability:CoG:x || Center of gravity (longitudinal, x-axis)
+data:stability:CoG:y || Center of gravity (lateral, y-axis)
+data:stability:CoG:z || Center of gravity (vertical, z-axis)
+data:stability:CoG:load:fixedwing || Center of gravity of fixed-wing payload and non-modeled parts
+data:stability:CoG:load:multirotor || Center of gravity of multirotor payload and non-modeled parts
+data:weight:load:fixedwing || Mass of fixed-wing payload and non-modeled parts
+data:weight:load:multirotor || Mass of multirotor payload and non-modeled parts
 data:stability:CoG:airframe || Center of gravity of airframe
 data:stability:CoG:airframe:fuselage || Center of gravity of fuselage
 data:stability:CoG:airframe:wing || Center of gravity of wing
