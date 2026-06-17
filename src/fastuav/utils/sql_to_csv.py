@@ -26,9 +26,9 @@ import os.path as pth
 from typing import List, Optional, Tuple
 
 import numpy as np
+import openmdao.api as om
 import pandas as pd
 import yaml
-import openmdao.api as om
 
 
 def _parse_optim_vars(configuration_file: str) -> Tuple[List[str], List[str], List[str]]:
@@ -97,16 +97,20 @@ def sql_to_csv(
     if configuration_file is not None:
         dv_names, cn_names, obj_names = _parse_optim_vars(configuration_file)
         if verbose:
-            print(f"[sql->csv] YAML: {len(dv_names)} DVs, "
-                  f"{len(cn_names)} constraints, {len(obj_names)} obj")
+            print(
+                f"[sql->csv] YAML: {len(dv_names)} DVs, "
+                f"{len(cn_names)} constraints, {len(obj_names)} obj"
+            )
     else:
         first = cr.get_case(case_ids[0])
         dv_names = list(first.get_design_vars().keys())
         cn_names = list(first.get_constraints().keys())
         obj_names = list(first.get_objectives().keys())
         if verbose:
-            print(f"[sql->csv] auto: {len(dv_names)} DVs, "
-                  f"{len(cn_names)} constraints, {len(obj_names)} obj")
+            print(
+                f"[sql->csv] auto: {len(dv_names)} DVs, "
+                f"{len(cn_names)} constraints, {len(obj_names)} obj"
+            )
 
     records = []
     for i, cid in enumerate(case_ids):
@@ -131,10 +135,10 @@ def sql_to_csv(
 
 if __name__ == "__main__":
     import argparse
+
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("sql", help="Path to the .sql recorder file")
     ap.add_argument("csv", help="Output CSV path")
-    ap.add_argument("--config", default=None,
-                    help="Optional FAST-OAD YAML to restrict columns")
+    ap.add_argument("--config", default=None, help="Optional FAST-OAD YAML to restrict columns")
     args = ap.parse_args()
     sql_to_csv(args.sql, args.csv, configuration_file=args.config)

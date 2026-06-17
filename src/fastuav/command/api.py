@@ -12,38 +12,37 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import logging
-import warnings
-import os.path as pth
-import os
-import shutil
-import inspect
 import importlib
+import inspect
+import logging
+import os
+import os.path as pth
+import shutil
 import tempfile
-from tempfile import TemporaryDirectory
+import warnings
 from copy import deepcopy
 from itertools import product
 from pathlib import Path
-from typing import Union, List
 from platform import system
-
-import numpy as np
-from deprecated import deprecated
-import openmdao.api as om
-from openmdao.core.explicitcomponent import ExplicitComponent
-from openmdao.core.implicitcomponent import ImplicitComponent
-from openmdao.core.indepvarcomp import IndepVarComp
-from openmdao.core.group import Group
-from openmdao.core.system import System
+from tempfile import TemporaryDirectory
+from typing import List, Union
 
 import fastoad.api as oad
+import numpy as np
+import openmdao.api as om
+from deprecated import deprecated
+
+# noinspection PyProtectedMember
+from fastoad.cmd.api import _get_simple_system_list
 from fastoad.cmd.exceptions import FastPathExistsError
 from fastoad.io import IVariableIOFormatter, VariableIO
 from fastoad.io.xml import VariableXmlStandardFormatter
 from fastoad.openmdao.problem import AutoUnitsDefaultGroup
-
-# noinspection PyProtectedMember
-from fastoad.cmd.api import _get_simple_system_list
+from openmdao.core.explicitcomponent import ExplicitComponent
+from openmdao.core.group import Group
+from openmdao.core.implicitcomponent import ImplicitComponent
+from openmdao.core.indepvarcomp import IndepVarComp
+from openmdao.core.system import System
 
 from fastuav.utils.warnings import VariableDescriptionWarning
 

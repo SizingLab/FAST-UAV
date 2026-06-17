@@ -19,15 +19,15 @@ import fastoad.api as oad
 from openmdao.core.group import Group
 
 from ..constants import (
-    SUBMODEL_CD0_WING,
+    SUBMODEL_CD0,
     SUBMODEL_CD0_FUSELAGE,
     SUBMODEL_CD0_HT,
-    SUBMODEL_CD0_VT,
     # SUBMODEL_CD0_NACELLE,
     SUBMODEL_CD0_LANDING_GEAR,
     SUBMODEL_CD0_OTHER,
     SUBMODEL_CD0_SUM,
-    SUBMODEL_CD0,
+    SUBMODEL_CD0_VT,
+    SUBMODEL_CD0_WING,
 )
 
 

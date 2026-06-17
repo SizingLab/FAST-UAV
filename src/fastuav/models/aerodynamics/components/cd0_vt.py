@@ -12,8 +12,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np
 import fastoad.api as oad
+import numpy as np
 from openmdao.core.explicitcomponent import ExplicitComponent
 
 from ..constants import SUBMODEL_CD0_VT
@@ -76,7 +76,9 @@ class Cd0VerticalTail(ExplicitComponent):
         # wing_area = inputs["data:geometry:wing:area"]
         wing_area = inputs["data:geometry:wing:surface"]
         # thickness = inputs["data:geometry:vertical_tail:thickness_ratio"]
-        thickness = inputs["data:geometry:wing:tc"] # Assuming the same thickness ratio than the wing
+        thickness = inputs[
+            "data:geometry:wing:tc"
+        ]  # Assuming the same thickness ratio than the wing
         # x_t_max = inputs["data:geometry:vertical_tail:max_thickness:x_ratio"]
         x_t_max = inputs["data:geometry:tail:vertical:max_thickness:x_ratio"]
         if self.options["low_speed_aero"]:
@@ -123,7 +125,7 @@ class Cd0VerticalTail(ExplicitComponent):
         # wing_area = inputs["data:geometry:wing:area"]
         wing_area = inputs["data:geometry:wing:surface"]
         # thickness = inputs["data:geometry:vertical_tail:thickness_ratio"]
-        thickness = inputs["data:geometry:wing:tc"] 
+        thickness = inputs["data:geometry:wing:tc"]
         # x_t_max = inputs["data:geometry:vertical_tail:max_thickness:x_ratio"]
         x_t_max = inputs["data:geometry:tail:vertical:max_thickness:x_ratio"]
 
@@ -220,7 +222,7 @@ class Cd0VerticalTail(ExplicitComponent):
         if self.options["low_speed_aero"]:
             partials[
                 "data:aerodynamics:vertical_tail:low_speed:CD0",
-                "data:geometry:tail:vertical:tip:chord",#"data:geometry:vertical_tail:tip:chord",
+                "data:geometry:tail:vertical:tip:chord",  # "data:geometry:vertical_tail:tip:chord",
             ] = (
                 form_factor
                 * mach_correction
@@ -231,7 +233,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:low_speed:CD0",
-                "data:geometry:tail:vertical:root:chord",#"data:geometry:vertical_tail:root:chord"
+                "data:geometry:tail:vertical:root:chord",  # "data:geometry:vertical_tail:root:chord"
             ] = (
                 form_factor
                 * mach_correction
@@ -242,7 +244,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:low_speed:CD0",
-                "data:geometry:tail:vertical:sweep_25",#"data:geometry:vertical_tail:sweep_25"
+                "data:geometry:tail:vertical:sweep_25",  # "data:geometry:vertical_tail:sweep_25"
             ] = (
                 form_factor
                 * d_mach_correction_d_sweep
@@ -253,10 +255,12 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:cruise:CD0",
-                "data:geometry:tail:vertical:surface",#"data:geometry:vertical_tail:wet_area"
+                "data:geometry:tail:vertical:surface",  # "data:geometry:vertical_tail:wet_area"
             ] = form_factor * mach_correction * interference_factor * cf_vt * 1.05 * 2 / wing_area
             # partials["data:aerodynamics:vertical_tail:low_speed:CD0", "data:geometry:wing:area"] = (
-            partials["data:aerodynamics:vertical_tail:low_speed:CD0", "data:geometry:wing:surface"] = (
+            partials[
+                "data:aerodynamics:vertical_tail:low_speed:CD0", "data:geometry:wing:surface"
+            ] = (
                 -form_factor
                 * mach_correction
                 * interference_factor
@@ -266,7 +270,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:low_speed:CD0",
-                "data:geometry:wing:tc",#"data:geometry:vertical_tail:thickness_ratio"
+                "data:geometry:wing:tc",  # "data:geometry:vertical_tail:thickness_ratio"
             ] = (
                 d_ff_d_thickness
                 * mach_correction
@@ -277,7 +281,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:low_speed:CD0",
-                "data:geometry:tail:vertical:max_thickness:x_ratio",#"data:geometry:vertical_tail:max_thickness:x_ratio",
+                "data:geometry:tail:vertical:max_thickness:x_ratio",  # "data:geometry:vertical_tail:max_thickness:x_ratio",
             ] = (
                 d_ff_d_location
                 * mach_correction
@@ -311,7 +315,7 @@ class Cd0VerticalTail(ExplicitComponent):
         else:
             partials[
                 "data:aerodynamics:vertical_tail:cruise:CD0",
-                "data:geometry:tail:vertical:tip:chord",#"data:geometry:vertical_tail:tip:chord"
+                "data:geometry:tail:vertical:tip:chord",  # "data:geometry:vertical_tail:tip:chord"
             ] = (
                 form_factor
                 * mach_correction
@@ -322,7 +326,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:cruise:CD0",
-                "data:geometry:tail:vertical:root:chord",#"data:geometry:vertical_tail:root:chord",
+                "data:geometry:tail:vertical:root:chord",  # "data:geometry:vertical_tail:root:chord",
             ] = (
                 form_factor
                 * mach_correction
@@ -333,7 +337,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:cruise:CD0",
-                "data:geometry:tail:vertical:sweep_25",#"data:geometry:vertical_tail:sweep_25"
+                "data:geometry:tail:vertical:sweep_25",  # "data:geometry:vertical_tail:sweep_25"
             ] = (
                 form_factor
                 * d_mach_correction_d_sweep
@@ -344,7 +348,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:cruise:CD0",
-                "data:geometry:tail:vertical:surface",#"data:geometry:vertical_tail:wet_area"
+                "data:geometry:tail:vertical:surface",  # "data:geometry:vertical_tail:wet_area"
             ] = form_factor * mach_correction * interference_factor * cf_vt * 1.05 * 2 / wing_area
             # partials["data:aerodynamics:vertical_tail:cruise:CD0", "data:geometry:wing:area"] = (
             partials["data:aerodynamics:vertical_tail:cruise:CD0", "data:geometry:wing:surface"] = (
@@ -357,7 +361,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:cruise:CD0",
-                "data:geometry:wing:tc",#"data:geometry:vertical_tail:thickness_ratio"
+                "data:geometry:wing:tc",  # "data:geometry:vertical_tail:thickness_ratio"
             ] = (
                 d_ff_d_thickness
                 * mach_correction
@@ -368,7 +372,7 @@ class Cd0VerticalTail(ExplicitComponent):
             )
             partials[
                 "data:aerodynamics:vertical_tail:cruise:CD0",
-                "data:geometry:tail:vertical:max_thickness:x_ratio",#"data:geometry:vertical_tail:max_thickness:x_ratio",
+                "data:geometry:tail:vertical:max_thickness:x_ratio",  # "data:geometry:vertical_tail:max_thickness:x_ratio",
             ] = (
                 d_ff_d_location
                 * mach_correction

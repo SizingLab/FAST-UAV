@@ -19,9 +19,9 @@ import logging
 import numpy as np
 from openmdao.core.group import Group
 
-from .openvsp import OpenVSPSimpleGeometry, DEFAULT_WING_AIRFOIL, DEFAULT_HTP_AIRFOIL
+from .openvsp import DEFAULT_HTP_AIRFOIL, DEFAULT_WING_AIRFOIL, OpenVSPSimpleGeometry
 from ...components.compute_reynolds import ComputeUnitReynolds
-from ...constants import SPAN_MESH_POINT, MACH_NB_PTS, DEFAULT_INPUT_AOA
+from ...constants import DEFAULT_INPUT_AOA, MACH_NB_PTS, SPAN_MESH_POINT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -210,6 +210,4 @@ class _ComputeAeroOpenVSP(OpenVSPSimpleGeometry):
             outputs["data:aerodynamics:tail:horizontal:cruise:CL_alpha_isolated"] = (
                 cl_alpha_htp_isolated
             )
-            outputs["data:aerodynamics:tail:horizontal:cruise:CDi:k"] = (
-                coef_k_htp
-            )
+            outputs["data:aerodynamics:tail:horizontal:cruise:CDi:k"] = coef_k_htp

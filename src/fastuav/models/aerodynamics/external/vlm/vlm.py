@@ -24,9 +24,10 @@ import openmdao.api as om
 import pandas as pd
 from stdatm import Atmosphere
 
-from fastuav.models.geometry.profiles.get_profile import get_profile
 from fastuav.command.api import string_to_array
-from ...constants import SPAN_MESH_POINT, POLAR_POINT_COUNT, MACH_NB_PTS
+from fastuav.models.geometry.profiles.get_profile import get_profile
+
+from ...constants import MACH_NB_PTS, POLAR_POINT_COUNT, SPAN_MESH_POINT
 
 DEFAULT_NX = 19
 DEFAULT_NY1 = 3
@@ -219,7 +220,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         sref_wing = float(inputs["data:geometry:wing:surface"])
         # sref_htp = float(inputs["data:geometry:horizontal_tail:area"])
         sref_htp = float(inputs["data:geometry:tail:horizontal:surface"])
-        
+
         area_ratio = sref_htp / sref_wing
         sweep25_wing = float(inputs["data:geometry:wing:sweep_25"])
         taper_ratio_wing = float(inputs["optimization:variables:geometry:wing:lambda"])
@@ -230,7 +231,9 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         # aspect_ratio_htp = float(inputs["data:geometry:horizontal_tail:aspect_ratio"])
         aspect_ratio_htp = float(inputs["optimization:variables:geometry:tail:horizontal:AR"])
         # taper_ratio_htp = float(inputs["data:geometry:horizontal_tail:taper_ratio"])
-        taper_ratio_htp = float(inputs["data:geometry:tail:horizontal:lambda"]) # assume same profile as wing
+        taper_ratio_htp = float(
+            inputs["data:geometry:tail:horizontal:lambda"]
+        )  # assume same profile as wing
         dihedral_angle = float(inputs["data:geometry:wing:dihedral"])
         twist_angle = float(inputs["data:geometry:wing:twist"])
         geometry_set = np.around(
@@ -738,7 +741,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         """
 
         # y2_wing = inputs["data:geometry:wing:root:y"]
-        y2_wing= inputs["data:geometry:fuselage:diameter:mid"] / 2.0
+        y2_wing = inputs["data:geometry:fuselage:diameter:mid"] / 2.0
         semi_span = inputs["data:geometry:wing:span"] / 2.0
         root_chord = inputs["data:geometry:wing:root:chord"]
         tip_chord = inputs["data:geometry:wing:tip:chord"]
@@ -1188,13 +1191,13 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         y_vector_wing = wing_aoa["y_vector"]
         cl_vector_wing = (np.array(wing_aoa["cl_vector"]) * k_fus / beta).tolist()
         chord_vector_wing = wing_aoa["chord_vector"]
-        cdp_foil = self._interpolate_cdp(cl_wing_airfoil, cdp_wing_airfoil, cl_x_wing)
+        _cdp_foil = self._interpolate_cdp(cl_wing_airfoil, cdp_wing_airfoil, cl_x_wing)
         # Mach correction
         if mach <= 0.4:
             coef_e = wing_aoa["coef_e"]
         else:
             coef_e = wing_aoa["coef_e"] * (-0.001521 * ((mach - 0.05) / 0.3 - 1) ** 10.82 + 1)
-        cdi = cl_x_wing**2 / (np.pi * aspect_ratio_wing * coef_e) # + cdp_foil
+        cdi = cl_x_wing**2 / (np.pi * aspect_ratio_wing * coef_e)  # + cdp_foil
         coef_e = wing_aoa["cl"] ** 2 / (np.pi * aspect_ratio_wing * cdi)
         # Fuselage correction
         k_fus = 1 - 2 * (width_max / span_wing) ** 2

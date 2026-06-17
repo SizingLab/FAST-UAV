@@ -12,8 +12,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np
 import fastoad.api as oad
+import numpy as np
 from openmdao.core.explicitcomponent import ExplicitComponent
 
 from ..constants import SUBMODEL_CD0_LANDING_GEAR
@@ -50,7 +50,7 @@ class Cd0LandingGear(ExplicitComponent):
         self.declare_partials(
             "data:aerodynamics:landing_gear:cruise:CD0",
             # ["data:geometry:wing:area"], #"data:geometry:landing_gear:height",
-            ["data:geometry:wing:surface"], #"data:geometry:landing_gear:height", 
+            ["data:geometry:wing:surface"],  # "data:geometry:landing_gear:height",
             method="exact",
         )
 
@@ -58,7 +58,7 @@ class Cd0LandingGear(ExplicitComponent):
         # lg_type = inputs["data:geometry:landing_gear:type"]
         # lg_height = inputs["data:geometry:landing_gear:height"]
         # wing_area = inputs["data:geometry:wing:area"]
-        wing_area = inputs["data:geometry:wing:surface"]
+        _wing_area = inputs["data:geometry:wing:surface"]
         # if lg_type == 0.0:  # non-retractable LG AC (ref: Cirrus SR22)
         #     # Gudmundsson example 15.12 (page 721)
         #     area_mlg = 15 * 6 * 0.0254**2  # Frontal area of wheel (data in inches)
@@ -149,5 +149,5 @@ class Cd0LandingGear(ExplicitComponent):
         #         ] = 0.0
         partials[
             "data:aerodynamics:landing_gear:cruise:CD0",
-            "data:geometry:wing:surface", #"data:geometry:wing:area",
+            "data:geometry:wing:surface",  # "data:geometry:wing:area",
         ] = 0.0

@@ -12,8 +12,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np
 import fastoad.api as oad
+import numpy as np
 from openmdao.core.explicitcomponent import ExplicitComponent
 
 from ..constants import SUBMODEL_MAX_L_D

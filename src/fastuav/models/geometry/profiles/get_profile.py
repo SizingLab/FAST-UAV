@@ -22,6 +22,7 @@ import numpy as np
 import pandas as pd
 
 from fastuav.models.aerodynamics import airfoil_folder
+
 from .profile import Profile
 
 _LOGGER = logging.getLogger(__name__)

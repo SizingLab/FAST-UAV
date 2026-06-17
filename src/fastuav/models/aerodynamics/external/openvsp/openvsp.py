@@ -15,16 +15,14 @@
 import os
 import os.path as pth
 import warnings
+from distutils.dir_util import copy_tree
 from importlib.resources import path
 
 import numpy as np
 import pandas as pd
 
-from distutils.dir_util import copy_tree
-
 # noinspection PyProtectedMember
 from fastoad._utils.resource_management.copy import copy_resource
-
 from openmdao.components.external_code_comp import ExternalCodeComp
 from openmdao.utils.file_wrap import InputFileGenerator
 from stdatm import Atmosphere
@@ -32,10 +30,11 @@ from stdatm import Atmosphere
 # noinspection PyProtectedMember
 from fastuav.command.api import _create_tmp_directory, string_to_array
 from fastuav.utils.resource_management.copy import copy_resource_from_path
+
 from . import openvsp3201
 from . import resources as local_resources
 from ... import airfoil_folder
-from ...constants import SPAN_MESH_POINT, MACH_NB_PTS
+from ...constants import MACH_NB_PTS, SPAN_MESH_POINT
 
 DEFAULT_WING_AIRFOIL = "naca23012.af"
 DEFAULT_HTP_AIRFOIL = "naca0012.af"
@@ -97,7 +96,6 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
         self.add_input("data:geometry:tail:horizontal:sweep_25", val=np.nan, units="deg")
         # self.add_input("data:geometry:horizontal_tail:taper_ratio", val=np.nan)
         self.add_input("data:geometry:tail:horizontal:lambda", val=0.9, units=None)
-
 
         # self.add_input("data:geometry:horizontal_tail:aspect_ratio", val=np.nan)
         self.add_input("optimization:variables:geometry:tail:horizontal:AR", val=np.nan)
@@ -356,7 +354,7 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
             # inputs["data:geometry:horizontal_tail:span"] / 2.0
             inputs["data:geometry:tail:horizontal:span"] / 2.0
         )  # TODO: full span? half span for htp?
-        
+
         # root_chord_htp = inputs["data:geometry:horizontal_tail:root:chord"]
         root_chord_htp = inputs["data:geometry:tail:horizontal:root:chord"]
         # tip_chord_htp = inputs["data:geometry:horizontal_tail:tip:chord"]
@@ -1268,7 +1266,7 @@ class OpenVSPSimpleGeometryDP(OpenVSPSimpleGeometry):
         width_max = inputs["data:geometry:fuselage:diameter:mid"]
         y1_wing = width_max / 2.0
         # y2_wing = inputs["data:geometry:wing:root:y"]
-        y2_wing= inputs["data:geometry:fuselage:diameter:mid"] / 2.0
+        y2_wing = inputs["data:geometry:fuselage:diameter:mid"] / 2.0
         l2_wing = inputs["data:geometry:wing:root:chord"]
         y4_wing = inputs["data:geometry:wing:tip:y"]
         l4_wing = inputs["data:geometry:wing:tip:chord"]

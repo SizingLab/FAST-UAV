@@ -12,8 +12,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np
 import fastoad.api as oad
+import numpy as np
 from openmdao.core.explicitcomponent import ExplicitComponent
 
 from ..constants import SUBMODEL_CD0_SUM
@@ -87,7 +87,7 @@ class Cd0Total(ExplicitComponent):
         # CRUD (other undesirable drag). Factor from Gudmundsson book
         crud_factor = inputs["settings:aerodynamics:aircraft:undesirable_drag:k_factor"]
 
-        cd0 = crud_factor * (cd0_wing + cd0_fus + cd0_ht + cd0_vt + cd0_lg  + cd0_other) # + cd0_nac
+        cd0 = crud_factor * (cd0_wing + cd0_fus + cd0_ht + cd0_vt + cd0_lg + cd0_other)  # + cd0_nac
 
         if self.options["low_speed_aero"]:
             outputs["data:aerodynamics:aircraft:low_speed:CD0"] = cd0
@@ -134,7 +134,7 @@ class Cd0Total(ExplicitComponent):
             partials[
                 "data:aerodynamics:aircraft:low_speed:CD0",
                 "settings:aerodynamics:aircraft:undesirable_drag:k_factor",
-            ] = cd0_wing + cd0_fus + cd0_ht + cd0_vt + cd0_lg  + cd0_other #+ cd0_nac
+            ] = cd0_wing + cd0_fus + cd0_ht + cd0_vt + cd0_lg + cd0_other  # + cd0_nac
         else:
             cd0_wing = inputs["data:aerodynamics:wing:cruise:CD0"]
             cd0_fus = inputs["data:aerodynamics:fuselage:cruise:CD0"]
@@ -152,7 +152,7 @@ class Cd0Total(ExplicitComponent):
             ] = crud_factor
             partials[
                 "data:aerodynamics:aircraft:cruise:CD0",
-                "data:aerodynamics:tail:horizontal:cruise:CD0",#"data:aerodynamics:horizontal_tail:cruise:CD0",
+                "data:aerodynamics:tail:horizontal:cruise:CD0",  # "data:aerodynamics:horizontal_tail:cruise:CD0",
             ] = crud_factor
             partials[
                 "data:aerodynamics:aircraft:cruise:CD0",
@@ -170,4 +170,4 @@ class Cd0Total(ExplicitComponent):
             partials[
                 "data:aerodynamics:aircraft:cruise:CD0",
                 "settings:aerodynamics:aircraft:undesirable_drag:k_factor",
-            ] = cd0_wing + cd0_fus + cd0_ht + cd0_vt + cd0_lg  + cd0_other #+ cd0_nac
+            ] = cd0_wing + cd0_fus + cd0_ht + cd0_vt + cd0_lg + cd0_other  # + cd0_nac

@@ -50,12 +50,12 @@ with::
 import os
 import os.path as pth
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
-import yaml
 import numpy as np
-import pandas as pd
 import openmdao.api as om
+import pandas as pd
+import yaml
 
 # OpenMDAO renamed the recorder base class across versions:
 #   ≤ 3.27:  openmdao.recorders.base_recorder.BaseRecorder
@@ -77,9 +77,7 @@ if _RecorderBase is None:
     # Last resort: fall back to SqliteRecorder's parent (whatever it is)
     _RecorderBase = om.SqliteRecorder.__bases__[0]
 
-import fastoad.api as oad
-from fastoad.io.configuration import FASTOADProblemConfigurator
-
+from fastoad.io.configuration import FASTOADProblemConfigurator  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Custom recorder: writes the FAST-OAD output XML after every driver iteration
@@ -122,8 +120,7 @@ class _SnapshotXmlRecorder(_RecorderBase):
        ``request_stop()`` from a separate cell.
     """
 
-    def __init__(self, problem, output_path, stop_file=_STOP_FILE_DEFAULT,
-                 verbose=True):
+    def __init__(self, problem, output_path, stop_file=_STOP_FILE_DEFAULT, verbose=True):
         super().__init__()
         self._problem = problem
         self._output_path = output_path
@@ -143,12 +140,10 @@ class _SnapshotXmlRecorder(_RecorderBase):
         try:
             self._problem.write_outputs()
             if self._verbose and (self._iter_count == 1 or self._iter_count % 10 == 0):
-                print(f"[snapshot] iter {self._iter_count}: "
-                      f"wrote {self._output_path}")
+                print(f"[snapshot] iter {self._iter_count}: wrote {self._output_path}")
         except Exception as exc:
             if self._verbose and self._iter_count <= 3:
-                print(f"[snapshot] iter {self._iter_count}: "
-                      f"write_outputs failed: {exc!r}")
+                print(f"[snapshot] iter {self._iter_count}: write_outputs failed: {exc!r}")
 
         # 2. Check for stop file
         if pth.isfile(self._stop_file):
@@ -157,8 +152,10 @@ class _SnapshotXmlRecorder(_RecorderBase):
             except OSError:
                 pass
             if self._verbose:
-                print(f"\n[snapshot] iter {self._iter_count}: "
-                      f"STOP file detected — halting optimisation")
+                print(
+                    f"\n[snapshot] iter {self._iter_count}: "
+                    f"STOP file detected — halting optimisation"
+                )
                 print(f"[snapshot]   XML saved to: {self._output_path}")
             raise KeyboardInterrupt(
                 f"Stop requested via {self._stop_file} at iteration {self._iter_count}"
@@ -181,8 +178,7 @@ class _SnapshotXmlRecorder(_RecorderBase):
 
     def shutdown(self):
         if self._verbose:
-            print(f"[snapshot] {self._iter_count} XML snapshots written "
-                  f"to {self._output_path}")
+            print(f"[snapshot] {self._iter_count} XML snapshots written to {self._output_path}")
         super().shutdown()
 
 
@@ -207,9 +203,7 @@ def parse_optim_vars(
     Robust to missing keys: if a section is absent, returns an empty list.
     """
     if not pth.isfile(configuration_file):
-        raise FileNotFoundError(
-            f"YAML configuration not found: {configuration_file}"
-        )
+        raise FileNotFoundError(f"YAML configuration not found: {configuration_file}")
 
     with open(configuration_file) as f:
         cfg = yaml.safe_load(f) or {}
@@ -307,8 +301,10 @@ def optimize_problem_with_logging(
     # ---- 1. Read variable names from YAML ----
     dv_names, cn_names, obj_names = _parse_optim_vars(configuration_file)
     if verbose:
-        print(f"[logger] {len(dv_names)} design vars, "
-              f"{len(cn_names)} constraints, {len(obj_names)} objectives")
+        print(
+            f"[logger] {len(dv_names)} design vars, "
+            f"{len(cn_names)} constraints, {len(obj_names)} objectives"
+        )
 
     # Ensure log folder exists
     log_dir = pth.dirname(pth.abspath(log_path))
@@ -332,9 +328,7 @@ def optimize_problem_with_logging(
     # Handle overwrite the same way oad.optimize_problem does
     outputs_path = pth.abspath(problem.output_file_path)
     if (not overwrite) and pth.exists(outputs_path):
-        raise FileExistsError(
-            f"Output file {outputs_path} exists. Use overwrite=True to bypass."
-        )
+        raise FileExistsError(f"Output file {outputs_path} exists. Use overwrite=True to bypass.")
 
     # ---- 3. Attach the recorder BEFORE setup() ----
     # CRITICAL: recording options must be set before setup() finalises the
@@ -361,15 +355,16 @@ def optimize_problem_with_logging(
     # ---- 3b. Attach the snapshot recorder (writes XML after each iter) ----
     # Attached BEFORE setup so OpenMDAO initialises it properly.
     if write_xml_every_iter:
-        snapshot = _SnapshotXmlRecorder(
-            problem, outputs_path, stop_file=stop_path, verbose=verbose)
+        snapshot = _SnapshotXmlRecorder(problem, outputs_path, stop_file=stop_path, verbose=verbose)
         problem.driver.add_recorder(snapshot)
 
     problem.setup()
 
     if write_xml_every_iter and verbose:
-        print(f"[logger] XML snapshot enabled — {outputs_path} "
-              f"will be overwritten after every iteration")
+        print(
+            f"[logger] XML snapshot enabled — {outputs_path} "
+            f"will be overwritten after every iteration"
+        )
 
     # ---- 4. Run ----
     if verbose:
@@ -386,8 +381,8 @@ def optimize_problem_with_logging(
         was_interrupted = True
         problem.optim_failed = True
         if verbose:
-            print(f"\n[logger] *** Interrupted by user (Ctrl+C) ***")
-            print(f"[logger]   Saving last state to XML and CSV...")
+            print("\n[logger] *** Interrupted by user (Ctrl+C) ***")
+            print("[logger]   Saving last state to XML and CSV...")
     except Exception as exc:
         if verbose:
             print(f"[logger] run_driver raised: {exc!r}")
@@ -395,8 +390,7 @@ def optimize_problem_with_logging(
         # Continue to export whatever was recorded before the crash
     elapsed = round(time.time() - start, 2)
     if verbose:
-        status = "INTERRUPTED" if was_interrupted else (
-            "FAILED" if problem.optim_failed else "OK")
+        status = "INTERRUPTED" if was_interrupted else ("FAILED" if problem.optim_failed else "OK")
         print(f"[logger] Driver finished in {elapsed}s — status: {status}")
 
     # Write FAST-OAD outputs file BEFORE cleanup (cleanup may tear down
@@ -409,15 +403,15 @@ def optimize_problem_with_logging(
         # Always print this — if it fails silently the user gets no output XML
         print(f"[logger] WARNING: write_outputs() failed: {exc!r}")
         print(f"[logger]   Expected output path: {outputs_path}")
-        print(f"[logger]   Trying fallback via oad.generate_inputs/problem API...")
+        print("[logger]   Trying fallback via oad.generate_inputs/problem API...")
         # Fallback: manually write using FAST-OAD's variable I/O
         try:
             from fastoad.io import VariableIO
+
             writer = VariableIO(outputs_path)
-            variables = problem.model.get_io_metadata(
-                iotypes=("output",), return_rel_names=False
-            )
+            variables = problem.model.get_io_metadata(iotypes=("output",), return_rel_names=False)
             from fastoad.openmdao.variables import VariableList
+
             var_list = VariableList()
             for abs_name, meta in variables.items():
                 try:
@@ -431,8 +425,8 @@ def optimize_problem_with_logging(
             print(f"[logger] Fallback write succeeded: {outputs_path}")
         except Exception as exc2:
             print(f"[logger] Fallback also failed: {exc2!r}")
-            print(f"[logger]   No output XML was saved. You may need to re-run")
-            print(f"[logger]   with standard oad.optimize_problem() to get outputs.")
+            print("[logger]   No output XML was saved. You may need to re-run")
+            print("[logger]   with standard oad.optimize_problem() to get outputs.")
 
     # Now safe to flush the recorder
     try:
@@ -570,18 +564,21 @@ def sql_to_csv_from_yaml(
 
     # Report which YAML-declared variables had no SQL data
     if verbose and not df.empty:
-        all_yaml = [
-            (_short_name(n), n) for n in dv_names
-        ] + [
-            (_short_name(n, "c:"), n) for n in cn_names
-        ] + [
-            (_short_name(n, "obj:"), n) for n in obj_names
+        all_yaml = (
+            [(_short_name(n), n) for n in dv_names]
+            + [(_short_name(n, "c:"), n) for n in cn_names]
+            + [(_short_name(n, "obj:"), n) for n in obj_names]
+        )
+        missing = [
+            (short, full)
+            for short, full in all_yaml
+            if short in df.columns and df[short].isna().all()
         ]
-        missing = [(short, full) for short, full in all_yaml
-                   if short in df.columns and df[short].isna().all()]
         if missing:
-            print(f"[reextract] {len(missing)} variable(s) in YAML are entirely "
-                  f"missing or NaN in the SQL (likely renamed or removed):")
+            print(
+                f"[reextract] {len(missing)} variable(s) in YAML are entirely "
+                f"missing or NaN in the SQL (likely renamed or removed):"
+            )
             for short, full in missing:
                 print(f"            {short}    (full name: {full})")
 
@@ -724,13 +721,15 @@ def best_iteration(
         # Objective (smaller is better, by FAST-OAD convention)
         objs = case.get_objectives()
         obj = float(np.asarray(list(objs.values())[0]).ravel()[0]) if objs else np.nan
-        summary.append({
-            "iter": i,
-            "n_violated": n_violated,
-            "sum_violation": total,
-            "worst": worst,
-            "objective": obj,
-        })
+        summary.append(
+            {
+                "iter": i,
+                "n_violated": n_violated,
+                "sum_violation": total,
+                "worst": worst,
+                "objective": obj,
+            }
+        )
 
     # Pick the best
     if metric not in ("n_violated", "sum_violation", "worst"):
@@ -742,12 +741,10 @@ def best_iteration(
 
     # Extract DV values at the best iteration
     best_dvs = {
-        name: float(np.asarray(v).ravel()[0])
-        for name, v in best_case.get_design_vars().items()
+        name: float(np.asarray(v).ravel()[0]) for name, v in best_case.get_design_vars().items()
     }
     best_constraints = {
-        name: float(np.asarray(v).ravel()[0])
-        for name, v in best_case.get_constraints().items()
+        name: float(np.asarray(v).ravel()[0]) for name, v in best_case.get_constraints().items()
     }
 
     if verbose:
@@ -762,8 +759,10 @@ def best_iteration(
         print(f"  {'iter':>4} {'#viol':>6} {'sum':>10} {'worst':>10} {'obj':>10}")
         for r in summary:
             mark = "  ★" if r["iter"] == best_idx else ""
-            print(f"  {r['iter']:>4} {r['n_violated']:>6d} {r['sum_violation']:>10.4f} "
-                  f"{r['worst']:>10.4f} {r['objective']:>10.4g}{mark}")
+            print(
+                f"  {r['iter']:>4} {r['n_violated']:>6d} {r['sum_violation']:>10.4f} "
+                f"{r['worst']:>10.4f} {r['objective']:>10.4g}{mark}"
+            )
         print()
         print("Violated constraints at this iteration:")
         for n, v in sorted(best_constraints.items(), key=lambda kv: kv[1]):
@@ -817,15 +816,10 @@ def export_iteration_as_inputs(
     if iteration == -1:
         iteration = len(case_ids) - 1
     if iteration < 0 or iteration >= len(case_ids):
-        raise IndexError(
-            f"Iteration {iteration} out of range [0, {len(case_ids) - 1}]"
-        )
+        raise IndexError(f"Iteration {iteration} out of range [0, {len(case_ids) - 1}]")
 
     case = cr.get_case(case_ids[iteration])
-    dvs = {
-        name: float(np.asarray(v).ravel()[0])
-        for name, v in case.get_design_vars().items()
-    }
+    dvs = {name: float(np.asarray(v).ravel()[0]) for name, v in case.get_design_vars().items()}
 
     tree = ET.parse(template_inputs_xml)
     root = tree.getroot()
@@ -860,8 +854,7 @@ def export_iteration_as_inputs(
             short = ":".join(n.split(":")[-3:])
             print(f"           {short:<50} = {v:.5g}")
         if missing:
-            print(f"[export]   {len(missing)} DV(s) not found in XML "
-                  "(probably need to be added):")
+            print(f"[export]   {len(missing)} DV(s) not found in XML (probably need to be added):")
             for n in missing:
                 print(f"           {n}")
 
@@ -1020,20 +1013,27 @@ def plot_iteration_log_interactive(
         )
 
     fig = make_subplots(
-        rows=n_plots, cols=1, shared_xaxes=True,
-        subplot_titles=subplot_titles, vertical_spacing=0.08,
+        rows=n_plots,
+        cols=1,
+        shared_xaxes=True,
+        subplot_titles=subplot_titles,
+        vertical_spacing=0.08,
     )
 
     # ----- Objective -----
     for col in obj_cols:
         fig.add_trace(
             go.Scatter(
-                x=iters, y=df[col], mode="lines+markers",
-                name=col, legendgroup="obj",
+                x=iters,
+                y=df[col],
+                mode="lines+markers",
+                name=col,
+                legendgroup="obj",
                 legendgrouptitle_text="Objective",
                 marker=dict(size=6),
             ),
-            row=1, col=1,
+            row=1,
+            col=1,
         )
 
     # ----- Design variables (normalised) -----
@@ -1048,13 +1048,19 @@ def plot_iteration_log_interactive(
         hover = [f"{col}<br>iter {i}: {v:.5g}" for i, v in zip(iters, vals)]
         fig.add_trace(
             go.Scatter(
-                x=iters, y=normed, mode="lines+markers",
-                name=col, legendgroup="dv",
+                x=iters,
+                y=normed,
+                mode="lines+markers",
+                name=col,
+                legendgroup="dv",
                 legendgrouptitle_text="Design variables",
-                hovertext=hover, hoverinfo="text",
-                marker=dict(size=4), line=dict(width=1.5),
+                hovertext=hover,
+                hoverinfo="text",
+                marker=dict(size=4),
+                line=dict(width=1.5),
             ),
-            row=2, col=1,
+            row=2,
+            col=1,
         )
 
     # ----- Constraints -----
@@ -1067,27 +1073,38 @@ def plot_iteration_log_interactive(
                 vals_clipped = vals
             hover = [f"{col}<br>iter {i}: {v:+.5g}" for i, v in zip(iters, vals)]
             # Color final-iteration violators in red, others in default
-            final_val = vals.iloc[-1]
+            _final_val = vals.iloc[-1]
             line_dash = "solid"
             fig.add_trace(
                 go.Scatter(
-                    x=iters, y=vals_clipped, mode="lines+markers",
-                    name=col, legendgroup="cn",
+                    x=iters,
+                    y=vals_clipped,
+                    mode="lines+markers",
+                    name=col,
+                    legendgroup="cn",
                     legendgrouptitle_text="Constraints (need ≥ 0)",
-                    hovertext=hover, hoverinfo="text",
-                    marker=dict(size=4), line=dict(width=1.5, dash=line_dash),
+                    hovertext=hover,
+                    hoverinfo="text",
+                    marker=dict(size=4),
+                    line=dict(width=1.5, dash=line_dash),
                 ),
-                row=n_plots, col=1,
+                row=n_plots,
+                col=1,
             )
 
         # Reference line at zero
-        fig.add_hline(y=0, line=dict(color="black", width=1, dash="dash"),
-                       row=n_plots, col=1)
+        fig.add_hline(y=0, line=dict(color="black", width=1, dash="dash"), row=n_plots, col=1)
         # Shade the infeasible region
         if clip_constraints is not None:
-            fig.add_hrect(y0=-clip_constraints, y1=0,
-                          fillcolor="red", opacity=0.05, line_width=0,
-                          row=n_plots, col=1)
+            fig.add_hrect(
+                y0=-clip_constraints,
+                y1=0,
+                fillcolor="red",
+                opacity=0.05,
+                line_width=0,
+                row=n_plots,
+                col=1,
+            )
 
     # Layout
     fig.update_layout(
@@ -1113,14 +1130,15 @@ def plot_iteration_log_interactive(
     return fig
 
 
-
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     import sys
+
     if len(sys.argv) >= 3 and sys.argv[1] == "plot":
         import matplotlib.pyplot as plt
+
         fig = plot_iteration_log(sys.argv[2])
         plt.show()
     elif len(sys.argv) >= 3 and sys.argv[1] == "iplot":

@@ -21,9 +21,9 @@ from openmdao.core.explicitcomponent import ExplicitComponent
 from openmdao.core.group import Group
 
 from .vlm import VLMSimpleGeometry
-from ..xfoil.xfoil_polar import XfoilPolar
 from ..neuralfoil.neuralfoil_polar import NeuralfoilPolar
-from ...constants import SPAN_MESH_POINT, MACH_NB_PTS, DEFAULT_INPUT_AOA
+from ..xfoil.xfoil_polar import XfoilPolar
+from ...constants import DEFAULT_INPUT_AOA, SPAN_MESH_POINT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class ComputeAeroVLM(Group):
     def initialize(self):
         self.options.declare("low_speed_aero", default=False, types=bool)
         self.options.declare("result_folder_path", default="", types=str)
-        #self.options.declare("compute_mach_interpolation", default=False, types=bool)
+        # self.options.declare("compute_mach_interpolation", default=False, types=bool)
         self.options.declare("airfoil_folder_path", default=None, types=str, allow_none=True)
         self.options.declare(
             "wing_airfoil_file", default=DEFAULT_WING_AIRFOIL, types=str, allow_none=True
@@ -48,6 +48,7 @@ class ComputeAeroVLM(Group):
 
     def setup(self):
         from ...components.compute_reynolds import ComputeUnitReynolds
+
         self.add_subsystem(
             "comp_unit_reynolds",
             ComputeUnitReynolds(low_speed_aero=self.options["low_speed_aero"]),
@@ -108,7 +109,7 @@ class ComputeAeroVLM(Group):
             _ComputeAeroVLM(
                 low_speed_aero=self.options["low_speed_aero"],
                 result_folder_path=self.options["result_folder_path"],
-                #compute_mach_interpolation=self.options["compute_mach_interpolation"],
+                # compute_mach_interpolation=self.options["compute_mach_interpolation"],
                 airfoil_folder_path=self.options["airfoil_folder_path"],
                 wing_airfoil_file=self.options["wing_airfoil_file"],
                 htp_airfoil_file=self.options["htp_airfoil_file"],
@@ -191,7 +192,9 @@ class ComputeLocalReynolds(ExplicitComponent):
             )
             outputs["data:aerodynamics:horizontal_tail:low_speed:reynolds"] = (
                 inputs["data:aerodynamics:low_speed:unit_reynolds"]
-                * inputs["data:geometry:tail:horizontal:MAC:length"]#* inputs["data:geometry:horizontal_tail:MAC:length"]
+                * inputs[
+                    "data:geometry:tail:horizontal:MAC:length"
+                ]  # * inputs["data:geometry:horizontal_tail:MAC:length"]
             )
         else:
             outputs["data:aerodynamics:wing:cruise:reynolds"] = (
@@ -200,9 +203,11 @@ class ComputeLocalReynolds(ExplicitComponent):
             )
             outputs["data:aerodynamics:horizontal_tail:cruise:reynolds"] = (
                 inputs["data:aerodynamics:cruise:unit_reynolds"]
-                * inputs["data:geometry:tail:horizontal:MAC:length"]#* inputs["data:geometry:horizontal_tail:MAC:length"]
+                * inputs[
+                    "data:geometry:tail:horizontal:MAC:length"
+                ]  # * inputs["data:geometry:horizontal_tail:MAC:length"]
             )
-    
+
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         if self.options["low_speed_aero"]:
             Re_unit = inputs["data:aerodynamics:low_speed:unit_reynolds"]
@@ -243,7 +248,7 @@ class _ComputeAeroVLM(VLMSimpleGeometry):
     def initialize(self):
         super().initialize()
         self.options.declare("result_folder_path", default="", types=str)
-        #self.options.declare("compute_mach_interpolation", default=False, types=bool)
+        # self.options.declare("compute_mach_interpolation", default=False, types=bool)
         self.options.declare("input_angle_of_attack", default=DEFAULT_INPUT_AOA, types=float)
 
     def setup(self):

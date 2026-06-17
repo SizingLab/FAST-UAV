@@ -17,13 +17,13 @@ Estimation of the slope of the airfoil of the lifting surface using the results 
 
 import logging
 
+import fastoad.api as oad
 import numpy as np
 import openmdao.api as om
-import fastoad.api as oad
 
 from ..constants import POLAR_POINT_COUNT, SUBMODEL_AIRFOIL_LIFT_SLOPE
-from ..external.xfoil.xfoil_polar import XfoilPolar
 from ..external.neuralfoil.neuralfoil_polar import NeuralfoilPolar
+from ..external.xfoil.xfoil_polar import XfoilPolar
 
 ALPHA_START_LINEAR = np.deg2rad(-5.0)
 ALPHA_END_LINEAR = np.deg2rad(10.0)
@@ -56,9 +56,9 @@ class ComputeAirfoilLiftCurveSlope(om.Group):
                 "data:aerodynamics:low_speed:mach",
                 "data:aerodynamics:low_speed:unit_reynolds",
                 "data:geometry:wing:MAC:length",
-                "data:geometry:tail:horizontal:MAC:length", #"data:geometry:horizontal_tail:MAC:length"
+                "data:geometry:tail:horizontal:MAC:length",  # "data:geometry:horizontal_tail:MAC:length"
                 "data:aerodynamics:horizontal_tail:efficiency",
-                "data:geometry:tail:vertical:MAC:length",#"data:geometry:vertical_tail:MAC:length"
+                "data:geometry:tail:vertical:MAC:length",  # "data:geometry:vertical_tail:MAC:length"
                 "data:aerodynamics:wing:MAC:low_speed:reynolds",
                 "data:aerodynamics:horizontal_tail:MAC:low_speed:reynolds",
                 "data:aerodynamics:vertical_tail:MAC:low_speed:reynolds",
@@ -156,12 +156,16 @@ class ComputeLocalReynolds(om.ExplicitComponent):
         )
         outputs["data:aerodynamics:horizontal_tail:MAC:low_speed:reynolds"] = (
             inputs["data:aerodynamics:low_speed:unit_reynolds"]
-            * inputs["data:geometry:tail:horizontal:MAC:length"]#inputs["data:geometry:horizontal_tail:MAC:length"]
+            * inputs[
+                "data:geometry:tail:horizontal:MAC:length"
+            ]  # inputs["data:geometry:horizontal_tail:MAC:length"]
             * np.sqrt(inputs["data:aerodynamics:horizontal_tail:efficiency"])
         )
         outputs["data:aerodynamics:vertical_tail:MAC:low_speed:reynolds"] = (
             inputs["data:aerodynamics:low_speed:unit_reynolds"]
-            * inputs["data:geometry:tail:vertical:MAC:length"]#* inputs["data:geometry:vertical_tail:MAC:length"]
+            * inputs[
+                "data:geometry:tail:vertical:MAC:length"
+            ]  # * inputs["data:geometry:vertical_tail:MAC:length"]
             * np.sqrt(inputs["data:aerodynamics:horizontal_tail:efficiency"])
         )
         outputs["mach"] = inputs["data:aerodynamics:low_speed:mach"]

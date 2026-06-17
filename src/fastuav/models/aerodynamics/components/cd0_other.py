@@ -12,8 +12,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np
 import fastoad.api as oad
+import numpy as np
 from openmdao.core.explicitcomponent import ExplicitComponent
 
 from ..constants import SUBMODEL_CD0_OTHER
@@ -66,13 +66,13 @@ class Cd0Other(ExplicitComponent):
 
         # COWLING (only if engine in fuselage): cx_cowl*wing_area assumed typical (Gudmundsson p739)
         if prop_layout == 3.0:
-            cd0_cowling = 0.002*wing_area#0.0267 / wing_area 
+            cd0_cowling = 0.002 * wing_area  # 0.0267 / wing_area
         else:
             cd0_cowling = 0.0
         # Cooling (piston engine only)
         # Gudmundsson p739. Sum of other components (not calculated here), cx_other*wing_area
         # assumed typical
-        cd0_components =  0.002*wing_area#0.0253 / wing_area
+        cd0_components = 0.002 * wing_area  # 0.0253 / wing_area
 
         if self.options["low_speed_aero"]:
             # FIXME: should come from propulsion model...

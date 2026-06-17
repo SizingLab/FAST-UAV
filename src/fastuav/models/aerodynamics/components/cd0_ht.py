@@ -12,11 +12,12 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import numpy as np
 import fastoad.api as oad
+import numpy as np
 from openmdao.core.explicitcomponent import ExplicitComponent
 
 from fastuav.models.geometry.profiles.get_profile import get_profile
+
 from ..constants import SUBMODEL_CD0_HT
 
 
@@ -75,7 +76,9 @@ class Cd0HorizontalTail(ExplicitComponent):
         # wing_area = inputs["data:geometry:wing:area"]
         wing_area = inputs["data:geometry:wing:surface"]
         # thickness = inputs["data:geometry:horizontal_tail:thickness_ratio"]
-        thickness = inputs["data:geometry:wing:tc"] # Assuming the same thickness ratio than the wing
+        thickness = inputs[
+            "data:geometry:wing:tc"
+        ]  # Assuming the same thickness ratio than the wing
 
         if self.options["low_speed_aero"]:
             mach = inputs["data:aerodynamics:low_speed:mach"]
@@ -89,8 +92,6 @@ class Cd0HorizontalTail(ExplicitComponent):
             airfoil_folder_path=self.options["airfoil_folder_path"],
             file_name=self.options["htp_airfoil_file"],
         )
-
-
 
         relative_thickness = profile.get_relative_thickness()
         index = int(
@@ -117,7 +118,7 @@ class Cd0HorizontalTail(ExplicitComponent):
             )
         interference_factor = 1.05
         wet_area_ht = (2.0 - 0.4 * has_T_tail) * 1.05 * ht_area
-        cd0 = form_factor * interference_factor * cf_ht * wet_area_ht / wing_area 
+        cd0 = form_factor * interference_factor * cf_ht * wet_area_ht / wing_area
 
         if self.options["low_speed_aero"]:
             outputs["data:aerodynamics:horizontal_tail:low_speed:CD0"] = cd0

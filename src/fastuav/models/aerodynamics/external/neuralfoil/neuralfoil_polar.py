@@ -15,26 +15,27 @@ Computation of the airfoil aerodynamic properties using Neuralfoil from :cite:`n
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-import numpy as np
-import neuralfoil as nf
-from typing import Tuple
-import tempfile
 import os
-
-import openmdao.api as om
+import tempfile
 from pathlib import Path
+from typing import Tuple
+
+import neuralfoil as nf
+import numpy as np
+import openmdao.api as om
+
 from fastuav.models.aerodynamics import airfoil_folder
+
 from ...constants import (
-    POLAR_POINT_COUNT,
-    OPTION_ALPHA_START,
-    OPTION_ALPHA_END,
-    OPTION_COMP_NEG_AIR_SYM,
-    _DEFAULT_AIRFOIL_FILE,
     ALPHA_STEP,
     DEFAULT_2D_CL_MAX,
     DEFAULT_2D_CL_MIN,
+    OPTION_ALPHA_END,
+    OPTION_ALPHA_START,
+    OPTION_COMP_NEG_AIR_SYM,
+    POLAR_POINT_COUNT,
+    _DEFAULT_AIRFOIL_FILE,
 )
-
 
 _LOGGER = logging.getLogger(__name__)
 

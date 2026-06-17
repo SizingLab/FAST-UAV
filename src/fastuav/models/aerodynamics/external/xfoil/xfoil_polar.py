@@ -34,16 +34,17 @@ from openmdao.utils.file_wrap import InputFileGenerator
 from fastuav.command.api import string_to_array
 from fastuav.models.aerodynamics.external.xfoil import xfoil699
 from fastuav.models.geometry.profiles.get_profile import get_profile
+
 from . import resources as local_resources
 from ...constants import (
-    POLAR_POINT_COUNT,
-    OPTION_ALPHA_START,
-    OPTION_ALPHA_END,
-    OPTION_COMP_NEG_AIR_SYM,
-    _DEFAULT_AIRFOIL_FILE,
     ALPHA_STEP,
     DEFAULT_2D_CL_MAX,
     DEFAULT_2D_CL_MIN,
+    OPTION_ALPHA_END,
+    OPTION_ALPHA_START,
+    OPTION_COMP_NEG_AIR_SYM,
+    POLAR_POINT_COUNT,
+    _DEFAULT_AIRFOIL_FILE,
 )
 
 OPTION_RESULT_POLAR_FILENAME = "result_polar_filename"
@@ -579,8 +580,10 @@ class XfoilPolar(ExternalCodeComp):
             if saved_mach_list[index] not in near_mach:
                 near_mach.append(saved_mach_list[index])
                 distance_to_mach.append(abs(saved_mach_list[index] - mach))
-        if not near_mach: 
-            index_mach = np.where(data_saved.loc["mach", :].to_numpy() == str(mach))[0] # TODO: I would change it to = []
+        if not near_mach:
+            index_mach = np.where(data_saved.loc["mach", :].to_numpy() == str(mach))[
+                0
+            ]  # TODO: I would change it to = []
         else:
             selected_mach_index = distance_to_mach.index(min(distance_to_mach))
             index_mach = np.where(saved_mach_list == near_mach[selected_mach_index])[0]
