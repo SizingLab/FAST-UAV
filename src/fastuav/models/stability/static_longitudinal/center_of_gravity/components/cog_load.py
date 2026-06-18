@@ -30,7 +30,31 @@ class CoG_load_FW(om.ExplicitComponent):
         self.add_output("data:stability:CoG:load:%s" % propulsion_id, units="m")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        propulsion_id = self.options["propulsion_id"]
+
+        # CoG of the load is a linear function of the fuselage geometry
+        self.declare_partials(
+            "data:stability:CoG:load:%s" % propulsion_id,
+            "data:geometry:fuselage:length:nose",
+            val=1.0,
+        )
+        self.declare_partials(
+            "data:stability:CoG:load:%s" % propulsion_id,
+            "data:geometry:fuselage:length:mid",
+            val=0.5,
+        )
+
+        # Load mass is a plain sum of the contributing masses
+        self.declare_partials(
+            "data:weight:load:%s" % propulsion_id,
+            [
+                "data:weight:propulsion:%s:wires:mass" % propulsion_id,
+                "mission:sizing:payload:mass",
+                "data:weight:misc:mass",
+                "data:weight:propulsion:%s:esc:mass" % propulsion_id,
+            ],
+            val=1.0,
+        )
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
@@ -70,7 +94,31 @@ class CoG_load_MR(om.ExplicitComponent):
         self.add_output("data:stability:CoG:load:%s" % propulsion_id, units="m")
 
     def setup_partials(self):
-        self.declare_partials("*", "*", method="fd")
+        propulsion_id = self.options["propulsion_id"]
+
+        # CoG of the load is a linear function of the fuselage geometry
+        self.declare_partials(
+            "data:stability:CoG:load:%s" % propulsion_id,
+            "data:geometry:fuselage:length:nose",
+            val=1.0,
+        )
+        self.declare_partials(
+            "data:stability:CoG:load:%s" % propulsion_id,
+            "data:geometry:fuselage:length:mid",
+            val=0.5,
+        )
+
+        # Load mass sums the wires and the four ESCs
+        self.declare_partials(
+            "data:weight:load:%s" % propulsion_id,
+            "data:weight:propulsion:%s:wires:mass" % propulsion_id,
+            val=1.0,
+        )
+        self.declare_partials(
+            "data:weight:load:%s" % propulsion_id,
+            "data:weight:propulsion:%s:esc:mass" % propulsion_id,
+            val=4.0,
+        )
 
     def compute(self, inputs, outputs):
         propulsion_id = self.options["propulsion_id"]
