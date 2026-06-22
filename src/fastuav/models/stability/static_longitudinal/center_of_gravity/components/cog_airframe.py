@@ -134,7 +134,10 @@ class CoG_fuselage(om.ExplicitComponent):
         m_mid = inputs["data:weight:airframe:fuselage:mass:mid"]
         m_rear = inputs["data:weight:airframe:fuselage:mass:rear"]
 
-        x_cg_nose = l_nose * (3 / 4)  # [m] centroid of a half-ellipsoid (nose)
+        # Nose CG, measured from the tip (x=0). The nose skin is a thin shell
+        # (mass = surface x density), modelled as a prolate half-ellipsoid. 0.55 is representative 
+        # of a typical elongated nose (l_nose / r_base ~ 2-3).
+        x_cg_nose = l_nose * 0.55  # [m]
         x_cg_mid = l_nose + l_mid / 2  # [m]
         x_cg_rear = (
             l_nose
