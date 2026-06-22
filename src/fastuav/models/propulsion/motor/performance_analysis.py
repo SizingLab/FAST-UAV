@@ -365,7 +365,7 @@ class MotorEfficiency(om.ExplicitComponent):
 
         partials[
             "data:propulsion:motor:efficiency:%s" % scenario,
-            "data:propulsion:motor:voltage:%s" % scenario,
+            "data:propulsion:motor:current:%s" % scenario,
         ] = -T_mot * W_mot / (U_mot * I_mot**2)
 
         partials[
