@@ -40,15 +40,20 @@ class PropellerPerformanceModel:
         """
         Computes the induced velocity from Glauert's model
         """
+        # No thrust means no induced velocity
+        if F_pro <= 0.0:
+            return 0.0
 
         def func(x):
             return x - F_pro / (2 * rho_air * np.pi * (D_pro / 2) ** 2) / (
                 (V_inf * np.cos(alpha)) ** 2 + (V_inf * np.sin(alpha) + x) ** 2
             ) ** (1 / 2)
 
+        # Initial guess from momentum-theory hover induced velocity
         # Tight tolerance: the result is finite-differenced upstream, so the solver
         # residual must be well below the FD step to avoid noisy/inconsistent gradients.
-        v_i = fsolve(func, x0=1, xtol=1e-12)[0]
+        v_h = np.sqrt(F_pro / (2 * rho_air * np.pi * (D_pro / 2) ** 2))
+        v_i = fsolve(func, x0=v_h, xtol=1e-12, full_output=True)[0][0]
         return v_i
 
     @staticmethod
