@@ -266,15 +266,19 @@ class PhaseComponent(om.ExplicitComponent):
                 val=np.nan,
                 units=None,
             )
+            # Fixed-length surrogate model coefficients (see propeller definition_parameters).
+            # An explicit shape is used instead of shape_by_conn because in a performance-only
+            # problem these inputs are read from the input file and are not connected to a
+            # propeller design model, which would make shape_by_conn raise a warning.
             self.add_input(
                 "data:propulsion:%s:propeller:Ct:dynamic:polynomial" % propulsion_id,
-                shape_by_conn=True,
+                shape=12,
                 val=np.nan,
                 units=None,
             )
             self.add_input(
                 "data:propulsion:%s:propeller:Cp:dynamic:polynomial" % propulsion_id,
-                shape_by_conn=True,
+                shape=12,
                 val=np.nan,
                 units=None,
             )
