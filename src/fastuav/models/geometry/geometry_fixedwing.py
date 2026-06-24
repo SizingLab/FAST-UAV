@@ -795,7 +795,9 @@ class FuselageGeometry(om.ExplicitComponent):
         self.add_output("data:geometry:fuselage:surface:nose", units="m**2", lower=0.0)
         self.add_output("data:geometry:fuselage:surface:mid", units="m**2", lower=0.0)
         self.add_output("data:geometry:fuselage:surface:rear", units="m**2", lower=0.0)
+        self.add_output("data:geometry:fuselage:volume:nose", units="m**3", lower=0.0)
         self.add_output("data:geometry:fuselage:volume:mid", units="m**3", lower=0.0)
+        self.add_output("data:geometry:fuselage:volume:rear", units="m**3", lower=0.0)
 
     def setup_partials(self):
         self.declare_partials("*", "*", method="exact")
@@ -823,7 +825,18 @@ class FuselageGeometry(om.ExplicitComponent):
         S_nose = 2 * np.pi * (d_fus_mid / 2) ** 2  # nose part of fuselage (half spherical) [m2]
         S_fus = S_rear + S_mid + S_nose  # total fuselage area [m2]
 
+        V_nose = (
+            np.pi * (4 / 6) * l_nose * (0.5 * d_fus_mid) ** 2
+        )  # nose part of fuselage (half ellipsoid) [m3]
+
         V_mid = np.pi * (d_fus_mid / 2) ** 2 * l_mid  # mid part of fuselage (cylindrical) [m3]
+
+        V_rear = (
+            np.pi
+            * l_rear
+            * ((0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip)
+            / 3
+        )  # rear part of fuselage (truncated cone) [m3]
 
         outputs["data:geometry:fuselage:length"] = l_fus
         outputs["data:geometry:fuselage:length:nose"] = l_nose
@@ -835,7 +848,9 @@ class FuselageGeometry(om.ExplicitComponent):
         outputs["data:geometry:fuselage:surface:nose"] = S_nose
         outputs["data:geometry:fuselage:surface:mid"] = S_mid
         outputs["data:geometry:fuselage:surface:rear"] = S_rear
+        outputs["data:geometry:fuselage:volume:nose"] = V_nose
         outputs["data:geometry:fuselage:volume:mid"] = V_mid
+        outputs["data:geometry:fuselage:volume:rear"] = V_rear
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         lmbda_f = inputs["data:geometry:fuselage:fineness"]
@@ -964,11 +979,45 @@ class FuselageGeometry(om.ExplicitComponent):
         partials["data:geometry:fuselage:surface:rear", "data:geometry:fuselage:fineness"] = dS_rear_dlambda
         partials["data:geometry:fuselage:surface:rear", "data:geometry:fuselage:diameter:k"] = dS_rear_dk_df
 
-        # --- Output 11: V_mid ---
+
+        lmbda_f = inputs["data:geometry:fuselage:fineness"]
+        k_df = inputs["data:geometry:fuselage:diameter:k"]
+        x_root_TE_w = inputs["data:geometry:wing:root:TE:x"]
+        x_root_TE_ht = inputs["data:geometry:tail:horizontal:root:TE:x"]
+
+        l_fus = x_root_TE_ht  # fuselage length [m]
+        d_fus_mid = l_fus / lmbda_f  # max. fuselage diameter (mid) [m]
+        d_fus_tip = k_df * d_fus_mid  # min. fuselage diameter (tail tip) [m]
+
+        l_rear = x_root_TE_ht - x_root_TE_w
+
+        V_rear = (
+            np.pi
+            * l_rear
+            * ((0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip)
+            / 3
+        )  # rear part of fuselage (truncated cone) [m3]
+
+        # --- Output 12: V_nose ---
+        partials["data:geometry:fuselage:volume:nose", "data:geometry:tail:horizontal:root:TE:x"] =  np.pi * (4 / 6) * 3 * l_nose**2 / lmbda_f / 2
+        partials["data:geometry:fuselage:volume:nose", "data:geometry:fuselage:fineness"] = np.pi * (4 / 6) * 3 * l_nose**2 * (-x_root_TE_ht) / lmbda_f**2 / 2
+
+        # --- Output 13: V_mid ---
         partials["data:geometry:fuselage:volume:mid", "data:geometry:tail:horizontal:root:TE:x"] = dV_mid_dx_ht
         partials["data:geometry:fuselage:volume:mid", "data:geometry:wing:root:TE:x"] = dV_mid_dx_w
         partials["data:geometry:fuselage:volume:mid", "data:geometry:fuselage:fineness"] = dV_mid_dlambda
 
+        # --- Output 14: V_rear ---
+        partials["data:geometry:fuselage:volume:rear", "data:geometry:wing:root:TE:x"] = -np.pi* ((0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip)/ 3
+        partials["data:geometry:fuselage:volume:rear", "data:geometry:tail:horizontal:root:TE:x"] = np.pi* l_rear * ( 0.5**2  * 2 * d_fus_mid / lmbda_f
+                                                                                                            +  0.5**2 * 2 * d_fus_tip * k_df / lmbda_f 
+                                                                                                            +  0.25 * k_df * 2 * d_fus_mid /lmbda_f)/ 3 \
+                                                                                                    + np.pi * ((0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip) / 3
+        partials["data:geometry:fuselage:volume:rear", "data:geometry:fuselage:diameter:k"] = np.pi * l_rear * (0.5**2 *2* d_fus_tip * d_fus_mid + 
+                                                                                                                0.25 * d_fus_mid**2)/ 3
+        partials["data:geometry:fuselage:volume:rear", "data:geometry:fuselage:fineness"] = np.pi* l_rear * ( - 0.5**2  * 2 * d_fus_mid * x_root_TE_ht/ lmbda_f**2
+                                                                                                            -  0.5**2 * 2 * d_fus_tip * k_df *x_root_TE_ht / lmbda_f**2 
+                                                                                                            -  0.25 * k_df * 2 * d_fus_mid * x_root_TE_ht /lmbda_f**2)/ 3
 
 class ProjectedAreasGuess(om.ExplicitComponent):
     """

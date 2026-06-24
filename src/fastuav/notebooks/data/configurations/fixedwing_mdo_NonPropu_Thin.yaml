@@ -15,6 +15,14 @@ driver: om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')
 
 # Definition of OpenMDAO model
 model:
+    # # Converge the discipline coupling at every evaluation so the design point is self-consistent
+    # # and the (analytic) total derivatives are exact for the optimizer.
+    # nonlinear_solver: om.NonlinearBlockGS(maxiter=200, atol=1.0e-9, rtol=1.0e-9, iprint=0)
+    # linear_solver: om.DirectSolver()
+    # nonlinear_solver: om.NonlinearBlockGS(maxiter=50, iprint=2, rtol=1e-3, debug_print=True, reraise_child_analysiserror=True)
+    # linear_solver: om.DirectSolver()
+    nonlinear_solver: om.NonlinearBlockGS(maxiter=200, atol=1.0e-9, rtol=1.0e-9, iprint=2, debug_print=True, reraise_child_analysiserror=True)
+    linear_solver: om.DirectSolver()
     scenarios:
         id: fastuav.scenarios.fixedwing
     propulsion:

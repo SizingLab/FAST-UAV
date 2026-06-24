@@ -61,6 +61,11 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         self.saved_wing_0 = None
         self.saved_wing_aoa = None
 
+        # In-memory cache of VLM results, keyed by the rounded planform geometry (geometry_set
+        # without the area ratio). Replaces the former on-disk cache, which scanned and grew the
+        # result folder on every (mostly missing) lookup and slowed the optimization over time.
+        self._aero_cache = {}
+
     def initialize(self):
         self.options.declare("low_speed_aero", default=False, types=bool)
         self.options.declare("result_folder_path", default="", types=str)
@@ -251,26 +256,19 @@ class VLMSimpleGeometry(om.ExplicitComponent):
             decimals=6,
         )
 
-        # Search if results already exist:
-        result_folder_path = self.options["result_folder_path"]
-        result_file_path = None
-        saved_area_ratio = 1.0
-        if result_folder_path != "":
-            result_file_path, saved_area_ratio = self.search_results(
-                result_folder_path, geometry_set
-            )
+        # In-memory result cache --------------------------------------------------------------
+        # The VLM aerodynamics depend only on the (rounded) planform geometry and Mach number,
+        # captured by geometry_set. We key on every entry except the area ratio (last element):
+        # the HTP contributions scale linearly with the area ratio and the wing vectors with the
+        # square root of the reference area, so a single VLM run is reused for any area ratio via
+        # _rescale_results(). This in-memory cache replaces the former on-disk cache, which
+        # scanned and grew the result folder on every (mostly missing) lookup and made the
+        # optimization progressively slower.
+        geometry_key = tuple(geometry_set[:-1].tolist())
+        cached = self._aero_cache.get(geometry_key)
 
-        # If no result saved for that geometry under this mach condition, computation is done
-        if result_file_path is None:
-            # Create result folder first (if it must fail, let it fail as soon as possible)
-            if result_folder_path != "":
-                if not os.path.exists(result_folder_path):
-                    os.makedirs(pth.join(result_folder_path), exist_ok=True)
-
-            # Save the geometry (result_file_path is None entering the function)
-            if self.options["result_folder_path"] != "":
-                result_file_path = self.save_geometry(result_folder_path, geometry_set)
-
+        # If no cached result for that geometry/mach condition, computation is done
+        if cached is None:
             # Compute wing alone @ 0°/X° angle of attack
             wing_0 = self.compute_wing(
                 inputs, altitude, mach, 0.0, flaps_angle=0.0, use_airfoil=True
@@ -366,31 +364,30 @@ class VLMSimpleGeometry(om.ExplicitComponent):
             )
             y_vector_htp, cl_vector_htp = self.resize_vector([y_vector_htp, cl_vector_htp])
 
-            # Save results to defined path ---------------------------------------------------------
-            if self.options["result_folder_path"] != "":
-                results = [
-                    float(cl_0_wing),
-                    float(cl_x_wing),
-                    float(cl_alpha_wing),
-                    float(cm_0_wing),
-                    np.array(y_vector_wing).tolist(),
-                    np.array(cl_vector_wing).tolist(),
-                    np.array(chord_vector_wing).tolist(),
-                    float(coef_k_wing),
-                    float(cl_0_htp),
-                    float(cl_aoa_htp),
-                    float(cl_alpha_htp),
-                    float(cl_alpha_htp_isolated),
-                    np.array(y_vector_htp).tolist(),
-                    np.array(cl_vector_htp).tolist(),
-                    float(coef_k_htp),
-                    float(sref_wing),
-                ]
-                self.save_results(result_file_path, results)
+            # Store raw results in the in-memory cache for reuse at any area ratio --------------
+            results = [
+                float(cl_0_wing),
+                float(cl_x_wing),
+                float(cl_alpha_wing),
+                float(cm_0_wing),
+                np.array(y_vector_wing).tolist(),
+                np.array(cl_vector_wing).tolist(),
+                np.array(chord_vector_wing).tolist(),
+                float(coef_k_wing),
+                float(cl_0_htp),
+                float(cl_aoa_htp),
+                float(cl_alpha_htp),
+                float(cl_alpha_htp_isolated),
+                np.array(y_vector_htp).tolist(),
+                np.array(cl_vector_htp).tolist(),
+                float(coef_k_htp),
+                float(sref_wing),
+            ]
+            self._aero_cache[geometry_key] = (results, area_ratio)
 
-        # Else retrieved results are used, eventually adapted with new area ratio
+        # Else reuse cached results, rescaled for the current area ratio / reference area
         else:
-            # Read values from result file ---------------------------------------------------------
+            stored_results, saved_area_ratio = cached
             (
                 cl_0_wing,
                 cl_x_wing,
@@ -407,7 +404,61 @@ class VLMSimpleGeometry(om.ExplicitComponent):
                 y_vector_htp,
                 cl_vector_htp,
                 coef_k_htp,
-            ) = self.read_value_from_data(result_file_path, sref_wing, area_ratio, saved_area_ratio)
+            ) = self._rescale_results(stored_results, sref_wing, area_ratio, saved_area_ratio)
+
+        return (
+            cl_0_wing,
+            cl_x_wing,
+            cl_alpha_wing,
+            cm_0_wing,
+            y_vector_wing,
+            cl_vector_wing,
+            chord_vector_wing,
+            coef_k_wing,
+            cl_0_htp,
+            cl_aoa_htp,
+            cl_alpha_htp,
+            cl_alpha_htp_isolated,
+            y_vector_htp,
+            cl_vector_htp,
+            coef_k_htp,
+        )
+
+    def _rescale_results(self, results, sref_wing, area_ratio, saved_area_ratio):
+        """
+        Adapt cached VLM results to the requested wing reference area and tail/wing area ratio.
+
+        ``results`` is the raw list stored by :meth:`compute_aero_coeff` on a cache miss (computed
+        at ``saved_area_ratio`` and at the reference area stored as the last entry). The scaling
+        mirrors the former on-disk :meth:`read_value_from_data`: wing span-wise vectors scale with
+        the square root of the reference-area ratio, while the HTP contributions scale linearly
+        with the area ratio.
+
+        :param results: raw cached results list (16 entries, last one being the saved reference area)
+        :param sref_wing: current wing reference area
+        :param area_ratio: current tail/wing area ratio
+        :param saved_area_ratio: area ratio at which the cached results were computed
+        :return: the 15-element aerodynamic results tuple, rescaled to the current geometry
+        """
+        saved_area_wing = float(results[15])
+        area_scale = area_ratio / saved_area_ratio
+        span_scale = np.sqrt(sref_wing / saved_area_wing)
+
+        cl_0_wing = float(results[0])
+        cl_x_wing = float(results[1])
+        cl_alpha_wing = float(results[2])
+        cm_0_wing = float(results[3])
+        y_vector_wing = np.array(results[4]) * span_scale
+        cl_vector_wing = np.array(results[5])
+        chord_vector_wing = np.array(results[6]) * span_scale
+        coef_k_wing = float(results[7])
+        cl_0_htp = float(results[8]) * area_scale
+        cl_aoa_htp = float(results[9]) * area_scale
+        cl_alpha_htp = float(results[10]) * area_scale
+        cl_alpha_htp_isolated = float(results[11]) * area_scale
+        y_vector_htp = np.array(results[12])
+        cl_vector_htp = np.array(results[13])
+        coef_k_htp = float(results[14]) * area_scale
 
         return (
             cl_0_wing,

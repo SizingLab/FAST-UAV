@@ -1,7 +1,7 @@
 <FASTOAD_model>
   <data>
     <aerodynamics>
-      <CD0 is_input="False">0.03308722098142797<!--Parasitic drag coefficient of airframe (total)--><fuselage is_input="False">0.014147802678353815<!--Parasitic drag coefficient of fuselage--></fuselage><wing is_input="False">0.014880285463546578<!--Parasitic drag coefficient of wing--></wing><tail><horizontal is_input="False">0.0024095702996360753<!--Parasitic drag coefficient of horizontal tail--></horizontal><vertical is_input="False">0.0016495625398915013<!--Parasitic drag coefficient of vertical tail--></vertical></tail></CD0>
+      <CD0 is_input="False">0.030881936511748313<!--Parasitic drag coefficient of airframe (total)--><fuselage is_input="False">0.011503311556894585<!--Parasitic drag coefficient of fuselage--></fuselage><wing is_input="False">0.014638093124955094<!--Parasitic drag coefficient of wing--></wing><tail><horizontal is_input="False">0.0028307120025941285<!--Parasitic drag coefficient of horizontal tail--></horizontal><vertical is_input="False">0.001909819827304505<!--Parasitic drag coefficient of vertical tail--></vertical></tail></CD0>
       <CLmax is_input="True">1.2<!--Max. lift coefficient--></CLmax>
       <cruise>
         <mach is_input="False">0.047097740746743846</mach>
@@ -10,48 +10,48 @@
       <horizontal_tail>
         <cruise>
           <CDp is_input="False">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</CDp>
-          <CL is_input="False">[-0.8266272981783913, -0.8109730491437954, -0.7954667901944378, -0.7801659008611467, -0.7651295364496618, -0.7504092196874901, -0.7360362135762831, -0.7220148789434151, -0.7083351989257176, -0.6949610231269703, -0.6813539014576915, -0.6650238103739383, -0.6686300980821066, -0.8422179127020808, -1.0149725786790031, -1.0679455754863418, -1.0930798610747146, -1.0955636881691897, -1.0812098913814068, -1.054484061341788, -1.0193152328928425, -0.9792691758734587, -0.9370845948233096, -0.8945656640430023, -0.8527260540221431, -0.8120201354520445, -0.7724783074644104, -0.7338206323692138, -0.6955344725653443, -0.6570951615401102, -0.6184629874509341, -0.5789401259353633, -0.5384335246968714, -0.49692738148176185, -0.4534649743833587, -0.40166744936100895, -0.3354541674708651, -0.2556877758734655, -0.1721703983985453, -0.08893832467000956, -4.996003610813204e-16, 0.08893832467000906, 0.17217039839854453, 0.25568777587346575, 0.335454167470864, 0.4016674493610086, 0.45346497438335864, 0.4969273814817613, 0.538433524696871, 0.5789401259353626, 0.6184629874509343, 0.6570951615401098, 0.6955344725653441, 0.7338206323692134, 0.7724783074644105, 0.8120201354520443, 0.852726054022143, 0.8945656640430022, 0.9370845948233089, 0.9792691758734584, 1.0193152328928423, 1.0544840613417874, 1.0812098913814063, 1.095563688169189, 1.0930798610747123, 1.06794557548634, 1.0149725786789998, 0.842217912702074, 0.6686300980821047, 0.6650238103739385, 0.6813539014576915, 0.6949610231269698, 0.7083351989257178, 0.7220148789434143, 0.7360362135762828, 0.7504092196874899, 0.7651295364496612, 0.7801659008611465, 0.7954667901944371, 0.810973049143795, 0.8266272981783904, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</CL>
-          <CL0 is_input="False">-0.005140920116677118</CL0>
-          <induced_drag_coefficient is_input="False">0.2947734629905556</induced_drag_coefficient>
-          <reynolds is_input="False">174610.6302352344</reynolds>
+          <CL is_input="False">[-0.8300554232375633, -0.814535031889599, -0.799118297578376, -0.7838423772494776, -0.7687310232488691, -0.7537815761667234, -0.7389569543087279, -0.7241719226944071, -0.7090989530259683, -0.6921493246983161, -0.6760725265890921, -0.7485805213281373, -0.963950630295893, -1.063457897697368, -1.1035574743734773, -1.1246097749445363, -1.1265342218745982, -1.1135940300838418, -1.0889353913963107, -1.0559163159211522, -1.0178853362555902, -0.9774858213351214, -0.9364504213850064, -0.8957154873829088, -0.8556313174201993, -0.8161514636498244, -0.7770643114385193, -0.7381950203146638, -0.6993444225021307, -0.6603496934556327, -0.6214047959336442, -0.5817820085544896, -0.5402675793286646, -0.4950506783460577, -0.44317141229037815, -0.3793505516065129, -0.30194581390059533, -0.21824608212159635, -0.13841176858570603, -0.06715110393274021, -1.6653345369377348e-16, 0.0671511039327391, 0.13841176858570559, 0.2182460821215959, 0.3019458139005958, 0.3793505516065116, 0.4431714122903774, 0.49505067834605687, 0.540267579328665, 0.5817820085544888, 0.6214047959336437, 0.6603496934556319, 0.6993444225021304, 0.7381950203146639, 0.7770643114385192, 0.8161514636498246, 0.8556313174201982, 0.8957154873829081, 0.9364504213850054, 0.9774858213351206, 1.0178853362555889, 1.0559163159211515, 1.0889353913963107, 1.1135940300838416, 1.1265342218745986, 1.1246097749445352, 1.1035574743734755, 1.0634578976973657, 0.9639506302958862, 0.7485805213281312, 0.6760725265890919, 0.6921493246983157, 0.7090989530259677, 0.7241719226944067, 0.7389569543087278, 0.7537815761667235, 0.7687310232488691, 0.783842377249477, 0.799118297578375, 0.8145350318895984, 0.8300554232375628, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</CL>
+          <CL0 is_input="False">-0.006342740371019996</CL0>
+          <induced_drag_coefficient is_input="False">0.2421566180772226</induced_drag_coefficient>
+          <reynolds is_input="False">207481.6976266655</reynolds>
         </cruise>
       </horizontal_tail>
       <wing>
         <cruise>
           <CDp is_input="False">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</CDp>
-          <CL is_input="False">[-0.7455169153850151, -0.7285591688934082, -0.7117011822075738, -0.6950214797076407, -0.6786089527639492, -0.6625597060864655, -0.6469729595716267, -0.6319503406619473, -0.6176051015302979, -0.6040840160335179, -0.591590857405848, -0.5803654969248572, -0.570477275151533, -0.5611324528512152, -0.5497946751798561, -0.536214432414349, -0.5444866588306759, -0.6387597933461664, -0.7838714638433399, -0.8449917722760765, -0.8486879492334964, -0.832664981547679, -0.8061515202609436, -0.7732585345328838, -0.7370609224565349, -0.6992871797225955, -0.660403241930389, -0.6197047881129234, -0.5749640336830021, -0.5223016774060008, -0.4581346595043154, -0.3835331927972454, -0.3054412950947607, -0.23038202708645378, -0.15980663966696562, -0.09855527421823568, -0.05242463620925303, -0.0058458723329970486, 0.046740367784422365, 0.09552711112061285, 0.14157033796737556, 0.1950675213813437, 0.25798699130957475, 0.33034954744953127, 0.4081043378790665, 0.48416922922827005, 0.5520528858227889, 0.6099055813017162, 0.6602450997197222, 0.7064968135498955, 0.7510752683443418, 0.7952148696916566, 0.8394161213332919, 0.8838437581132225, 0.9285313696793156, 0.973456075436194, 1.018506384041267, 1.0631547594106139, 1.1057955172169447, 1.144731854762355, 1.1806271047135513, 1.2139500885485692, 1.2432217524189921, 1.2668342415536522, 1.2846419734094094, 1.298172660527592, 1.3092031147316112, 1.3184794206166524, 1.325769684976495, 1.3303862810988116, 1.3316468474415095, 1.3293502781919984, 1.324031274462424, 1.3167803101431597, 1.308813292770941, 1.3010279498591113, 1.293583101342081, 1.285505084546539, 1.2746190417686498, 1.2582055852631864, 1.2327922251582006, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</CL>
-          <CL0_clean is_input="False">0.08824902265962518</CL0_clean>
-          <CL_alpha units="1/rad" is_input="False">4.758871060877674</CL_alpha>
-          <CL_ref is_input="False">0.9188287095615343</CL_ref>
-          <CM0_clean is_input="False">-0.005242302456588392</CM0_clean>
-          <reynolds is_input="False">341683.59696248226</reynolds>
+          <CL is_input="False">[-0.7456321703173685, -0.7286643045887428, -0.7118166322418852, -0.6951687603752174, -0.6788062735768527, -0.6628159154788089, -0.6472826933615332, -0.6322963884563183, -0.6179741458734412, -0.6044936857741637, -0.5920942091830612, -0.5808871621834032, -0.5700607784961009, -0.5564793138836526, -0.538823438557431, -0.5440245263736274, -0.6383749702875088, -0.7903561623518991, -0.8657037044867286, -0.876384933411714, -0.864900196587984, -0.8421587856729364, -0.8118469372527368, -0.7771229626963048, -0.7403109777264509, -0.7023661150475596, -0.6630867704712613, -0.6211591391541536, -0.5738200118022204, -0.5172312564579628, -0.4492861608873516, -0.373325259667709, -0.2966760017311898, -0.2239075815080061, -0.15492470004183168, -0.09501712388581479, -0.050268588335342146, -0.004955876917835389, 0.04755419041558029, 0.0971942242930679, 0.14223506254698226, 0.1925882074899543, 0.25238173664899916, 0.3215993917865162, 0.3973950267933507, 0.4742748672126108, 0.5452762819722848, 0.606710150148642, 0.6597086161697285, 0.707518929009505, 0.7529215334796625, 0.7974906819370635, 0.8419208864479867, 0.8864750166067209, 0.9312427442506529, 0.976239296768213, 1.0213672306118227, 1.066055158553139, 1.1086894620224457, 1.1479907219328889, 1.1849693943038961, 1.2198925869024606, 1.2511977466496595, 1.277203824617097, 1.2974601042389955, 1.3131260297364313, 1.3258148637730274, 1.3362483315763218, 1.344168547253386, 1.348843205157484, 1.3495155511619479, 1.3459729888395169, 1.3389523252421296, 1.3298788980113874, 1.320197647010584, 1.3108832246533273, 1.3021725472777084, 1.2932568232018873, 1.282003730124975, 1.2655734939996846, 1.242272463632072, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</CL>
+          <CL0_clean is_input="False">0.08791063310541412</CL0_clean>
+          <CL_alpha units="1/rad" is_input="False">4.739624089534575</CL_alpha>
+          <CL_ref is_input="False">0.9151310897975826</CL_ref>
+          <CM0_clean is_input="False">-0.005677218598549674</CM0_clean>
+          <reynolds is_input="False">370623.2393796227</reynolds>
           <CDi>
-            <k is_input="False">0.04194923688952644</k>
+            <k is_input="False">0.042442433041930835</k>
           </CDi>
         </cruise>
       </wing>
       <tail>
         <horizontal>
           <cruise>
-            <CL_alpha units="1/rad" is_input="False">0.5108081664139097</CL_alpha>
-            <CL_alpha_isolated units="1/rad" is_input="False">0.788034760343449</CL_alpha_isolated>
+            <CL_alpha units="1/rad" is_input="False">0.6179584572136642</CL_alpha>
+            <CL_alpha_isolated units="1/rad" is_input="False">0.9599216986807358</CL_alpha_isolated>
           </cruise>
         </horizontal>
       </tail>
     </aerodynamics>
     <stability>
-      <CoG units="m" is_input="False">1.970882748559568<!--Center of gravity (longitudinal)--><airframe units="m" is_input="False">1.9307816527428114<!--Center of gravity of airframe--><fuselage units="m" is_input="False">1.354885865114792<!--Center of gravity of fuselage--></fuselage><wing units="m" is_input="False">2.0388309007891947<!--Center of gravity of wing--></wing><tail><horizontal units="m" is_input="False">2.8821089989682576<!--Center of gravity of horizontal tail--></horizontal><vertical units="m" is_input="False">2.882494785309313<!--Center of gravity of vertical tail--></vertical></tail></airframe><propulsion><fixedwing units="m" is_input="False">2.01997657107525<!--Center of gravity of fixed-wing propulsion system--></fixedwing></propulsion></CoG>
-      <neutral_point units="m" is_input="False">2.0024472672676445<!--Neutral point--></neutral_point>
-      <static_margin is_input="False">0.10000001186228942<!--Static margin--><requirement><max is_input="True">0.4<!--Requirement on maximum static margin--></max><min is_input="True">0.1<!--Requirement on minimum static margin--></min></requirement></static_margin>
+      <CoG units="m" is_input="False">1.7123630406006798<!--Center of gravity (longitudinal)--><airframe units="m" is_input="False">1.680997064269405<!--Center of gravity of airframe--><fuselage units="m" is_input="False">1.2065681361800085<!--Center of gravity of fuselage--></fuselage><wing units="m" is_input="False">1.783611893609013<!--Center of gravity of wing--></wing><tail><horizontal units="m" is_input="False">2.5322413915205844<!--Center of gravity of horizontal tail--></horizontal><vertical units="m" is_input="False">2.532442352793234<!--Center of gravity of vertical tail--></vertical></tail></airframe><propulsion><fixedwing units="m" is_input="False">1.7662344131251468<!--Center of gravity of fixed-wing propulsion system--></fixedwing></propulsion></CoG>
+      <neutral_point units="m" is_input="False">1.7466009815633035<!--Neutral point--></neutral_point>
+      <static_margin is_input="False">0.10000000030232231<!--Static margin--><requirement><max is_input="True">0.4<!--Requirement on maximum static margin--></max><min is_input="True">0.1<!--Requirement on minimum static margin--></min></requirement></static_margin>
     </stability>
     <weight>
-      <airframe units="kg" is_input="False">3.765317878827183<!--Airframe mass (total)--><fuselage><mass units="kg" is_input="False">1.8914906872282367<!--Fuselage mass--><density units="kg/m**2" is_input="True">0.6<!--Fuselage material density--></density><mid units="kg" is_input="False">1.4369176994979627<!--Mid-section fuselage mass--></mid><nose units="kg" is_input="False">0.131409541659586<!--Nose fuselage mass--></nose><rear units="kg" is_input="False">0.3231634460706881<!--Rear fuselage mass--></rear></mass></fuselage><tail><density units="kg/m**2" is_input="True">2.0<!--Tail material density--></density><horizontal><mass units="kg" is_input="False">0.6233054580869346<!--Horizontal tail mass--></mass></horizontal><vertical><mass units="kg" is_input="False">0.4281516199031312<!--Vertical tail mass--></mass></vertical></tail><wing><mass units="kg" is_input="False">0.8223701136088806<!--Wing mass--></mass><ribs><density units="kg/m**3" is_input="True">160.0<!--Ribs material density--></density><mass units="kg" is_input="False">0.14371900327448156<!--Ribs mass--></mass></ribs><skin><density units="kg/m**2" is_input="True">0.2<!--Wing skin density--></density><mass units="kg" is_input="False">0.3421881030344799<!--Wing skin mass--></mass></skin><spar><density units="kg/m**3" is_input="True">1600.0<!--Spars material density--></density><mass units="kg" is_input="False">0.3364630072999192<!--Spars mass--></mass></spar></wing></airframe>
-      <mtow units="kg" is_input="False">9.874697320782655<!--Maximum takeoff weight (MTOW)--><requirement units="kg" is_input="True">25.0<!--MTOW requirement not to exceed--></requirement></mtow>
+      <airframe units="kg" is_input="False">5.304867184854961<!--Airframe mass (total)--><fuselage><mass units="kg" is_input="False">2.8545435440830658<!--Fuselage mass--><density units="kg/m**2" is_input="True">1.0<!--Fuselage material density--></density><mid units="kg" is_input="False">2.145641064413799<!--Mid-section fuselage mass--></mid><nose units="kg" is_input="False">0.22633640797251092<!--Nose fuselage mass--></nose><rear units="kg" is_input="False">0.4825660716967559<!--Rear fuselage mass--></rear></mass></fuselage><tail><density units="kg/m**2" is_input="True">2.0<!--Tail material density--></density><horizontal><mass units="kg" is_input="False">0.8790422041374513<!--Horizontal tail mass--></mass></horizontal><vertical><mass units="kg" is_input="False">0.5939416088085477<!--Vertical tail mass--></mass></vertical></tail><wing><mass units="kg" is_input="False">0.9773398278258969<!--Wing mass--></mass><ribs><density units="kg/m**3" is_input="True">160.0<!--Ribs material density--></density><mass units="kg" is_input="False">0.16632923645775496<!--Ribs mass--></mass></ribs><skin><density units="kg/m**2" is_input="True">0.2<!--Wing skin density--></density><mass units="kg" is_input="False">0.39602199156608325<!--Wing skin mass--></mass></skin><spar><density units="kg/m**3" is_input="True">1600.0<!--Spars material density--></density><mass units="kg" is_input="False">0.41498859980205877<!--Spars mass--></mass></spar></wing></airframe>
+      <mtow units="kg" is_input="False">11.428207800498818<!--Maximum takeoff weight (MTOW)--><requirement units="kg" is_input="True">25.0<!--MTOW requirement not to exceed--></requirement></mtow>
       <misc>
         <mass units="kg" is_input="True">0.0<!--Miscellaneous mass (e.g. to account for non-modelled parts)--></mass>
       </misc>
       <propulsion>
-        <fixedwing units="kg" is_input="False">3.075608402486144<!--Mass of fixed-wing propulsion system--><battery><mass units="kg" is_input="False">3.0<!--Fixed-wing battery mass--><estimated units="kg" is_input="False">3.0<!--Fixed-wing battery mass (estimated value)--></estimated></mass></battery><esc><mass units="kg" is_input="False">0.01183967548106985<!--Fixed-wing ESC mass--><estimated units="kg" is_input="False">0.01183967548106985<!--Fixed-wing ESC mass (estimated value)--></estimated></mass></esc><gearbox><mass units="kg" is_input="False">0.0<!--Fixed-wing gearbox mass--></mass></gearbox><motor><mass units="kg" is_input="False">0.06807118948639866<!--Fixed-wing motor mass--><estimated units="kg" is_input="False">0.06807118948639866<!--Fixed-wing motor mass (estimated value)--></estimated></mass></motor><propeller><mass units="kg" is_input="False">0.007537212999745309<!--Fixed-wing propeller mass--><estimated units="kg" is_input="False">0.007537212999745309<!--Fixed-wing propeller mass (estimated value)--></estimated></mass></propeller><wires><density units="kg/m" is_input="False">0.004894479458884253<!--Fixed-wing wires linear density--></density><mass units="kg" is_input="False">0.02193136398825755<!--Fixed-wing wires mass--></mass></wires></fixedwing>
+        <fixedwing units="kg" is_input="False">3.0886968488717343<!--Mass of fixed-wing propulsion system--><battery><mass units="kg" is_input="False">3.0<!--Fixed-wing battery mass--><estimated units="kg" is_input="False">3.0<!--Fixed-wing battery mass (estimated value)--></estimated></mass></battery><esc><mass units="kg" is_input="False">0.013335435310984625<!--Fixed-wing ESC mass--><estimated units="kg" is_input="False">0.013335435310984625<!--Fixed-wing ESC mass (estimated value)--></estimated></mass></esc><gearbox><mass units="kg" is_input="False">0.0<!--Fixed-wing gearbox mass--></mass></gearbox><motor><mass units="kg" is_input="False">0.07964436446792428<!--Fixed-wing motor mass--><estimated units="kg" is_input="False">0.07964436446792428<!--Fixed-wing motor mass (estimated value)--></estimated></mass></motor><propeller><mass units="kg" is_input="False">0.0090524844038099<!--Fixed-wing propeller mass--><estimated units="kg" is_input="False">0.0090524844038099<!--Fixed-wing propeller mass (estimated value)--></estimated></mass></propeller><wires><density units="kg/m" is_input="False">0.005346171343235258<!--Fixed-wing wires linear density--></density><mass units="kg" is_input="False">0.021308331461138027<!--Fixed-wing wires mass--></mass></wires></fixedwing>
       </propulsion>
     </weight>
     <geometry>
@@ -60,224 +60,226 @@
         <span_ratio is_input="True">0.7</span_ratio>
       </flap>
       <fuselage>
-        <fineness is_input="True">8.0<!--Fineness ratio of fuselage--></fineness>
-        <length units="m" is_input="False">2.987224575836308<!--Total length of fuselage--><mid units="m" is_input="False">2.041516454582241<!--Length of fuselage mid-section--></mid><nose units="m" is_input="False">0.18670153598976924<!--Length of fuselage nose--></nose><rear units="m" is_input="False">0.7590065852642978<!--Length of rear fuselage--></rear></length>
-        <surface units="m**2" is_input="False">3.152484478713728<!--Total surface of fuselage--><mid units="m**2" is_input="False">2.3948628324966044<!--Surface of fuselage mid-section--></mid><nose units="m**2" is_input="False">0.21901590276597666<!--Surface of fuselage nose--></nose><rear units="m**2" is_input="False">0.5386057434511469<!--Surface of rear fuselage--></rear></surface>
+        <fineness is_input="True">7.0<!--Fineness ratio of fuselage--></fineness>
+        <length units="m" is_input="False">2.657145346716254<!--Total length of fuselage--><mid units="m" is_input="False">1.7992434425696833<!--Length of fuselage mid-section--></mid><nose units="m" is_input="False">0.18979609619401813<!--Length of fuselage nose--></nose><rear units="m" is_input="False">0.6681058079525524<!--Length of rear fuselage--></rear></length>
+        <surface units="m**2" is_input="False">2.8545435440830658<!--Total surface of fuselage--><mid units="m**2" is_input="False">2.145641064413799<!--Surface of fuselage mid-section--></mid><nose units="m**2" is_input="False">0.22633640797251092<!--Surface of fuselage nose--></nose><rear units="m**2" is_input="False">0.4825660716967559<!--Surface of rear fuselage--></rear></surface>
         <diameter>
           <k is_input="True">0.2<!--Tail cone diameter ratio (mid to tip)--></k>
-          <mid units="m" is_input="False">0.3734030719795385<!--Diameter of fuselage mid-section--></mid>
-          <tip units="m" is_input="False">0.0746806143959077<!--Tip diameter of fuselage--></tip>
+          <mid units="m" is_input="False">0.37959219238803626<!--Diameter of fuselage mid-section--></mid>
+          <tip units="m" is_input="False">0.07591843847760726<!--Tip diameter of fuselage--></tip>
         </diameter>
         <volume>
-          <mid units="m**3" is_input="False">0.22356228465596273<!--Volume of fuselage mid-section--></mid>
+          <mid units="m**3" is_input="False">0.20361714892965843<!--Volume of fuselage mid-section--></mid>
+          <nose units="m**3" is_input="False">0.014319255553253071</nose>
+          <rear units="m**3" is_input="False">0.03125144486829427</rear>
         </volume>
       </fuselage>
       <wing>
         <dihedral units="rad" is_input="True">0.0</dihedral>
-        <loading units="N/m**2" is_input="False">113.19819230722342<!--Wing loading--><stall units="N/m**2" is_input="False">113.19819230722342<!--Maximum wing loading for stall conditions--></stall></loading>
-        <span units="m" is_input="False">2.71022779398712<!--Wingspan--></span>
-        <surface units="m**2" is_input="False">0.8554702575861997<!--Wing area--></surface>
+        <loading units="N/m**2" is_input="False">113.19819230721954<!--Wing loading--><stall units="N/m**2" is_input="False">113.19819230722342<!--Maximum wing loading for stall conditions--></stall></loading>
+        <span units="m" is_input="False">2.8916896112098933<!--Wingspan--></span>
+        <surface units="m**2" is_input="False">0.9900549789152081<!--Wing area--></surface>
         <sweep_25 units="deg" is_input="True">0.0</sweep_25>
         <tc is_input="True">0.15<!--Thickness-to-chord ratio of wing--></tc>
         <twist units="rad" is_input="True">0.0<!--Negative twist means tip AOA is smaller than root--></twist>
         <MAC>
-          <length units="m" is_input="False">0.3156451496380252<!--Length of mean aerodynamic chord of wing--></length>
-          <y units="m" is_input="False">0.6775569484967799<!--Y-position of wing MAC--></y>
+          <length units="m" is_input="False">0.34237940859114735<!--Length of mean aerodynamic chord of wing--></length>
+          <y units="m" is_input="False">0.7229224028024733<!--Y-position of wing MAC--></y>
           <C4>
-            <x units="m" is_input="False">1.9914841283434912<!--X-location of wing MAC quarter chord (w.r.t. nose tip)--></x>
+            <x units="m" is_input="False">1.7322549823203408<!--X-location of wing MAC quarter chord (w.r.t. nose tip)--></x>
           </C4>
           <LE>
-            <x units="m" is_input="False">1.9125728409339848<!--X-location of wing MAC leading edge (w.r.t. nose tip)--></x>
+            <x units="m" is_input="False">1.646660130172554<!--X-location of wing MAC leading edge (w.r.t. nose tip)--></x>
           </LE>
         </MAC>
         <kink>
           <span_ratio is_input="True">0.0</span_ratio>
         </kink>
         <root>
-          <chord units="m" is_input="False">0.3156451496380253<!--Wing chord at root--></chord>
-          <thickness units="m" is_input="False">0.047346772445703796<!--Wing thickness at root--></thickness>
+          <chord units="m" is_input="False">0.34237940859114735<!--Wing chord at root--></chord>
+          <thickness units="m" is_input="False">0.0513569112886721<!--Wing thickness at root--></thickness>
           <LE>
-            <x units="m" is_input="False">1.9125728409339848<!--X-position of wing root leading edge (w.r.t. nose tip)--></x>
+            <x units="m" is_input="False">1.646660130172554<!--X-position of wing root leading edge (w.r.t. nose tip)--></x>
           </LE>
           <TE>
-            <x units="m" is_input="False">2.22821799057201<!--X-position of wing root trailing edge (w.r.t. nose tip)--></x>
+            <x units="m" is_input="False">1.9890395387637014<!--X-position of wing root trailing edge (w.r.t. nose tip)--></x>
           </TE>
         </root>
         <sweep>
           <LE units="rad" is_input="True">0.0<!--Sweep angle of wing leading edge--></LE>
-          <TE units="rad" is_input="False">-1.2930149765154908e-16<!--Sweep angle of wing trailing edge--></TE>
+          <TE units="rad" is_input="False">0.0<!--Sweep angle of wing trailing edge--></TE>
         </sweep>
         <tip>
-          <chord units="m" is_input="False">0.31564514963802515<!--Wing chord at tip--></chord>
-          <thickness units="m" is_input="False">0.04734677244570377<!--Wing thickness at tip--></thickness>
+          <chord units="m" is_input="False">0.34237940859114735<!--Wing chord at tip--></chord>
+          <thickness units="m" is_input="False">0.0513569112886721<!--Wing thickness at tip--></thickness>
         </tip>
       </wing>
       <tail>
         <horizontal>
-          <arm units="m" is_input="False">0.8664292409549688<!--Distance between wing MAC and HT MAC (tail moment arm)--></arm>
+          <arm units="m" is_input="False">0.7712358668519769<!--Distance between wing MAC and HT MAC (tail moment arm)--></arm>
           <coefficient is_input="True">0.5<!--Volume coefficient of horizontal tail--></coefficient>
           <lambda is_input="True">0.9<!--Taper ratio of horizontal tail--></lambda>
-          <span units="m" is_input="False">0.9669323591288079<!--Span of horizontal tail--></span>
-          <surface units="m**2" is_input="False">0.15582636452173365<!--Area of horizontal tail--></surface>
+          <span units="m" is_input="False">1.1476138434165555<!--Span of horizontal tail--></span>
+          <surface units="m**2" is_input="False">0.21976055103436282<!--Area of horizontal tail--></surface>
           <sweep_25 units="deg" is_input="True">4.0</sweep_25>
           <MAC>
-            <length units="m" is_input="False">0.16130419779865002<!--length of mean aerodynamic chord of horizontal tail--></length>
-            <y units="m" is_input="False">0.23749215838251422<!--Y-location of HT MAC--></y>
+            <length units="m" is_input="False">0.19167028232178018<!--length of mean aerodynamic chord of horizontal tail--></length>
+            <y units="m" is_input="False">0.28187006680406623<!--Y-location of HT MAC--></y>
             <C4>
-              <x units="m" is_input="False">2.85791336929846<!--X-location of HT MAC quarter chord (w.r.t. nose tip)--></x>
+              <x units="m" is_input="False">2.5034908491723176<!--X-location of HT MAC quarter chord (w.r.t. nose tip)--></x>
             </C4>
             <LE>
-              <x units="m" is_input="False">2.8175873198487977<!--X-location of HT MAC leading edge (w.r.t. nose tip)--></x>
+              <x units="m" is_input="False">2.4555732785918725<!--X-location of HT MAC leading edge (w.r.t. nose tip)--></x>
             </LE>
           </MAC>
           <root>
-            <chord units="m" is_input="False">0.16963725598751017<!--Horizontal tail chord at root--></chord>
-            <thickness units="m" is_input="False">0.025445588398126526<!--Horizontal tail thickness at root--></thickness>
+            <chord units="m" is_input="False">0.2015720681243814<!--Horizontal tail chord at root--></chord>
+            <thickness units="m" is_input="False">0.030235810218657205<!--Horizontal tail thickness at root--></thickness>
             <LE>
-              <x units="m" is_input="False">2.8175873198487977<!--X-location of HT root leading edge (w.r.t. nose tip)--></x>
+              <x units="m" is_input="False">2.4555732785918725<!--X-location of HT root leading edge (w.r.t. nose tip)--></x>
             </LE>
             <TE>
-              <x units="m" is_input="False">2.987224575836308<!--X-location of HT root trailing edge (w.r.t. nose tip)--></x>
+              <x units="m" is_input="False">2.657145346716254<!--X-location of HT root trailing edge (w.r.t. nose tip)--></x>
             </TE>
           </root>
           <tip>
-            <chord units="m" is_input="False">0.15267353038875917<!--Horizontal tail chord at tip--></chord>
-            <thickness units="m" is_input="False">0.022901029558313874<!--Horizontal tail thickness at tip--></thickness>
+            <chord units="m" is_input="False">0.18141486131194326<!--Horizontal tail chord at tip--></chord>
+            <thickness units="m" is_input="False">0.027212229196791487<!--Horizontal tail thickness at tip--></thickness>
           </tip>
         </horizontal>
         <vertical>
-          <arm units="m" is_input="False">0.8664292409549688<!--Distance between wing MAC and VT MAC (tail moment arm)--></arm>
+          <arm units="m" is_input="False">0.7712358668519769<!--Distance between wing MAC and VT MAC (tail moment arm)--></arm>
           <coefficient is_input="True">0.04<!--Volume coefficient of vertical tail--></coefficient>
           <lambda is_input="True">0.9<!--Taper ratio of vertical tail--></lambda>
-          <span units="m" is_input="False">0.653766688374146<!--Span of vertical tail--></span>
-          <surface units="m**2" is_input="False">0.1070379049757828<!--Area of vertical tail--></surface>
+          <span units="m" is_input="False">0.7700248134744501<!--Span of vertical tail--></span>
+          <surface units="m**2" is_input="False">0.14848540220213693<!--Area of vertical tail--></surface>
           <MAC>
-            <length units="m" is_input="False">0.16387610673901826<!--length of mean aerodynamic chord of vertical tail--></length>
-            <z units="m" is_input="False">0.16057427433750954<!--Z-location of VT MAC--></z>
+            <length units="m" is_input="False">0.1930100241394416<!--length of mean aerodynamic chord of vertical tail--></length>
+            <z units="m" is_input="False">0.1891289015551281<!--Z-location of VT MAC--></z>
             <C4>
-              <x units="m" is_input="False">2.85791336929846<!--X-location of VT MAC quarter chord (w.r.t. nose tip)--></x>
+              <x units="m" is_input="False">2.5034908491723176<!--X-location of VT MAC quarter chord (w.r.t. nose tip)--></x>
             </C4>
             <LE>
-              <x units="m" is_input="False">2.8169443426137057<!--X-location of VT MAC leading edge (w.r.t. nose tip)--></x>
+              <x units="m" is_input="False">2.455238343137457<!--X-location of VT MAC leading edge (w.r.t. nose tip)--></x>
             </LE>
           </MAC>
           <root>
-            <chord units="m" is_input="False">0.1723420310723993<!--Vertical tail chord at root--></chord>
-            <thickness units="m" is_input="False">0.025851304660859893<!--Vertical tail thickness at root--></thickness>
+            <chord units="m" is_input="False">0.20298102169646073<!--Vertical tail chord at root--></chord>
+            <thickness units="m" is_input="False">0.03044715325446911<!--Vertical tail thickness at root--></thickness>
             <LE>
-              <x units="m" is_input="False">2.8169443426137057<!--X-location of VT root leading edge (w.r.t. nose tip)--></x>
+              <x units="m" is_input="False">2.455238343137457<!--X-location of VT root leading edge (w.r.t. nose tip)--></x>
             </LE>
             <TE>
-              <x units="m" is_input="False">2.989286373686105<!--X-location of VT root trailing edge (w.r.t. nose tip)--></x>
+              <x units="m" is_input="False">2.658219364833918<!--X-location of VT root trailing edge (w.r.t. nose tip)--></x>
             </TE>
           </root>
           <tip>
-            <chord units="m" is_input="False">0.15510782796515937<!--Vertical tail chord at tip--></chord>
-            <thickness units="m" is_input="False">0.023266174194773906<!--Vertical tail thickness at tip--></thickness>
+            <chord units="m" is_input="False">0.18268291952681467<!--Vertical tail chord at tip--></chord>
+            <thickness units="m" is_input="False">0.0274024379290222<!--Vertical tail thickness at tip--></thickness>
           </tip>
         </vertical>
       </tail>
     </geometry>
     <performance>
       <endurance>
-        <cruise units="min" is_input="False">162.6264030276216<!--Maximum cruise endurance (at cruise speed fixed by sizing mission)--></cruise>
+        <cruise units="min" is_input="False">146.91199502628743<!--Maximum cruise endurance (at cruise speed fixed by sizing mission)--></cruise>
       </endurance>
       <range>
-        <cruise units="m" is_input="False">156121.34690651673<!--Maximum range (at cruise speed fixed by sizing mission)--></cruise>
+        <cruise units="m" is_input="False">141035.51522523593<!--Maximum range (at cruise speed fixed by sizing mission)--></cruise>
       </range>
     </performance>
     <propulsion>
       <fixedwing>
         <battery>
-          <capacity units="A*s" is_input="False">123082.52687280576<!--Fixed-wing battery capacity--><estimated units="kA*s" is_input="False">123.08252687280576<!--Fixed-wing battery capacity (estimated value)--></estimated></capacity>
+          <capacity units="A*s" is_input="False">118064.70030022557<!--Fixed-wing battery capacity--><estimated units="kA*s" is_input="False">118.06470030022557<!--Fixed-wing battery capacity (estimated value)--></estimated></capacity>
           <energy units="kJ" is_input="False">2064.070588235294<!--Fixed-wing battery energy--><estimated units="kJ" is_input="False">2064.070588235294<!--Fixed-wing battery energy (estimated value)--></estimated></energy>
-          <voltage units="V" is_input="False">16.76980998585053<!--Fixed-wing battery voltage--><estimated units="V" is_input="False">16.76980998585053<!--Fixed-wing battery voltage (estimated value)--></estimated></voltage>
+          <voltage units="V" is_input="False">17.482537820251007<!--Fixed-wing battery voltage--><estimated units="V" is_input="False">17.482537820251007<!--Fixed-wing battery voltage (estimated value)--></estimated></voltage>
           <volume units="cm**3" is_input="False">2205.8823529411766<!--Fixed-wing battery volume--><estimated units="cm**3" is_input="False">2205.8823529411766<!--Fixed-wing battery volume (estimated value)--></estimated></volume>
           <DoD>
             <max is_input="False">0.8<!--Fixed-wing battery depth of discharge--><estimated is_input="False">0.8<!--Fixed-wing battery depth of discharge (estimated value)--></estimated></max>
           </DoD>
           <cell>
-            <number is_input="False">4.413107891013297<!--Cell number for fixed-wing battery--><estimated is_input="False">4.413107891013297<!--Cell number for fixed-wing battery (estimated value)--></estimated><parallel is_input="False">1.0<!--Cell number in parallel for fixed-wing battery--><estimated is_input="False">1.0<!--Cell number in parallel for fixed-wing battery (estimated value)--></estimated></parallel><series is_input="False">4.413107891013297<!--Cell number in series for fixed-wing battery--><estimated is_input="False">4.413107891013297<!--Cell number in series for fixed-wing battery (estimated value)--></estimated></series></number>
+            <number is_input="False">4.600667847434476<!--Cell number for fixed-wing battery--><estimated is_input="False">4.600667847434476<!--Cell number for fixed-wing battery (estimated value)--></estimated><parallel is_input="False">1.0<!--Cell number in parallel for fixed-wing battery--><estimated is_input="False">1.0<!--Cell number in parallel for fixed-wing battery (estimated value)--></estimated></parallel><series is_input="False">4.600667847434476<!--Cell number in series for fixed-wing battery--><estimated is_input="False">4.600667847434476<!--Cell number in series for fixed-wing battery (estimated value)--></estimated></series></number>
             <voltage units="V" is_input="False">3.8<!--Voltage of one cell for fixed-wing battery--><estimated units="V" is_input="True">3.8<!--Voltage of one cell for fixed-wing battery (estimated value)--></estimated></voltage>
           </cell>
           <current>
-            <climb units="A" is_input="False">70.3202867113454<!--Fixed-wing battery current (climb)--></climb>
-            <cruise units="A" is_input="False">10.091229515943613<!--Fixed-wing battery current (cruise)--></cruise>
-            <hover units="A" is_input="False">0.0009246298699587151<!--Fixed-wing battery current (hover)--></hover>
-            <max units="A" is_input="False">1199.6347648421613<!--Fixed-wing battery max. current--><estimated units="A" is_input="False">1199.6347648421613<!--Fixed-wing battery max. current (estimated value)--></estimated></max>
-            <takeoff units="A" is_input="False">7.216479086018851<!--Fixed-wing battery current (takeoff)--></takeoff>
+            <climb units="A" is_input="False">78.0901202163778<!--Fixed-wing battery current (climb)--></climb>
+            <cruise units="A" is_input="False">10.715231276529407<!--Fixed-wing battery current (cruise)--></cruise>
+            <hover units="A" is_input="False">0.0009345922060639922<!--Fixed-wing battery current (hover)--></hover>
+            <max units="A" is_input="False">1150.7280731016137<!--Fixed-wing battery max. current--><estimated units="A" is_input="False">1150.7280731016137<!--Fixed-wing battery max. current (estimated value)--></estimated></max>
+            <takeoff units="A" is_input="False">7.796800482242088<!--Fixed-wing battery current (takeoff)--></takeoff>
           </current>
           <power>
-            <climb units="W" is_input="False">1179.2578462997924<!--Fixed-wing battery power (climb)--></climb>
-            <cruise units="W" is_input="False">169.2280015059808<!--Fixed-wing battery power (cruise)--></cruise>
-            <hover units="W" is_input="False">0.015505867226449336<!--Fixed-wing battery power (hover)--></hover>
+            <climb units="W" is_input="False">1365.2134800707727<!--Fixed-wing battery power (climb)--></climb>
+            <cruise units="W" is_input="False">187.32943604466183<!--Fixed-wing battery power (cruise)--></cruise>
+            <hover units="W" is_input="False">0.016339043589025565<!--Fixed-wing battery power (hover)--></hover>
             <max units="W" is_input="False">20117.647058823528<!--Fixed-wing battery power--><estimated units="W" is_input="False">20117.647058823528<!--Fixed-wing battery power (estimated value)--></estimated></max>
-            <takeoff units="W" is_input="False">121.01898303940042<!--Fixed-wing battery power (takeoff)--></takeoff>
+            <takeoff units="W" is_input="False">136.3078593077486<!--Fixed-wing battery power (takeoff)--></takeoff>
           </power>
         </battery>
         <esc>
           <efficiency is_input="False">0.95<!--Fixed-wing ESC efficiency--><estimated is_input="False">0.95<!--Fixed-wing ESC efficiency (estimated value)--></estimated></efficiency>
-          <voltage units="V" is_input="False">18.446790984435584<!--Fixed-wing ESC voltage--><estimated units="V" is_input="False">18.446790984435584<!--Fixed-wing ESC voltage (estimated value)--></estimated></voltage>
+          <voltage units="V" is_input="False">19.23079160227611<!--Fixed-wing ESC voltage--><estimated units="V" is_input="False">19.23079160227611<!--Fixed-wing ESC voltage (estimated value)--></estimated></voltage>
           <power>
-            <climb units="W" is_input="False">700.491586163004<!--Fixed-wing ESC power (climb)--></climb>
-            <cruise units="W" is_input="False">204.8785183177261<!--Fixed-wing ESC power (cruise)--></cruise>
-            <hover units="W" is_input="False">5.695931175628914<!--Fixed-wing ESC power (hover)--></hover>
-            <max units="W" is_input="False">319.9800990883921<!--Fixed-wing ESC max. power--><estimated units="W" is_input="False">319.9800990883921<!--Fixed-wing ESC max. power (estimated value)--></estimated></max>
-            <takeoff units="W" is_input="False">180.9518601249248<!--Fixed-wing ESC power (takeoff)--></takeoff>
+            <climb units="W" is_input="False">803.3863887195645<!--Fixed-wing ESC power (climb)--></climb>
+            <cruise units="W" is_input="False">228.20493498804063<!--Fixed-wing ESC power (cruise)--></cruise>
+            <hover units="W" is_input="False">6.254896115158921<!--Fixed-wing ESC power (hover)--></hover>
+            <max units="W" is_input="False">360.404634317741<!--Fixed-wing ESC max. power--><estimated units="W" is_input="False">360.404634317741<!--Fixed-wing ESC max. power (estimated value)--></estimated></max>
+            <takeoff units="W" is_input="False">203.8123282142717<!--Fixed-wing ESC power (takeoff)--></takeoff>
           </power>
         </esc>
         <gearbox>
           <N_red is_input="False">1.0<!--Fixed-wing gearbox reduction ratio--></N_red>
         </gearbox>
         <motor>
-          <resistance units="V/A" is_input="False">0.12768694126682423<!--Fixed-wing motor resistance--><estimated units="V/A" is_input="False">0.12768694126682423<!--Fixed-wing motor resistance (estimated value)--></estimated></resistance>
+          <resistance units="V/A" is_input="False">0.12126039744805249<!--Fixed-wing motor resistance--><estimated units="V/A" is_input="False">0.12126039744805249<!--Fixed-wing motor resistance (estimated value)--></estimated></resistance>
           <current>
-            <climb units="A" is_input="False">41.770991248800165<!--Fixed-wing motor current (climb)--></climb>
-            <cruise units="A" is_input="False">12.217104337532248<!--Fixed-wing motor current (cruise)--></cruise>
-            <hover units="A" is_input="False">0.33965388877004793<!--Fixed-wing motor current (hover)--></hover>
-            <takeoff units="A" is_input="False">10.79033455224611<!--Fixed-wing motor current (takeoff)--></takeoff>
+            <climb units="A" is_input="False">45.9536479760368<!--Fixed-wing motor current (climb)--></climb>
+            <cruise units="A" is_input="False">13.053307096164152<!--Fixed-wing motor current (cruise)--></cruise>
+            <hover units="A" is_input="False">0.35777964157546527<!--Fixed-wing motor current (hover)--></hover>
+            <takeoff units="A" is_input="False">11.658051611830887<!--Fixed-wing motor current (takeoff)--></takeoff>
           </current>
           <efficiency>
-            <climb is_input="False">0.7946182909345161<!--Fixed-wing motor efficiency (climb)--></climb>
-            <cruise is_input="False">0.8569481688121069<!--Fixed-wing motor efficiency (cruise)--></cruise>
+            <climb is_input="False">0.7963116921514464<!--Fixed-wing motor efficiency (climb)--></climb>
+            <cruise is_input="False">0.8596735357439733<!--Fixed-wing motor efficiency (cruise)--></cruise>
             <hover is_input="False">0.0<!--Fixed-wing motor efficiency (hover)--></hover>
-            <takeoff is_input="False">0.84328072017384<!--Fixed-wing motor efficiency (takeoff)--></takeoff>
+            <takeoff is_input="False">0.8459462524416747<!--Fixed-wing motor efficiency (takeoff)--></takeoff>
           </efficiency>
           <length>
-            <estimated units="m" is_input="False">0.04320969197964346<!--Fixed-wing motor length (estimated value)--></estimated>
+            <estimated units="m" is_input="False">0.04553147724104623<!--Fixed-wing motor length (estimated value)--></estimated>
           </length>
           <power>
-            <climb units="W" is_input="False">1120.2949539848028<!--Fixed-wing motor power (climb)--></climb>
-            <cruise units="W" is_input="False">160.76660143068176<!--Fixed-wing motor power (cruise)--></cruise>
-            <hover units="W" is_input="False">0.014730573865126868<!--Fixed-wing motor power (hover)--></hover>
-            <takeoff units="W" is_input="False">114.9680338874304<!--Fixed-wing motor power (takeoff)--></takeoff>
+            <climb units="W" is_input="False">1296.952806067234<!--Fixed-wing motor power (climb)--></climb>
+            <cruise units="W" is_input="False">177.96296424242874<!--Fixed-wing motor power (cruise)--></cruise>
+            <hover units="W" is_input="False">0.015522091409574286<!--Fixed-wing motor power (hover)--></hover>
+            <takeoff units="W" is_input="False">129.49246634236115<!--Fixed-wing motor power (takeoff)--></takeoff>
           </power>
           <speed>
-            <climb units="rad/s" is_input="False">2054.858054476547<!--Fixed-wing motor rotation speed (climb)--></climb>
-            <constant units="rad/V/s" is_input="False">95.63565610078487<!--Fixed-wing motor speed constant--><estimated units="rad/V/s" is_input="False">95.63565610078487<!--Fixed-wing motor speed constant (catalogue value)--></estimated></constant>
-            <cruise units="rad/s" is_input="False">1109.2948594520044<!--Fixed-wing motor rotation speed (cruise)--></cruise>
+            <climb units="rad/s" is_input="False">1950.243945048282<!--Fixed-wing motor rotation speed (climb)--></climb>
+            <constant units="rad/V/s" is_input="False">86.10079540477925<!--Fixed-wing motor speed constant--><estimated units="rad/V/s" is_input="False">86.10079540477925<!--Fixed-wing motor speed constant (catalogue value)--></estimated></constant>
+            <cruise units="rad/s" is_input="False">1037.5752485713808<!--Fixed-wing motor rotation speed (cruise)--></cruise>
             <hover units="rad/s" is_input="False">0.0<!--Fixed-wing motor rotation speed (hover)--></hover>
-            <takeoff units="rad/s" is_input="False">887.2061422899075<!--Fixed-wing motor rotation speed (takeoff)--></takeoff>
+            <takeoff units="rad/s" is_input="False">834.6521970900371<!--Fixed-wing motor rotation speed (takeoff)--></takeoff>
           </speed>
           <torque>
-            <climb units="N*m" is_input="False">0.43322061090236086<!--Fixed-wing motor torque (climb)--></climb>
-            <cruise units="N*m" is_input="False">0.12419479232981101<!--Fixed-wing motor torque (cruise)--></cruise>
-            <friction units="N*m" is_input="False">0.0035515403210294957<!--Fixed-wing motor friction torque--><estimated units="N*m" is_input="False">0.0035515403210294957<!--Fixed-wing motor friction torque (estimated value)--></estimated></friction>
+            <climb units="N*m" is_input="False">0.5295638457241293<!--Fixed-wing motor torque (climb)--></climb>
+            <cruise units="N*m" is_input="False">0.1474495954991374<!--Fixed-wing motor torque (cruise)--></cruise>
+            <friction units="N*m" is_input="False">0.004155358146152571<!--Fixed-wing motor friction torque--><estimated units="N*m" is_input="False">0.004155358146152571<!--Fixed-wing motor friction torque (estimated value)--></estimated></friction>
             <hover units="N*m" is_input="False">0.0<!--Fixed-wing motor torque (hover)--></hover>
-            <max units="N*m" is_input="False">0.23369725708711958<!--Fixed-wing motor max. torque--><estimated units="N*m" is_input="False">0.23369725708711958<!--Fixed-wing motor max. torque (estimated value)--></estimated></max>
-            <nominal units="N*m" is_input="False">0.1924565644647916<!--Fixed-wing motor nominal torque--><estimated units="N*m" is_input="False">0.1924565644647916<!--Fixed-wing motor nominal torque (estimated value)--></estimated></nominal>
-            <takeoff units="N*m" is_input="False">0.10927598648419053<!--Fixed-wing motor torque (takeoff)--></takeoff>
+            <max units="N*m" is_input="False">0.28067944677505985<!--Fixed-wing motor max. torque--><estimated units="N*m" is_input="False">0.28067944677505985<!--Fixed-wing motor max. torque (estimated value)--></estimated></max>
+            <nominal units="N*m" is_input="False">0.23114777946267828<!--Fixed-wing motor nominal torque--><estimated units="N*m" is_input="False">0.23114777946267828<!--Fixed-wing motor nominal torque (estimated value)--></estimated></nominal>
+            <takeoff units="N*m" is_input="False">0.13124468731247252<!--Fixed-wing motor torque (takeoff)--></takeoff>
           </torque>
           <voltage>
-            <climb units="V" is_input="False">26.819927430306848<!--Fixed-wing motor voltage (climb)--></climb>
-            <cruise units="V" is_input="False">13.159141232574203<!--Fixed-wing motor voltage (cruise)--></cruise>
-            <hover units="V" is_input="False">0.04336936614642956<!--Fixed-wing motor voltage (hover)--></hover>
-            <takeoff units="V" is_input="False">10.654723755854143<!--Fixed-wing motor voltage (takeoff)--></takeoff>
+            <climb units="V" is_input="False">28.223065266625817<!--Fixed-wing motor voltage (climb)--></climb>
+            <cruise units="V" is_input="False">13.63355377540493<!--Fixed-wing motor voltage (cruise)--></cruise>
+            <hover units="V" is_input="False">0.043384501536262686<!--Fixed-wing motor voltage (hover)--></hover>
+            <takeoff units="V" is_input="False">11.107556447163857<!--Fixed-wing motor voltage (takeoff)--></takeoff>
           </voltage>
         </motor>
         <propeller>
           <beta is_input="False">0.55<!--Fixed-wing propeller pitch-to-diameter ratio--><estimated is_input="False">0.55<!--Fixed-wing propeller pitch-to-diameter ratio (estimated value)--></estimated></beta>
-          <diameter units="m" is_input="False">0.2221310295790914<!--Fixed-wing propeller diameter--><estimated units="m" is_input="False">0.2221310295790914<!--Fixed-wing propeller diameter (estimated value)--></estimated></diameter>
+          <diameter units="m" is_input="False">0.23611752838229413<!--Fixed-wing propeller diameter--><estimated units="m" is_input="False">0.23611752838229413<!--Fixed-wing propeller diameter (estimated value)--></estimated></diameter>
           <number is_input="True">1.0<!--Number of propellers for fixed-wing--></number>
           <AoA>
             <climb units="rad" is_input="False">1.5707963267948966<!--Fixed-wing propeller angle of attack (climb)--></climb>
@@ -290,32 +292,32 @@
             <takeoff units="m/s" is_input="False">31.365621766806534<!--Fixed-wing propeller tip speed (takeoff)--></takeoff>
           </ND>
           <efficiency>
-            <climb is_input="False">0.8065761715384789<!--Fixed-wing propeller efficiency (climb)--></climb>
-            <cruise is_input="False">1.063740741351389<!--Fixed-wing propeller efficiency (cruise)--></cruise>
+            <climb is_input="False">0.8039243863391948<!--Fixed-wing propeller efficiency (climb)--></climb>
+            <cruise is_input="False">1.0678722170531343<!--Fixed-wing propeller efficiency (cruise)--></cruise>
           </efficiency>
           <power>
-            <climb units="W" is_input="False">890.2068616779663<!--Fixed-wing propeller power (climb)--></climb>
-            <cruise units="W" is_input="False">137.7686447021686<!--Fixed-wing propeller power (cruise)--></cruise>
+            <climb units="W" is_input="False">1032.7786836399657<!--Fixed-wing propeller power (climb)--></climb>
+            <cruise units="W" is_input="False">152.99005070176702<!--Fixed-wing propeller power (cruise)--></cruise>
             <hover units="W" is_input="False">0.0<!--Fixed-wing propeller power (hover)--></hover>
-            <takeoff units="W" is_input="False">96.95032641356275<!--Fixed-wing propeller power (takeoff)--></takeoff>
+            <takeoff units="W" is_input="False">109.54366662175012<!--Fixed-wing propeller power (takeoff)--></takeoff>
           </power>
           <speed>
-            <climb units="rad/s" is_input="False">2054.858054476547<!--Fixed-wing propeller rotational speed (climb)--></climb>
-            <cruise units="rad/s" is_input="False">1109.2948594520044<!--Fixed-wing propeller rotational speed (cruise)--></cruise>
+            <climb units="rad/s" is_input="False">1950.243945048282<!--Fixed-wing propeller rotational speed (climb)--></climb>
+            <cruise units="rad/s" is_input="False">1037.5752485713808<!--Fixed-wing propeller rotational speed (cruise)--></cruise>
             <hover units="rad/s" is_input="False">0.0<!--Fixed-wing propeller rotational speed (hover)--></hover>
-            <takeoff units="rad/s" is_input="False">887.2061422899075<!--Fixed-wing propeller rotational speed (takeoff)--></takeoff>
+            <takeoff units="rad/s" is_input="False">834.6521970900371<!--Fixed-wing propeller rotational speed (takeoff)--></takeoff>
           </speed>
           <thrust>
-            <climb units="N" is_input="False">27.986386070233824<!--Fixed-wing propeller thrust (climb)--></climb>
-            <cruise units="N" is_input="False">7.3499546716331<!--Fixed-wing propeller thrust (cruise)--></cruise>
+            <climb units="N" is_input="False">32.18377911602544<!--Fixed-wing propeller thrust (climb)--></climb>
+            <cruise units="N" is_input="False">8.209294988815078<!--Fixed-wing propeller thrust (cruise)--></cruise>
             <hover units="N" is_input="False">0.0<!--Fixed-wing propeller thrust (hover)--></hover>
-            <takeoff units="N" is_input="False">7.248744713002037<!--Fixed-wing propeller max. thrust--></takeoff>
+            <takeoff units="N" is_input="False">8.190318729614775<!--Fixed-wing propeller max. thrust--></takeoff>
           </thrust>
           <torque>
-            <climb units="N*m" is_input="False">0.43322061090236086<!--Fixed-wing propeller torque (climb)--></climb>
-            <cruise units="N*m" is_input="False">0.12419479232981101<!--Fixed-wing propeller torque (cruise)--></cruise>
+            <climb units="N*m" is_input="False">0.5295638457241293<!--Fixed-wing propeller torque (climb)--></climb>
+            <cruise units="N*m" is_input="False">0.1474495954991374<!--Fixed-wing propeller torque (cruise)--></cruise>
             <hover units="N*m" is_input="False">0.0<!--Fixed-wing propeller torque (hover)--></hover>
-            <takeoff units="N*m" is_input="False">0.10927598648419053<!--Fixed-wing propeller torque (takeoff)--></takeoff>
+            <takeoff units="N*m" is_input="False">0.13124468731247252<!--Fixed-wing propeller torque (takeoff)--></takeoff>
           </torque>
           <Cp>
             <dynamic>
@@ -335,30 +337,30 @@
           </Ct>
         </propeller>
         <wires>
-          <length units="m" is_input="False">1.493612287918154<!--Fixed-wing wires length--></length>
+          <length units="m" is_input="False">1.328572673358127<!--Fixed-wing wires length--></length>
           <number is_input="False">3.0<!--Number of wires for fixed-wing (battery, ESC and motor connections)--></number>
-          <radius units="m" is_input="False">0.0008025026200059095<!--Fixed-wing wires radius--></radius>
+          <radius units="m" is_input="False">0.0008387154450671055<!--Fixed-wing wires radius--></radius>
         </wires>
       </fixedwing>
     </propulsion>
     <structures>
       <wing>
         <ribs>
-          <number is_input="False">17.17262436692057<!--Number of ribs for the wing--></number>
+          <number is_input="False">16.891726188259216<!--Number of ribs for the wing--></number>
           <thickness units="m" is_input="True">0.0035<!--Thickness of ribs--></thickness>
         </ribs>
         <spar>
-          <depth units="m" is_input="False">0.030546106100207467<!--Spar depth (I-beam)--></depth>
+          <depth units="m" is_input="False">0.034685567997267075<!--Spar depth (I-beam)--></depth>
           <flange>
-            <depth units="m" is_input="False">0.0016000914318814923<!--Flanges depth (I-beam)--></depth>
-            <thickness units="m" is_input="False">0.01600091431881492<!--Flanges thickness (I-beam)--></thickness>
+            <depth units="m" is_input="False">0.0016608449299839174<!--Flanges depth (I-beam)--></depth>
+            <thickness units="m" is_input="False">0.01660844929983917<!--Flanges thickness (I-beam)--></thickness>
           </flange>
           <stress>
             <max units="N/m**2" is_input="True">140000000.0<!--Maximum allowable stress for wing spars material--></max>
           </stress>
           <web>
-            <depth units="m" is_input="False">0.028946014668325974<!--Distance between two flanges (I-beam)--></depth>
-            <thickness units="m" is_input="False">0.0009648671556108658<!--Web thickness (I-beam)--></thickness>
+            <depth units="m" is_input="False">0.03302472306728316<!--Distance between two flanges (I-beam)--></depth>
+            <thickness units="m" is_input="False">0.001100824102242772<!--Web thickness (I-beam)--></thickness>
           </web>
         </spar>
       </wing>
@@ -369,16 +371,16 @@
       <dISA units="degK" is_input="True">0.0<!--ISA deviation in temperature--></dISA>
       <distance units="m" is_input="False">150000.0<!--Sizing mission distance (total)--></distance>
       <duration units="min" is_input="False">157.08333333333334<!--Sizing mission duration (total)--><fixedwing units="min" is_input="False">157.08333333333334<!--Sizing mission duration (fixed-wing mode)--></fixedwing></duration>
-      <energy units="kJ" is_input="False">1645.4754064335598<!--Sizing mission energy consumption (total)--><fixedwing units="kJ" is_input="False">1645.4754064335598<!--Sizing mission energy consumption (fixed-wing mode)--></fixedwing></energy>
+      <energy units="kJ" is_input="False">1824.4741369222434<!--Sizing mission energy consumption (total)--><fixedwing units="kJ" is_input="False">1824.4741369222434<!--Sizing mission energy consumption (fixed-wing mode)--></fixedwing></energy>
       <load_factor>
         <ultimate is_input="True">3.0<!--Ultimate load factor for sizing the structures--></ultimate>
       </load_factor>
       <main_route>
         <duration units="min" is_input="False">157.08333333333334<!--Duration of main route of sizing mission--><fixedwing units="min" is_input="False">157.08333333333334<!--Duration of main route of sizing mission (fixed-wing mode)--></fixedwing></duration>
-        <energy units="kJ" is_input="False">1645.4754064335598<!--Energy consumption of main route of sizing mission--><fixedwing units="kJ" is_input="False">1645.4754064335598<!--Energy consumption of main route of sizing mission (fixed-wing mode)--></fixedwing></energy>
+        <energy units="kJ" is_input="False">1824.4741369222434<!--Energy consumption of main route of sizing mission--><fixedwing units="kJ" is_input="False">1824.4741369222434<!--Energy consumption of main route of sizing mission (fixed-wing mode)--></fixedwing></energy>
         <climb>
           <duration units="min" is_input="False">0.8333333333333334<!--Climb segment duration--></duration>
-          <energy units="kJ" is_input="False">58.962892314989624<!--Climb segment energy consumption--></energy>
+          <energy units="kJ" is_input="False">68.26067400353863<!--Climb segment energy consumption--></energy>
           <rate units="m/s" is_input="False">3.0<!--Climb rate for main route of sizing mission--><fixedwing units="m/s" is_input="True">3.0<!--Climb rate for main route of sizing mission (fixed-wing mode)--></fixedwing></rate>
           <speed units="m/s" is_input="False">14.0<!--Climb speed for main route of sizing mission--><fixedwing units="m/s" is_input="True">14.0<!--Climb speed for main route of sizing mission (fixed-wing mode)--></fixedwing></speed>
         </climb>
@@ -386,7 +388,7 @@
           <altitude units="m" is_input="True">150.0<!--Cruise altitude for main route of sizing mission--></altitude>
           <distance units="m" is_input="True">150000.0<!--Distance of cruise segment for main route of sizing mission--></distance>
           <duration units="min" is_input="False">156.25<!--Duration of cruise segment for main route of sizing mission--></duration>
-          <energy units="kJ" is_input="False">1586.5125141185702<!--Energy consumption of cruise segment for main route of sizing mission--></energy>
+          <energy units="kJ" is_input="False">1756.2134629187046<!--Energy consumption of cruise segment for main route of sizing mission--></energy>
           <speed units="m/s" is_input="False">16.0<!--Cruise speed for main route of sizing mission--><fixedwing units="m/s" is_input="True">16.0<!--Cruise speed for main route of sizing mission (fixed-wing mode)--></fixedwing></speed>
         </cruise>
         <takeoff>
@@ -559,42 +561,42 @@
     <constraints>
       <aerodynamics>
         <CD0>
-          <consistency is_input="False">-1.359464248591725e-10<!--Constraint to ensure parasitic drag coefficient consistency--></consistency>
+          <consistency is_input="False">-4.742033260597872e-10<!--Constraint to ensure parasitic drag coefficient consistency--></consistency>
         </CD0>
         <CDi>
           <K>
-            <consistency is_input="False">3.56826615169073e-06</consistency>
+            <consistency is_input="False">-3.3758955354945422e-12</consistency>
           </K>
         </CDi>
       </aerodynamics>
       <geometry>
         <fuselage>
-          <volume is_input="False">11.993363552654245<!--Constraint on fuselage volume to house batteries and payload--></volume>
+          <volume is_input="False">10.83415908309126<!--Constraint on fuselage volume to house batteries and payload--></volume>
         </fuselage>
       </geometry>
       <stability>
         <static_margin>
-          <max is_input="False">0.7499999703442765<!--Constraint on maximum static margin--></max>
-          <min is_input="False">1.1862289414632521e-07<!--Constraint on minimum static margin--></min>
+          <max is_input="False">0.7499999992441942<!--Constraint on maximum static margin--></max>
+          <min is_input="False">3.0232230607829536e-09<!--Constraint on minimum static margin--></min>
         </static_margin>
       </stability>
       <weight>
         <mtow>
-          <consistency is_input="False">-1.4198499713302552e-07<!--Constraint to ensure MTOW consistency (see NVH formulation)--></consistency>
-          <requirement is_input="False">1.5317231696189888<!--Constraint on MTOW requirement--></requirement>
+          <consistency is_input="False">-1.1492372115606731e-09<!--Constraint to ensure MTOW consistency (see NVH formulation)--></consistency>
+          <requirement is_input="False">1.1875696029003604<!--Constraint on MTOW requirement--></requirement>
         </mtow>
       </weight>
       <mission>
         <sizing>
           <energy>
-            <fixedwing is_input="False">0.00350100923608559<!--Constraint on fixed-wing battery energy to complete the mission--></fixedwing>
+            <fixedwing is_input="False">-0.10490052237148956<!--Constraint on fixed-wing battery energy to complete the mission--></fixedwing>
           </energy>
         </sizing>
       </mission>
       <structures>
         <wing>
           <spar>
-            <depth is_input="False">0.5500100828033918<!--Constraint on spar depth vs. wing thickness--></depth>
+            <depth is_input="False">0.4806420725968386<!--Constraint on spar depth vs. wing thickness--></depth>
           </spar>
         </wing>
       </structures>
@@ -602,52 +604,52 @@
         <fixedwing>
           <battery>
             <power>
-              <climb is_input="False">0.9413819199207706<!--Constraint on fixed-wing battery power (climb)--></climb>
-              <cruise is_input="False">0.9915880817964864<!--Constraint on fixed-wing battery power (cruise)--></cruise>
-              <takeoff is_input="False">0.9939844365155853<!--Constraint on fixed-wing battery power (takeoff)--></takeoff>
+              <climb is_input="False">0.9321385112245523<!--Constraint on fixed-wing battery power (climb)--></climb>
+              <cruise is_input="False">0.9906883028866688<!--Constraint on fixed-wing battery power (cruise)--></cruise>
+              <takeoff is_input="False">0.9932244631338254<!--Constraint on fixed-wing battery power (takeoff)--></takeoff>
             </power>
             <voltage>
-              <climb is_input="False">-0.5992982301490638<!--Constraint on fixed-wing battery voltage (climb)--></climb>
-              <cruise is_input="False">0.21530767231845888<!--Constraint on fixed-wing battery voltage (cruise)--></cruise>
-              <max is_input="False">1.8836882120511678<!--Constraint to ensure battery voltage estimate is within model bounds--></max>
-              <min is_input="False">-0.26053326736385257<!--Constraint to ensure battery voltage estimate is within model bounds--></min>
-              <takeoff is_input="False">0.3646485103382787<!--Constraint on fixed-wing battery voltage (takeoff)--></takeoff>
+              <climb is_input="False">-0.6143574552393333<!--Constraint on fixed-wing battery voltage (climb)--></climb>
+              <cruise is_input="False">0.22016163124712831<!--Constraint on fixed-wing battery voltage (cruise)--></cruise>
+              <max is_input="False">1.76612605513819<!--Constraint to ensure battery voltage estimate is within model bounds--></max>
+              <min is_input="False">-0.20914386640415258<!--Constraint to ensure battery voltage estimate is within model bounds--></min>
+              <takeoff is_input="False">0.36464851033827883<!--Constraint on fixed-wing battery voltage (takeoff)--></takeoff>
             </voltage>
           </battery>
           <esc>
             <power>
-              <climb is_input="False">-1.1891723521514956<!--Constraint on fixed-wing ESC power (climb)--></climb>
-              <cruise is_input="False">0.3597148106978679<!--Constraint on fixed-wing ESC power (cruise)--></cruise>
-              <takeoff is_input="False">0.43449026786213285<!--Constraint on fixed-wing ESC power (takeoff)--></takeoff>
+              <climb is_input="False">-1.2291233580844596<!--Constraint on fixed-wing ESC power (climb)--></climb>
+              <cruise is_input="False">0.36680909938896644<!--Constraint on fixed-wing ESC power (cruise)--></cruise>
+              <takeoff is_input="False">0.4344902678621328<!--Constraint on fixed-wing ESC power (takeoff)--></takeoff>
             </power>
             <voltage>
-              <battery is_input="False">0.09090909090909101<!--Constraint on fixed-wing ESC voltage vs. battery--></battery>
-              <max is_input="False">0.48848859827130636<!--Constraint to ensure ESC voltage estimate is within model bounds--></max>
-              <min is_input="False">0.9269337384391935<!--Constraint to ensure ESC voltage estimate is within model bounds--></min>
+              <battery is_input="False">0.090909090909091<!--Constraint on fixed-wing ESC voltage vs. battery--></battery>
+              <max is_input="False">0.4612048849817023<!--Constraint to ensure ESC voltage estimate is within model bounds--></max>
+              <min is_input="False">0.8965135355595346<!--Constraint to ensure ESC voltage estimate is within model bounds--></min>
             </voltage>
           </esc>
           <motor>
             <torque>
-              <climb is_input="False">-0.8537684879239353<!--Constraint on fixed-wing motor torque (climb)--></climb>
-              <cruise is_input="False">0.3546866396831506<!--Constraint on fixed-wing motor torque (cruise)--></cruise>
+              <climb is_input="False">-0.8867211397510293<!--Constraint on fixed-wing motor torque (climb)--></climb>
+              <cruise is_input="False">0.3620981527839207<!--Constraint on fixed-wing motor torque (cruise)--></cruise>
               <hover is_input="False">1.0<!--Constraint on fixed-wing motor torque (hover)--></hover>
               <takeoff is_input="False">0.5324036411627471<!--Constraint on fixed-wing motor torque (takeoff)--></takeoff>
             </torque>
             <speed>
               <constant>
-                <max is_input="False">1.875854527383197<!--Constraint to ensure speed constant estimate is within model bounds--></max>
-                <min is_input="False">0.6864333069831404<!--Constraint to ensure speed constant estimate is within model bounds--></min>
+                <max is_input="False">1.952365239457145<!--Constraint to ensure speed constant estimate is within model bounds--></max>
+                <min is_input="False">0.6780910175046727<!--Constraint to ensure speed constant estimate is within model bounds--></min>
               </constant>
             </speed>
           </motor>
           <propeller>
             <airspeed>
-              <climb is_input="False">0.4810933625659188<!--Constraint on climb speed--></climb>
-              <cruise is_input="False">0.5097774405903572<!--Constraint on cruise speed--></cruise>
+              <climb is_input="False">0.4765016273533399<!--Constraint on climb speed--></climb>
+              <cruise is_input="False">0.5126007073152533<!--Constraint on cruise speed--></cruise>
             </airspeed>
             <rpm>
-              <climb is_input="False">-0.9067168853773058<!--Constraint on fixed-wing propeller rotational speed (climb)--></climb>
-              <cruise is_input="False">-0.02932231001142506<!--Constraint on fixed-wing propeller rotational speed (cruise)--></cruise>
+              <climb is_input="False">-0.9235891672704392<!--Constraint on fixed-wing propeller rotational speed (climb)--></climb>
+              <cruise is_input="False">-0.023394285339227012<!--Constraint on fixed-wing propeller rotational speed (cruise)--></cruise>
             </rpm>
           </propeller>
         </fixedwing>
@@ -656,45 +658,45 @@
     <variables>
       <aerodynamics>
         <CD0>
-          <guess is_input="True">0.03308722097692988<!--Initial guess for parasitic drag coefficient of airframe--></guess>
+          <guess is_input="True">0.030881936497103996<!--Initial guess for parasitic drag coefficient of airframe--></guess>
         </CD0>
         <CDi>
           <K>
-            <guess is_input="True">0.04194938657556852</guess>
+            <guess is_input="True">0.042442433041787554</guess>
           </K>
         </CDi>
       </aerodynamics>
       <geometry>
         <wing>
-          <AR is_input="True">8.586312183460281<!--Aspect ratio of wing--></AR>
-          <lambda is_input="True">0.9999999999999994<!--Taper ratio of wing--></lambda>
+          <AR is_input="True">8.445863094129608<!--Aspect ratio of wing--></AR>
+          <lambda is_input="True">1.0<!--Taper ratio of wing--></lambda>
           <loading>
-            <k is_input="True">1.0<!--Sizing coefficient on wing loading--></k>
+            <k is_input="True">0.9999999999999657<!--Sizing coefficient on wing loading--></k>
           </loading>
           <MAC>
             <LE>
               <x>
-                <k is_input="True">0.7056871179526668<!--Sizing coefficient on x-location of MAC leading edge--></k>
+                <k is_input="True">0.5694456707210652<!--Sizing coefficient on x-location of MAC leading edge--></k>
               </x>
             </LE>
           </MAC>
         </wing>
         <tail>
           <horizontal>
-            <AR is_input="True">6.0<!--Aspect ratio of horizontal tail--></AR>
+            <AR is_input="True">5.992966105164993<!--Aspect ratio of horizontal tail--></AR>
             <arm>
-              <k is_input="True">0.3196887150508967<!--Sizing coefficient on tail moment arm--></k>
+              <k is_input="True">0.2667076936135234<!--Sizing coefficient on tail moment arm--></k>
             </arm>
           </horizontal>
           <vertical>
-            <AR is_input="True">3.993079675133766<!--Aspect ratio of vertical tail--></AR>
+            <AR is_input="True">3.9932424640583846<!--Aspect ratio of vertical tail--></AR>
           </vertical>
         </tail>
       </geometry>
       <weight>
         <mtow>
-          <guess units="kg" is_input="False">9.874695918723784<!--Initial guess of MTOW for sizing scenarios--></guess>
-          <k is_input="True">3.291565306241261<!--Normalized variable for MTOW consistency (see NVH formulation)--></k>
+          <guess units="kg" is_input="False">11.428207787365096<!--Initial guess of MTOW for sizing scenarios--></guess>
+          <k is_input="True">3.8094025957883657<!--Normalized variable for MTOW consistency (see NVH formulation)--></k>
         </mtow>
       </weight>
       <propulsion>
@@ -739,7 +741,7 @@
         <wing>
           <spar>
             <depth>
-              <k is_input="True">0.05527847098178887<!--Flanges thickness over distance between the two flanges (I-beam)--></k>
+              <k is_input="True">0.05029095706874462<!--Flanges thickness over distance between the two flanges (I-beam)--></k>
             </depth>
             <web>
               <depth>

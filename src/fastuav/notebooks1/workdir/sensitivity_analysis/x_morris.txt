@@ -1,0 +1,1 @@
+['uncertainty:propulsion:multirotor:battery:power:max:rel', 'uncertainty:propulsion:multirotor:motor:torque:friction:rel']

@@ -1,0 +1,317 @@
+title: Hybrid VTOL Drone MDO
+
+# List of folder paths where user added custom registered OpenMDAO components
+module_folders:
+   
+# Input and output files
+input_file: ../../workdir/problem_inputs.xml
+output_file: ../../workdir/problem_outputs.xml
+
+# Definition of problem driver assuming the OpenMDAO convention import openmdao.api as om
+driver: om.ScipyOptimizeDriver(tol=1e-9, optimizer='SLSQP')
+
+# Definition of OpenMDAO model
+model:
+    scenarios:
+        id: fastuav.scenarios.hybrid
+    propulsion:
+        id: fastuav.propulsion.hybrid
+        gearbox: False
+    geometry:
+        id: fastuav.geometry.hybrid
+    structures:
+        id: fastuav.structures.hybrid
+        spar_model: "I_beam"  # "I_beam" or "pipe"
+    aerodynamics:
+        id: fastuav.aerodynamics.hybrid
+    wires:
+        id: fastuav.propulsion.wires.hybrid
+    mtow:
+        id: fastuav.mtow.hybrid
+    stability:
+        id: fastuav.stability.hybrid
+    performance:
+        cruise_range:
+            id: fastuav.performance.endurance.hybrid
+        missions:
+            id: fastuav.performance.mission
+            file_path: ../missions/missions_hybrid.yaml
+
+
+# This section is needed only if optimization process is run
+optimization: 
+    
+    design_variables:
+    
+        ## GLOBAL ##
+      - name: optimization:variables:weight:mtow:k # over estimation coefficient on the load mass
+        lower: 1.0
+        upper: 40.0
+        
+      - name: optimization:variables:geometry:projected_area:top:k  # over estimation coefficient on the wing area
+        lower: 1.0
+        upper: 5.0
+        
+      - name: optimization:variables:geometry:wing:loading:k # under estimation coefficient on the wing loading
+        lower: 0.1
+        upper: 1.0
+        
+        ## PROPULSION FIXED WING ##
+      - name: optimization:variables:propulsion:fixedwing:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
+        lower: 0.01
+        upper: 1.0
+
+      - name: optimization:variables:propulsion:fixedwing:propeller:beta # pitch/diameter ratio of the propeller
+        lower: 0.48
+        upper: 1.0
+
+      - name: optimization:variables:propulsion:fixedwing:propeller:advance_ratio:climb # climbing advance ratio
+        lower: 0.01
+        upper: 1.2
+
+      - name: optimization:variables:propulsion:fixedwing:propeller:advance_ratio:cruise # cruise advance ratio
+        lower: 0.01
+        upper: 1.2
+
+      - name: optimization:variables:propulsion:fixedwing:motor:torque:k # over estimation coefficient on the motor torque
+        lower: 1.0
+        upper: 20.0
+
+      - name: optimization:variables:propulsion:fixedwing:motor:speed:k # over estimation coefficient on the motor speed
+        lower: 0.1
+        upper: 10.0
+
+      - name: optimization:variables:propulsion:fixedwing:battery:energy:k # over estimation coefficient on the battery energy
+        lower: 0.1
+        upper: 20.0
+        
+      - name: optimization:variables:propulsion:fixedwing:battery:voltage:k # over estimation coefficient on the battery voltage
+        lower: 1.0
+        upper: 10.0
+
+      - name: optimization:variables:propulsion:fixedwing:esc:power:k # over estimation coefficient on the ESC power
+        lower: 1.0
+        upper: 15.0
+        
+      - name: optimization:variables:propulsion:fixedwing:esc:voltage:k # over estimation coefficient on the ESC voltage
+        lower: 1.0
+        upper: 15.0
+        
+        ## PROPULSION MULTIROTOR ##
+      - name: optimization:variables:propulsion:multirotor:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
+        lower: 0.01
+        upper: 1.0
+
+      - name: optimization:variables:propulsion:multirotor:propeller:beta # pitch/diameter ratio of the propeller
+        lower: 0.3
+        upper: 0.6
+
+      - name: optimization:variables:propulsion:multirotor:propeller:advance_ratio:climb # climbing advance ratio
+        lower: 0.01
+        upper: 0.5
+
+      - name: optimization:variables:propulsion:multirotor:motor:torque:k # over estimation coefficient on the motor torque
+        lower: 1.0
+        upper: 20.0
+
+      - name: optimization:variables:propulsion:multirotor:motor:speed:k # over estimation coefficient on the motor speed
+        lower: 0.1
+        upper: 10.0
+
+      - name: optimization:variables:propulsion:multirotor:battery:energy:k # over estimation coefficient on the battery energy
+        lower: 0.1
+        upper: 20.0
+        
+      - name: optimization:variables:propulsion:multirotor:battery:voltage:k # over estimation coefficient on the battery voltage
+        lower: 1.0
+        upper: 10.0
+
+      - name: optimization:variables:propulsion:multirotor:esc:power:k # over estimation coefficient on the ESC power
+        lower: 1.0
+        upper: 15.0
+        
+      - name: optimization:variables:propulsion:multirotor:esc:voltage:k # over estimation coefficient on the ESC voltage
+        lower: 1.0
+        upper: 15.0 
+    
+        ## GEOMETRY ##
+      - name: optimization:variables:geometry:wing:AR
+        lower: 8.0
+        upper: 20.0
+        
+      - name: optimization:variables:geometry:wing:lambda
+        lower: 0.1
+        upper: 1.0
+        
+      - name: optimization:variables:geometry:wing:MAC:LE:x:k  # under estimation coefficient on wing's MAC leading edge location
+        lower: 0.01
+        upper: 1.0
+        
+      - name: optimization:variables:geometry:tail:horizontal:AR
+        lower: 3.0
+        upper: 6.0
+        
+      - name: optimization:variables:geometry:tail:vertical:AR
+        lower: 0.9
+        upper: 4.0
+        
+      - name: optimization:variables:geometry:tail:horizontal:arm:k  # under estimation coefficient on tail moment arm
+        lower: 0.01
+        upper: 1.0
+        
+      #- name: optimization:variables:geometry:multirotor:propeller:y:k  # over estimation coefficient on y-location of VTOL propellers (to be robustified in models to avoid negative values if located after wingtip)
+      #  lower: 1.0
+      #  upper: 5.0
+        
+        ## STRUCTURES ##  
+      - name: optimization:variables:structures:wing:spar:depth:k  # optimization:variables:structures:wing:spar:diameter:k
+        lower: 0.01
+        upper: 0.99
+        
+      - name: optimization:variables:structures:wing:spar:web:depth:k  # optimization:variables:structures:wing:spar:diameter:outer:k  # over-estimation coefficient on spar loads (takeoff VTOL vs aerodynamic laods)
+        lower: 1.0
+        upper: 5.0
+      
+      - name: optimization:variables:structures:arms:diameter:k # aspect ratio D_out/D_in for the VTOL arms
+        lower: 0.05
+        upper: 0.99
+
+        ## AERODYNAMICS ##
+      - name: optimization:variables:aerodynamics:CD0:guess
+        lower: 0.01
+        upper: 1.0
+        
+    constraints:
+    
+        ## GLOBAL ##
+      - name: optimization:constraints:weight:mtow:consistency # Mass consistency
+        lower: 0.0
+
+      - name: optimization:constraints:weight:mtow:requirement # MTOW requirement
+        lower: 0.0
+        
+      - name: optimization:constraints:geometry:projected_area:top # Area consistency
+        lower: 0.0
+        
+      ## PROPULSION FIXED WING ##
+      - name: optimization:constraints:propulsion:fixedwing:propeller:airspeed:climb  # climb speed requirement
+        lower: 0.0
+        upper: 0.01
+        
+      - name: optimization:constraints:propulsion:fixedwing:propeller:airspeed:cruise  # cruise speed requirement
+        lower: 0.0
+        upper: 0.01
+        
+      - name: optimization:constraints:propulsion:fixedwing:propeller:rpm:climb  # propeller rpm in climb
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:fixedwing:propeller:rpm:cruise  # propeller rpm in cruise
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:fixedwing:motor:torque:climb  # motor torque in climb
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:fixedwing:motor:torque:cruise  # motor torque in cruise
+        lower: 0.0
+      
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:takeoff  # battery power at takeoff
+        lower: 0.0
+
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:climb  # battery power in climb
+        lower: 0.0
+
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:cruise  # battery power in cruise
+        lower: 0.0
+
+      - name: optimization:constraints:propulsion:fixedwing:battery:voltage:climb  # battery voltage in climb
+        lower: 0.0
+
+      - name: optimization:constraints:propulsion:fixedwing:battery:voltage:cruise  # battery voltage in cruise
+        lower: 0.0
+      
+      - name: optimization:constraints:propulsion:fixedwing:esc:power:climb  # ESC power in climb
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:fixedwing:esc:power:cruise  # ESC power in cruise
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:fixedwing:esc:voltage:min  # min bound for voltage w.r.t. power (to match commercially available components)
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:fixedwing:esc:voltage:max  # max bound for voltage w.r.t. power (to match commercially available components)
+        lower: 0.0 
+        
+      ## PROPULSION MULTIROTOR ##  (takeoff, climb and hover scenarios only. Cruise is not considered for VTOL propulsion)
+      - name: optimization:constraints:propulsion:multirotor:propeller:airspeed:climb  # climb speed requirement
+        lower: 0.0
+        upper: 0.01
+        
+      - name: optimization:constraints:propulsion:multirotor:propeller:rpm:climb  # propeller rpm in climb
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:multirotor:motor:torque:climb  # motor torque in climb
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:multirotor:motor:torque:hover  # steady motor torque in hover
+        lower: 0.0
+      
+      - name: optimization:constraints:propulsion:multirotor:battery:power:takeoff  # battery power at takeoff
+        lower: 0.0
+
+      - name: optimization:constraints:propulsion:multirotor:battery:power:climb  # battery power in climb
+        lower: 0.0
+
+      - name: optimization:constraints:propulsion:multirotor:battery:voltage:climb  # battery voltage in climb
+        lower: 0.0
+      
+      - name: optimization:constraints:propulsion:multirotor:esc:power:climb  # ESC power in climb
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:multirotor:esc:voltage:min  # min bound for voltage w.r.t. power (to match commercially available components)
+        lower: 0.0
+        
+      - name: optimization:constraints:propulsion:multirotor:esc:voltage:max  # max bound for voltage w.r.t. power (to match commercially available components)
+        lower: 0.0  
+      
+        ## GEOMETRY ##  
+      - name: optimization:constraints:geometry:fuselage:volume  # fuselage volume requirement
+        lower: 0.0
+        
+      - name: optimization:constraints:geometry:multirotor:propeller:y  # maximum y-location of VTOL propellers
+        lower: 0.0
+        
+        ## STRUCTURES ##
+      - name: optimization:constraints:structures:wing:spar:depth  # data:structures:wing:spar:diameter
+        lower: 0.0
+        
+      - name: optimization:constraints:structures:wing:spar:stress:VTOL  # loads at takeoff (VTOL propellers)
+        lower: 0.0
+    
+        ## AERODYNAMICS ##
+      - name: optimization:constraints:aerodynamics:CD0:consistency # Drag consistency
+        lower: 0.0
+        upper: 0.01
+      
+        ## STABILITY ##
+      - name: optimization:constraints:stability:static_margin:min  # static margin constraint (min value)
+        lower: 0.0
+        
+      #- name: optimization:constraints:stability:static_margin:max  # static margin constraint (max value)
+      #  lower: 0.0
+      
+        ## MISSION ##
+      #- name: optimization:constraints:mission:sizing:energy:fixedwing  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+      #  lower: 0.0
+        
+      #- name: optimization:constraints:mission:sizing:energy:multirotor  # energy requirement to fulfill mission (e.g. for mass minimization objective)
+      #  lower: 0.0
+      
+
+    objective:
+      # MASS MINIMIZATION
+      #- name: data:weight:mtow
+      #  scaler: 1e-1
+        
+      # ENDURANCE MAXIMIZATION
+      - name: data:performance:endurance:cruise
+        scaler: -1e-3  # the use of a scaler is highly recommended due to numerical precision affecting the final convergence.

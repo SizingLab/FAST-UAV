@@ -136,7 +136,6 @@ class MotorSpeed(om.ExplicitComponent):
         W_pro = inputs["data:propulsion:propeller:speed:%s" % scenario]
 
         W_mot = MotorPerformanceModel.speed(W_pro, N_red)  # [rad/s] Motor speed with reduction
-
         outputs["data:propulsion:motor:speed:%s" % scenario] = W_mot
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
@@ -336,7 +335,7 @@ class MotorEfficiency(om.ExplicitComponent):
         ] = - T_mot * W_mot / (U_mot**2 * I_mot)
 
         partials["data:propulsion:motor:efficiency:%s" % scenario,
-                 "data:propulsion:motor:voltage:%s" % scenario
+                 "data:propulsion:motor:current:%s" % scenario
         ] = - T_mot * W_mot / (U_mot * I_mot**2)
 
         partials["data:propulsion:motor:efficiency:%s" % scenario,
