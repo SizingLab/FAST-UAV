@@ -15,6 +15,14 @@ driver: om.ScipyOptimizeDriver(tol=1e-6, optimizer='SLSQP')
 
 # Definition of OpenMDAO model
 model:
+    # # Converge the discipline coupling at every evaluation so the design point is self-consistent
+    # # and the (analytic) total derivatives are exact for the optimizer.
+    # nonlinear_solver: om.NonlinearBlockGS(maxiter=200, atol=1.0e-9, rtol=1.0e-9, iprint=0)
+    # linear_solver: om.DirectSolver()
+    # nonlinear_solver: om.NonlinearBlockGS(maxiter=50, iprint=2, rtol=1e-3, debug_print=True, reraise_child_analysiserror=True)
+    # linear_solver: om.DirectSolver()
+    nonlinear_solver: om.NonlinearBlockGS(maxiter=200, atol=1.0e-9, rtol=1.0e-9, iprint=2, debug_print=True, reraise_child_analysiserror=True)
+    linear_solver: om.DirectSolver()
     scenarios:
         id: fastuav.scenarios.fixedwing
     propulsion:
@@ -60,49 +68,49 @@ optimization:
         upper: 1.0
         
         ## PROPULSION ##
-      # - name: optimization:variables:propulsion:fixedwing:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
-      #   lower: 0.01
-      #   upper: 1.0
+      - name: optimization:variables:propulsion:fixedwing:propeller:ND:k # slow down propeller coef : k_ND: ND / NDmax
+        lower: 0.01
+        upper: 1.0
 
-      # - name: optimization:variables:propulsion:fixedwing:propeller:beta # pitch/diameter ratio of the propeller
-      #   lower: 0.48
-      #   upper: 1.0
+      - name: optimization:variables:propulsion:fixedwing:propeller:beta # pitch/diameter ratio of the propeller
+        lower: 0.48
+        upper: 1.0
 
-      # - name: optimization:variables:propulsion:fixedwing:propeller:advance_ratio:climb # climbing advance ratio
-      #   lower: 0.01
-      #   upper: 1.2
+      - name: optimization:variables:propulsion:fixedwing:propeller:advance_ratio:climb # climbing advance ratio
+        lower: 0.01
+        upper: 1.2
 
-      # - name: optimization:variables:propulsion:fixedwing:propeller:advance_ratio:cruise # cruise advance ratio
-      #   lower: 0.01
-      #   upper: 1.2
+      - name: optimization:variables:propulsion:fixedwing:propeller:advance_ratio:cruise # cruise advance ratio
+        lower: 0.01
+        upper: 1.2
 
-      # - name: optimization:variables:propulsion:fixedwing:motor:torque:k # over estimation coefficient on the motor torque
-      #   lower: 1.0
-      #   # upper: 20.0
-      #   upper: 30.0
-      # - name: optimization:variables:propulsion:fixedwing:motor:speed:k # over estimation coefficient on the motor speed
-      #   lower: 0.1
-      #   upper: 10.0
+      - name: optimization:variables:propulsion:fixedwing:motor:torque:k # over estimation coefficient on the motor torque
+        lower: 1.0
+        upper: 20.0
+        # upper: 30.0
+      - name: optimization:variables:propulsion:fixedwing:motor:speed:k # over estimation coefficient on the motor speed
+        lower: 0.1
+        upper: 10.0
 
-      # - name: optimization:variables:propulsion:fixedwing:battery:energy:k # over estimation coefficient on the battery energy
-      #   # lower: 0.1
-      #   # upper: 20.0
-      #   lower: 0.7
-      #   upper: 1.5
+      - name: optimization:variables:propulsion:fixedwing:battery:energy:k # over estimation coefficient on the battery energy
+        lower: 0.1
+        upper: 20.0
+        # lower: 0.7
+        # upper: 1.5
         
-      # - name: optimization:variables:propulsion:fixedwing:battery:voltage:k # over estimation coefficient on the battery voltage
-      #   # lower: 1.0
-      #   # upper: 10.0
-      #   lower: 0.5
-      #   upper: 2.0
+      - name: optimization:variables:propulsion:fixedwing:battery:voltage:k # over estimation coefficient on the battery voltage
+        lower: 1.0
+        upper: 10.0
+        # lower: 0.5
+        # upper: 2.0
 
-      # - name: optimization:variables:propulsion:fixedwing:esc:power:k # over estimation coefficient on the ESC power
-      #   lower: 1.0
-      #   upper: 15.0
+      - name: optimization:variables:propulsion:fixedwing:esc:power:k # over estimation coefficient on the ESC power
+        lower: 1.0
+        upper: 15.0
         
-      # - name: optimization:variables:propulsion:fixedwing:esc:voltage:k # over estimation coefficient on the ESC voltage
-      #   lower: 1.0
-      #   upper: 15.0
+      - name: optimization:variables:propulsion:fixedwing:esc:voltage:k # over estimation coefficient on the ESC voltage
+        lower: 1.0
+        upper: 15.0
     
         ## GEOMETRY ##
       - name: optimization:variables:geometry:wing:AR
@@ -153,52 +161,52 @@ optimization:
         lower: 0.0
         
       #   ## PROPULSION ##
-      # - name: optimization:constraints:propulsion:fixedwing:propeller:airspeed:climb  # climb speed requirement
-      #   lower: 0.0
-      #   upper: 0.01
+      - name: optimization:constraints:propulsion:fixedwing:propeller:airspeed:climb  # climb speed requirement
+        lower: 0.0
+        upper: 0.01
         
-      # - name: optimization:constraints:propulsion:fixedwing:propeller:airspeed:cruise  # cruise speed requirement
-      #   lower: 0.0
-      #   upper: 0.01
+      - name: optimization:constraints:propulsion:fixedwing:propeller:airspeed:cruise  # cruise speed requirement
+        lower: 0.0
+        upper: 0.01
         
-      # - name: optimization:constraints:propulsion:fixedwing:propeller:rpm:climb  # propeller rpm in climb
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:propeller:rpm:climb  # propeller rpm in climb
+        lower: 0.0
         
-      # - name: optimization:constraints:propulsion:fixedwing:propeller:rpm:cruise  # propeller rpm in cruise
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:propeller:rpm:cruise  # propeller rpm in cruise
+        lower: 0.0
         
-      # - name: optimization:constraints:propulsion:fixedwing:motor:torque:climb  # motor torque in climb
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:motor:torque:climb  # motor torque in climb
+        lower: 0.0
         
-      # - name: optimization:constraints:propulsion:fixedwing:motor:torque:cruise  # motor torque in cruise
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:motor:torque:cruise  # motor torque in cruise
+        lower: 0.0
       
-      # - name: optimization:constraints:propulsion:fixedwing:battery:power:takeoff  # battery power at takeoff
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:takeoff  # battery power at takeoff
+        lower: 0.0
 
-      # - name: optimization:constraints:propulsion:fixedwing:battery:power:climb  # battery power in climb
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:climb  # battery power in climb
+        lower: 0.0
 
-      # - name: optimization:constraints:propulsion:fixedwing:battery:power:cruise  # battery power in cruise
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:battery:power:cruise  # battery power in cruise
+        lower: 0.0
 
-      # - name: optimization:constraints:propulsion:fixedwing:battery:voltage:climb  # battery voltage in climb
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:battery:voltage:climb  # battery voltage in climb
+        lower: 0.0
 
-      # - name: optimization:constraints:propulsion:fixedwing:battery:voltage:cruise  # battery voltage in cruise
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:battery:voltage:cruise  # battery voltage in cruise
+        lower: 0.0
       
-      # - name: optimization:constraints:propulsion:fixedwing:esc:power:climb  # ESC power in climb
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:esc:power:climb  # ESC power in climb
+        lower: 0.0
         
-      # - name: optimization:constraints:propulsion:fixedwing:esc:power:cruise  # ESC power in cruise
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:esc:power:cruise  # ESC power in cruise
+        lower: 0.0
         
-      # - name: optimization:constraints:propulsion:fixedwing:esc:voltage:min  # min bound for voltage w.r.t. power (to match commercially available components)
-      #   lower: 0.0
+      - name: optimization:constraints:propulsion:fixedwing:esc:voltage:min  # min bound for voltage w.r.t. power (to match commercially available components)
+        lower: 0.0
         
-      # - name: optimization:constraints:propulsion:fixedwing:esc:voltage:max  # max bound for voltage w.r.t. power (to match commercially available components)
-      #   lower: 0.0 
+      - name: optimization:constraints:propulsion:fixedwing:esc:voltage:max  # max bound for voltage w.r.t. power (to match commercially available components)
+        lower: 0.0 
       
         ## GEOMETRY ##  
       - name: optimization:constraints:geometry:fuselage:volume  # fuselage volume requirement

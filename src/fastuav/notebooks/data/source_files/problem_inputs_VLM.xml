@@ -46,8 +46,8 @@
       <static_margin is_input="False">0.8120913621070981<requirement><max is_input="True">0.4</max><min is_input="True">0.1</min></requirement></static_margin>
     </stability>
     <weight>
-      <airframe units="kg" is_input="False">4.272310595699498<fuselage><mass units="kg" is_input="False">3.734435514076363<density units="kg/m**2" is_input="True">0.6</density><mid units="kg" is_input="False">2.613673794101958</mid><nose units="kg" is_input="False">0.4188420555195608</nose><rear units="kg" is_input="False">0.7019196644548448</rear></mass></fuselage><tail><density units="kg/m**2" is_input="True">2.0</density><horizontal><mass units="kg" is_input="False">0.1394141727552027</mass></horizontal><vertical><mass units="kg" is_input="False">0.08582247564415937</mass></vertical></tail><wing><mass units="kg" is_input="False">0.31263843322377305</mass><ribs><density units="kg/m**3" is_input="True">160.0</density><mass units="kg" is_input="False">0.061083995759367814</mass></ribs><skin><density units="kg/m**2" is_input="True">0.2</density><mass units="kg" is_input="False">0.13893342152532454</mass></skin><spar><density units="kg/m**3" is_input="True">1600.0</density><mass units="kg" is_input="False">0.11262101593908068</mass></spar></wing></airframe>
-      <mtow units="kg" is_input="False">14.05411590043964<requirement units="kg" is_input="True">25.0</requirement></mtow>
+      <airframe units="kg" is_input="False">4.272310595699498<fuselage><mass units="kg" is_input="False">3.734435514076363<density units="kg/m**2" is_input="True">2.0</density><mid units="kg" is_input="False">2.613673794101958</mid><nose units="kg" is_input="False">0.4188420555195608</nose><rear units="kg" is_input="False">0.7019196644548448</rear></mass></fuselage><tail><density units="kg/m**2" is_input="True">2.0</density><horizontal><mass units="kg" is_input="False">0.1394141727552027</mass></horizontal><vertical><mass units="kg" is_input="False">0.08582247564415937</mass></vertical></tail><wing><mass units="kg" is_input="False">0.31263843322377305</mass><ribs><density units="kg/m**3" is_input="True">160.0</density><mass units="kg" is_input="False">0.061083995759367814</mass></ribs><skin><density units="kg/m**2" is_input="True">0.2</density><mass units="kg" is_input="False">0.13893342152532454</mass></skin><spar><density units="kg/m**3" is_input="True">1600.0</density><mass units="kg" is_input="False">0.11262101593908068</mass></spar></wing></airframe>
+      <mtow units="kg" is_input="False">14.05411590043964<requirement units="kg" is_input="True">15.0</requirement></mtow>
       <misc>
         <mass units="kg" is_input="True">0.0</mass>
       </misc>
@@ -61,7 +61,7 @@
         <span_ratio is_input="True">0.7</span_ratio>
       </flap>
       <fuselage>
-        <fineness is_input="True">8.0</fineness>
+        <fineness is_input="True">5.0</fineness>
         <length units="m" is_input="False">3.3331862511893973<mid units="m" is_input="False">2.0799872985027434</mid><nose units="m" is_input="False">0.3333186251189397</nose><rear units="m" is_input="False">0.9198803275677143</rear></length>
         <surface units="m**2" is_input="False">6.224059190127273<mid units="m**2" is_input="False">4.35612299016993</mid><nose units="m**2" is_input="False">0.6980700925326013</nose><rear units="m**2" is_input="False">1.1698661074247414</rear></surface>
         <diameter>
