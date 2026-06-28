@@ -24,3 +24,6 @@
 .python-version
 **/__pycache__/
 .vscode/
+**/CheckPartials/problem*_out/
+**/solver_errors*.out
+*.diff
