@@ -46,12 +46,12 @@ from openmdao.core.system import System
 
 from fastuav.utils.warnings import VariableDescriptionWarning
 
-from . import resources
+# from . import resources
 
 _LOGGER = logging.getLogger(__name__)
 
-SAMPLE_FILENAME = "fastga.yml"
-SAMPLE_XML_NAME = "fastga.xml"
+# SAMPLE_FILENAME = "fastga.yml"
+# SAMPLE_XML_NAME = "fastga.xml"
 BOOLEAN_OPTIONS = [
     "use_openvsp",
     "compute_mach_interpolation",
@@ -396,48 +396,48 @@ def generate_variables_description(subpackage_path: str, overwrite: bool = False
     reason="Will be removed in version 1.0. Please use the generate_configuration_file from "
     'fast-oad-core api with the distribution_name="fast-oad-cs23" instead',
 )
-def generate_configuration_file(configuration_file_path: str, overwrite: bool = False):
-    """
-    Generates a sample configuration file.
+# def generate_configuration_file(configuration_file_path: str, overwrite: bool = False):
+#     """
+#     Generates a sample configuration file.
 
-    :param configuration_file_path: the path of the file to be written
-    :param overwrite: if True, the file will be written, even if it already exists
-    :raise FastPathExistsError: if overwrite==False and configuration_file_path already exists
-    """
-    if not overwrite and pth.exists(configuration_file_path):
-        raise FastPathExistsError(
-            "Configuration file is not written because it already exists. "
-            "Use overwrite=True to bypass." % configuration_file_path,
-            configuration_file_path,
-        )
+#     :param configuration_file_path: the path of the file to be written
+#     :param overwrite: if True, the file will be written, even if it already exists
+#     :raise FastPathExistsError: if overwrite==False and configuration_file_path already exists
+#     """
+#     if not overwrite and pth.exists(configuration_file_path):
+#         raise FastPathExistsError(
+#             "Configuration file is not written because it already exists. "
+#             "Use overwrite=True to bypass." % configuration_file_path,
+#             configuration_file_path,
+#         )
 
-    if not pth.exists(pth.split(configuration_file_path)[0]):
-        os.mkdir(pth.split(configuration_file_path)[0])
-    shutil.copy(pth.join(resources.__path__[0], SAMPLE_FILENAME), configuration_file_path)
+#     if not pth.exists(pth.split(configuration_file_path)[0]):
+#         os.mkdir(pth.split(configuration_file_path)[0])
+#     shutil.copy(pth.join(resources.__path__[0], SAMPLE_FILENAME), configuration_file_path)
 
-    _LOGGER.info("Sample configuration written in %s", configuration_file_path)
+#     _LOGGER.info("Sample configuration written in %s", configuration_file_path)
 
 
-def generate_xml_file(xml_file_path: str, overwrite: bool = False):
-    """
-    Generates a sample XML file.
+# def generate_xml_file(xml_file_path: str, overwrite: bool = False):
+#     """
+#     Generates a sample XML file.
 
-    :param xml_file_path: the path of the file to be written
-    :param overwrite: if True, the file will be written, even if it already exists
-    :raise FastPathExistsError: if overwrite==False and configuration_file_path already exists
-    """
-    if not overwrite and pth.exists(xml_file_path):
-        raise FastPathExistsError(
-            "Configuration file is not written because it already exists. "
-            "Use overwrite=True to bypass." % xml_file_path,
-            xml_file_path,
-        )
+#     :param xml_file_path: the path of the file to be written
+#     :param overwrite: if True, the file will be written, even if it already exists
+#     :raise FastPathExistsError: if overwrite==False and configuration_file_path already exists
+#     """
+#     if not overwrite and pth.exists(xml_file_path):
+#         raise FastPathExistsError(
+#             "Configuration file is not written because it already exists. "
+#             "Use overwrite=True to bypass." % xml_file_path,
+#             xml_file_path,
+#         )
 
-    if not pth.exists(pth.split(xml_file_path)[0]):
-        os.mkdir(pth.split(xml_file_path)[0])
-    shutil.copy(pth.join(resources.__path__[0], SAMPLE_XML_NAME), xml_file_path)
+#     if not pth.exists(pth.split(xml_file_path)[0]):
+#         os.mkdir(pth.split(xml_file_path)[0])
+#     shutil.copy(pth.join(resources.__path__[0], SAMPLE_XML_NAME), xml_file_path)
 
-    _LOGGER.info("Sample configuration written in %s", xml_file_path)
+#     _LOGGER.info("Sample configuration written in %s", xml_file_path)
 
 
 def write_needed_inputs(
