@@ -25,5 +25,9 @@
 **/__pycache__/
 .vscode/
 **/CheckPartials/problem*_out/
+**/CheckPartials/reports/
 **/solver_errors*.out
 *.diff
+# Vendored third-party binaries (XFOIL / OpenVSP) — not redistributable, installed locally
+*.exe
+*.dll
