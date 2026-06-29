@@ -64,6 +64,15 @@ _LOGGER = logging.getLogger(__name__)
 _XFOIL_PATH_LIMIT = 64
 
 
+def _scalarize(value):
+    """Return the scalar inside a one-element array/sequence (numpy>=2 safe).
+
+    numpy>=2 (required by OpenMDAO) raises on ``float(np.array([x]))``, so this
+    mirrors fast-oad-core's ``scalarize`` and is used instead of bare ``float``.
+    """
+    return float(np.asarray(value).item())
+
+
 class XfoilPolar(ExternalCodeComp):
     """Runs a polar computation with XFOIL and returns the 2D max lift coefficient."""
 
@@ -300,9 +309,9 @@ class XfoilPolar(ExternalCodeComp):
             parser.set_generated_file(self.stdin)
             if not inviscid:
                 parser.mark_anchor("RE")
-                parser.transfer_var(float(reynolds), 1, 1)
+                parser.transfer_var(_scalarize(reynolds), 1, 1)
             parser.mark_anchor("M")
-            parser.transfer_var(float(mach), 1, 1)
+            parser.transfer_var(_scalarize(mach), 1, 1)
             parser.mark_anchor("ITER")
             parser.transfer_var(self.options[OPTION_ITER_LIMIT], 1, 1)
 

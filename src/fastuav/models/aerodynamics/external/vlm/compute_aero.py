@@ -322,10 +322,10 @@ class _ComputeAeroVLM(VLMSimpleGeometry):
 
         if self.options["low_speed_aero"]:
             altitude = 0.0
-            mach = inputs["data:aerodynamics:low_speed:mach"]
+            mach = float(inputs["data:aerodynamics:low_speed:mach"][0])
         else:
-            altitude = inputs["mission:sizing:main_route:cruise:altitude"]
-            mach = inputs["data:aerodynamics:cruise:mach"]
+            altitude = float(inputs["mission:sizing:main_route:cruise:altitude"][0])
+            mach = float(inputs["data:aerodynamics:cruise:mach"][0])
 
         (
             cl_0_wing,

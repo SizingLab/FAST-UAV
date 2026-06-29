@@ -36,6 +36,15 @@ DEFAULT_NY2 = 14
 _LOGGER = logging.getLogger(__name__)
 
 
+def _scalarize(value):
+    """Return the scalar inside a one-element array/sequence (numpy>=2 safe).
+
+    numpy>=2 (required by OpenMDAO) raises on ``float(np.array([x]))``, so this
+    mirrors fast-oad-core's ``scalarize`` and is used instead of bare ``float``.
+    """
+    return float(np.asarray(value).item())
+
+
 class VLMSimpleGeometry(om.ExplicitComponent):
     """Computation of the aerodynamics properties using the in-house VLM code."""
 
@@ -157,7 +166,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
             _,
             _,
         ) = self.compute_aero_coeff(inputs, altitude, mach, aoa_angle)
-        return float(cl_alpha_wing + cl_alpha_htp)
+        return _scalarize(cl_alpha_wing + cl_alpha_htp)
 
     def compute_cl_alpha_mach(self, inputs, aoa_angle, altitude, cruise_mach):
         """
@@ -205,7 +214,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         """
 
         # Fix mach number of digits to consider similar results
-        mach = round(float(mach) * 1e3) / 1e3
+        mach = round(_scalarize(mach) * 1e3) / 1e3
 
         # Get inputs necessary to define global geometry
         if self.options["low_speed_aero"]:
@@ -221,26 +230,26 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         # width_max = inputs["data:geometry:fuselage:maximum_width"]
         width_max = inputs["data:geometry:fuselage:diameter:mid"]
         span_wing = inputs["data:geometry:wing:span"]
-        # sref_wing = float(inputs["data:geometry:wing:area"])
-        sref_wing = float(inputs["data:geometry:wing:surface"])
-        # sref_htp = float(inputs["data:geometry:horizontal_tail:area"])
-        sref_htp = float(inputs["data:geometry:tail:horizontal:surface"])
+        # sref_wing = _scalarize(inputs["data:geometry:wing:area"])
+        sref_wing = _scalarize(inputs["data:geometry:wing:surface"])
+        # sref_htp = _scalarize(inputs["data:geometry:horizontal_tail:area"])
+        sref_htp = _scalarize(inputs["data:geometry:tail:horizontal:surface"])
 
         area_ratio = sref_htp / sref_wing
-        sweep25_wing = float(inputs["data:geometry:wing:sweep_25"])
-        taper_ratio_wing = float(inputs["optimization:variables:geometry:wing:lambda"])
-        # aspect_ratio_wing = float(inputs["data:geometry:wing:aspect_ratio"])
-        aspect_ratio_wing = float(inputs["optimization:variables:geometry:wing:AR"])
-        # sweep25_htp = float(inputs["data:geometry:horizontal_tail:sweep_25"])
-        sweep25_htp = float(inputs["data:geometry:tail:horizontal:sweep_25"])
-        # aspect_ratio_htp = float(inputs["data:geometry:horizontal_tail:aspect_ratio"])
-        aspect_ratio_htp = float(inputs["optimization:variables:geometry:tail:horizontal:AR"])
-        # taper_ratio_htp = float(inputs["data:geometry:horizontal_tail:taper_ratio"])
-        taper_ratio_htp = float(
+        sweep25_wing = _scalarize(inputs["data:geometry:wing:sweep_25"])
+        taper_ratio_wing = _scalarize(inputs["optimization:variables:geometry:wing:lambda"])
+        # aspect_ratio_wing = _scalarize(inputs["data:geometry:wing:aspect_ratio"])
+        aspect_ratio_wing = _scalarize(inputs["optimization:variables:geometry:wing:AR"])
+        # sweep25_htp = _scalarize(inputs["data:geometry:horizontal_tail:sweep_25"])
+        sweep25_htp = _scalarize(inputs["data:geometry:tail:horizontal:sweep_25"])
+        # aspect_ratio_htp = _scalarize(inputs["data:geometry:horizontal_tail:aspect_ratio"])
+        aspect_ratio_htp = _scalarize(inputs["optimization:variables:geometry:tail:horizontal:AR"])
+        # taper_ratio_htp = _scalarize(inputs["data:geometry:horizontal_tail:taper_ratio"])
+        taper_ratio_htp = _scalarize(
             inputs["data:geometry:tail:horizontal:lambda"]
         )  # assume same profile as wing
-        dihedral_angle = float(inputs["data:geometry:wing:dihedral"])
-        twist_angle = float(inputs["data:geometry:wing:twist"])
+        dihedral_angle = _scalarize(inputs["data:geometry:wing:dihedral"])
+        twist_angle = _scalarize(inputs["data:geometry:wing:twist"])
         geometry_set = np.around(
             np.array(
                 [
@@ -349,7 +358,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
 
             # Post-process HTP-isolated data -------------------------------------------------------
             cl_alpha_htp_isolated = (
-                float(htp_aoa_isolated["cl"] - htp_0_isolated["cl"])
+                _scalarize(htp_aoa_isolated["cl"] - htp_0_isolated["cl"])
                 / beta
                 * area_ratio
                 / (aoa_angle * np.pi / 180)
@@ -364,22 +373,22 @@ class VLMSimpleGeometry(om.ExplicitComponent):
 
             # Store raw results for reuse at any area_ratio
             results = [
-                float(cl_0_wing),
-                float(cl_x_wing),
-                float(cl_alpha_wing),
-                float(cm_0_wing),
+                _scalarize(cl_0_wing),
+                _scalarize(cl_x_wing),
+                _scalarize(cl_alpha_wing),
+                _scalarize(cm_0_wing),
                 np.array(y_vector_wing).tolist(),
                 np.array(cl_vector_wing).tolist(),
                 np.array(chord_vector_wing).tolist(),
-                float(coef_k_wing),
-                float(cl_0_htp),
-                float(cl_aoa_htp),
-                float(cl_alpha_htp),
-                float(cl_alpha_htp_isolated),
+                _scalarize(coef_k_wing),
+                _scalarize(cl_0_htp),
+                _scalarize(cl_aoa_htp),
+                _scalarize(cl_alpha_htp),
+                _scalarize(cl_alpha_htp_isolated),
                 np.array(y_vector_htp).tolist(),
                 np.array(cl_vector_htp).tolist(),
-                float(coef_k_htp),
-                float(sref_wing),
+                _scalarize(coef_k_htp),
+                _scalarize(sref_wing),
             ]
             self._aero_cache[geometry_key] = (results, area_ratio)
 
@@ -440,25 +449,25 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         :param saved_area_ratio: area ratio at which the cached result was computed
         :return: 15-element aerodynamic results tuple, rescaled to current geometry
         """
-        saved_area_wing = float(results[15])
+        saved_area_wing = _scalarize(results[15])
         area_scale = area_ratio / saved_area_ratio
         span_scale = np.sqrt(sref_wing / saved_area_wing)
 
-        cl_0_wing = float(results[0])
-        cl_x_wing = float(results[1])
-        cl_alpha_wing = float(results[2])
-        cm_0_wing = float(results[3])
+        cl_0_wing = _scalarize(results[0])
+        cl_x_wing = _scalarize(results[1])
+        cl_alpha_wing = _scalarize(results[2])
+        cm_0_wing = _scalarize(results[3])
         y_vector_wing = np.array(results[4]) * span_scale
         cl_vector_wing = np.array(results[5])
         chord_vector_wing = np.array(results[6]) * span_scale
-        coef_k_wing = float(results[7])
-        cl_0_htp = float(results[8]) * area_scale
-        cl_aoa_htp = float(results[9]) * area_scale
-        cl_alpha_htp = float(results[10]) * area_scale
-        cl_alpha_htp_isolated = float(results[11]) * area_scale
+        coef_k_wing = _scalarize(results[7])
+        cl_0_htp = _scalarize(results[8]) * area_scale
+        cl_aoa_htp = _scalarize(results[9]) * area_scale
+        cl_alpha_htp = _scalarize(results[10]) * area_scale
+        cl_alpha_htp_isolated = _scalarize(results[11]) * area_scale
         y_vector_htp = np.array(results[12])
         cl_vector_htp = np.array(results[13])
-        coef_k_htp = float(results[14]) * area_scale
+        coef_k_htp = _scalarize(results[14]) * area_scale
 
         return (
             cl_0_wing,
@@ -504,14 +513,14 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         self._run(inputs, run_opt="wing")
 
         # Get inputs
-        # aspect_ratio = float(inputs["data:geometry:wing:aspect_ratio"])
-        aspect_ratio = float(inputs["optimization:variables:geometry:wing:AR"])
+        # aspect_ratio = _scalarize(inputs["data:geometry:wing:aspect_ratio"])
+        aspect_ratio = _scalarize(inputs["optimization:variables:geometry:wing:AR"])
         l0_wing = inputs["data:geometry:wing:MAC:length"]
 
-        # y2_wing = float(inputs["data:geometry:wing:root:y"])
-        y2_wing = float(inputs["data:geometry:fuselage:diameter:mid"]) / 2.0
-        semi_span = float(inputs["data:geometry:wing:span"]) / 2.0
-        wing_twist = float(inputs["data:geometry:wing:twist"])
+        # y2_wing = _scalarize(inputs["data:geometry:wing:root:y"])
+        y2_wing = _scalarize(inputs["data:geometry:fuselage:diameter:mid"]) / 2.0
+        semi_span = _scalarize(inputs["data:geometry:wing:span"]) / 2.0
+        wing_twist = _scalarize(inputs["data:geometry:wing:twist"])
 
         # Initialization
         x_c = self.wing["x_c"]
@@ -594,8 +603,8 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         self._run(inputs, run_opt="htp")
 
         # Get inputs
-        # aspect_ratio = float(inputs["data:geometry:horizontal_tail:aspect_ratio"])
-        aspect_ratio = float(inputs["optimization:variables:geometry:tail:horizontal:AR"])
+        # aspect_ratio = _scalarize(inputs["data:geometry:horizontal_tail:aspect_ratio"])
+        aspect_ratio = _scalarize(inputs["optimization:variables:geometry:tail:horizontal:AR"])
         # l0_wing = inputs["data:geometry:horizontal_tail:MAC:length"]
         l0_wing = inputs["data:geometry:tail:horizontal:MAC:length"]
         # Initialization
@@ -678,8 +687,8 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         """
 
         # Get inputs
-        # aspect_ratio_wing = float(inputs["data:geometry:wing:aspect_ratio"])
-        aspect_ratio_wing = float(inputs["optimization:variables:geometry:wing:AR"])
+        # aspect_ratio_wing = _scalarize(inputs["data:geometry:wing:aspect_ratio"])
+        aspect_ratio_wing = _scalarize(inputs["optimization:variables:geometry:wing:AR"])
 
         # Compute wing
         if saved_wing_result is None:
@@ -704,7 +713,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         return wing, htp, aircraft
 
     def _run(self, inputs, run_opt="wing"):
-        wing_break = float(inputs["data:geometry:wing:kink:span_ratio"])
+        wing_break = _scalarize(inputs["data:geometry:wing:kink:span_ratio"])
 
         # Define mesh size
         self.n_x = int(DEFAULT_NX)
@@ -1071,7 +1080,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
 
         # Interpolate value if within the interpolation range
         if min(lift_coeff) <= objective <= max(lift_coeff):
-            idx_max = int(float(np.where(lift_coeff == max(lift_coeff))[0]))
+            idx_max = int(_scalarize(np.where(lift_coeff == max(lift_coeff))[0]))
             return np.interp(objective, lift_coeff[0 : idx_max + 1], drag_coeff[0 : idx_max + 1])
         if objective < lift_coeff[0]:
             cdp = drag_coeff[0] + (objective - lift_coeff[0]) * (drag_coeff[1] - drag_coeff[0]) / (
@@ -1224,9 +1233,9 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         """
         k_fus = 1 + 0.025 * width_max / span_wing - 0.025 * (width_max / span_wing) ** 2
         beta = np.sqrt(1 - mach**2)  # Prandtl-Glauert
-        cl_0_wing = float((wing_0["cl"] * k_fus / beta) * np.cos(dihedral_angle) ** 2.0)
-        cl_x_wing = float(wing_aoa["cl"] * k_fus / beta)
-        cm_0_wing = float(wing_0["cm"] * k_fus / beta)
+        cl_0_wing = _scalarize((wing_0["cl"] * k_fus / beta) * np.cos(dihedral_angle) ** 2.0)
+        cl_x_wing = _scalarize(wing_aoa["cl"] * k_fus / beta)
+        cm_0_wing = _scalarize(wing_0["cm"] * k_fus / beta)
         cl_alpha_wing = ((cl_x_wing - cl_0_wing) / (aoa_angle * np.pi / 180)) * np.cos(
             dihedral_angle
         ) ** 2.0
@@ -1249,8 +1258,8 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         coef_e = wing_aoa["cl"] ** 2 / (np.pi * aspect_ratio_wing * cdi)
         # Fuselage correction
         k_fus = 1 - 2 * (width_max / span_wing) ** 2
-        coef_e = float(coef_e * k_fus)
-        coef_k_wing = float(1.0 / (np.pi * aspect_ratio_wing * coef_e))
+        coef_e = _scalarize(coef_e * k_fus)
+        coef_k_wing = _scalarize(1.0 / (np.pi * aspect_ratio_wing * coef_e))
 
         return (
             beta,
@@ -1291,9 +1300,9 @@ class VLMSimpleGeometry(om.ExplicitComponent):
 
         :return: post-processed data for other use
         """
-        cl_0_htp = float(htp_0["cl"]) / beta * area_ratio
-        cl_aoa_htp = float(htp_aoa["cl"]) / beta * area_ratio
-        cl_alpha_htp = float((cl_aoa_htp - cl_0_htp) / (aoa_angle * np.pi / 180))
+        cl_0_htp = _scalarize(htp_0["cl"]) / beta * area_ratio
+        cl_aoa_htp = _scalarize(htp_aoa["cl"]) / beta * area_ratio
+        cl_alpha_htp = _scalarize((cl_aoa_htp - cl_0_htp) / (aoa_angle * np.pi / 180))
         cdp_foil = self._interpolate_cdp(cl_htp_airfoil, cdp_htp_airfoil, htp_aoa["cl"] / beta)
         # Mach correction
         if mach <= 0.4:
@@ -1301,7 +1310,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         else:
             coef_e = htp_aoa["coef_e"] * (-0.001521 * ((mach - 0.05) / 0.3 - 1) ** 10.82 + 1)
         cdi = (htp_aoa["cl"] / beta) ** 2 / (np.pi * aspect_ratio_htp * coef_e) + cdp_foil
-        coef_k_htp = float(cdi / cl_aoa_htp**2 * area_ratio)
+        coef_k_htp = _scalarize(cdi / cl_aoa_htp**2 * area_ratio)
         y_vector_htp = htp_aoa["y_vector"]
         cl_vector_htp = (np.array(htp_aoa["cl_vector"]) / beta * area_ratio).tolist()
 
@@ -1326,11 +1335,11 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         :return: existing data
         """
         data = self.read_results(result_file_path)
-        saved_area_wing = float(data.loc["saved_ref_area", 0])
-        cl_0_wing = float(data.loc["cl_0_wing", 0])
-        cl_x_wing = float(data.loc["cl_X_wing", 0])
-        cl_alpha_wing = float(data.loc["cl_alpha_wing", 0])
-        cm_0_wing = float(data.loc["cm_0_wing", 0])
+        saved_area_wing = _scalarize(data.loc["saved_ref_area", 0])
+        cl_0_wing = _scalarize(data.loc["cl_0_wing", 0])
+        cl_x_wing = _scalarize(data.loc["cl_X_wing", 0])
+        cl_alpha_wing = _scalarize(data.loc["cl_alpha_wing", 0])
+        cm_0_wing = _scalarize(data.loc["cm_0_wing", 0])
         y_vector_wing = string_to_array(data.loc["y_vector_wing", 0][1:-2]) * np.sqrt(
             sref_wing / saved_area_wing
         )
@@ -1338,16 +1347,16 @@ class VLMSimpleGeometry(om.ExplicitComponent):
         chord_vector_wing = string_to_array(data.loc["chord_vector_wing", 0][1:-2]) * np.sqrt(
             sref_wing / saved_area_wing
         )
-        coef_k_wing = float(data.loc["coef_k_wing", 0])
-        cl_0_htp = float(data.loc["cl_0_htp", 0]) * (area_ratio / saved_area_ratio)
-        cl_aoa_htp = float(data.loc["cl_X_htp", 0]) * (area_ratio / saved_area_ratio)
-        cl_alpha_htp = float(data.loc["cl_alpha_htp", 0]) * (area_ratio / saved_area_ratio)
-        cl_alpha_htp_isolated = float(data.loc["cl_alpha_htp_isolated", 0]) * (
+        coef_k_wing = _scalarize(data.loc["coef_k_wing", 0])
+        cl_0_htp = _scalarize(data.loc["cl_0_htp", 0]) * (area_ratio / saved_area_ratio)
+        cl_aoa_htp = _scalarize(data.loc["cl_X_htp", 0]) * (area_ratio / saved_area_ratio)
+        cl_alpha_htp = _scalarize(data.loc["cl_alpha_htp", 0]) * (area_ratio / saved_area_ratio)
+        cl_alpha_htp_isolated = _scalarize(data.loc["cl_alpha_htp_isolated", 0]) * (
             area_ratio / saved_area_ratio
         )
         y_vector_htp = string_to_array(data.loc["y_vector_htp", 0][1:-2])
         cl_vector_htp = string_to_array(data.loc["cl_vector_htp", 0][1:-2])
-        coef_k_htp = float(data.loc["coef_k_htp", 0]) * (area_ratio / saved_area_ratio)
+        coef_k_htp = _scalarize(data.loc["coef_k_htp", 0]) * (area_ratio / saved_area_ratio)
 
         return (
             cl_0_wing,

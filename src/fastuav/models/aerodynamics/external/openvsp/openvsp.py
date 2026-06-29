@@ -47,6 +47,15 @@ VSPSCRIPT_EXE_NAME = "vspscript.exe"
 VSPAERO_EXE_NAME = "vspaero.exe"
 
 
+def _scalarize(value):
+    """Return the scalar inside a one-element array/sequence (numpy>=2 safe).
+
+    numpy>=2 (required by OpenMDAO) raises on ``float(np.array([x]))``, so this
+    mirrors fast-oad-core's ``scalarize`` and is used instead of bare ``float``.
+    """
+    return float(np.asarray(value).item())
+
+
 class OpenVSPSimpleGeometry(ExternalCodeComp):
     """Execution of OpenVSP for clean surfaces."""
 
@@ -144,7 +153,7 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
             _,
             _,
         ) = self.compute_aero_coeff(inputs, outputs, altitude, mach, aoa_angle)
-        return float(cl_alpha_wing + cl_alpha_htp)
+        return _scalarize(cl_alpha_wing + cl_alpha_htp)
 
     def compute_cl_alpha_mach(self, inputs, outputs, aoa_angle, altitude, cruise_mach):
         """
@@ -183,7 +192,7 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
         # initialize
         results = [None] * 16
         # Fix mach number of digits to consider similar results
-        mach = round(float(mach) * 1e3) / 1e3
+        mach = round(_scalarize(mach) * 1e3) / 1e3
 
         # Get inputs necessary to define global geometry
         s_ref_wing, area_ratio, geometry_set = self.define_geometry(inputs, mach)
@@ -264,22 +273,22 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
             # Save results to defined path ---------------------------------------------------------
             if self.options["result_folder_path"] != "":
                 results = [
-                    float(cl_0_wing),
-                    float(cl_x_wing),
-                    float(cl_alpha_wing),
-                    float(cm_0_wing),
+                    _scalarize(cl_0_wing),
+                    _scalarize(cl_x_wing),
+                    _scalarize(cl_alpha_wing),
+                    _scalarize(cm_0_wing),
                     np.array(y_vector_wing).tolist(),
                     np.array(cl_vector_wing).tolist(),
                     np.array(chord_vector_wing).tolist(),
-                    float(coeff_k_wing),
-                    float(cl_0_htp),
-                    float(cl_aoa_htp),
-                    float(cl_alpha_htp),
-                    float(cl_alpha_htp_isolated),
+                    _scalarize(coeff_k_wing),
+                    _scalarize(cl_0_htp),
+                    _scalarize(cl_aoa_htp),
+                    _scalarize(cl_alpha_htp),
+                    _scalarize(cl_alpha_htp_isolated),
                     np.array(y_vector_htp).tolist(),
                     np.array(cl_vector_htp).tolist(),
-                    float(coeff_k_htp),
-                    float(s_ref_wing),
+                    _scalarize(coeff_k_htp),
+                    _scalarize(s_ref_wing),
                 ]
                 self.save_results(result_file_path, results)
 
@@ -312,8 +321,8 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
 
         # WING
         # Get inputs (and calculate missing ones)
-        # s_ref_wing = float(inputs["data:geometry:wing:area"])
-        s_ref_wing = float(inputs["data:geometry:wing:surface"])
+        # s_ref_wing = _scalarize(inputs["data:geometry:wing:area"])
+        s_ref_wing = _scalarize(inputs["data:geometry:wing:surface"])
         x0_wing = inputs["data:geometry:wing:MAC:leading_edge:x:local"]
         l0_wing = inputs["data:geometry:wing:MAC:length"]
         # width_max = inputs["data:geometry:fuselage:maximum_width"]
@@ -344,8 +353,8 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
 
         # HTP
         # Get inputs (and calculate missing ones)
-        # s_ref_htp = float(inputs["data:geometry:horizontal_tail:area"])
-        s_ref_htp = float(inputs["data:geometry:tail:horizontal:surface"])
+        # s_ref_htp = _scalarize(inputs["data:geometry:horizontal_tail:area"])
+        s_ref_htp = _scalarize(inputs["data:geometry:tail:horizontal:surface"])
         # sweep_25_htp = inputs["data:geometry:horizontal_tail:sweep_25"]
         sweep_25_htp = inputs["data:geometry:tail:horizontal:sweep_25"]
         # semi_span_htp = inputs["data:geometry:horizontal_tail:span"] / 2.0
@@ -488,25 +497,25 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
                 parser.set_generated_file(input_file_list[0])
                 # Modify wing parameters
                 parser.mark_anchor("x_wing")
-                parser.transfer_var(float(x_wing), 0, 5)
+                parser.transfer_var(_scalarize(x_wing), 0, 5)
                 parser.mark_anchor("z_wing")
-                parser.transfer_var(float(z_wing), 0, 5)
+                parser.transfer_var(_scalarize(z_wing), 0, 5)
                 parser.mark_anchor("y1_wing")
-                parser.transfer_var(float(y1_wing), 0, 5)
+                parser.transfer_var(_scalarize(y1_wing), 0, 5)
                 for i in range(3):
                     parser.mark_anchor("l2_wing")
-                    parser.transfer_var(float(l2_wing), 0, 5)
+                    parser.transfer_var(_scalarize(l2_wing), 0, 5)
                 parser.reset_anchor()
                 parser.mark_anchor("span2_wing")
-                parser.transfer_var(float(span2_wing), 0, 5)
+                parser.transfer_var(_scalarize(span2_wing), 0, 5)
                 parser.mark_anchor("l4_wing")
-                parser.transfer_var(float(l4_wing), 0, 5)
+                parser.transfer_var(_scalarize(l4_wing), 0, 5)
                 parser.mark_anchor("sweep_0_wing")
-                parser.transfer_var(float(sweep_0_wing), 0, 5)
+                parser.transfer_var(_scalarize(sweep_0_wing), 0, 5)
                 parser.mark_anchor("twist")
-                parser.transfer_var(float(twist), 0, 5)
+                parser.transfer_var(_scalarize(twist), 0, 5)
                 parser.mark_anchor("dihedral_angle")
-                parser.transfer_var(float(dihedral_angle), 0, 5)
+                parser.transfer_var(_scalarize(dihedral_angle), 0, 5)
                 parser.mark_anchor("airfoil_0_file")
                 parser.transfer_var('"' + input_file_list[1].replace("\\", "/") + '"', 0, 3)
                 parser.mark_anchor("airfoil_1_file")
@@ -530,17 +539,17 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
                 parser.set_generated_file(input_file_list[0])
                 # Modify htp parameters
                 parser.mark_anchor("x_htp")
-                parser.transfer_var(float(x_htp), 0, 5)
+                parser.transfer_var(_scalarize(x_htp), 0, 5)
                 parser.mark_anchor("z_htp")
-                parser.transfer_var(float(z_htp), 0, 5)
+                parser.transfer_var(_scalarize(z_htp), 0, 5)
                 parser.mark_anchor("semi_span_htp")
-                parser.transfer_var(float(semi_span_htp), 0, 5)
+                parser.transfer_var(_scalarize(semi_span_htp), 0, 5)
                 parser.mark_anchor("root_chord_htp")
-                parser.transfer_var(float(root_chord_htp), 0, 5)
+                parser.transfer_var(_scalarize(root_chord_htp), 0, 5)
                 parser.mark_anchor("tip_chord_htp")
-                parser.transfer_var(float(tip_chord_htp), 0, 5)
+                parser.transfer_var(_scalarize(tip_chord_htp), 0, 5)
                 parser.mark_anchor("sweep_25_htp")
-                parser.transfer_var(float(sweep_25_htp), 0, 5)
+                parser.transfer_var(_scalarize(sweep_25_htp), 0, 5)
                 parser.mark_anchor("airfoil_0_file")
                 parser.transfer_var('"' + input_file_list[1].replace("\\", "/") + '"', 0, 3)
                 parser.mark_anchor("airfoil_1_file")
@@ -563,25 +572,25 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
                 parser.set_generated_file(input_file_list[0])
                 # Modify wing parameters
                 parser.mark_anchor("x_wing")
-                parser.transfer_var(float(x_wing), 0, 5)
+                parser.transfer_var(_scalarize(x_wing), 0, 5)
                 parser.mark_anchor("z_wing")
-                parser.transfer_var(float(z_wing), 0, 5)
+                parser.transfer_var(_scalarize(z_wing), 0, 5)
                 parser.mark_anchor("y1_wing")
-                parser.transfer_var(float(y1_wing), 0, 5)
+                parser.transfer_var(_scalarize(y1_wing), 0, 5)
                 for i in range(3):
                     parser.mark_anchor("l2_wing")
-                    parser.transfer_var(float(l2_wing), 0, 5)
+                    parser.transfer_var(_scalarize(l2_wing), 0, 5)
                 parser.reset_anchor()
                 parser.mark_anchor("span2_wing")
-                parser.transfer_var(float(span2_wing), 0, 5)
+                parser.transfer_var(_scalarize(span2_wing), 0, 5)
                 parser.mark_anchor("l4_wing")
-                parser.transfer_var(float(l4_wing), 0, 5)
+                parser.transfer_var(_scalarize(l4_wing), 0, 5)
                 parser.mark_anchor("sweep_0_wing")
-                parser.transfer_var(float(sweep_0_wing), 0, 5)
+                parser.transfer_var(_scalarize(sweep_0_wing), 0, 5)
                 parser.mark_anchor("twist")
-                parser.transfer_var(float(twist), 0, 5)
+                parser.transfer_var(_scalarize(twist), 0, 5)
                 parser.mark_anchor("dihedral_angle")
-                parser.transfer_var(float(dihedral_angle), 0, 5)
+                parser.transfer_var(_scalarize(dihedral_angle), 0, 5)
                 parser.mark_anchor("airfoil_0_file")
                 parser.transfer_var('"' + input_file_list[-2].replace("\\", "/") + '"', 0, 3)
                 parser.mark_anchor("airfoil_1_file")
@@ -590,17 +599,17 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
                 parser.transfer_var('"' + input_file_list[-2].replace("\\", "/") + '"', 0, 3)
                 # Modify HTP parameters
                 parser.mark_anchor("distance_htp")
-                parser.transfer_var(float(distance_htp), 0, 5)
+                parser.transfer_var(_scalarize(distance_htp), 0, 5)
                 parser.mark_anchor("height_htp")
-                parser.transfer_var(float(height_htp), 0, 5)
+                parser.transfer_var(_scalarize(height_htp), 0, 5)
                 parser.mark_anchor("span_htp")
-                parser.transfer_var(float(span_htp), 0, 5)
+                parser.transfer_var(_scalarize(span_htp), 0, 5)
                 parser.mark_anchor("root_chord_htp")
-                parser.transfer_var(float(root_chord_htp), 0, 5)
+                parser.transfer_var(_scalarize(root_chord_htp), 0, 5)
                 parser.mark_anchor("tip_chord_htp")
-                parser.transfer_var(float(tip_chord_htp), 0, 5)
+                parser.transfer_var(_scalarize(tip_chord_htp), 0, 5)
                 parser.mark_anchor("sweep_25_htp")
-                parser.transfer_var(float(sweep_25_htp), 0, 5)
+                parser.transfer_var(_scalarize(sweep_25_htp), 0, 5)
                 parser.mark_anchor("airfoil_3_file")
                 parser.transfer_var('"' + input_file_list[-1].replace("\\", "/") + '"', 0, 3)
                 parser.mark_anchor("airfoil_4_file")
@@ -648,36 +657,36 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
 
             if comp_opt == "htp":
                 parser.mark_anchor("Sref")
-                parser.transfer_var(float(s_ref_htp), 0, 3)
+                parser.transfer_var(_scalarize(s_ref_htp), 0, 3)
                 parser.mark_anchor("Cref")
-                parser.transfer_var(float(l0_htp), 0, 3)
+                parser.transfer_var(_scalarize(l0_htp), 0, 3)
                 parser.mark_anchor("Bref")
-                parser.transfer_var(float(2.0 * semi_span_htp), 0, 3)
+                parser.transfer_var(_scalarize(2.0 * semi_span_htp), 0, 3)
                 parser.mark_anchor("X_cg")
-                parser.transfer_var(float(fa_length + lp_htp), 0, 3)
+                parser.transfer_var(_scalarize(fa_length + lp_htp), 0, 3)
                 reynolds = reynolds_htp
             else:
                 # For wing and AC evaluation, same reference length and area
                 parser.mark_anchor("Sref")
-                parser.transfer_var(float(s_ref_wing), 0, 3)
+                parser.transfer_var(_scalarize(s_ref_wing), 0, 3)
                 parser.mark_anchor("Cref")
-                parser.transfer_var(float(l0_wing), 0, 3)
+                parser.transfer_var(_scalarize(l0_wing), 0, 3)
                 parser.mark_anchor("Bref")
-                parser.transfer_var(float(span_wing), 0, 3)
+                parser.transfer_var(_scalarize(span_wing), 0, 3)
                 parser.mark_anchor("X_cg")
-                parser.transfer_var(float(fa_length), 0, 3)
+                parser.transfer_var(_scalarize(fa_length), 0, 3)
                 reynolds = reynolds_wing
 
             parser.mark_anchor("Mach")
-            parser.transfer_var(float(mach), 0, 3)
+            parser.transfer_var(_scalarize(mach), 0, 3)
             parser.mark_anchor("AOA")
-            parser.transfer_var(float(aoa_angle), 0, 3)
+            parser.transfer_var(_scalarize(aoa_angle), 0, 3)
             parser.mark_anchor("Vinf")
-            parser.transfer_var(float(v_inf), 0, 3)
+            parser.transfer_var(_scalarize(v_inf), 0, 3)
             parser.mark_anchor("Rho")
-            parser.transfer_var(float(rho), 0, 3)
+            parser.transfer_var(_scalarize(rho), 0, 3)
             parser.mark_anchor("ReCref")
-            parser.transfer_var(float(reynolds), 0, 3)
+            parser.transfer_var(_scalarize(reynolds), 0, 3)
             parser.generate()
 
         # STEP 7/XX - RUN BATCH TO GENERATE AERO OUTPUT FILES (.lod, .polar...) ####################
@@ -699,26 +708,26 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
                     line = data[i].split()
                     line.append("**")
                     if line[0] == "1":
-                        wing_y_vect.append(float(line[2]))
-                        wing_chord_vect.append(float(line[3]))
-                        wing_cl_vect.append(float(line[5]))
-                        wing_cd_vect.append(float(line[6]))
-                        wing_cm_vect.append(float(line[12]))
+                        wing_y_vect.append(_scalarize(line[2]))
+                        wing_chord_vect.append(_scalarize(line[3]))
+                        wing_cl_vect.append(_scalarize(line[5]))
+                        wing_cd_vect.append(_scalarize(line[6]))
+                        wing_cm_vect.append(_scalarize(line[12]))
                     if line[0] == "Comp":
-                        cl_wing = float(data[i + 1].split()[5]) + float(
+                        cl_wing = _scalarize(data[i + 1].split()[5]) + _scalarize(
                             data[i + 2].split()[5]
                         )  # sum CL left/right
-                        cdi_wing = float(data[i + 1].split()[6]) + float(
+                        cdi_wing = _scalarize(data[i + 1].split()[6]) + _scalarize(
                             data[i + 2].split()[6]
                         )  # sum CDi left/right
-                        cm_wing = float(data[i + 1].split()[12]) + float(
+                        cm_wing = _scalarize(data[i + 1].split()[12]) + _scalarize(
                             data[i + 2].split()[12]
                         )  # sum CM left/right
                         break
             # Open .polar file and extract data
             with open(output_file_list[1], "r") as file_stream:
                 data = file_stream.readlines()
-                wing_e = float(data[1].split()[10])
+                wing_e = _scalarize(data[1].split()[10])
             # Delete temporary directory
             if not self.options["openvsp_exe_path"]:
                 # noinspection PyUnboundLocalVariable
@@ -748,25 +757,25 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
                     line = data[i].split()
                     line.append("**")
                     if line[0] == "1":
-                        htp_y_vect.append(float(line[2]))
-                        htp_cl_vect.append(float(line[5]))
-                        htp_cd_vect.append(float(line[6]))
-                        htp_cm_vect.append(float(line[12]))
+                        htp_y_vect.append(_scalarize(line[2]))
+                        htp_cl_vect.append(_scalarize(line[5]))
+                        htp_cd_vect.append(_scalarize(line[6]))
+                        htp_cm_vect.append(_scalarize(line[12]))
                     if line[0] == "Comp":
-                        cl_htp = float(data[i + 1].split()[5]) + float(
+                        cl_htp = _scalarize(data[i + 1].split()[5]) + _scalarize(
                             data[i + 2].split()[5]
                         )  # sum CL left/right
-                        cdi_htp = float(data[i + 1].split()[6]) + float(
+                        cdi_htp = _scalarize(data[i + 1].split()[6]) + _scalarize(
                             data[i + 2].split()[6]
                         )  # sum CDi left/right
-                        cm_htp = float(data[i + 1].split()[12]) + float(
+                        cm_htp = _scalarize(data[i + 1].split()[12]) + _scalarize(
                             data[i + 2].split()[12]
                         )  # sum CM left/right
                         break
             # Open .polar file and extract data
             with open(output_file_list[1], "r") as lf:
                 data = lf.readlines()
-                htp_e = float(data[1].split()[10])
+                htp_e = _scalarize(data[1].split()[10])
             # Delete temporary directory
             if not self.options["openvsp_exe_path"]:
                 # noinspection PyUnboundLocalVariable
@@ -799,42 +808,42 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
                     line = data[i].split()
                     line.append("**")
                     if line[0] == "1":
-                        wing_y_vect.append(float(line[2]))
-                        wing_cl_vect.append(float(line[5]))
-                        wing_cd_vect.append(float(line[6]))
-                        wing_cm_vect.append(float(line[12]))
+                        wing_y_vect.append(_scalarize(line[2]))
+                        wing_cl_vect.append(_scalarize(line[5]))
+                        wing_cd_vect.append(_scalarize(line[6]))
+                        wing_cm_vect.append(_scalarize(line[12]))
                     elif line[0] == "3":
-                        htp_y_vect.append(float(line[2]))
-                        htp_cl_vect.append(float(line[5]))
-                        htp_cd_vect.append(float(line[6]))
-                        htp_cm_vect.append(float(line[12]))
+                        htp_y_vect.append(_scalarize(line[2]))
+                        htp_cl_vect.append(_scalarize(line[5]))
+                        htp_cd_vect.append(_scalarize(line[6]))
+                        htp_cm_vect.append(_scalarize(line[12]))
                     if line[0] == "Comp":
-                        cl_wing = float(data[i + 1].split()[5]) + float(
+                        cl_wing = _scalarize(data[i + 1].split()[5]) + _scalarize(
                             data[i + 2].split()[5]
                         )  # sum CL left/right
-                        cdi_wing = float(data[i + 1].split()[6]) + float(
+                        cdi_wing = _scalarize(data[i + 1].split()[6]) + _scalarize(
                             data[i + 2].split()[6]
                         )  # sum CDi left/right
-                        cm_wing = float(data[i + 1].split()[12]) + float(
+                        cm_wing = _scalarize(data[i + 1].split()[12]) + _scalarize(
                             data[i + 2].split()[12]
                         )  # sum CM left/right
-                        cl_htp = float(data[i + 3].split()[5]) + float(
+                        cl_htp = _scalarize(data[i + 3].split()[5]) + _scalarize(
                             data[i + 4].split()[5]
                         )  # sum CL left/right
-                        cdi_htp = float(data[i + 3].split()[6]) + float(
+                        cdi_htp = _scalarize(data[i + 3].split()[6]) + _scalarize(
                             data[i + 4].split()[6]
                         )  # sum CDi left/right
-                        cm_htp = float(data[i + 3].split()[12]) + float(
+                        cm_htp = _scalarize(data[i + 3].split()[12]) + _scalarize(
                             data[i + 4].split()[12]
                         )  # sum CM left/right
                         break
             # Open .polar file and extract data
             with open(output_file_list[1], "r") as lf:
                 data = lf.readlines()
-                aircraft_cl = float(data[1].split()[4])
-                aircraft_cd0 = float(data[1].split()[5])
-                aircraft_cdi = float(data[1].split()[6])
-                aircraft_e = float(data[1].split()[10])
+                aircraft_cl = _scalarize(data[1].split()[4])
+                aircraft_cd0 = _scalarize(data[1].split()[5])
+                aircraft_cdi = _scalarize(data[1].split()[6])
+                aircraft_e = _scalarize(data[1].split()[10])
             # Delete temporary directory
             if not (self.options["openvsp_exe_path"]):
                 # noinspection PyUnboundLocalVariable
@@ -991,23 +1000,23 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
         :return area_ratio: rea ratio between wing and horizontal stabilizer
         :return s_ref_wing: geometry dataset for openvsp calculation
         """
-        # s_ref_wing = float(inputs["data:geometry:wing:area"])
-        s_ref_wing = float(inputs["data:geometry:wing:surface"])
-        # s_ref_htp = float(inputs["data:geometry:horizontal_tail:area"])
-        s_ref_htp = float(inputs["data:geometry:tail:horizontal:surface"])
+        # s_ref_wing = _scalarize(inputs["data:geometry:wing:area"])
+        s_ref_wing = _scalarize(inputs["data:geometry:wing:surface"])
+        # s_ref_htp = _scalarize(inputs["data:geometry:horizontal_tail:area"])
+        s_ref_htp = _scalarize(inputs["data:geometry:tail:horizontal:surface"])
         area_ratio = s_ref_htp / s_ref_wing
-        sweep25_wing = float(inputs["data:geometry:wing:sweep_25"])
-        taper_ratio_wing = float(inputs["optimization:variables:geometry:wing:lambda"])
-        # aspect_ratio_wing = float(inputs["data:geometry:wing:aspect_ratio"])
-        aspect_ratio_wing = float(inputs["optimization:variables:geometry:wing:AR"])
-        # sweep25_htp = float(inputs["data:geometry:horizontal_tail:sweep_25"])
-        sweep25_htp = float(inputs["data:geometry:tail:horizontal:sweep_25"])
-        # aspect_ratio_htp = float(inputs["data:geometry:horizontal_tail:aspect_ratio"])
-        aspect_ratio_htp = float(inputs["optimization:variables:geometry:tail:horizontal:AR"])
-        # taper_ratio_htp = float(inputs["data:geometry:horizontal_tail:taper_ratio"])
-        taper_ratio_htp = float(inputs["data:geometry:tail:horizontal:lambda"])
-        dihedral_angle = float(inputs["data:geometry:wing:dihedral"])
-        twist_angle = float(inputs["data:geometry:wing:twist"])
+        sweep25_wing = _scalarize(inputs["data:geometry:wing:sweep_25"])
+        taper_ratio_wing = _scalarize(inputs["optimization:variables:geometry:wing:lambda"])
+        # aspect_ratio_wing = _scalarize(inputs["data:geometry:wing:aspect_ratio"])
+        aspect_ratio_wing = _scalarize(inputs["optimization:variables:geometry:wing:AR"])
+        # sweep25_htp = _scalarize(inputs["data:geometry:horizontal_tail:sweep_25"])
+        sweep25_htp = _scalarize(inputs["data:geometry:tail:horizontal:sweep_25"])
+        # aspect_ratio_htp = _scalarize(inputs["data:geometry:horizontal_tail:aspect_ratio"])
+        aspect_ratio_htp = _scalarize(inputs["optimization:variables:geometry:tail:horizontal:AR"])
+        # taper_ratio_htp = _scalarize(inputs["data:geometry:horizontal_tail:taper_ratio"])
+        taper_ratio_htp = _scalarize(inputs["data:geometry:tail:horizontal:lambda"])
+        dihedral_angle = _scalarize(inputs["data:geometry:wing:dihedral"])
+        twist_angle = _scalarize(inputs["data:geometry:wing:twist"])
         geometry_set = np.around(
             np.array(
                 [
@@ -1044,19 +1053,19 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
         lift induced drag coefficient
         """
         # width_max = inputs["data:geometry:fuselage:maximum_width"]
-        width_max = float(inputs["data:geometry:fuselage:diameter:mid"])
+        width_max = _scalarize(inputs["data:geometry:fuselage:diameter:mid"])
         span_wing = inputs["data:geometry:wing:span"]
         k_fus = 1 + 0.025 * width_max / span_wing - 0.025 * (width_max / span_wing) ** 2
-        cl_0_wing = float(wing_0["cl"] * k_fus)
-        cl_x_wing = float(wing_aoa["cl"] * k_fus)
-        cm_0_wing = float(wing_0["cm"] * k_fus)
+        cl_0_wing = _scalarize(wing_0["cl"] * k_fus)
+        cl_x_wing = _scalarize(wing_aoa["cl"] * k_fus)
+        cm_0_wing = _scalarize(wing_0["cm"] * k_fus)
         cl_alpha_wing = (cl_x_wing - cl_0_wing) / (aoa_angle * np.pi / 180)
         y_vector_wing = wing_aoa["y_vector"]
         cl_vector_wing = (np.array(wing_aoa["cl_vector"]) * k_fus).tolist()
         chord_vector_wing = wing_aoa["chord_vector"]
         k_fus = 1 - 2 * (width_max / span_wing) ** 2  # Fuselage correction
-        coeff_e = float(wing_aoa["coeff_e"] * k_fus)
-        coeff_k_wing = float(1.0 / (np.pi * span_wing**2 / s_ref_wing * coeff_e))
+        coeff_e = _scalarize(wing_aoa["coeff_e"] * k_fus)
+        coeff_k_wing = _scalarize(1.0 / (np.pi * span_wing**2 / s_ref_wing * coeff_e))
 
         return (
             cl_0_wing,
@@ -1087,16 +1096,16 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
         """
 
         # Post-process HTP-aircraft data -------------------------------------------------------
-        cl_0_htp = float(htp_0["cl"])
-        cl_aoa_htp = float(htp_aoa["cl"])
-        cl_alpha_htp = float((cl_aoa_htp - cl_0_htp) / (aoa_angle * np.pi / 180))
-        coeff_k_htp = float(htp_aoa["cdi"]) / cl_aoa_htp**2  # area ratio missing ?
+        cl_0_htp = _scalarize(htp_0["cl"])
+        cl_aoa_htp = _scalarize(htp_aoa["cl"])
+        cl_alpha_htp = _scalarize((cl_aoa_htp - cl_0_htp) / (aoa_angle * np.pi / 180))
+        coeff_k_htp = _scalarize(htp_aoa["cdi"]) / cl_aoa_htp**2  # area ratio missing ?
         y_vector_htp = htp_aoa["y_vector"]
         cl_vector_htp = (np.array(htp_aoa["cl_vector"]) * area_ratio).tolist()
 
         # Post-process HTP-isolated data -------------------------------------------------------
         cl_alpha_htp_isolated = (
-            float(htp_aoa_isolated["cl"] - htp_0_isolated["cl"])
+            _scalarize(htp_aoa_isolated["cl"] - htp_0_isolated["cl"])
             * area_ratio
             / (aoa_angle * np.pi / 180)
         )
@@ -1164,11 +1173,11 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
 
         :return: aerodynamic characteristic parameters of wing and horizontal stabilizer
         """
-        saved_area_wing = float(data.loc["saved_ref_area", 0])
-        cl_0_wing = float(data.loc["cl_0_wing", 0])
-        cl_x_wing = float(data.loc["cl_X_wing", 0])
-        cl_alpha_wing = float(data.loc["cl_alpha_wing", 0])
-        cm_0_wing = float(data.loc["cm_0_wing", 0])
+        saved_area_wing = _scalarize(data.loc["saved_ref_area", 0])
+        cl_0_wing = _scalarize(data.loc["cl_0_wing", 0])
+        cl_x_wing = _scalarize(data.loc["cl_X_wing", 0])
+        cl_alpha_wing = _scalarize(data.loc["cl_alpha_wing", 0])
+        cm_0_wing = _scalarize(data.loc["cm_0_wing", 0])
         y_vector_wing = string_to_array(data.loc["y_vector_wing", 0][1:-2]) * np.sqrt(
             s_ref_wing / saved_area_wing
         )
@@ -1176,18 +1185,18 @@ class OpenVSPSimpleGeometry(ExternalCodeComp):
         chord_vector_wing = string_to_array(data.loc["chord_vector_wing", 0][1:-2]) * np.sqrt(
             s_ref_wing / saved_area_wing
         )
-        coeff_k_wing = float(data.loc["coeff_k_wing", 0])
-        cl_0_htp = float(data.loc["cl_0_htp", 0]) * (area_ratio / saved_area_ratio)
-        cl_aoa_htp = float(data.loc["cl_X_htp", 0]) * (area_ratio / saved_area_ratio)
-        cl_alpha_htp = float(data.loc["cl_alpha_htp", 0]) * (area_ratio / saved_area_ratio)
-        cl_alpha_htp_isolated = float(data.loc["cl_alpha_htp_isolated", 0]) * (
+        coeff_k_wing = _scalarize(data.loc["coeff_k_wing", 0])
+        cl_0_htp = _scalarize(data.loc["cl_0_htp", 0]) * (area_ratio / saved_area_ratio)
+        cl_aoa_htp = _scalarize(data.loc["cl_X_htp", 0]) * (area_ratio / saved_area_ratio)
+        cl_alpha_htp = _scalarize(data.loc["cl_alpha_htp", 0]) * (area_ratio / saved_area_ratio)
+        cl_alpha_htp_isolated = _scalarize(data.loc["cl_alpha_htp_isolated", 0]) * (
             area_ratio / saved_area_ratio
         )
         y_vector_htp = string_to_array(data.loc["y_vector_htp", 0][1:-2])
         cl_vector_htp = string_to_array(data.loc["cl_vector_htp", 0][1:-2]) * (
             area_ratio / saved_area_ratio
         )
-        coeff_k_htp = float(data.loc["coeff_k_htp", 0]) * (area_ratio / saved_area_ratio)
+        coeff_k_htp = _scalarize(data.loc["coeff_k_htp", 0]) * (area_ratio / saved_area_ratio)
 
         return (
             cl_0_wing,
@@ -1258,8 +1267,8 @@ class OpenVSPSimpleGeometryDP(OpenVSPSimpleGeometry):
         ############################################################################################
 
         # Get inputs (and calculate missing ones)
-        # s_ref_wing = float(inputs["data:geometry:wing:area"])
-        s_ref_wing = float(inputs["data:geometry:wing:surface"])
+        # s_ref_wing = _scalarize(inputs["data:geometry:wing:area"])
+        s_ref_wing = _scalarize(inputs["data:geometry:wing:surface"])
         x0_wing = inputs["data:geometry:wing:MAC:leading_edge:x:local"]
         l0_wing = inputs["data:geometry:wing:MAC:length"]
         # width_max = inputs["data:geometry:fuselage:maximum_width"]
@@ -1277,11 +1286,11 @@ class OpenVSPSimpleGeometryDP(OpenVSPSimpleGeometry):
         fa_length = inputs["data:geometry:wing:MAC:at25percent:x"]
         span_wing = inputs["data:geometry:wing:span"]
         engine_rpm = inputs["data:propulsion:max_rpm"]
-        # propeller_diameter = float(inputs["data:geometry:propeller:diameter"])
-        propeller_diameter = float(inputs["data:propulsion:propeller:diameter"])
+        # propeller_diameter = _scalarize(inputs["data:geometry:propeller:diameter"])
+        propeller_diameter = _scalarize(inputs["data:propulsion:propeller:diameter"])
         nac_length = inputs["data:geometry:propulsion:nacelle:length"]
         engine_config = inputs["data:geometry:propulsion:engine:layout"]
-        engine_count = int(float(inputs["data:geometry:propulsion:engine:count"]))
+        engine_count = int(_scalarize(inputs["data:geometry:propulsion:engine:count"]))
         semi_span = span_wing / 2.0
 
         if engine_config != 1.0:
@@ -1309,10 +1318,10 @@ class OpenVSPSimpleGeometryDP(OpenVSPSimpleGeometry):
         engine_rps = engine_rpm / 60.0
         # For now thrust is distributed equally on each engine
         thrust_coefficient = round(
-            float(thrust_one_prop / (rho * engine_rps**2.0 * propeller_diameter**4.0)), 5
+            _scalarize(thrust_one_prop / (rho * engine_rps**2.0 * propeller_diameter**4.0)), 5
         )
         power_coefficient = round(
-            float(shaft_power_one_prop / (rho * engine_rps**3.0 * propeller_diameter**5.0)), 5
+            _scalarize(shaft_power_one_prop / (rho * engine_rps**3.0 * propeller_diameter**5.0)), 5
         )
 
         prop_radius = round(propeller_diameter / 2.0, 3)
@@ -1374,14 +1383,14 @@ class OpenVSPSimpleGeometryDP(OpenVSPSimpleGeometry):
                 else:
                     prop_rpm_loop = engine_rpm
 
-                motor_pos_x[eng_start + i] = round(float(x_eng), 2)
-                motor_pos_y[eng_start + i] = round(float(y_engine), 2)
-                motor_pos_z[eng_start + i] = round(float(z_wing), 2)
-                motor_rpm_signed[eng_start + i] = float(prop_rpm_loop)
-                motor_pos_x[eng_start + eng_per_wing + i] = round(float(x_eng), 2)
-                motor_pos_y[eng_start + eng_per_wing + i] = round(-float(y_engine), 2)
-                motor_pos_z[eng_start + eng_per_wing + i] = round(float(z_wing), 2)
-                motor_rpm_signed[eng_start + eng_per_wing + i] = -float(prop_rpm_loop)
+                motor_pos_x[eng_start + i] = round(_scalarize(x_eng), 2)
+                motor_pos_y[eng_start + i] = round(_scalarize(y_engine), 2)
+                motor_pos_z[eng_start + i] = round(_scalarize(z_wing), 2)
+                motor_rpm_signed[eng_start + i] = _scalarize(prop_rpm_loop)
+                motor_pos_x[eng_start + eng_per_wing + i] = round(_scalarize(x_eng), 2)
+                motor_pos_y[eng_start + eng_per_wing + i] = round(-_scalarize(y_engine), 2)
+                motor_pos_z[eng_start + eng_per_wing + i] = round(_scalarize(z_wing), 2)
+                motor_rpm_signed[eng_start + eng_per_wing + i] = -_scalarize(prop_rpm_loop)
                 i += 1
 
         # STEP 2/XX - DEFINE WORK DIRECTORY, COPY RESOURCES AND CREATE COMMAND BATCH ###############
@@ -1441,25 +1450,25 @@ class OpenVSPSimpleGeometryDP(OpenVSPSimpleGeometry):
             parser.set_generated_file(input_file_list[0])
             # Modify wing parameters
             parser.mark_anchor("x_wing")
-            parser.transfer_var(float(x_wing), 0, 5)
+            parser.transfer_var(_scalarize(x_wing), 0, 5)
             parser.mark_anchor("z_wing")
-            parser.transfer_var(float(z_wing), 0, 5)
+            parser.transfer_var(_scalarize(z_wing), 0, 5)
             parser.mark_anchor("y1_wing")
-            parser.transfer_var(float(y1_wing), 0, 5)
+            parser.transfer_var(_scalarize(y1_wing), 0, 5)
             for i in range(3):
                 parser.mark_anchor("l2_wing")
-                parser.transfer_var(float(l2_wing), 0, 5)
+                parser.transfer_var(_scalarize(l2_wing), 0, 5)
             parser.reset_anchor()
             parser.mark_anchor("span2_wing")
-            parser.transfer_var(float(span2_wing), 0, 5)
+            parser.transfer_var(_scalarize(span2_wing), 0, 5)
             parser.mark_anchor("l4_wing")
-            parser.transfer_var(float(l4_wing), 0, 5)
+            parser.transfer_var(_scalarize(l4_wing), 0, 5)
             parser.mark_anchor("sweep_0_wing")
-            parser.transfer_var(float(sweep_0_wing), 0, 5)
+            parser.transfer_var(_scalarize(sweep_0_wing), 0, 5)
             parser.mark_anchor("twist")
-            parser.transfer_var(float(twist), 0, 5)
+            parser.transfer_var(_scalarize(twist), 0, 5)
             parser.mark_anchor("dihedral_angle")
-            parser.transfer_var(float(dihedral_angle), 0, 5)
+            parser.transfer_var(_scalarize(dihedral_angle), 0, 5)
             parser.mark_anchor("airfoil_0_file")
             parser.transfer_var('"' + input_file_list[1].replace("\\", "/") + '"', 0, 3)
             parser.mark_anchor("airfoil_1_file")
@@ -1515,23 +1524,23 @@ class OpenVSPSimpleGeometryDP(OpenVSPSimpleGeometry):
             parser.set_generated_file(input_file_list[1])
             parser.reset_anchor()
             parser.mark_anchor("Sref")
-            parser.transfer_var(float(s_ref_wing), 0, 3)
+            parser.transfer_var(_scalarize(s_ref_wing), 0, 3)
             parser.mark_anchor("Cref")
-            parser.transfer_var(float(l0_wing), 0, 3)
+            parser.transfer_var(_scalarize(l0_wing), 0, 3)
             parser.mark_anchor("Bref")
-            parser.transfer_var(float(span_wing), 0, 3)
+            parser.transfer_var(_scalarize(span_wing), 0, 3)
             parser.mark_anchor("X_cg")
-            parser.transfer_var(float(fa_length), 0, 3)
+            parser.transfer_var(_scalarize(fa_length), 0, 3)
             parser.mark_anchor("Mach")
-            parser.transfer_var(float(mach), 0, 3)
+            parser.transfer_var(_scalarize(mach), 0, 3)
             parser.mark_anchor("AOA")
-            parser.transfer_var(float(aoa_angle), 0, 3)
+            parser.transfer_var(_scalarize(aoa_angle), 0, 3)
             parser.mark_anchor("Vinf")
-            parser.transfer_var(float(v_inf), 0, 3)
+            parser.transfer_var(_scalarize(v_inf), 0, 3)
             parser.mark_anchor("Rho")
-            parser.transfer_var(float(rho), 0, 3)
+            parser.transfer_var(_scalarize(rho), 0, 3)
             parser.mark_anchor("ReCref")
-            parser.transfer_var(float(reynolds), 0, 3)
+            parser.transfer_var(_scalarize(reynolds), 0, 3)
             for i in range(1, eng_per_wing + 1):
                 parser.mark_anchor("Prop_" + str(i) + "_name")
                 parser.transfer_var("Prop_element_" + str(i), 0, 1)
@@ -1579,26 +1588,26 @@ class OpenVSPSimpleGeometryDP(OpenVSPSimpleGeometry):
                 line = data[i].split()
                 line.append("**")
                 if line[0] == "1":
-                    wing_y_vect.append(float(line[2]))
-                    wing_chord_vect.append(float(line[3]))
-                    wing_cl_vect.append(float(line[5]))
-                    wing_cd_vect.append(float(line[6]))
-                    wing_cm_vect.append(float(line[12]))
+                    wing_y_vect.append(_scalarize(line[2]))
+                    wing_chord_vect.append(_scalarize(line[3]))
+                    wing_cl_vect.append(_scalarize(line[5]))
+                    wing_cd_vect.append(_scalarize(line[6]))
+                    wing_cm_vect.append(_scalarize(line[12]))
                 if line[0] == "Comp":
-                    cl_wing = float(data[i + 1].split()[5]) + float(
+                    cl_wing = _scalarize(data[i + 1].split()[5]) + _scalarize(
                         data[i + 2].split()[5]
                     )  # sum CL left/right
-                    cdi_wing = float(data[i + 1].split()[6]) + float(
+                    cdi_wing = _scalarize(data[i + 1].split()[6]) + _scalarize(
                         data[i + 2].split()[6]
                     )  # sum CDi left/right
-                    cm_wing = float(data[i + 1].split()[12]) + float(
+                    cm_wing = _scalarize(data[i + 1].split()[12]) + _scalarize(
                         data[i + 2].split()[12]
                     )  # sum CM left/right
                     break
         # Open .polar file and extract data
         with open(output_file_list[1], "r") as lf:
             data = lf.readlines()
-            wing_e = float(data[1].split()[10])
+            wing_e = _scalarize(data[1].split()[10])
         # Delete temporary directory
         if not (self.options["openvsp_exe_path"]):
             # noinspection PyUnboundLocalVariable

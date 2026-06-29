@@ -48,7 +48,7 @@ class ComputeUnitReynolds(ExplicitComponent):
             altitude = 0.0
             mach = inputs["data:TLAR:v_approach"] / Atmosphere(altitude).speed_of_sound
         else:
-            altitude = float(inputs["mission:sizing:main_route:cruise:altitude"])
+            altitude = float(inputs["mission:sizing:main_route:cruise:altitude"][0])
             mach = (
                 inputs["mission:sizing:main_route:cruise:speed:fixedwing"]
                 / Atmosphere(altitude, altitude_in_feet=False).speed_of_sound
@@ -90,7 +90,7 @@ class ComputeUnitReynolds(ExplicitComponent):
         else:
             # Cruise case: altitude and speed are inputs
             V = inputs["mission:sizing:main_route:cruise:speed:fixedwing"]
-            altitude = float(inputs["mission:sizing:main_route:cruise:altitude"])
+            altitude = float(inputs["mission:sizing:main_route:cruise:altitude"][0])
 
             atm = AtmIsa(altitude, altitude_in_feet=False)
             a = atm.speed_of_sound
