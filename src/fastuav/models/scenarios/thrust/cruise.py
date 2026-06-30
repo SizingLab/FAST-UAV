@@ -5,10 +5,15 @@ Cruise scenarios
 import numpy as np
 import openmdao.api as om
 from scipy.constants import g
-from stdatm import AtmosphereWithPartials
+from stdatm import AtmosphereSI, AtmosphereWithPartials
 
 from fastuav.constants import FW_PROPULSION, MR_PROPULSION
 from fastuav.models.scenarios.thrust.flight_models import MultirotorFlightModel
+
+# ISA troposphere constants (consistent with the stdatm temperature model:
+# T = T0 - L * altitude + dISA)
+T0 = 288.15  # [K] sea-level standard temperature
+L = 0.0065  # [K/m] troposphere temperature lapse rate
 
 
 class MultirotorCruiseThrust(om.ExplicitComponent):
@@ -142,6 +147,140 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
 
         outputs["data:propulsion:%s:propeller:thrust:cruise" % propulsion_id] = F_pro_cruise
         outputs["data:propulsion:%s:propeller:AoA:cruise" % propulsion_id] = alpha_cr
+
+class FixedwingCruiseThrust_VLM(om.ExplicitComponent):
+    """
+    Thrust for the desired cruise speed, in fixed wing configuration.
+    """
+
+    def initialize(self):
+        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
+
+    def setup(self):
+        propulsion_id = self.options["propulsion_id"]
+        self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
+        self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
+        self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        # self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
+        self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=0.035, units=None)
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
+        self.add_output("data:propulsion:%s:propeller:thrust:cruise" % propulsion_id, units="N")
+        self.add_output("data:propulsion:%s:propeller:AoA:cruise" % propulsion_id, units="rad")
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        # UAV configuration
+        propulsion_id = self.options["propulsion_id"]
+        Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
+        WS = inputs["data:geometry:wing:loading"]
+
+        # Flight parameters
+        V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
+        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm.true_airspeed = V_cruise
+        q_cruise = atm.dynamic_pressure
+
+        # Weight
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
+        Weight = m_uav_guess * g  # [N]
+
+        # Induced drag parameter
+        # K = inputs["data:aerodynamics:CDi:K"]
+        K = inputs["optimization:variables:aerodynamics:CDi:K:guess"]
+
+        # Parasitic drag parameter
+        CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
+
+        # Thrust and trim calculation (equilibrium)
+        TW_cruise = (
+            q_cruise * CD_0_guess / WS + K / q_cruise * WS
+        )  # [-] thrust-to-weight ratio in cruise conditions
+        F_pro_cruise = TW_cruise * Weight / Npro  # [N] Thrust per propeller for cruise
+        alpha_cr = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight)
+
+        outputs["data:propulsion:%s:propeller:thrust:cruise" % propulsion_id] = F_pro_cruise
+        outputs["data:propulsion:%s:propeller:AoA:cruise" % propulsion_id] = alpha_cr
+
+    def compute_partials(self, inputs, partials):
+        propulsion_id = self.options["propulsion_id"]
+        Npro = inputs["data:propulsion:%s:propeller:number" % propulsion_id]
+        WS = inputs["data:geometry:wing:loading"]
+        out_id_1 = "data:propulsion:%s:propeller:thrust:cruise" % propulsion_id
+        out_id_2 = "data:propulsion:%s:propeller:AoA:cruise" % propulsion_id
+
+        # Flight parameters
+        V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
+        atm = AtmosphereSI(altitude_cruise, dISA)
+        atm.true_airspeed = V_cruise
+        q_cruise = atm.dynamic_pressure
+        rho = atm.density
+
+        # ===== DENSITY DERIVATIVES (Analytic, Troposphere) =====
+        # Temperature profile: T = T0 - L * h + dISA
+        # Density varies as: rho ∝ (T/T0)^(g/RL - 1) --> (g/(R*L) - 1) ≈ -5.256 for ISA
+        from stdatm import AtmosphereWithPartials
+        datm = AtmosphereWithPartials(altitude_cruise, dISA, altitude_in_feet=False)
+        # drho = datm.density
+        # d(rho)/d(h):   chain rule through T
+        # d(rho)/d(h) = d(rho)/d(T) * d(T)/d(h) = (g/(R*L) - 1) * rho / T * (-L)
+        drho_dh = datm.partial_density_altitude # d(rho)/d(altitude)
+        # d(rho)/d(dISA): stdatm treats dISA as a pure temperature offset at fixed pressure
+        drho_ddISA = -rho / (T0 - L * altitude_cruise + dISA)
+
+        # Weight
+        m_uav_guess = inputs["optimization:variables:weight:mtow:guess"]
+        Weight = m_uav_guess * g  # [N]
+
+        # Induced drag parameters
+        K = inputs["optimization:variables:aerodynamics:CDi:K:guess"]
+
+        # Parasitic drag parameters
+        CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
+
+        # Thrust calculation (equilibrium)
+        TW_cruise = (q_cruise * CD_0_guess / WS + K / q_cruise* WS)  # thrust-to-weight ratio in cruise conditions [-]
+        F_pro_cruise = TW_cruise * Weight / Npro  # [N] Thrust per propeller for cruise
+
+    
+        
+        partials[out_id_1, "optimization:variables:aerodynamics:CD0:guess"] = q_cruise / WS * Weight / Npro
+
+        partials[out_id_1, "optimization:variables:aerodynamics:CDi:K:guess"] = WS / q_cruise * Weight / Npro
+        
+
+        # ∂(q_cruise)/∂(V_cruise) = ∂(0.5 * ρ * V^2)/∂(V_cruise) = ρ * V_cruise
+        partials[out_id_1, "mission:sizing:main_route:cruise:speed:%s" % propulsion_id] = rho*V_cruise*(CD_0_guess / WS - K / (q_cruise**2) * WS)* Weight / Npro
+        # ∂(q_cruise)/∂(h) = 0.5 * V^2 * d(rho)/d(dISA)
+        partials[out_id_1, "mission:sizing:main_route:cruise:altitude"] = 0.5 * V_cruise**2 * drho_dh * (CD_0_guess / WS - K / (q_cruise**2) * WS)* Weight / Npro
+        # ∂(q_cruise)/∂(dISA) = 0.5 * V^2 * d(rho)/d(dISA)
+        partials[out_id_1, "mission:sizing:dISA"] = 0.5 * V_cruise**2 * drho_ddISA * (CD_0_guess / WS - K / (q_cruise**2) * WS)* Weight / Npro
+
+
+        partials[out_id_1, "data:geometry:wing:loading"] = (-q_cruise*CD_0_guess / WS**2 + K / q_cruise)* Weight / Npro
+
+        
+
+        partials[out_id_1, "optimization:variables:weight:mtow:guess"] = TW_cruise * g / Npro
+        partials[out_id_1, "data:propulsion:%s:propeller:number" % propulsion_id] = -TW_cruise * Weight / Npro**2
+
+        # AoA is assumed to be constant (axial flight), so its partials are zero.
+        partials[out_id_2, "optimization:variables:aerodynamics:CD0:guess"] = 0.0
+        partials[out_id_2, "optimization:variables:aerodynamics:CDi:K:guess"] = 0.0
+        partials[out_id_2, "mission:sizing:main_route:cruise:speed:%s" % propulsion_id] = 0.0
+        partials[out_id_2, "mission:sizing:main_route:cruise:altitude"] = 0.0
+        partials[out_id_2, "mission:sizing:dISA"] = 0.0
+        partials[out_id_2, "data:geometry:wing:loading"] = 0.0
+        partials[out_id_2, "optimization:variables:weight:mtow:guess"] = 0.0
+        partials[out_id_2, "data:propulsion:%s:propeller:number" % propulsion_id] = 0.0
 
 
 class NoCruise(om.ExplicitComponent):

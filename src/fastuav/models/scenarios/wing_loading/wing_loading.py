@@ -109,6 +109,54 @@ class WingLoadingCruise(om.ExplicitComponent):
         outputs["data:geometry:wing:loading:cruise"] = WS_cruise
 
 
+class WingLoadingCruiseVLM(om.ExplicitComponent):
+    """
+    Computes wing loading to maximize the achievable range (at cruise altitude and speed)
+    """
+
+    def initialize(self):
+        self.options.declare("propulsion_id", default=FW_PROPULSION, values=[FW_PROPULSION])
+
+    def setup(self):
+        propulsion_id = self.options["propulsion_id"]
+        self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
+        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input("mission:sizing:dISA", val=0.0, units="K")
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        # self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
+        self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=0.035, units=None)
+        self.add_output("data:geometry:wing:loading:cruise", units="N/m**2")
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="fd")
+
+    def compute(self, inputs, outputs):
+        # UAV configuration
+        propulsion_id = self.options["propulsion_id"]
+
+        # Flight parameters
+        V_cruise = inputs["mission:sizing:main_route:cruise:speed:%s" % propulsion_id]
+        altitude_cruise = inputs["mission:sizing:main_route:cruise:altitude"]
+        dISA = inputs["mission:sizing:dISA"]
+        atm = AtmosphereWithPartials(altitude_cruise, dISA)
+        atm.true_airspeed = V_cruise
+        q_cruise = atm.dynamic_pressure
+
+        # Induced drag parameter
+        # K = inputs["data:aerodynamics:CDi:K"]
+        K = inputs["optimization:variables:aerodynamics:CDi:K:guess"]
+
+        # Parasitic drag parameter
+        CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
+
+        # Wing loading calculation
+        WS_cruise = q_cruise * np.sqrt(
+            CD_0_guess / K
+        )  # wing loading that maximizes range during cruise [N/m2] (simplified drag model CD = CD_0 + K * CL^2)
+
+        outputs["data:geometry:wing:loading:cruise"] = WS_cruise
+
+
 @ValidityDomainChecker(
     {
         "data:geometry:wing:loading": (

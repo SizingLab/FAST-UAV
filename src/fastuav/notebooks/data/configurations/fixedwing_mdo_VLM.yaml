@@ -24,7 +24,7 @@ model:
     nonlinear_solver: om.NonlinearBlockGS(maxiter=200, atol=1.0e-9, rtol=1.0e-9, iprint=2, debug_print=True, reraise_child_analysiserror=True)
     linear_solver: om.DirectSolver()
     scenarios:
-        id: fastuav.scenarios.fixedwing
+        id: fastuav.scenarios_VLM.fixedwing
     propulsion:
         id: fastuav.propulsion.fixedwing
         gearbox: False
@@ -45,7 +45,7 @@ model:
     mtow:
         id: fastuav.mtow.fixedwing
     stability:
-        id: fastuav.stability.fixedwing
+        id: fastuav.stability_VLM.fixedwing
     performance:
         cruise_range:
             id: fastuav.performance.endurance.fixedwing
