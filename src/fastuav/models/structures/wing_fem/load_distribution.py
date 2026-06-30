@@ -99,9 +99,9 @@ class WingLoadDistribution(om.ExplicitComponent):
         self.declare_partials("*", "*", method="fd", form="central", step_calc="rel_avg")
 
     def compute(self, inputs, outputs):
-        semi_span = 0.5 * float(inputs["data:geometry:wing:span"])
-        n_ult = float(inputs["mission:sizing:load_factor:ultimate"])
-        mass = float(inputs["optimization:variables:weight:mtow:guess"])
+        semi_span = 0.5 * float(inputs["data:geometry:wing:span"][0])
+        n_ult = float(inputs["mission:sizing:load_factor:ultimate"][0])
+        mass = float(inputs["optimization:variables:weight:mtow:guess"][0])
 
         use_aero = self.options["use_aero_vectors"]
         y_vlm = cl_vlm = chord_vlm = None
