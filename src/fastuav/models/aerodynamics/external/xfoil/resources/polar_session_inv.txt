@@ -1,0 +1,26 @@
+PLOP
+G F
+
+LOAD
+/profile
+PANE
+GDES
+GSET
+EXEC
+
+OPER
+M
+mach_number
+INV
+ITER
+100
+PACC
+/polar_result
+
+ASEQ
+0
+30
+0.5
+PACC
+
+QUIT

@@ -13,6 +13,35 @@ files = [
 ]
 
 [[package]]
+name = "aerosandbox"
+version = "4.2.9"
+description = "AeroSandbox is a Python package that helps you design and optimize aircraft and other engineered systems."
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "aerosandbox-4.2.9-py3-none-any.whl", hash = "sha256:984a61964d262e2befa36bfb2c9a404a8e6b4ffeff4289c7051f3b05f30bb6c0"},
+    {file = "aerosandbox-4.2.9.tar.gz", hash = "sha256:f00369b916b23c831788d9d534d3b87d3869495800e2313a828734ab2eca8fe1"},
+]
+
+[package.dependencies]
+casadi = ">=3.7.2"
+dill = ">=0.4.0"
+matplotlib = ">=3.10.7"
+neuralfoil = ">=0.3.0,<0.4.0"
+numpy = ">=2.2.6"
+pandas = ">=2.3.3"
+scipy = ">=1.15.3"
+seaborn = ">=0.13.2"
+sortedcontainers = ">=2.4.0"
+tqdm = ">=4.67.1"
+
+[package.extras]
+docs = ["furo (>=2025.9.25)", "sphinx (>=8.1.3)", "sphinx-autoapi (>=3.6.1)"]
+full = ["cadquery (>=2.6.1)", "plotly (>=6.4.0)", "pyvista (>=0.46.4)", "shapely (>=2.1.2)", "sympy (>=1.14.0)", "trimesh (>=4.9.0)"]
+test = ["nbval (>=0.11.0)", "openpyxl (>=3.1.5)", "pytest (>=8.4.2)", "pytest-cov (>=7.0.0)", "shapely (>=2.1.2)"]
+
+[[package]]
 name = "alabaster"
 version = "0.7.16"
 description = "A light, configurable Sphinx theme"
@@ -276,6 +305,75 @@ tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 [package.extras]
 uv = ["uv (>=0.1.18)"]
 virtualenv = ["virtualenv (>=20.11) ; python_version < \"3.10\"", "virtualenv (>=20.17) ; python_version >= \"3.10\" and python_version < \"3.14\"", "virtualenv (>=20.31) ; python_version >= \"3.14\""]
+
+[[package]]
+name = "casadi"
+version = "3.7.2"
+description = "CasADi -- framework for algorithmic differentiation and numeric optimization"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "casadi-3.7.2-cp27-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:765966e5fe3f79f5ee7f98cd8fe5dde5d9a119757eaaea6227c13ba3fdbbd577"},
+    {file = "casadi-3.7.2-cp27-none-manylinux1_i686.whl", hash = "sha256:ce02d3ddaa7800f7e99508fe3103ea765e7e16185bb310c85d2952cd8aaf3808"},
+    {file = "casadi-3.7.2-cp27-none-manylinux2010_x86_64.whl", hash = "sha256:72d94260d3c4c04393cd52d49c823852f104671dcc7c9fcbf4e4f8f13647bbcd"},
+    {file = "casadi-3.7.2-cp27-none-win_amd64.whl", hash = "sha256:858c2094d2a85ae496f0b8e2f825b05eb754b38b1429cbb6a8bfc9be3a56bcc6"},
+    {file = "casadi-3.7.2-cp310-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:cf60276b40efe203738309d34a629e149db7c0865db1034aa3e094c9f567a6e3"},
+    {file = "casadi-3.7.2-cp310-none-macosx_11_0_arm64.whl", hash = "sha256:07c398d2e99847d99adc5a007f303d909be3141f34aca34e53adaa3d040c06ee"},
+    {file = "casadi-3.7.2-cp310-none-manylinux2014_aarch64.whl", hash = "sha256:75cd1b446aacb378d3e39d440e16a0e56c27ef0f28438d164b5bbe84399fa5d2"},
+    {file = "casadi-3.7.2-cp310-none-manylinux2014_i686.whl", hash = "sha256:b00740ad6d5b5535bf1e5b50d841b577d487bf2493928db0520026305407e774"},
+    {file = "casadi-3.7.2-cp310-none-manylinux2014_x86_64.whl", hash = "sha256:e1cb725c95024d5b8f09cb339d3fe65bb74368793783366fbbdffece980f0082"},
+    {file = "casadi-3.7.2-cp310-none-win_amd64.whl", hash = "sha256:73f2b1d22879b12cd228dc52f3483226d7451b456da1a58abd25a303d21f0dd4"},
+    {file = "casadi-3.7.2-cp311-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:f43b0562d05a5e6e81f1885fc4ae426c382e36eebfd8d27f1baff6052178a9b0"},
+    {file = "casadi-3.7.2-cp311-none-macosx_11_0_arm64.whl", hash = "sha256:70add3334b437b60a9bc0f864d094350f1a4fcbf9e8bafec870b61aed64674df"},
+    {file = "casadi-3.7.2-cp311-none-manylinux2014_aarch64.whl", hash = "sha256:392d3367a4b33cf223013dad8122a0e549da40b1702a5375f82f85b563e5c0cf"},
+    {file = "casadi-3.7.2-cp311-none-manylinux2014_i686.whl", hash = "sha256:2ce09e0ced6df33048dccd582b5cfa2c9ff5193b12858b2584078afc17761905"},
+    {file = "casadi-3.7.2-cp311-none-manylinux2014_x86_64.whl", hash = "sha256:5086799a46d10ba884b72fd02c21be09dae52cbc189272354a5d424791b55f37"},
+    {file = "casadi-3.7.2-cp311-none-win_amd64.whl", hash = "sha256:72aa5727417d781ed216f16b5e93c6ddca5db27d83b0015a729e8ad570cdc465"},
+    {file = "casadi-3.7.2-cp312-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:309ea41a69c9230390d349b0dd899c6a19504d1904c0756bef463e47fb5c8f9a"},
+    {file = "casadi-3.7.2-cp312-none-macosx_11_0_arm64.whl", hash = "sha256:6033381234db810b2247d16c6352e679a009ec4365d04008fc768866e011ed58"},
+    {file = "casadi-3.7.2-cp312-none-manylinux2014_aarch64.whl", hash = "sha256:732f2804d0766454bb75596339e4f2da6662ffb669621da0f630ed4af9e83d6a"},
+    {file = "casadi-3.7.2-cp312-none-manylinux2014_i686.whl", hash = "sha256:cf17298ff0c162735bdf9bf72b765c636ae732130604017a3b52e26e35402857"},
+    {file = "casadi-3.7.2-cp312-none-manylinux2014_x86_64.whl", hash = "sha256:cde616930fa1440ad66f1850670399423edd37354eed9b12e74b3817b98d1187"},
+    {file = "casadi-3.7.2-cp312-none-win_amd64.whl", hash = "sha256:81d677d2b020c1307c1eb25eae15686e5de199bb066828c3eaabdfaaaf457ffd"},
+    {file = "casadi-3.7.2-cp313-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:b53e9cc44e9d45fd0276322e85c721977ab32fefe5147069cf57f23352253479"},
+    {file = "casadi-3.7.2-cp313-none-macosx_11_0_arm64.whl", hash = "sha256:2e37806a2d6a57320da79e200398239ae432a34569afbb0268598dd3381dafb9"},
+    {file = "casadi-3.7.2-cp313-none-manylinux2014_aarch64.whl", hash = "sha256:8c22837ff751ab22ea3333198427e0dd2aa1f3974a10867de897fe26bcb57438"},
+    {file = "casadi-3.7.2-cp313-none-manylinux2014_i686.whl", hash = "sha256:4a92b5c28abb8d00ae24ce243fed36df36c53a511449aedcdf4db54f78efaf64"},
+    {file = "casadi-3.7.2-cp313-none-manylinux2014_x86_64.whl", hash = "sha256:63a406ead6582ddc730ea9bfcb100fc299d0793f2e6b177a967a1495846f9a72"},
+    {file = "casadi-3.7.2-cp313-none-win_amd64.whl", hash = "sha256:d1a996d5904ba74ee2c0bb9991344c9b0963adc08864ddce908fe92cfdf36bf0"},
+    {file = "casadi-3.7.2-cp314-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:f8faf88720477f63b48e96f443ba557931ddd3f5d7d08fc905148893b5c25917"},
+    {file = "casadi-3.7.2-cp314-none-macosx_11_0_arm64.whl", hash = "sha256:08762169bd464d5a00a15bf28d2ff7deac41d24a1da842a13153a833cd247b61"},
+    {file = "casadi-3.7.2-cp314-none-manylinux2014_i686.whl", hash = "sha256:9b5683d06f7c5c2bc044585f2d3591d81ec0ad81de84db29765a8bca8247f9d7"},
+    {file = "casadi-3.7.2-cp314-none-manylinux2014_x86_64.whl", hash = "sha256:8861213b7fc605a67cf9b46b29c05337b70c773c0b9615939a7c8a3361cabed1"},
+    {file = "casadi-3.7.2-cp314-none-win_amd64.whl", hash = "sha256:62b7b1f943456447205673865e130ec9d97a6f931239968a46d9a7b40ea8c4c3"},
+    {file = "casadi-3.7.2-cp36-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:4ca4daed2470ac6cc0dfb85d400d51cf2bb8120279df0babde5fa1e6fa78cab9"},
+    {file = "casadi-3.7.2-cp36-none-manylinux2014_aarch64.whl", hash = "sha256:4d076b4298b3e0ea25e5247a17c8104c594255d286b5b7676066a9d4baa7d42c"},
+    {file = "casadi-3.7.2-cp36-none-manylinux2014_i686.whl", hash = "sha256:67099c9fd79f9a04a74c8a9c98802001b9e59442689ac152e9a81b66644fc650"},
+    {file = "casadi-3.7.2-cp36-none-manylinux2014_x86_64.whl", hash = "sha256:c03d9d4bab77035acc2a16543cbad422cb595dc76bdc037e31f136e39c1f3228"},
+    {file = "casadi-3.7.2-cp36-none-win_amd64.whl", hash = "sha256:0d63d6138ceb7aa71889663b1a572b3a804474f581cf8d0aa344e0c982719099"},
+    {file = "casadi-3.7.2-cp37-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:ce582e998636760683470379b9518089d4e26e6064dd1748a04db58c3ea3c5a4"},
+    {file = "casadi-3.7.2-cp37-none-manylinux2014_aarch64.whl", hash = "sha256:8c637723924ffc4cd1b29079aea63b1909750d2a3eb184bacd34bb43be71c543"},
+    {file = "casadi-3.7.2-cp37-none-manylinux2014_i686.whl", hash = "sha256:a463cc4c56308869d856612ed625530a643a52173635676d8a7bc27013e0ae0c"},
+    {file = "casadi-3.7.2-cp37-none-manylinux2014_x86_64.whl", hash = "sha256:9ff080fad234aaf550adf0399c3c902242f88510b5494d20fcc3a32c426547f8"},
+    {file = "casadi-3.7.2-cp37-none-win_amd64.whl", hash = "sha256:b8092adb198df634f47cbc8a9d0dc92d0ab40df968d384fd2f4f2f69a26724c8"},
+    {file = "casadi-3.7.2-cp38-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:d346cd8066cab9ef32dc3198d6e6bb9447e52fab2de1cd68f9ebda4c2392c0b8"},
+    {file = "casadi-3.7.2-cp38-none-macosx_11_0_arm64.whl", hash = "sha256:ab86cc3b59a5905062e7de7204e2109f4a261b6e9fe1d13a39c436e02cd9d153"},
+    {file = "casadi-3.7.2-cp38-none-manylinux2014_aarch64.whl", hash = "sha256:99af0a29f9f17790a8fa8c77ee4b49ebaef1b84f2381e8ceebd596a601120f12"},
+    {file = "casadi-3.7.2-cp38-none-manylinux2014_i686.whl", hash = "sha256:f5941c96597000939dd01fbf908164e3680b0a803e6f818159de999caacb9eaf"},
+    {file = "casadi-3.7.2-cp38-none-manylinux2014_x86_64.whl", hash = "sha256:2d9721f77f78639b7e7ca5426d0ae39a320b5d966261e129148b741251dd95a7"},
+    {file = "casadi-3.7.2-cp38-none-win_amd64.whl", hash = "sha256:cfe92ca5f3f2ae310edc158f928f88399fc399633e94333f3e3b687b83751e3b"},
+    {file = "casadi-3.7.2-cp39-none-macosx_10_13_x86_64.macosx_10_13_intel.whl", hash = "sha256:f6382470e3c0aed6e73dca12646a3a34143c5d95ca3dfec711bdff702812600b"},
+    {file = "casadi-3.7.2-cp39-none-macosx_11_0_arm64.whl", hash = "sha256:ba2fb1d462bb4a8fd2182eeedb4acf93813264c71fe0bd8c2f550cee5583385f"},
+    {file = "casadi-3.7.2-cp39-none-manylinux2014_aarch64.whl", hash = "sha256:336e584a4dddbeb276a1a9e670642bf803b369f641e21303f5d7d4c579853ced"},
+    {file = "casadi-3.7.2-cp39-none-manylinux2014_i686.whl", hash = "sha256:8a8acc6def681d002af0438e01f608301c9585640fd6e2f3d42328e21ad2c8a6"},
+    {file = "casadi-3.7.2-cp39-none-manylinux2014_x86_64.whl", hash = "sha256:7ac98d0262889d52307e777ffde6106c6ad1e7992e96976d08a50719a973c8cc"},
+    {file = "casadi-3.7.2-cp39-none-win_amd64.whl", hash = "sha256:490b63893d131772c498556703c54a1a6daea78e894ee8955779508a4c3bbc31"},
+    {file = "casadi-3.7.2.tar.gz", hash = "sha256:b4d7bd8acdc4180306903ae1c9eddaf41be2a3ae2fa7154c57174ae64acdc60d"},
+]
+
+[package.dependencies]
+numpy = "*"
 
 [[package]]
 name = "certifi"
@@ -2799,6 +2897,27 @@ test = ["pytest (>=7.2)", "pytest-cov (>=4.0)", "pytest-xdist (>=3.0)"]
 test-extras = ["pytest-mpl", "pytest-randomly"]
 
 [[package]]
+name = "neuralfoil"
+version = "0.3.2"
+description = "NeuralFoil is an airfoil aerodynamics analysis tool using physics-informed machine learning, in pure Python/NumPy."
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "neuralfoil-0.3.2-py3-none-any.whl", hash = "sha256:e0067af2c748997e04b1afa2befc684895e9afe093a8967fa08aad49e9022cde"},
+    {file = "neuralfoil-0.3.2.tar.gz", hash = "sha256:baf1f2ad3cdbe56d4ff4c8bc8de219c6822571b16314a1e25a074d80ebe7d7dc"},
+]
+
+[package.dependencies]
+aerosandbox = ">=4.2.4,<4.3.0"
+numpy = ">=1"
+
+[package.extras]
+docs = ["furo", "sphinx", "sphinx-autoapi"]
+test = ["nbval", "pytest"]
+training = ["polars", "ray", "torch", "tqdm"]
+
+[[package]]
 name = "nodeenv"
 version = "1.10.0"
 description = "Node.js virtual environment builder"
@@ -4675,6 +4794,18 @@ files = [
 ]
 
 [[package]]
+name = "sortedcontainers"
+version = "2.4.0"
+description = "Sorted Containers -- Sorted List, Sorted Dict, Sorted Set"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"},
+    {file = "sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88"},
+]
+
+[[package]]
 name = "soupsieve"
 version = "2.8.3"
 description = "A modern CSS selector implementation for Beautiful Soup."
@@ -5090,6 +5221,28 @@ files = [
 ]
 
 [[package]]
+name = "tqdm"
+version = "4.68.2"
+description = "Fast, Extensible Progress Meter"
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "tqdm-4.68.2-py3-none-any.whl", hash = "sha256:d4240441fb5353290b87d6a85968c9decc131a99b8c7faa28269d829de669ede"},
+    {file = "tqdm-4.68.2.tar.gz", hash = "sha256:89c230e8dbc67c7615c142487111222f878c77427ea09549960f62389e258add"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+dev = ["nbval", "pytest (>=6)", "pytest-asyncio (>=0.24)", "pytest-cov", "pytest-timeout"]
+discord = ["envwrap", "requests"]
+notebook = ["ipywidgets (>=6)"]
+slack = ["envwrap", "slack-sdk"]
+telegram = ["envwrap", "requests"]
+
+[[package]]
 name = "traitlets"
 version = "5.14.3"
 description = "Traitlets Python configuration system"
@@ -5415,4 +5568,4 @@ jupyterlab = ["jupyterlab"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.15"
-content-hash = "ab1b7b583f2f0833ff57280bda4f153d46fb8b66e300fd23be2699fd2caed66b"
+content-hash = "1b644d7e8dd10ad5f9580c15b8740749926643fc224614079e01a014f889d737"
