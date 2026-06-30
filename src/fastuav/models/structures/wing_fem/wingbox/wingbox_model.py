@@ -15,12 +15,12 @@ from __future__ import annotations
 import numpy as np
 import openmdao.api as om
 
+from .mesh import build_wingbox_mesh
 from ..buckling import column_buckling_stress, plate_buckling_stress
 from ..fe_core.assembly import assemble, node_dofs, solve_clamped
 from ..fe_core.beam_element import BeamElement3D
 from ..fe_core.shell_element import membrane_stress, shell_stiffness
 from ..fe_core.stress import ks_aggregate
-from .mesh import build_wingbox_mesh
 
 
 def _quad_area(p):
@@ -34,18 +34,41 @@ def _taper(root, tip, eta):
     return root + (tip - root) * eta
 
 
-def solve_wingbox(mesh, *, E_skin, nu, rho_skin, t_skin_root, t_skin_tip,
-                  t_rib, rho_rib, E_cap, nu_cap, rho_cap,
-                  A_cap_root, A_cap_tip, sig_skin, sig_cap, q_stations, ks_rho,
-                  t_web_root, t_web_tip, E_web, rho_web, sig_web,
-                  kc_skin=4.0, cap_fixity=1.0, ks_web=5.35):
+def solve_wingbox(
+    mesh,
+    *,
+    E_skin,
+    nu,
+    rho_skin,
+    t_skin_root,
+    t_skin_tip,
+    t_rib,
+    rho_rib,
+    E_cap,
+    nu_cap,
+    rho_cap,
+    A_cap_root,
+    A_cap_tip,
+    sig_skin,
+    sig_cap,
+    q_stations,
+    ks_rho,
+    t_web_root,
+    t_web_tip,
+    E_web,
+    rho_web,
+    sig_web,
+    kc_skin=4.0,
+    cap_fixity=1.0,
+    ks_web=5.35,
+):
     """Assemble, solve, and recover stresses/mass for the wingbox. Pure NumPy."""
     nodes = mesh["nodes"]
     n_nodes = len(nodes)
     G_cap = E_cap / (2.0 * (1.0 + nu_cap))
 
-    elements = []          # (node_ids, K_global)
-    skin_records = []      # (node_ids, t, eta)
+    elements = []  # (node_ids, K_global)
+    skin_records = []  # (node_ids, t, eta)
     # --- skin shells ---
     for q, eta in mesh["skin_quads"]:
         t = _taper(t_skin_root, t_skin_tip, eta)
@@ -57,7 +80,7 @@ def solve_wingbox(mesh, *, E_skin, nu, rho_skin, t_skin_root, t_skin_tip,
         K, _ = shell_stiffness(nodes[list(q)], E_skin, nu, t_rib)
         elements.append((q, K))
     # --- spar-web shells ---
-    web_records = []       # (node_ids, t, eta)
+    web_records = []  # (node_ids, t, eta)
     for q, eta in mesh["web_quads"]:
         t = _taper(t_web_root, t_web_tip, eta)
         K, _ = shell_stiffness(nodes[list(q)], E_web, nu, t)
@@ -68,10 +91,10 @@ def solve_wingbox(mesh, *, E_skin, nu, rho_skin, t_skin_root, t_skin_tip,
     for e, eta in mesh["cap_beams"]:
         A = _taper(A_cap_root, A_cap_tip, eta)
         R = np.sqrt(A / np.pi)
-        I = 0.25 * np.pi * R**4
-        J = 2.0 * I
+        I_sec = 0.25 * np.pi * R**4
+        J = 2.0 * I_sec
         L = np.linalg.norm(nodes[e[1]] - nodes[e[0]])
-        Kl = BeamElement3D.stiffness_matrix(L, E_cap, G_cap, A, I, I, J)
+        Kl = BeamElement3D.stiffness_matrix(L, E_cap, G_cap, A, I_sec, I_sec, J)
         T = BeamElement3D.transformation_matrix(nodes[e[0]], nodes[e[1]])
         elements.append((e, T.T @ Kl @ T))
         cap_records.append((e, A, L, T))
@@ -121,8 +144,8 @@ def solve_wingbox(mesh, *, E_skin, nu, rho_skin, t_skin_root, t_skin_tip,
         cap_mass += A * L * rho_cap
         if N < 0.0:  # only compressed caps buckle (Euler, free length = rib pitch)
             R = np.sqrt(A / np.pi)
-            I = 0.25 * np.pi * R**4
-            sig_cr = column_buckling_stress(E_cap, I, A, L, coeff=cap_fixity)
+            I_sec = 0.25 * np.pi * R**4
+            sig_cr = column_buckling_stress(E_cap, I_sec, A, L, coeff=cap_fixity)
             u_cap_buck.append(abs(N / A) / sig_cr)
 
     # --- spar-web shear stress + shear buckling ---
@@ -143,8 +166,7 @@ def solve_wingbox(mesh, *, E_skin, nu, rho_skin, t_skin_root, t_skin_tip,
         u_web_buck.append(tau / tau_cr)
 
     # --- rib mass ---
-    rib_mass = sum(_quad_area(nodes[list(q)]) * t_rib * rho_rib
-                   for q, _ in mesh["rib_quads"])
+    rib_mass = sum(_quad_area(nodes[list(q)]) * t_rib * rho_rib for q, _ in mesh["rib_quads"])
 
     utilization = np.array(u_skin + u_cap + u_web)
     failure_margin = ks_aggregate(utilization, ks_rho) - 1.0
@@ -159,11 +181,16 @@ def solve_wingbox(mesh, *, E_skin, nu, rho_skin, t_skin_root, t_skin_tip,
     w_tip = float(np.max(np.abs([u[n * 6 + 2] for n in tip_nodes])))
 
     return {
-        "skin_mass": skin_mass, "rib_mass": rib_mass, "cap_mass": cap_mass,
+        "skin_mass": skin_mass,
+        "rib_mass": rib_mass,
+        "cap_mass": cap_mass,
         "web_mass": web_mass,
-        "failure_margin": failure_margin, "buckling_margin": buckling_margin,
-        "sigma_max": sigma_max, "w_tip": w_tip,
-        "max_skin_util": max(u_skin), "max_cap_util": max(u_cap),
+        "failure_margin": failure_margin,
+        "buckling_margin": buckling_margin,
+        "sigma_max": sigma_max,
+        "w_tip": w_tip,
+        "max_skin_util": max(u_skin),
+        "max_cap_util": max(u_cap),
         "max_web_util": max(u_web) if u_web else 0.0,
     }
 
@@ -175,28 +202,47 @@ class WingboxModel(om.ExplicitComponent):
     # (degenerate mesh): a clearly-too-heavy wing and a strongly violated
     # feasibility margin, so the optimiser is steered away without NaN crashing
     # the nonlinear solver.
-    _PENALTY_MASS = 1.0e3      # kg (both half-wings); ~3 orders above feasible
-    _PENALTY_MARGIN = 1.0e2    # dimensionless KS utilisation - 1 (>> 0)
+    _PENALTY_MASS = 1.0e3  # kg (both half-wings); ~3 orders above feasible
+    _PENALTY_MARGIN = 1.0e2  # dimensionless KS utilisation - 1 (>> 0)
 
     def initialize(self):
         self.options.declare("n_span", types=int, default=10)
         self.options.declare("n_chord", types=int, default=6)
         self.options.declare("ks_rho", types=float, default=100.0)
-        self.options.declare("fs_ratio", types=float, default=0.15,
-                             desc="Front-spar chordwise position (fraction of chord).")
-        self.options.declare("rs_ratio", types=float, default=0.65,
-                             desc="Rear-spar chordwise position (fraction of chord).")
+        self.options.declare(
+            "fs_ratio",
+            types=float,
+            default=0.15,
+            desc="Front-spar chordwise position (fraction of chord).",
+        )
+        self.options.declare(
+            "rs_ratio",
+            types=float,
+            default=0.65,
+            desc="Rear-spar chordwise position (fraction of chord).",
+        )
         self.options.declare("poisson", types=float, default=0.3)
-        self.options.declare("kc_skin", types=float, default=4.0,
-                             desc="Plate buckling coefficient for the skin panels "
-                                  "(~4 for a long simply-supported plate).")
-        self.options.declare("cap_fixity", types=float, default=1.0,
-                             desc="Euler end-fixity coefficient for cap column "
-                                  "buckling (1.0 = pinned-pinned).")
-        self.options.declare("ks_web", types=float, default=5.35,
-                             desc="Shear buckling coefficient for the spar-web "
-                                  "panels (~5.35 for a long simply-supported "
-                                  "plate in shear).")
+        self.options.declare(
+            "kc_skin",
+            types=float,
+            default=4.0,
+            desc="Plate buckling coefficient for the skin panels "
+            "(~4 for a long simply-supported plate).",
+        )
+        self.options.declare(
+            "cap_fixity",
+            types=float,
+            default=1.0,
+            desc="Euler end-fixity coefficient for cap column buckling (1.0 = pinned-pinned).",
+        )
+        self.options.declare(
+            "ks_web",
+            types=float,
+            default=5.35,
+            desc="Shear buckling coefficient for the spar-web "
+            "panels (~5.35 for a long simply-supported "
+            "plate in shear).",
+        )
 
     def setup(self):
         n_stations = self.options["n_span"] + 1
@@ -227,8 +273,9 @@ class WingboxModel(om.ExplicitComponent):
         self.add_input("data:structures:wing:ribs:thickness", val=0.0006, units="m")
 
         # Load (from WingLoadDistribution with n_elements = n_span)
-        self.add_input("data:loads:wing:q_nodes",
-                       val=np.zeros(n_stations), shape=n_stations, units="N/m")
+        self.add_input(
+            "data:loads:wing:q_nodes", val=np.zeros(n_stations), shape=n_stations, units="N/m"
+        )
 
         # Outputs
         self.add_output("data:weight:airframe:wing:mass", units="kg", lower=0.0)
@@ -254,8 +301,10 @@ class WingboxModel(om.ExplicitComponent):
             c_tip=float(inputs["data:geometry:wing:tip:chord"][0]),
             h_root=float(inputs["data:geometry:wing:root:thickness"][0]),
             h_tip=float(inputs["data:geometry:wing:tip:thickness"][0]),
-            fs_ratio=opt["fs_ratio"], rs_ratio=opt["rs_ratio"],
-            n_span=opt["n_span"], n_chord=opt["n_chord"],
+            fs_ratio=opt["fs_ratio"],
+            rs_ratio=opt["rs_ratio"],
+            n_span=opt["n_span"],
+            n_chord=opt["n_chord"],
         )
 
         res = solve_wingbox(
@@ -302,8 +351,9 @@ class WingboxModel(om.ExplicitComponent):
         # stresses, which would poison the whole MDA with NaN. Emit a strong but
         # *finite* infeasibility penalty instead so the optimiser is pushed away
         # from the bad region rather than crashing the nonlinear solver.
-        if not np.all(np.isfinite([skin_m, rib_m, spar_m, wing_m,
-                                   fail_margin, buck_margin, sigma_max, w_tip])):
+        if not np.all(
+            np.isfinite([skin_m, rib_m, spar_m, wing_m, fail_margin, buck_margin, sigma_max, w_tip])
+        ):
             skin_m = rib_m = spar_m = self._PENALTY_MASS / 3.0
             wing_m = self._PENALTY_MASS
             fail_margin = buck_margin = self._PENALTY_MARGIN

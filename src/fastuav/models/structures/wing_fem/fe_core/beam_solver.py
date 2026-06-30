@@ -65,9 +65,7 @@ def solve_bending_beam(y_nodes, EI_mid, q_nodes, element_class=BeamElement2D):
     for e in range(n_elem):
         L = y_nodes[e + 1] - y_nodes[e]
         i0, i1 = e * dpn, (e + 2) * dpn
-        M_bending[e] = element_class.bending_moment_at_midpoint(
-            L, EI_mid[e], 1.0, u[i0:i1]
-        )
+        M_bending[e] = element_class.bending_moment_at_midpoint(L, EI_mid[e], 1.0, u[i0:i1])
 
     w_tip = u[(n_nodes - 1) * dpn]
     return {"u": u, "M_bending": M_bending, "w_tip": w_tip}
@@ -75,9 +73,12 @@ def solve_bending_beam(y_nodes, EI_mid, q_nodes, element_class=BeamElement2D):
 
 def solve_beam_fem(
     semi_span: float,
-    R_root: float, R_tip: float,
-    t_root: float, t_tip: float,
-    E: float, G: float,
+    R_root: float,
+    R_tip: float,
+    t_root: float,
+    t_tip: float,
+    E: float,
+    G: float,
     q_nodes: np.ndarray,
     n_elements: int = 20,
 ):

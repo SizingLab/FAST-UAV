@@ -49,10 +49,10 @@ def build_q_distribution(semi_span, y_src, lift_shape_src, n_ult, mass, n_elemen
     y_fe = np.linspace(0.0, semi_span, n_nodes)
 
     shape_fe = np.interp(y_fe, y_src, lift_shape_src)
-    shape_fe = np.clip(shape_fe, 0.0, None)        # only upward lift sizes the spar
+    shape_fe = np.clip(shape_fe, 0.0, None)  # only upward lift sizes the spar
 
     integral = np.trapezoid(shape_fe, y_fe)
-    target = n_ult * mass * g / 2.0                # half-wing limit lift [N]
+    target = n_ult * mass * g / 2.0  # half-wing limit lift [N]
     if integral > 0.0:
         q_nodes = target * shape_fe / integral
     else:
@@ -72,8 +72,12 @@ class WingLoadDistribution(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("n_elements", types=int, default=20)
-        self.options.declare("use_aero_vectors", types=bool, default=False,
-                             desc="Use VLM spanwise CL/chord vectors for the lift shape.")
+        self.options.declare(
+            "use_aero_vectors",
+            types=bool,
+            default=False,
+            desc="Use VLM spanwise CL/chord vectors for the lift shape.",
+        )
 
     def setup(self):
         n_nodes = self.options["n_elements"] + 1
@@ -83,15 +87,25 @@ class WingLoadDistribution(om.ExplicitComponent):
         self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
 
         if self.options["use_aero_vectors"]:
-            self.add_input("data:aerodynamics:wing:low_speed:Y_vector",
-                           shape=SPAN_MESH_POINT, val=0.0, units="m")
-            self.add_input("data:aerodynamics:wing:low_speed:CL_vector",
-                           shape=SPAN_MESH_POINT, val=0.0)
-            self.add_input("data:aerodynamics:wing:low_speed:chord_vector",
-                           shape=SPAN_MESH_POINT, val=0.0, units="m")
+            self.add_input(
+                "data:aerodynamics:wing:low_speed:Y_vector",
+                shape=SPAN_MESH_POINT,
+                val=0.0,
+                units="m",
+            )
+            self.add_input(
+                "data:aerodynamics:wing:low_speed:CL_vector", shape=SPAN_MESH_POINT, val=0.0
+            )
+            self.add_input(
+                "data:aerodynamics:wing:low_speed:chord_vector",
+                shape=SPAN_MESH_POINT,
+                val=0.0,
+                units="m",
+            )
 
-        self.add_output("data:loads:wing:q_nodes",
-                        val=np.zeros(n_nodes), shape=n_nodes, units="N/m")
+        self.add_output(
+            "data:loads:wing:q_nodes", val=np.zeros(n_nodes), shape=n_nodes, units="N/m"
+        )
 
     def setup_partials(self):
         # Central + relative-step FD to keep the load-distribution derivatives clean

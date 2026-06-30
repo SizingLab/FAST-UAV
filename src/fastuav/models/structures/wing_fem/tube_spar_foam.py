@@ -37,15 +37,26 @@ class TubeSparFoamModel(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("n_elements", types=int, default=20)
         self.options.declare("ks_rho", types=float, default=100.0)
-        self.options.declare("box_chord_ratio", types=float, default=0.5,
-                             desc="Chord fraction over which the sandwich skin "
-                                  "carries spanwise bending.")
-        self.options.declare("tube_buckling_coeff", types=float, default=0.3,
-                             desc="Knockdown x classical coefficient for thin-tube "
-                                  "local (shell) buckling, sigma_cr = coeff*E*t/R.")
-        self.options.declare("wrinkling_coeff", types=float, default=0.5,
-                             desc="Coefficient for sandwich-face wrinkling, "
-                                  "sigma_wr = coeff*(E_face*E_core*G_core)^(1/3).")
+        self.options.declare(
+            "box_chord_ratio",
+            types=float,
+            default=0.5,
+            desc="Chord fraction over which the sandwich skin carries spanwise bending.",
+        )
+        self.options.declare(
+            "tube_buckling_coeff",
+            types=float,
+            default=0.3,
+            desc="Knockdown x classical coefficient for thin-tube "
+            "local (shell) buckling, sigma_cr = coeff*E*t/R.",
+        )
+        self.options.declare(
+            "wrinkling_coeff",
+            types=float,
+            default=0.5,
+            desc="Coefficient for sandwich-face wrinkling, "
+            "sigma_wr = coeff*(E_face*E_core*G_core)^(1/3).",
+        )
 
     def setup(self):
         n_elem = self.options["n_elements"]
@@ -76,8 +87,7 @@ class TubeSparFoamModel(om.ExplicitComponent):
         self.add_input("data:structures:wing:skin:face:thickness", val=0.0003, units="m")
 
         # Load (from WingLoadDistribution)
-        self.add_input("data:loads:wing:q_nodes",
-                       val=np.zeros(n_nodes), shape=n_nodes, units="N/m")
+        self.add_input("data:loads:wing:q_nodes", val=np.zeros(n_nodes), shape=n_nodes, units="N/m")
 
         # Outputs: masses
         self.add_output("data:weight:airframe:wing:mass", units="kg", lower=0.0)
@@ -131,7 +141,7 @@ class TubeSparFoamModel(om.ExplicitComponent):
         R_out = 0.5 * (d_out_root + (d_out_tip - d_out_root) * eta)
         t_wall = t_wall_root + (t_wall_tip - t_wall_root) * eta
         chord = c_root + (c_tip - c_root) * eta
-        h = h_root + (h_tip - h_root) * eta          # airfoil thickness -> box height
+        h = h_root + (h_tip - h_root) * eta  # airfoil thickness -> box height
         w_box = kbox * chord
 
         # --- Section properties at nodes ---
@@ -164,9 +174,9 @@ class TubeSparFoamModel(om.ExplicitComponent):
         #     compressed-fibre magnitude for the symmetric section) ---
         t_wall_mid = 0.5 * (t_wall[:-1] + t_wall[1:])
         sig_cr_tube = tube_local_buckling_stress(
-            E_spar, t_wall_mid, R_mid, coeff=self.options["tube_buckling_coeff"])
-        sig_wr = sandwich_wrinkling_stress(
-            E_skin, E_foam, coeff=self.options["wrinkling_coeff"])
+            E_spar, t_wall_mid, R_mid, coeff=self.options["tube_buckling_coeff"]
+        )
+        sig_wr = sandwich_wrinkling_stress(E_skin, E_foam, coeff=self.options["wrinkling_coeff"])
         u_tube_buck = sigma_spar / sig_cr_tube
         u_face_buck = sigma_face / sig_wr
         u_buck = np.concatenate([u_tube_buck, u_face_buck])

@@ -39,6 +39,7 @@ _GAUSS2 = np.array([-1.0, 1.0]) / np.sqrt(3.0)
 # Geometry helpers
 # ---------------------------------------------------------------------------
 
+
 def quad_local_frame(coords):
     """
     Local orthonormal triad and in-plane 2D coordinates for a quad.
@@ -71,10 +72,12 @@ def _shape_q4(xi, eta):
 
 
 def _jacobian(xy, dN_dxi, dN_deta):
-    J = np.array([
-        [dN_dxi @ xy[:, 0], dN_dxi @ xy[:, 1]],
-        [dN_deta @ xy[:, 0], dN_deta @ xy[:, 1]],
-    ])
+    J = np.array(
+        [
+            [dN_dxi @ xy[:, 0], dN_dxi @ xy[:, 1]],
+            [dN_deta @ xy[:, 0], dN_deta @ xy[:, 1]],
+        ]
+    )
     detJ = np.linalg.det(J)
     Jinv = np.linalg.inv(J)
     dN_dx = Jinv[0, 0] * dN_dxi + Jinv[0, 1] * dN_deta
@@ -86,13 +89,20 @@ def _jacobian(xy, dN_dxi, dN_deta):
 # Local stiffness blocks
 # ---------------------------------------------------------------------------
 
+
 def _membrane_stiffness(xy, E, nu, t):
     """8x8 plane-stress membrane stiffness (DOF order per node: u, v)."""
-    D = E / (1.0 - nu**2) * np.array([
-        [1.0, nu, 0.0],
-        [nu, 1.0, 0.0],
-        [0.0, 0.0, 0.5 * (1.0 - nu)],
-    ])
+    D = (
+        E
+        / (1.0 - nu**2)
+        * np.array(
+            [
+                [1.0, nu, 0.0],
+                [nu, 1.0, 0.0],
+                [0.0, 0.0, 0.5 * (1.0 - nu)],
+            ]
+        )
+    )
     K = np.zeros((8, 8))
     for xi in _GAUSS2:
         for eta in _GAUSS2:
@@ -112,11 +122,13 @@ def _plate_stiffness(xy, E, nu, t, kappa=5.0 / 6.0):
     12x12 Mindlin plate stiffness (DOF order per node: w, theta_x, theta_y),
     selective reduced integration (2x2 bending, 1-point shear).
     """
-    Db = (E * t**3 / (12.0 * (1.0 - nu**2))) * np.array([
-        [1.0, nu, 0.0],
-        [nu, 1.0, 0.0],
-        [0.0, 0.0, 0.5 * (1.0 - nu)],
-    ])
+    Db = (E * t**3 / (12.0 * (1.0 - nu**2))) * np.array(
+        [
+            [1.0, nu, 0.0],
+            [nu, 1.0, 0.0],
+            [0.0, 0.0, 0.5 * (1.0 - nu)],
+        ]
+    )
     G = E / (2.0 * (1.0 + nu))
     Ds = kappa * G * t * np.eye(2)
 
@@ -195,8 +207,8 @@ def shell_stiffness(coords, E, nu, t, drilling_rel=1.0e-3):
     # Transform local -> global. T maps global DOFs to local (loc = T @ glob),
     # so K_glob = T^T K_loc T with T block-diagonal in R.
     T = np.zeros((24, 24))
-    for b in range(8):           # 8 triads (2 per node)
-        T[3*b:3*b+3, 3*b:3*b+3] = R
+    for b in range(8):  # 8 triads (2 per node)
+        T[3 * b : 3 * b + 3, 3 * b : 3 * b + 3] = R
     K_glob = T.T @ K_loc @ T
     return K_glob, R
 
@@ -213,14 +225,15 @@ def membrane_stress(coords, E, nu, t, u_elem_global):
     R, xy = quad_local_frame(coords)
     T = np.zeros((24, 24))
     for b in range(8):
-        T[3*b:3*b+3, 3*b:3*b+3] = R
+        T[3 * b : 3 * b + 3, 3 * b : 3 * b + 3] = R
     u_loc = T @ np.asarray(u_elem_global, dtype=float)
 
     u_mem = u_loc[[0, 1, 6, 7, 12, 13, 18, 19]]
     u_pl = u_loc[[2, 3, 4, 8, 9, 10, 14, 15, 16, 20, 21, 22]]
 
-    Dm = E / (1.0 - nu**2) * np.array([
-        [1.0, nu, 0.0], [nu, 1.0, 0.0], [0.0, 0.0, 0.5 * (1.0 - nu)]])
+    Dm = (
+        E / (1.0 - nu**2) * np.array([[1.0, nu, 0.0], [nu, 1.0, 0.0], [0.0, 0.0, 0.5 * (1.0 - nu)]])
+    )
 
     _, dxi, deta = _shape_q4(0.0, 0.0)
     dNx, dNy, _ = _jacobian(xy, dxi, deta)
@@ -231,17 +244,18 @@ def membrane_stress(coords, E, nu, t, u_elem_global):
     Bm[2, 1::2] = dNx
     sigma_m = Dm @ (Bm @ u_mem)
 
-    Db = (E / (1.0 - nu**2)) * np.array([
-        [1.0, nu, 0.0], [nu, 1.0, 0.0], [0.0, 0.0, 0.5 * (1.0 - nu)]])
+    Db = (E / (1.0 - nu**2)) * np.array(
+        [[1.0, nu, 0.0], [nu, 1.0, 0.0], [0.0, 0.0, 0.5 * (1.0 - nu)]]
+    )
     Bb = np.zeros((3, 12))
     Bb[0, 2::3] = dNx
     Bb[1, 1::3] = -dNy
     Bb[2, 2::3] = dNy
     Bb[2, 1::3] = -dNx
     kappa = Bb @ u_pl
-    sigma_b = (t / 2.0) * (Db @ kappa)    # outer-fibre bending stress
+    sigma_b = (t / 2.0) * (Db @ kappa)  # outer-fibre bending stress
 
     def vm(s):
-        return np.sqrt(s[0]**2 - s[0]*s[1] + s[1]**2 + 3.0*s[2]**2)
+        return np.sqrt(s[0] ** 2 - s[0] * s[1] + s[1] ** 2 + 3.0 * s[2] ** 2)
 
     return sigma_m, vm(sigma_m + sigma_b), vm(sigma_m - sigma_b)

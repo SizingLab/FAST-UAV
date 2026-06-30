@@ -64,8 +64,9 @@ class StructuresFEM(om.Group):
     """
 
     def initialize(self):
-        self.options.declare("wing_model", default="tube_spar_foam",
-                             values=["tube_spar_foam", "wingbox_shell"])
+        self.options.declare(
+            "wing_model", default="tube_spar_foam", values=["tube_spar_foam", "wingbox_shell"]
+        )
         self.options.declare("n_elements", types=int, default=20)
         self.options.declare("n_span", types=int, default=10)
         self.options.declare("n_chord", types=int, default=6)

@@ -37,8 +37,9 @@ from __future__ import annotations
 import numpy as np
 
 
-def build_wingbox_mesh(semi_span, c_root, c_tip, h_root, h_tip,
-                       fs_ratio, rs_ratio, n_span, n_chord):
+def build_wingbox_mesh(
+    semi_span, c_root, c_tip, h_root, h_tip, fs_ratio, rs_ratio, n_span, n_chord
+):
     """
     Returns a dict describing the half-span wingbox mesh:
 
@@ -74,15 +75,18 @@ def build_wingbox_mesh(semi_span, c_root, c_tip, h_root, h_tip,
     for surf in (0, 1):
         for j in range(n_span):
             for i in range(n_chord):
-                q = (nid(j, i, surf), nid(j + 1, i, surf),
-                     nid(j + 1, i + 1, surf), nid(j, i + 1, surf))
+                q = (
+                    nid(j, i, surf),
+                    nid(j + 1, i, surf),
+                    nid(j + 1, i + 1, surf),
+                    nid(j, i + 1, surf),
+                )
                 skin_quads.append((q, eta_of(q)))
 
     # Ribs (vertical, chordwise) at every station.
     for j in range(n_span + 1):
         for i in range(n_chord):
-            q = (nid(j, i, 0), nid(j, i + 1, 0),
-                 nid(j, i + 1, 1), nid(j, i, 1))
+            q = (nid(j, i, 0), nid(j, i + 1, 0), nid(j, i + 1, 1), nid(j, i, 1))
             rib_quads.append((q, eta_of(q)))
 
     # Spar webs: vertical shear panels along the front (i=0) and rear
@@ -90,8 +94,12 @@ def build_wingbox_mesh(semi_span, c_root, c_tip, h_root, h_tip,
     # surfaces between adjacent stations.
     for i_corner in (0, n_chord):
         for j in range(n_span):
-            q = (nid(j, i_corner, 0), nid(j + 1, i_corner, 0),
-                 nid(j + 1, i_corner, 1), nid(j, i_corner, 1))
+            q = (
+                nid(j, i_corner, 0),
+                nid(j + 1, i_corner, 0),
+                nid(j + 1, i_corner, 1),
+                nid(j, i_corner, 1),
+            )
             web_quads.append((q, eta_of(q)))
 
     # Spar-cap beams at the 4 corners (front i=0, rear i=n_chord; upper/lower).
@@ -102,8 +110,9 @@ def build_wingbox_mesh(semi_span, c_root, c_tip, h_root, h_tip,
                 cap_beams.append((e, eta_of(e)))
 
     root_nodes = [nid(0, i, s) for s in (0, 1) for i in range(n_chord + 1)]
-    station_nodes = [[nid(j, i, s) for s in (0, 1) for i in range(n_chord + 1)]
-                     for j in range(n_span + 1)]
+    station_nodes = [
+        [nid(j, i, s) for s in (0, 1) for i in range(n_chord + 1)] for j in range(n_span + 1)
+    ]
 
     return {
         "nodes": nodes,

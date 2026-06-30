@@ -26,10 +26,10 @@ from __future__ import annotations
 
 import numpy as np
 
-
 # ---------------------------------------------------------------------------
 # Cross-section properties (tubular spar, exact thick-walled formula)
 # ---------------------------------------------------------------------------
+
 
 def tube_section_properties(R: float, t: float):
     """
@@ -46,8 +46,8 @@ def tube_section_properties(R: float, t: float):
     R_in = R - t
     A = np.pi * (R**2 - R_in**2)
     Iy = (np.pi / 4.0) * (R**4 - R_in**4)
-    Iz = Iy                # axisymmetric tube
-    J = Iy + Iz            # exact for circular tube
+    Iz = Iy  # axisymmetric tube
+    J = Iy + Iz  # exact for circular tube
     return A, Iy, Iz, J
 
 
@@ -55,12 +55,14 @@ def tube_section_properties(R: float, t: float):
 # Abstract base class
 # ---------------------------------------------------------------------------
 
+
 class BeamElementBase:
     """
     2-node beam element interface. Subclasses define DOF count and matrices.
     """
+
     n_nodes: int = 2
-    dof_per_node: int = 0       # set by subclass
+    dof_per_node: int = 0  # set by subclass
     n_load_components: int = 0  # number of distributed-load components per span station
 
     @classmethod
@@ -84,6 +86,7 @@ class BeamElementBase:
 # 2D Euler-Bernoulli element  (2 DOF/node: w, theta)
 # ---------------------------------------------------------------------------
 
+
 class BeamElement2D(BeamElementBase):
     """
     2-node Euler-Bernoulli beam element, bending only.
@@ -94,20 +97,23 @@ class BeamElement2D(BeamElementBase):
 
     Element stiffness matrix (4x4) is the standard EI/L^3 form.
     """
+
     dof_per_node = 2
-    n_load_components = 1   # only transverse distributed force q_w(y)
+    n_load_components = 1  # only transverse distributed force q_w(y)
 
     @classmethod
     def stiffness_matrix(cls, L, E, G, A, Iy, Iz, J):
         # Only E*Iy enters in pure bending. The other args are accepted so the
         # interface matches the 3D element.
         c = E * Iy / L**3
-        K = c * np.array([
-            [12.0,    6.0*L,    -12.0,    6.0*L   ],
-            [6.0*L,   4.0*L*L,  -6.0*L,   2.0*L*L ],
-            [-12.0,   -6.0*L,    12.0,   -6.0*L   ],
-            [6.0*L,   2.0*L*L,  -6.0*L,   4.0*L*L ],
-        ])
+        K = c * np.array(
+            [
+                [12.0, 6.0 * L, -12.0, 6.0 * L],
+                [6.0 * L, 4.0 * L * L, -6.0 * L, 2.0 * L * L],
+                [-12.0, -6.0 * L, 12.0, -6.0 * L],
+                [6.0 * L, 2.0 * L * L, -6.0 * L, 4.0 * L * L],
+            ]
+        )
         return K
 
     @classmethod
@@ -118,12 +124,14 @@ class BeamElement2D(BeamElementBase):
 
         For uniform q this reduces to the textbook (qL/2)[1, L/6, 1, -L/6].
         """
-        return (L / 60.0) * np.array([
-            21.0 * q_left + 9.0 * q_right,
-            L * (3.0 * q_left + 2.0 * q_right),
-            9.0 * q_left + 21.0 * q_right,
-            -L * (2.0 * q_left + 3.0 * q_right),
-        ])
+        return (L / 60.0) * np.array(
+            [
+                21.0 * q_left + 9.0 * q_right,
+                L * (3.0 * q_left + 2.0 * q_right),
+                9.0 * q_left + 21.0 * q_right,
+                -L * (2.0 * q_left + 3.0 * q_right),
+            ]
+        )
 
     @classmethod
     def bending_moment_at_midpoint(cls, L, E, Iy, u_e):
@@ -143,6 +151,7 @@ class BeamElement2D(BeamElementBase):
 # 3D spatial frame element  (6 DOF/node: u, v, w, theta_x, theta_y, theta_z)
 # ---------------------------------------------------------------------------
 
+
 class BeamElement3D(BeamElementBase):
     """
     2-node spatial Euler-Bernoulli frame element.
@@ -156,8 +165,9 @@ class BeamElement3D(BeamElementBase):
     cap the local x-axis points root->tip; the local z-axis is taken "up"
     (global +Z) by default via the reference vector.
     """
+
     dof_per_node = 6
-    n_load_components = 2   # distributed transverse force in local y and z
+    n_load_components = 2  # distributed transverse force in local y and z
 
     @classmethod
     def stiffness_matrix(cls, L, E, G, A, Iy, Iz, J):
@@ -169,8 +179,8 @@ class BeamElement3D(BeamElementBase):
         """
         K = np.zeros((12, 12))
 
-        ax = E * A / L            # axial
-        gj = G * J / L            # torsion
+        ax = E * A / L  # axial
+        gj = G * J / L  # torsion
 
         # Bending about local z (x-y plane): v (1,7), theta_z (5,11)
         z1 = 12.0 * E * Iz / L**3
@@ -184,21 +194,49 @@ class BeamElement3D(BeamElementBase):
         y4 = 2.0 * E * Iy / L
 
         # Axial
-        K[0, 0] = ax; K[0, 6] = -ax
-        K[6, 0] = -ax; K[6, 6] = ax
+        K[0, 0] = ax
+        K[0, 6] = -ax
+        K[6, 0] = -ax
+        K[6, 6] = ax
         # Torsion
-        K[3, 3] = gj; K[3, 9] = -gj
-        K[9, 3] = -gj; K[9, 9] = gj
+        K[3, 3] = gj
+        K[3, 9] = -gj
+        K[9, 3] = -gj
+        K[9, 9] = gj
         # Bending in x-y plane (v, theta_z)
-        K[1, 1] = z1;  K[1, 5] = z2;   K[1, 7] = -z1;  K[1, 11] = z2
-        K[5, 1] = z2;  K[5, 5] = z3;   K[5, 7] = -z2;  K[5, 11] = z4
-        K[7, 1] = -z1; K[7, 5] = -z2;  K[7, 7] = z1;   K[7, 11] = -z2
-        K[11, 1] = z2; K[11, 5] = z4;  K[11, 7] = -z2; K[11, 11] = z3
+        K[1, 1] = z1
+        K[1, 5] = z2
+        K[1, 7] = -z1
+        K[1, 11] = z2
+        K[5, 1] = z2
+        K[5, 5] = z3
+        K[5, 7] = -z2
+        K[5, 11] = z4
+        K[7, 1] = -z1
+        K[7, 5] = -z2
+        K[7, 7] = z1
+        K[7, 11] = -z2
+        K[11, 1] = z2
+        K[11, 5] = z4
+        K[11, 7] = -z2
+        K[11, 11] = z3
         # Bending in x-z plane (w, theta_y) -- note opposite coupling sign
-        K[2, 2] = y1;  K[2, 4] = -y2;  K[2, 8] = -y1;  K[2, 10] = -y2
-        K[4, 2] = -y2; K[4, 4] = y3;   K[4, 8] = y2;   K[4, 10] = y4
-        K[8, 2] = -y1; K[8, 4] = y2;   K[8, 8] = y1;   K[8, 10] = y2
-        K[10, 2] = -y2; K[10, 4] = y4; K[10, 8] = y2;  K[10, 10] = y3
+        K[2, 2] = y1
+        K[2, 4] = -y2
+        K[2, 8] = -y1
+        K[2, 10] = -y2
+        K[4, 2] = -y2
+        K[4, 4] = y3
+        K[4, 8] = y2
+        K[4, 10] = y4
+        K[8, 2] = -y1
+        K[8, 4] = y2
+        K[8, 8] = y1
+        K[8, 10] = y2
+        K[10, 2] = -y2
+        K[10, 4] = y4
+        K[10, 8] = y2
+        K[10, 10] = y3
 
         return K
 
@@ -230,10 +268,10 @@ class BeamElement3D(BeamElementBase):
         ey = ey / np.linalg.norm(ey)
         ez = np.cross(ex, ey)
 
-        R = np.vstack([ex, ey, ez])     # rows are local axes in global coords
+        R = np.vstack([ex, ey, ez])  # rows are local axes in global coords
         T = np.zeros((12, 12))
         for b in range(4):
-            T[3*b:3*b+3, 3*b:3*b+3] = R
+            T[3 * b : 3 * b + 3, 3 * b : 3 * b + 3] = R
         return T
 
     @classmethod
@@ -252,20 +290,24 @@ class BeamElement3D(BeamElementBase):
 
         f = np.zeros(12)
         # x-y plane bending DOFs: v(1), theta_z(5), v(7), theta_z(11)
-        f[[1, 5, 7, 11]] = (L / 60.0) * np.array([
-            21.0 * qy_l + 9.0 * qy_r,
-            L * (3.0 * qy_l + 2.0 * qy_r),
-            9.0 * qy_l + 21.0 * qy_r,
-            -L * (2.0 * qy_l + 3.0 * qy_r),
-        ])
+        f[[1, 5, 7, 11]] = (L / 60.0) * np.array(
+            [
+                21.0 * qy_l + 9.0 * qy_r,
+                L * (3.0 * qy_l + 2.0 * qy_r),
+                9.0 * qy_l + 21.0 * qy_r,
+                -L * (2.0 * qy_l + 3.0 * qy_r),
+            ]
+        )
         # x-z plane bending DOFs: w(2), theta_y(4), w(8), theta_y(10)
         # theta_y couples with -w, so the moment rows flip sign.
-        f[[2, 4, 8, 10]] = (L / 60.0) * np.array([
-            21.0 * qz_l + 9.0 * qz_r,
-            -L * (3.0 * qz_l + 2.0 * qz_r),
-            9.0 * qz_l + 21.0 * qz_r,
-            L * (2.0 * qz_l + 3.0 * qz_r),
-        ])
+        f[[2, 4, 8, 10]] = (L / 60.0) * np.array(
+            [
+                21.0 * qz_l + 9.0 * qz_r,
+                -L * (3.0 * qz_l + 2.0 * qz_r),
+                9.0 * qz_l + 21.0 * qz_r,
+                L * (2.0 * qz_l + 3.0 * qz_r),
+            ]
+        )
         return f
 
     @classmethod

@@ -61,9 +61,9 @@ def plate_buckling_stress(E, t, b, nu=0.3, kc=4.0):
     return kc * np.pi**2 * E / (12.0 * (1.0 - nu**2)) * (t / b) ** 2
 
 
-def column_buckling_stress(E, I, A, L, coeff=1.0):
+def column_buckling_stress(E, I_sec, A, L, coeff=1.0):
     """
-    Euler column-buckling stress of a beam of section ``(I, A)`` and free
+    Euler column-buckling stress of a beam of section ``(I_sec, A)`` and free
     length ``L``:
 
         sigma_cr = coeff * pi^2 E I / (A L^2)
@@ -73,4 +73,4 @@ def column_buckling_stress(E, I, A, L, coeff=1.0):
     """
     L = np.maximum(L, 1e-9)
     A = np.maximum(A, 1e-12)
-    return coeff * np.pi**2 * E * I / (A * L**2)
+    return coeff * np.pi**2 * E * I_sec / (A * L**2)

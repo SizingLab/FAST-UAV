@@ -24,9 +24,9 @@ def ks_aggregate(values: np.ndarray, rho: float = 100.0) -> float:
     return float(v_max + (1.0 / rho) * np.log(np.sum(np.exp(rho * (values - v_max)))))
 
 
-def tube_fibre_stress(M_bending: np.ndarray,
-                      R_nodes: np.ndarray,
-                      t_nodes: np.ndarray) -> np.ndarray:
+def tube_fibre_stress(
+    M_bending: np.ndarray, R_nodes: np.ndarray, t_nodes: np.ndarray
+) -> np.ndarray:
     """
     Outer-fibre bending stress sigma = M * R / I at element midpoints, for a
     tapered circular tube whose radius/thickness are given at the FE nodes.
