@@ -120,7 +120,9 @@ class WingLoadingCruiseVLM(om.ExplicitComponent):
     def setup(self):
         propulsion_id = self.options["propulsion_id"]
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s"
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         # self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
@@ -150,8 +152,8 @@ class WingLoadingCruiseVLM(om.ExplicitComponent):
         CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
 
         # Wing loading calculation
-        WS_cruise = q_cruise * np.sqrt(
-            CD_0_guess / K
+        WS_cruise = (
+            q_cruise * np.sqrt(CD_0_guess / K)
         )  # wing loading that maximizes range during cruise [N/m2] (simplified drag model CD = CD_0 + K * CL^2)
 
         outputs["data:geometry:wing:loading:cruise"] = WS_cruise
