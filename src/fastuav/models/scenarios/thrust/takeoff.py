@@ -113,6 +113,7 @@ class LauncherTakeoff(om.ExplicitComponent):
 
         outputs["data:propulsion:%s:propeller:thrust:takeoff" % propulsion_id] = F_pro_takeoff
 
+
 class LauncherTakeoff_VLM(om.ExplicitComponent):
     """
     Thrust required for takeoff assuming the use of a rail launcher or bungee, in fixed wing configuration.
@@ -128,7 +129,9 @@ class LauncherTakeoff_VLM(om.ExplicitComponent):
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
         self.add_input("mission:sizing:main_route:takeoff:altitude", val=0.0, units="m")
-        self.add_input("mission:sizing:main_route:stall:speed:%s" % propulsion_id, val=np.nan, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:stall:speed:%s" % propulsion_id, val=np.nan, units="m/s"
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
         # self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
@@ -191,11 +194,12 @@ class LauncherTakeoff_VLM(om.ExplicitComponent):
         # Temperature profile: T = T0 - L * h + dISA
         # Density varies as: rho ∝ (T/T0)^(g/RL - 1) --> (g/(R*L) - 1) ≈ -5.256 for ISA
         from stdatm import AtmosphereWithPartials
+
         datm = AtmosphereWithPartials(altitude_takeoff, dISA, altitude_in_feet=False)
         # drho = datm.density
         # d(rho)/d(h):   chain rule through T
         # d(rho)/d(h) = d(rho)/d(T) * d(T)/d(h) = (g/(R*L) - 1) * rho / T * (-L)
-        drho_dh = datm.partial_density_altitude # d(rho)/d(altitude)
+        drho_dh = datm.partial_density_altitude  # d(rho)/d(altitude)
         # d(rho)/d(dISA): stdatm treats dISA as a pure temperature offset at fixed pressure
         drho_ddISA = -rho / (T0 - L * altitude_takeoff + dISA)
 
@@ -210,24 +214,46 @@ class LauncherTakeoff_VLM(om.ExplicitComponent):
         CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
 
         # Thrust calculation (equilibrium)
-        TW_takeoff = q_takeoff * CD_0_guess / WS + K / q_takeoff * WS  # thrust-to-weight ratio at takeoff  [-]
+        TW_takeoff = (
+            q_takeoff * CD_0_guess / WS + K / q_takeoff * WS
+        )  # thrust-to-weight ratio at takeoff  [-]
 
-        partials[out_id, "optimization:variables:aerodynamics:CD0:guess"] = q_takeoff / WS * Weight / Npro
+        partials[out_id, "optimization:variables:aerodynamics:CD0:guess"] = (
+            q_takeoff / WS * Weight / Npro
+        )
 
-        partials[out_id, "optimization:variables:aerodynamics:CDi:K:guess"] = WS / q_takeoff * Weight / Npro
-        
+        partials[out_id, "optimization:variables:aerodynamics:CDi:K:guess"] = (
+            WS / q_takeoff * Weight / Npro
+        )
 
         # ∂(q_stall)/∂(V_stall) = ∂(0.5 * ρ * V^2)/∂(V_stall) = ρ * V_stall
-        partials[out_id, "mission:sizing:main_route:stall:speed:%s" % propulsion_id] = rho * 1.1**2 * V_stall*(CD_0_guess / WS - K / (q_takeoff**2) * WS)* Weight / Npro
+        partials[out_id, "mission:sizing:main_route:stall:speed:%s" % propulsion_id] = (
+            rho * 1.1**2 * V_stall * (CD_0_guess / WS - K / (q_takeoff**2) * WS) * Weight / Npro
+        )
         # ∂(q_stall)/∂(h) = 0.5 * V^2 * d(rho)/d(dISA)
-        partials[out_id, "mission:sizing:main_route:takeoff:altitude"] = 0.5 * (1.1 * V_stall)**2 * drho_dh * (CD_0_guess / WS - K / (q_takeoff**2) * WS)* Weight / Npro
+        partials[out_id, "mission:sizing:main_route:takeoff:altitude"] = (
+            0.5
+            * (1.1 * V_stall) ** 2
+            * drho_dh
+            * (CD_0_guess / WS - K / (q_takeoff**2) * WS)
+            * Weight
+            / Npro
+        )
         # ∂(q_stall)/∂(dISA) = 0.5 * V^2 * d(rho)/d(dISA)
-        partials[out_id, "mission:sizing:dISA"] = 0.5 * (1.1 * V_stall)**2 * drho_ddISA * (CD_0_guess / WS - K / (q_takeoff**2) * WS)* Weight / Npro
+        partials[out_id, "mission:sizing:dISA"] = (
+            0.5
+            * (1.1 * V_stall) ** 2
+            * drho_ddISA
+            * (CD_0_guess / WS - K / (q_takeoff**2) * WS)
+            * Weight
+            / Npro
+        )
 
-
-        partials[out_id, "data:geometry:wing:loading"] = (-q_takeoff*CD_0_guess / WS**2 + K / q_takeoff)* Weight / Npro
-
-        
+        partials[out_id, "data:geometry:wing:loading"] = (
+            (-q_takeoff * CD_0_guess / WS**2 + K / q_takeoff) * Weight / Npro
+        )
 
         partials[out_id, "optimization:variables:weight:mtow:guess"] = TW_takeoff * g / Npro
-        partials[out_id, "data:propulsion:%s:propeller:number" % propulsion_id] = -TW_takeoff * Weight / Npro**2
+        partials[out_id, "data:propulsion:%s:propeller:number" % propulsion_id] = (
+            -TW_takeoff * Weight / Npro**2
+        )

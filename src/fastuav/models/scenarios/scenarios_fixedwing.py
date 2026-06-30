@@ -12,7 +12,7 @@ from fastuav.models.aerodynamics.aerodynamics_fixedwing import (
     SpanEfficiency,
 )
 from fastuav.models.mtow.mtow import MtowGuess
-from fastuav.models.scenarios.thrust.climb import FixedwingClimbThrust , FixedwingClimbThrust_VLM
+from fastuav.models.scenarios.thrust.climb import FixedwingClimbThrust, FixedwingClimbThrust_VLM
 from fastuav.models.scenarios.thrust.cruise import FixedwingCruiseThrust, FixedwingCruiseThrust_VLM
 from fastuav.models.scenarios.thrust.hover import NoHover
 from fastuav.models.scenarios.thrust.takeoff import LauncherTakeoff, LauncherTakeoff_VLM
