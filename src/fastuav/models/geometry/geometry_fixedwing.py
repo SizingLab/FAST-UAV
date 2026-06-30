@@ -121,8 +121,8 @@ class WingGeometry(om.ExplicitComponent):
         c_root = 2 * S_w / b_w / (1 + lambda_w)  # chord at root [m]
         c_tip = lambda_w * c_root  # chord at tip [m]
         c_MAC = (2 / 3) * c_root * (1 + lambda_w + lambda_w**2) / (1 + lambda_w)  # MAC = MGC [m]
-        t_root = c_root * tc_ratio  # wing thickness at root [m]
-        t_tip = c_tip * tc_ratio  # wing thickness at tip [m]
+        c_root * tc_ratio  # wing thickness at root [m]
+        c_tip * tc_ratio  # wing thickness at tip [m]
 
         # Wing location
         y_MAC = (
@@ -132,10 +132,10 @@ class WingGeometry(om.ExplicitComponent):
             sweep_LE
         )  # x-location of MAC leading edge (from leading edge of root) [m]
         x_MAC_LE = k_xw * b_w  # x-location of MAC leading edge (from nose tip) [m]
-        x_MAC_c4 = x_MAC_LE + 0.25 * c_MAC  # x-location of MAC quarter chord (from nose tip) [m]
+        x_MAC_LE + 0.25 * c_MAC  # x-location of MAC quarter chord (from nose tip) [m]
         x_root_LE = x_MAC_LE - x_MAC_LE_loc  # x-location of root leading edge (from nose tip) [m]
-        x_root_TE = x_root_LE + c_root  # x-location of root trailing edge (from nose tip) [m]
-        sweep_TE = np.arctan(np.tan(sweep_LE) - 4 / AR_w * (1 - lambda_w) / (1 + lambda_w))
+        x_root_LE + c_root  # x-location of root trailing edge (from nose tip) [m]
+        np.arctan(np.tan(sweep_LE) - 4 / AR_w * (1 - lambda_w) / (1 + lambda_w))
 
         out1_ID = "data:geometry:wing:surface"
         partials[out1_ID, "optimization:variables:weight:mtow:guess"] = g / WS
@@ -484,8 +484,7 @@ class HorizontalTailGeometry(om.ExplicitComponent):
         c_tip_ht = lmbda_ht * c_root_ht
         c_MAC_ht = (2 / 3) * c_root_ht * (1 + lmbda_ht + lmbda_ht**2) / (1 + lmbda_ht)
         x_MAC_c4_ht = x_MAC_c4_w + l_ht
-        x_MAC_LE_ht = x_MAC_c4_ht - 0.25 * c_MAC_ht
-        x_root_LE_ht = x_MAC_LE_ht
+        x_MAC_c4_ht - 0.25 * c_MAC_ht
 
         # --- Key intermediate partials (chain rule building blocks) ---
         # dl_ht/d...
@@ -933,8 +932,7 @@ class VerticalTailGeometry(om.ExplicitComponent):
         c_tip_vt = lmbda_vt * c_root_vt
         c_MAC_vt = (2 / 3) * c_root_vt * (1 + lmbda_vt + lmbda_vt**2) / (1 + lmbda_vt)
         x_MAC_c4_vt = x_MAC_c4_w + l_vt
-        x_MAC_LE_vt = x_MAC_c4_vt - 0.25 * c_MAC_vt
-        x_root_LE_vt = x_MAC_LE_vt
+        x_MAC_c4_vt - 0.25 * c_MAC_vt
 
         # --- Key intermediate partials (chain rule building blocks) ---
         # dl_vt/d...
@@ -1265,7 +1263,7 @@ class FuselageGeometry(om.ExplicitComponent):
             np.pi * (4 / 6) * l_nose * (0.5 * d_fus_mid) ** 2
         )  # nose part of fuselage (half ellipsoid) [m3]
         V_mid = np.pi * (d_fus_mid / 2) ** 2 * l_mid  # mid part of fuselage (cylindrical) [m3]
-        V_rear = (
+        (
             np.pi
             * l_rear
             * ((0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip)

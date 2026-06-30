@@ -168,6 +168,7 @@ class FixedwingClimbThrust(om.ExplicitComponent):
         outputs["data:propulsion:%s:propeller:thrust:climb" % propulsion_id] = F_pro_climb
         outputs["data:propulsion:%s:propeller:AoA:climb" % propulsion_id] = alpha_cl
 
+
 class FixedwingClimbThrust_VLM(om.ExplicitComponent):
     """
     Thrust for the desired rate of climb, in fixed wing configuration.
@@ -185,8 +186,12 @@ class FixedwingClimbThrust_VLM(om.ExplicitComponent):
         # self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=0.035, units=None)
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
-        self.add_input("mission:sizing:main_route:climb:speed:%s" % propulsion_id, val=0.0, units="m/s")
-        self.add_input("mission:sizing:main_route:climb:rate:%s" % propulsion_id, val=np.nan, units="m/s")
+        self.add_input(
+            "mission:sizing:main_route:climb:speed:%s" % propulsion_id, val=0.0, units="m/s"
+        )
+        self.add_input(
+            "mission:sizing:main_route:climb:rate:%s" % propulsion_id, val=np.nan, units="m/s"
+        )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_output("data:propulsion:%s:propeller:thrust:climb" % propulsion_id, units="N")
         self.add_output("data:propulsion:%s:propeller:AoA:climb" % propulsion_id, units="rad")
@@ -203,7 +208,9 @@ class FixedwingClimbThrust_VLM(om.ExplicitComponent):
         # Flight parameters
         V_v = inputs["mission:sizing:main_route:climb:rate:%s" % propulsion_id]
         V_climb = inputs["mission:sizing:main_route:climb:speed:%s" % propulsion_id]
-        altitude_climb = inputs["mission:sizing:main_route:cruise:altitude"]  # conservative assumption
+        altitude_climb = inputs[
+            "mission:sizing:main_route:cruise:altitude"
+        ]  # conservative assumption
         dISA = inputs["mission:sizing:dISA"]
         atm = AtmosphereSI(altitude_climb, dISA)
         atm.true_airspeed = V_climb
@@ -225,7 +232,9 @@ class FixedwingClimbThrust_VLM(om.ExplicitComponent):
             V_v / V_climb + q_climb * CD_0_guess / WS + K / q_climb * WS
         )  # thrust-to-weight ratio in climb conditions [-]
         F_pro_climb = TW_climb * Weight / Npro  # [N] Thrust per propeller for climb
-        alpha_cl = np.pi / 2  # [rad] Rotor disk Angle of Attack (assumption: axial flight TODO: estimate trim?)
+        alpha_cl = (
+            np.pi / 2
+        )  # [rad] Rotor disk Angle of Attack (assumption: axial flight TODO: estimate trim?)
 
         outputs["data:propulsion:%s:propeller:thrust:climb" % propulsion_id] = F_pro_climb
         outputs["data:propulsion:%s:propeller:AoA:climb" % propulsion_id] = alpha_cl
@@ -251,11 +260,12 @@ class FixedwingClimbThrust_VLM(om.ExplicitComponent):
         # Temperature profile: T = T0 - L * h + dISA
         # Density varies as: rho ∝ (T/T0)^(g/RL - 1) --> (g/(R*L) - 1) ≈ -5.256 for ISA
         from stdatm import AtmosphereWithPartials
+
         datm = AtmosphereWithPartials(altitude_climb, dISA, altitude_in_feet=False)
         # drho = datm.density
         # d(rho)/d(h):   chain rule through T
         # d(rho)/d(h) = d(rho)/d(T) * d(T)/d(h) = (g/(R*L) - 1) * rho / T * (-L)
-        drho_dh = datm.partial_density_altitude # d(rho)/d(altitude)
+        drho_dh = datm.partial_density_altitude  # d(rho)/d(altitude)
         # d(rho)/d(dISA): stdatm treats dISA as a pure temperature offset at fixed pressure
         drho_ddISA = -rho / (T0 - L * altitude_climb + dISA)
 
@@ -270,29 +280,50 @@ class FixedwingClimbThrust_VLM(om.ExplicitComponent):
         CD_0_guess = inputs["optimization:variables:aerodynamics:CD0:guess"]
 
         # Thrust calculation (equilibrium)
-        TW_climb = (V_v / V_climb + q_climb * CD_0_guess / WS + K / q_climb * WS)  # thrust-to-weight ratio in climb conditions [-]
-    
-        partials[out_id_1, "mission:sizing:main_route:climb:rate:%s" % propulsion_id] = Weight / Npro / V_climb
-        
-        partials[out_id_1, "optimization:variables:aerodynamics:CD0:guess"] = q_climb / WS * Weight / Npro
+        TW_climb = (
+            V_v / V_climb + q_climb * CD_0_guess / WS + K / q_climb * WS
+        )  # thrust-to-weight ratio in climb conditions [-]
 
-        partials[out_id_1, "optimization:variables:aerodynamics:CDi:K:guess"] = WS / q_climb * Weight / Npro
-        
+        partials[out_id_1, "mission:sizing:main_route:climb:rate:%s" % propulsion_id] = (
+            Weight / Npro / V_climb
+        )
+
+        partials[out_id_1, "optimization:variables:aerodynamics:CD0:guess"] = (
+            q_climb / WS * Weight / Npro
+        )
+
+        partials[out_id_1, "optimization:variables:aerodynamics:CDi:K:guess"] = (
+            WS / q_climb * Weight / Npro
+        )
 
         # ∂(q_climb)/∂(V_climb) = ∂(0.5 * ρ * V^2)/∂(V_climb) = ρ * V_climb
-        partials[out_id_1, "mission:sizing:main_route:climb:speed:%s" % propulsion_id] = (-V_v/V_climb**2 + rho*V_climb*(CD_0_guess / WS - K / (q_climb**2) * WS))* Weight / Npro
+        partials[out_id_1, "mission:sizing:main_route:climb:speed:%s" % propulsion_id] = (
+            (-V_v / V_climb**2 + rho * V_climb * (CD_0_guess / WS - K / (q_climb**2) * WS))
+            * Weight
+            / Npro
+        )
         # ∂(q_climb)/∂(h) = 0.5 * V^2 * d(rho)/d(dISA)
-        partials[out_id_1, "mission:sizing:main_route:cruise:altitude"] = 0.5 * V_climb**2 * drho_dh * (CD_0_guess / WS - K / (q_climb**2) * WS)* Weight / Npro
+        partials[out_id_1, "mission:sizing:main_route:cruise:altitude"] = (
+            0.5 * V_climb**2 * drho_dh * (CD_0_guess / WS - K / (q_climb**2) * WS) * Weight / Npro
+        )
         # ∂(q_climb)/∂(dISA) = 0.5 * V^2 * d(rho)/d(dISA)
-        partials[out_id_1, "mission:sizing:dISA"] = 0.5 * V_climb**2 * drho_ddISA * (CD_0_guess / WS - K / (q_climb**2) * WS)* Weight / Npro
+        partials[out_id_1, "mission:sizing:dISA"] = (
+            0.5
+            * V_climb**2
+            * drho_ddISA
+            * (CD_0_guess / WS - K / (q_climb**2) * WS)
+            * Weight
+            / Npro
+        )
 
-
-        partials[out_id_1, "data:geometry:wing:loading"] = (-q_climb*CD_0_guess / WS**2 + K / q_climb)* Weight / Npro
-
-        
+        partials[out_id_1, "data:geometry:wing:loading"] = (
+            (-q_climb * CD_0_guess / WS**2 + K / q_climb) * Weight / Npro
+        )
 
         partials[out_id_1, "optimization:variables:weight:mtow:guess"] = TW_climb * g / Npro
-        partials[out_id_1, "data:propulsion:%s:propeller:number" % propulsion_id] = -TW_climb * Weight / Npro**2
+        partials[out_id_1, "data:propulsion:%s:propeller:number" % propulsion_id] = (
+            -TW_climb * Weight / Npro**2
+        )
 
         # AoA is assumed to be constant (axial flight), so its partials are zero.
         partials[out_id_2, "mission:sizing:main_route:climb:rate:%s" % propulsion_id] = 0.0
@@ -304,4 +335,3 @@ class FixedwingClimbThrust_VLM(om.ExplicitComponent):
         partials[out_id_2, "data:geometry:wing:loading"] = 0.0
         partials[out_id_2, "optimization:variables:weight:mtow:guess"] = 0.0
         partials[out_id_2, "data:propulsion:%s:propeller:number" % propulsion_id] = 0.0
-
