@@ -32,6 +32,8 @@ dependencies = [
     "plotly>=6.0.0,<7.0.0",
     "ipywidgets>=8.1.8,<9.0.0",
     "neuralfoil>=0.3.0,<0.4.0",
+    # Issue with the hybrid MDO convergence failures in Python 3.14
+    "numpy<2.5.1",
 ]
 
 [project.optional-dependencies]
