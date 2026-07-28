@@ -123,6 +123,10 @@ class AerodynamicsHighSpeed(om.Group):
             promotes=["*"],
         )
 
+        # Induced drag constant, published under the aircraft-level name expected by the
+        # sizing scenarios and the mission analysis.
+        self.add_subsystem("induced_drag_constant", InducedDragConstantVLM(), promotes=["*"])
+
         # Parasitic drag calculations
         parasitic_drag = self.add_subsystem("parasitic_drag", om.Group(), promotes=["*"])
         parasitic_drag.add_subsystem("wing", WingParasiticDrag(), promotes=["*"])
@@ -754,3 +758,27 @@ class InducedDragConstant(om.ExplicitComponent):
             np.pi * e * AR_w**2
         )
         partials["data:aerodynamics:CDi:K", "data:aerodynamics:CDi:e"] = -1 / (np.pi * e**2 * AR_w)
+
+
+class InducedDragConstantVLM(om.ExplicitComponent):
+    """
+    Induced drag constant from the VLM analysis.
+
+    The VLM publishes the wing induced drag coefficient as
+    ``data:aerodynamics:wing:cruise:CDi:k``, while the sizing scenarios and the mission
+    analysis consume the aircraft-level ``data:aerodynamics:CDi:K``. Both denote the same
+    quantity in the ``CD = CD_0 + K * CL**2`` drag polar, so the VLM value is passed through.
+    """
+
+    def setup(self):
+        self.add_input("data:aerodynamics:wing:cruise:CDi:k", val=np.nan, units=None)
+        self.add_output("data:aerodynamics:CDi:K", units=None, lower=0.0)
+
+    def setup_partials(self):
+        self.declare_partials("*", "*", method="exact")
+
+    def compute(self, inputs, outputs):
+        outputs["data:aerodynamics:CDi:K"] = inputs["data:aerodynamics:wing:cruise:CDi:k"]
+
+    def compute_partials(self, inputs, partials, discrete_inputs=None):
+        partials["data:aerodynamics:CDi:K", "data:aerodynamics:wing:cruise:CDi:k"] = 1.0
