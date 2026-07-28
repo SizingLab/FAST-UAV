@@ -50,8 +50,11 @@ def get_profile(
         x_z = genfromtxt(pth.join(airfoil_folder_path, file_name))
     profile.set_points(x_z["x"], x_z["z"])
 
-    if thickness_ratio:
-        if abs(profile.thickness_ratio - thickness_ratio) / thickness_ratio > 0.01:
+    if thickness_ratio is not None:
+        if (
+            thickness_ratio > 0.0
+            and abs(profile.thickness_ratio - thickness_ratio) / thickness_ratio > 0.01
+        ):
             warnings.warn(
                 "The airfoil thickness ratio from file "
                 + pth.join(airfoil_folder.__path__[0], file_name)
@@ -60,7 +63,7 @@ def get_profile(
             )
         profile.thickness_ratio = thickness_ratio
 
-    if chord_length:
+    if chord_length is not None:
         profile.chord_length = chord_length
 
     return profile

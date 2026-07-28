@@ -90,7 +90,8 @@ def sql_to_csv(
     if len(case_ids) == 0:
         df = pd.DataFrame()
         df.to_csv(csv_path, index=False)
-        print(f"[sql->csv] No cases — wrote empty file to {csv_path}")
+        if verbose:
+            print(f"[sql->csv] No cases — wrote empty file to {csv_path}")
         return df
 
     # Discover variable names: from YAML if given, otherwise from first case
@@ -129,7 +130,8 @@ def sql_to_csv(
 
     df = pd.DataFrame(records)
     df.to_csv(csv_path, index=False)
-    print(f"[sql->csv] Wrote {len(df)} rows x {len(df.columns)} cols -> {csv_path}")
+    if verbose:
+        print(f"[sql->csv] Wrote {len(df)} rows x {len(df.columns)} cols -> {csv_path}")
     return df
 
 

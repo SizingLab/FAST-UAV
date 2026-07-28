@@ -194,12 +194,13 @@ class Profile:
             list_index = np.where(x_vect[0 : len(x_vect) - 1] < x_vect[1 : len(x_vect)])[0].tolist()
         else:
             list_index = np.where(x_vect[0 : len(x_vect) - 1] > x_vect[1 : len(x_vect)])[0].tolist()
-        index = int(list_index[0] + 1)
+        # No local inversion of delta_x means the points already describe a single side.
+        index = int(list_index[0] + 1) if list_index else None
 
         if index is None:
             side1 = pd.DataFrame({X: x, Z: z})
             # noinspection PyTypeChecker
-            side2 = pd.DataFrame({X: x, Z: -1.0 * z})
+            side2 = pd.DataFrame({X: x, Z: -1.0 * np.asarray(z)})
         else:
             side1 = pd.DataFrame({X: x[0:index], Z: z[0:index]})
             side2 = pd.DataFrame({X: x[index:], Z: z[index:]})
