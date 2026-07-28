@@ -20,7 +20,6 @@ from fastuav.models.scenarios.wing_loading.wing_loading import (
     WingLoadingCruise,
     WingLoadingSelection,
     WingLoadingStall,
-    # WingLoadingCruiseVLM
 )
 
 
@@ -51,18 +50,19 @@ class SizingScenariosFixedWing(om.Group):
 @oad.RegisterOpenMDAOSystem("fastuav.scenarios_VLM.fixedwing")
 class SizingScenariosVLMFixedWing(om.Group):
     """
-    Sizing scenarios definition for fixed wing configurations (VLM-based)
+    Sizing scenarios definition for fixed wing configurations (VLM-based).
+
+    No span efficiency nor induced drag constant here: K comes from the VLM through
+    InducedDragConstantVLM, and adding them back would write that variable twice.
+    No cruise wing loading either, the optimiser reaches it through wing:loading:k.
     """
 
     def setup(self):
         preliminary = self.add_subsystem("preliminary", om.Group(), promotes=["*"])
         preliminary.add_subsystem("mtow_guess", MtowGuess(), promotes=["*"])
-        # preliminary.add_subsystem("span_efficiency", SpanEfficiency(), promotes=["*"])
-        # preliminary.add_subsystem("induced_drag_constant", InducedDragConstant(), promotes=["*"])
 
         wingloading = self.add_subsystem("wing_loading", om.Group(), promotes=["*"])
         wingloading.add_subsystem("stall", WingLoadingStall(), promotes=["*"])
-        # wingloading.add_subsystem("cruise", WingLoadingCruiseVLM(), promotes=["*"])
         wingloading.add_subsystem("selection", WingLoadingSelection(), promotes=["*"])
 
         thrust = self.add_subsystem("thrust", om.Group(), promotes=["*"])
