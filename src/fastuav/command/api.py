@@ -53,7 +53,6 @@ _LOGGER = logging.getLogger(__name__)
 # SAMPLE_FILENAME = "fastga.yml"
 # SAMPLE_XML_NAME = "fastga.xml"
 BOOLEAN_OPTIONS = [
-    "use_openvsp",
     "compute_mach_interpolation",
     "compute_slipstream",
     "low_speed_aero",

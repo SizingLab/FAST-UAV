@@ -170,7 +170,7 @@ class VLMSimpleGeometry(om.ExplicitComponent):
 
     def compute_cl_alpha_mach(self, inputs, aoa_angle, altitude, cruise_mach):
         """
-        Function that performs multiple run of OpenVSP to get an interpolation of Cl_alpha as a
+        Function that performs multiple run of the VLM to get an interpolation of Cl_alpha as a
         function of Mach for later use in the computation of the V-n diagram.
         """
         mach_interp = np.log(np.linspace(np.exp(0.15), np.exp(1.55 * cruise_mach), MACH_NB_PTS))

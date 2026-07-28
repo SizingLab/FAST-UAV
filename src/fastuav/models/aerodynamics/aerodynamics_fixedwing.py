@@ -99,7 +99,6 @@ class AerodynamicsHighSpeed(om.Group):
 
     def initialize(self):
         self.options.declare("result_folder_path", default="", types=str)
-        self.options.declare("openvsp_exe_path", default="", types=str, allow_none=True)
         self.options.declare("airfoil_folder_path", default=None, types=str, allow_none=True)
         self.options.declare("wing_airfoil", default="naca23012.af", types=str, allow_none=True)
         self.options.declare("htp_airfoil", default="naca0012.af", types=str, allow_none=True)
