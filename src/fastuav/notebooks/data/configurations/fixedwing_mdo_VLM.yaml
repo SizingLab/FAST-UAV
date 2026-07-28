@@ -223,7 +223,7 @@ optimization:
 
       - name: optimization:constraints:aerodynamics:CDi:K:consistency # Induced Drag consistency
         lower: 0.0
-        upper: 0.1
+        upper: 0.01
       
         ## STABILITY ##
       - name: optimization:constraints:stability:static_margin:min  # static margin constraint (min value)
