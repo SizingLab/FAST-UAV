@@ -636,7 +636,7 @@ class ParasiticDragConstraint(om.ExplicitComponent):
     """
 
     def setup(self):
-        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=np.nan, units=None)
         self.add_input("data:aerodynamics:CD0", val=np.nan, units=None)
         self.add_output("optimization:constraints:aerodynamics:CD0:consistency", units=None)
 
@@ -671,7 +671,7 @@ class MaxLiftToDrag(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:aerodynamics:CD0", val=np.nan, units=None)
-        self.add_input("data:aerodynamics:CDi:K", val=0.035, units=None)
+        self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_output("data:aerodynamics:LD:max", units=None, lower=0.0)
 
     def setup_partials(self):
