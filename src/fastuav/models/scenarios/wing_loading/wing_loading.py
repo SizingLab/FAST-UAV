@@ -76,7 +76,7 @@ class WingLoadingCruise(om.ExplicitComponent):
             units="m/s",
         )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=np.nan, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_output("data:geometry:wing:loading:cruise", units="N/m**2")
 
@@ -124,9 +124,9 @@ class WingLoadingCruiseVLM(om.ExplicitComponent):
             "mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s"
         )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
-        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=np.nan, units=None)
         # self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
-        self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=0.035, units=None)
+        self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=np.nan, units=None)
         self.add_output("data:geometry:wing:loading:cruise", units="N/m**2")
 
     def setup_partials(self):

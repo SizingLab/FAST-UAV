@@ -99,7 +99,7 @@ class FixedwingCruiseThrust(om.ExplicitComponent):
         self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
-        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=np.nan, units=None)
         self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input(
@@ -162,9 +162,9 @@ class FixedwingCruiseThrust_VLM(om.ExplicitComponent):
         self.add_input("optimization:variables:weight:mtow:guess", val=np.nan, units="kg")
         self.add_input("data:propulsion:%s:propeller:number" % propulsion_id, val=1.0, units=None)
         self.add_input("data:geometry:wing:loading", val=np.nan, units="N/m**2")
-        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=0.04, units=None)
+        self.add_input("optimization:variables:aerodynamics:CD0:guess", val=np.nan, units=None)
         # self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
-        self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=0.035, units=None)
+        self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=np.nan, units=None)
         self.add_input("mission:sizing:main_route:cruise:altitude", val=150.0, units="m")
         self.add_input(
             "mission:sizing:main_route:cruise:speed:%s" % propulsion_id, val=0.0, units="m/s"
