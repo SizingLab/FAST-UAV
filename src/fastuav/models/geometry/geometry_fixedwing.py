@@ -1263,7 +1263,7 @@ class FuselageGeometry(om.ExplicitComponent):
             np.pi * (4 / 6) * l_nose * (0.5 * d_fus_mid) ** 2
         )  # nose part of fuselage (half ellipsoid) [m3]
         V_mid = np.pi * (d_fus_mid / 2) ** 2 * l_mid  # mid part of fuselage (cylindrical) [m3]
-        (
+        V_rear = (
             np.pi
             * l_rear
             * ((0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip)
@@ -1282,6 +1282,7 @@ class FuselageGeometry(om.ExplicitComponent):
         outputs["data:geometry:fuselage:surface:rear"] = S_rear
         outputs["data:geometry:fuselage:volume:nose"] = V_nose
         outputs["data:geometry:fuselage:volume:mid"] = V_mid
+        outputs["data:geometry:fuselage:volume:rear"] = V_rear
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         lmbda_f = inputs["data:geometry:fuselage:fineness"]
@@ -1369,6 +1370,22 @@ class FuselageGeometry(om.ExplicitComponent):
         dV_nose_dd_mid = np.pi * (4 / 6) * l_nose * 2 * (0.5 * d_fus_mid) * 0.5
         dV_nose_dx_ht = dV_nose_dl_nose * dl_nose_dx_ht + dV_nose_dd_mid * dd_mid_dx_ht
         dV_nose_dlambda = dV_nose_dl_nose * dl_nose_dlambda + dV_nose_dd_mid * dd_mid_dlambda
+
+        # V_rear = pi/3 * l_rear * ((d_mid/2)^2 + (d_tip/2)^2 + d_mid*d_tip/4)
+        A_rear = (0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip
+        dV_rear_dl_rear = np.pi * A_rear / 3
+        dA_rear_dd_mid = 0.5 * d_fus_mid + 0.25 * d_fus_tip
+        dA_rear_dd_tip = 0.5 * d_fus_tip + 0.25 * d_fus_mid
+        dV_rear_dd_mid = np.pi * l_rear / 3 * dA_rear_dd_mid
+        dV_rear_dd_tip = np.pi * l_rear / 3 * dA_rear_dd_tip
+        dV_rear_dx_ht = (
+            dV_rear_dl_rear * dl_rear_dx_ht
+            + dV_rear_dd_mid * dd_mid_dx_ht
+            + dV_rear_dd_tip * dd_tip_dx_ht
+        )
+        dV_rear_dx_w = dV_rear_dl_rear * dl_rear_dx_w
+        dV_rear_dlambda = dV_rear_dd_mid * dd_mid_dlambda + dV_rear_dd_tip * dd_tip_dlambda
+        dV_rear_dk_df = dV_rear_dd_tip * dd_tip_dk_df
 
         # --- Output 1: l_fus ---
         partials["data:geometry:fuselage:length", "data:geometry:tail:horizontal:root:TE:x"] = (
@@ -1477,6 +1494,20 @@ class FuselageGeometry(om.ExplicitComponent):
         ] = dV_nose_dx_ht
         partials["data:geometry:fuselage:volume:nose", "data:geometry:fuselage:fineness"] = (
             dV_nose_dlambda
+        )
+
+        # --- Output 13: V_rear ---
+        partials[
+            "data:geometry:fuselage:volume:rear", "data:geometry:tail:horizontal:root:TE:x"
+        ] = dV_rear_dx_ht
+        partials["data:geometry:fuselage:volume:rear", "data:geometry:wing:root:TE:x"] = (
+            dV_rear_dx_w
+        )
+        partials["data:geometry:fuselage:volume:rear", "data:geometry:fuselage:fineness"] = (
+            dV_rear_dlambda
+        )
+        partials["data:geometry:fuselage:volume:rear", "data:geometry:fuselage:diameter:k"] = (
+            dV_rear_dk_df
         )
 
 
