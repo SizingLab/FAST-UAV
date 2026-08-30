@@ -31,12 +31,12 @@ ALPHA_END_LINEAR = np.deg2rad(10.0)
 _LOGGER = logging.getLogger(__name__)
 
 oad.RegisterSubmodel.active_models[SUBMODEL_AIRFOIL_LIFT_SLOPE] = (
-    "fastga.submodel.aerodynamics.airfoil.all.lift_curve_slope"
+    "fastuav.submodel.aerodynamics.airfoil.all.lift_curve_slope"
 )
 
 
 @oad.RegisterSubmodel(
-    SUBMODEL_AIRFOIL_LIFT_SLOPE, "fastga.submodel.aerodynamics.airfoil.all.lift_curve_slope"
+    SUBMODEL_AIRFOIL_LIFT_SLOPE, "fastuav.submodel.aerodynamics.airfoil.all.lift_curve_slope"
 )
 class ComputeAirfoilLiftCurveSlope(om.Group):
     def initialize(self):
@@ -135,10 +135,8 @@ class ComputeLocalReynolds(om.ExplicitComponent):
         self.add_input("data:aerodynamics:low_speed:mach", val=np.nan)
         self.add_input("data:aerodynamics:low_speed:unit_reynolds", val=np.nan, units="m**-1")
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
-        # self.add_input("data:geometry:horizontal_tail:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:MAC:length", val=np.nan, units="m")
         self.add_input("data:aerodynamics:horizontal_tail:efficiency", val=0.9)
-        # self.add_input("data:geometry:vertical_tail:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:tail:vertical:MAC:length", val=np.nan, units="m")
 
         self.add_output("data:aerodynamics:wing:MAC:low_speed:reynolds")

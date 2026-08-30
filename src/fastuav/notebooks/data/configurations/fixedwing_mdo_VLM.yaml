@@ -32,10 +32,7 @@ model:
         id: fastuav.geometry.fixedwing
     aerodynamics:
         id: fastuav.aerodynamics.highspeed.legacy.fixedwing
-        # propulsion_id: fastga.wrapper.propulsion.basicIC_engine
         result_folder_path: ../../workdir/aero_results
-        # compute_mach_interpolation: false
-        # compute_slipstream: false
         use_neuralfoil: true
     structures:
         id: fastuav.structures.fixedwing

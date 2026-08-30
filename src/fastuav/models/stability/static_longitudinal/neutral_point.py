@@ -56,8 +56,6 @@ class NeutralPointVLM(om.ExplicitComponent):
         self.add_input("optimization:variables:geometry:wing:AR", val=np.nan, units=None)
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:coefficient", val=0.5, units=None)
-        # self.add_input("optimization:variables:geometry:tail:horizontal:AR", val=4.0, units=None)
-        # self.add_input("data:aerodynamics:CDi:e", val=np.nan, units=None)
         self.add_input("data:geometry:wing:MAC:C4:x", val=np.nan, units="m")
         self.add_input("data:aerodynamics:wing:cruise:CL_alpha", val=np.nan, units="rad**-1")
         self.add_input(
@@ -75,7 +73,6 @@ class NeutralPointVLM(om.ExplicitComponent):
         c_MAC = inputs["data:geometry:wing:MAC:length"]
         V_ht = inputs["data:geometry:tail:horizontal:coefficient"]
         # AR_ht = inputs["optimization:variables:geometry:tail:horizontal:AR"]
-        # e = inputs["data:aerodynamics:CDi:e"]
         x_ac_w = inputs[
             "data:geometry:wing:MAC:C4:x"
         ]  # wing aerodynamic center (located at quarter chord of the wing)

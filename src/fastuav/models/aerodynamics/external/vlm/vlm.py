@@ -87,37 +87,24 @@ class VLMSimpleGeometry(om.ExplicitComponent):
 
     def setup(self):
         self.add_input("data:geometry:wing:sweep_25", val=np.nan, units="deg")
-        # self.add_input("data:geometry:wing:taper_ratio", val=np.nan)
         self.add_input("optimization:variables:geometry:wing:lambda", val=np.nan)
-        # self.add_input("data:geometry:wing:aspect_ratio", val=np.nan)
         self.add_input("optimization:variables:geometry:wing:AR", val=np.nan)
         self.add_input("data:geometry:wing:kink:span_ratio", val=np.nan)
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
-        # self.add_input("data:geometry:wing:root:y", val=np.nan, units="m")
         self.add_input("data:geometry:wing:root:chord", val=np.nan, units="m")
         self.add_input("data:geometry:wing:tip:chord", val=np.nan, units="m")
-        # self.add_input("data:geometry:wing:area", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:surface", val=np.nan, units="m**2")
         self.add_input("data:geometry:wing:span", val=np.nan, units="m")
         self.add_input("data:geometry:flap:span_ratio", val=np.nan)
         self.add_input("data:geometry:flap:chord_ratio", val=np.nan)
-        # self.add_input("data:geometry:horizontal_tail:sweep_25", val=np.nan, units="deg")
         self.add_input("data:geometry:tail:horizontal:sweep_25", val=np.nan, units="deg")
-        # self.add_input("data:geometry:horizontal_tail:taper_ratio", val=np.nan)
         self.add_input("data:geometry:tail:horizontal:lambda", val=0.9, units=None)
-        # self.add_input("data:geometry:horizontal_tail:aspect_ratio", val=np.nan)
         self.add_input("optimization:variables:geometry:tail:horizontal:AR", val=np.nan)
-        # self.add_input("data:geometry:horizontal_tail:span", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:span", val=np.nan, units="m")
-        # self.add_input("data:geometry:horizontal_tail:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:MAC:length", val=np.nan, units="m")
-        # self.add_input("data:geometry:horizontal_tail:root:chord", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:root:chord", val=np.nan, units="m")
-        # self.add_input("data:geometry:horizontal_tail:tip:chord", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:tip:chord", val=np.nan, units="m")
-        # self.add_input("data:geometry:horizontal_tail:area", val=np.nan, units="m**2")
         self.add_input("data:geometry:tail:horizontal:surface", val=np.nan, units="m**2")
-        # self.add_input("data:geometry:fuselage:maximum_width", val=np.nan, units="m")
         self.add_input("data:geometry:fuselage:diameter:mid", val=np.nan, units="m")
         self.add_input("data:geometry:wing:dihedral", val=np.nan, units="rad")
         self.add_input(
@@ -227,7 +214,6 @@ class VLMSimpleGeometry(om.ExplicitComponent):
             cdp_wing_airfoil = inputs["data:aerodynamics:wing:cruise:CDp"]
             cl_htp_airfoil = inputs["data:aerodynamics:horizontal_tail:cruise:CL"]
             cdp_htp_airfoil = inputs["data:aerodynamics:horizontal_tail:cruise:CDp"]
-        # width_max = inputs["data:geometry:fuselage:maximum_width"]
         width_max = inputs["data:geometry:fuselage:diameter:mid"]
         span_wing = inputs["data:geometry:wing:span"]
         # sref_wing = _scalarize(inputs["data:geometry:wing:area"])
@@ -877,11 +863,8 @@ class VLMSimpleGeometry(om.ExplicitComponent):
               y - span wise direction
           x_le array identifies the x-coordinate of Pi and Pf along the span-direction
         """
-        # semi_span = inputs["data:geometry:horizontal_tail:span"] / 2.0
         semi_span = inputs["data:geometry:tail:horizontal:span"] / 2.0
-        # root_chord = inputs["data:geometry:horizontal_tail:root:chord"]
         root_chord = inputs["data:geometry:tail:horizontal:root:chord"]
-        # tip_chord = inputs["data:geometry:horizontal_tail:tip:chord"]
         tip_chord = inputs["data:geometry:tail:horizontal:tip:chord"]
 
         # Initial data (zero matrix/array)

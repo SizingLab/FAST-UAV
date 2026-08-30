@@ -35,7 +35,6 @@ class ComputeAeroVLM(Group):
     def initialize(self):
         self.options.declare("low_speed_aero", default=False, types=bool)
         self.options.declare("result_folder_path", default="", types=str)
-        # self.options.declare("compute_mach_interpolation", default=False, types=bool)
         self.options.declare("airfoil_folder_path", default=None, types=str, allow_none=True)
         self.options.declare(
             "wing_airfoil_file", default=DEFAULT_WING_AIRFOIL, types=str, allow_none=True
@@ -172,7 +171,6 @@ class ComputeLocalReynolds(ExplicitComponent):
         else:
             self.add_input("data:aerodynamics:cruise:unit_reynolds", val=np.nan, units="m**-1")
         self.add_input("data:geometry:wing:MAC:length", val=np.nan, units="m")
-        # self.add_input("data:geometry:horizontal_tail:MAC:length", val=np.nan, units="m")
         self.add_input("data:geometry:tail:horizontal:MAC:length", val=np.nan, units="m")
 
         if self.options["low_speed_aero"]:
@@ -248,7 +246,6 @@ class _ComputeAeroVLM(VLMSimpleGeometry):
     def initialize(self):
         super().initialize()
         self.options.declare("result_folder_path", default="", types=str)
-        # self.options.declare("compute_mach_interpolation", default=False, types=bool)
         self.options.declare("input_angle_of_attack", default=DEFAULT_INPUT_AOA, types=float)
 
     def setup(self):
@@ -299,16 +296,6 @@ class _ComputeAeroVLM(VLMSimpleGeometry):
                 "data:aerodynamics:tail:horizontal:cruise:CL_alpha_isolated", units="rad**-1"
             )
             self.add_output("data:aerodynamics:horizontal_tail:cruise:induced_drag_coefficient")
-            # if self.options["compute_mach_interpolation"]:
-            #     self.add_output(
-            #         "data:aerodynamics:aircraft:mach_interpolation:mach_vector",
-            #         shape=MACH_NB_PTS + 1,
-            #     )
-            #     self.add_output(
-            #         "data:aerodynamics:aircraft:mach_interpolation:CL_alpha_vector",
-            #         shape=MACH_NB_PTS + 1,
-            #         units="rad**-1",
-            #     )
 
         self.declare_partials("*", "*", method="fd")
 
@@ -348,10 +335,6 @@ class _ComputeAeroVLM(VLMSimpleGeometry):
         # if self.options["low_speed_aero"]:
         #     pass
         # else:
-        #     if self.options["compute_mach_interpolation"]:
-        #         mach_interp, cl_alpha_interp = self.compute_cl_alpha_mach(
-        #             inputs, input_aoa, altitude, mach
-        #         )
 
         # Defining outputs
         if self.options["low_speed_aero"]:
@@ -388,8 +371,3 @@ class _ComputeAeroVLM(VLMSimpleGeometry):
             outputs["data:aerodynamics:horizontal_tail:cruise:induced_drag_coefficient"] = (
                 coef_k_htp
             )
-            # if self.options["compute_mach_interpolation"]:
-            #     outputs["data:aerodynamics:aircraft:mach_interpolation:mach_vector"] = mach_interp
-            #     outputs["data:aerodynamics:aircraft:mach_interpolation:CL_alpha_vector"] = (
-            #         cl_alpha_interp
-            #     )

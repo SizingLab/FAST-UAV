@@ -125,7 +125,6 @@ class WingLoadingCruiseVLM(om.ExplicitComponent):
         )
         self.add_input("mission:sizing:dISA", val=0.0, units="K")
         self.add_input("optimization:variables:aerodynamics:CD0:guess", val=np.nan, units=None)
-        # self.add_input("data:aerodynamics:CDi:K", val=np.nan, units=None)
         self.add_input("optimization:variables:aerodynamics:CDi:K:guess", val=np.nan, units=None)
         self.add_output("data:geometry:wing:loading:cruise", units="N/m**2")
 
