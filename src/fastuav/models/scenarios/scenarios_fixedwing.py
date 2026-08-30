@@ -12,10 +12,10 @@ from fastuav.models.aerodynamics.aerodynamics_fixedwing import (
     SpanEfficiency,
 )
 from fastuav.models.mtow.mtow import MtowGuess
-from fastuav.models.scenarios.thrust.climb import FixedwingClimbThrust
-from fastuav.models.scenarios.thrust.cruise import FixedwingCruiseThrust
+from fastuav.models.scenarios.thrust.climb import FixedwingClimbThrust, FixedwingClimbThrust_VLM
+from fastuav.models.scenarios.thrust.cruise import FixedwingCruiseThrust, FixedwingCruiseThrust_VLM
 from fastuav.models.scenarios.thrust.hover import NoHover
-from fastuav.models.scenarios.thrust.takeoff import LauncherTakeoff
+from fastuav.models.scenarios.thrust.takeoff import LauncherTakeoff, LauncherTakeoff_VLM
 from fastuav.models.scenarios.wing_loading.wing_loading import (
     WingLoadingCruise,
     WingLoadingSelection,
@@ -44,4 +44,29 @@ class SizingScenariosFixedWing(om.Group):
         thrust.add_subsystem("takeoff", LauncherTakeoff(), promotes=["*"])
         thrust.add_subsystem("climb", FixedwingClimbThrust(), promotes=["*"])
         thrust.add_subsystem("cruise", FixedwingCruiseThrust(), promotes=["*"])
+        thrust.add_subsystem("no_hover", NoHover(), promotes=["*"])
+
+
+@oad.RegisterOpenMDAOSystem("fastuav.scenarios_VLM.fixedwing")
+class SizingScenariosVLMFixedWing(om.Group):
+    """
+    Sizing scenarios definition for fixed wing configurations (VLM-based).
+
+    No span efficiency nor induced drag constant here: K comes from the VLM through
+    InducedDragConstantVLM, and adding them back would write that variable twice.
+    No cruise wing loading either, the optimiser reaches it through wing:loading:k.
+    """
+
+    def setup(self):
+        preliminary = self.add_subsystem("preliminary", om.Group(), promotes=["*"])
+        preliminary.add_subsystem("mtow_guess", MtowGuess(), promotes=["*"])
+
+        wingloading = self.add_subsystem("wing_loading", om.Group(), promotes=["*"])
+        wingloading.add_subsystem("stall", WingLoadingStall(), promotes=["*"])
+        wingloading.add_subsystem("selection", WingLoadingSelection(), promotes=["*"])
+
+        thrust = self.add_subsystem("thrust", om.Group(), promotes=["*"])
+        thrust.add_subsystem("takeoff", LauncherTakeoff_VLM(), promotes=["*"])
+        thrust.add_subsystem("climb", FixedwingClimbThrust_VLM(), promotes=["*"])
+        thrust.add_subsystem("cruise", FixedwingCruiseThrust_VLM(), promotes=["*"])
         thrust.add_subsystem("no_hover", NoHover(), promotes=["*"])

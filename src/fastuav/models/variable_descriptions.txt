@@ -647,7 +647,6 @@ data:weight:airframe:wing:spar:density || Spars material density
 data:weight:airframe:wing:spar:mass || Spars mass
 
 # Stability
-data:stability:CoG || Center of gravity (longitudinal)
 data:stability:CoG:x || Center of gravity (longitudinal, x-axis)
 data:stability:CoG:y || Center of gravity (lateral, y-axis)
 data:stability:CoG:z || Center of gravity (vertical, z-axis)
