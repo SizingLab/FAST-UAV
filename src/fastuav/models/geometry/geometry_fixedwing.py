@@ -1263,7 +1263,7 @@ class FuselageGeometry(om.ExplicitComponent):
             np.pi * (4 / 6) * l_nose * (0.5 * d_fus_mid) ** 2
         )  # nose part of fuselage (half ellipsoid) [m3]
         V_mid = np.pi * (d_fus_mid / 2) ** 2 * l_mid  # mid part of fuselage (cylindrical) [m3]
-        V_rear = (
+        (
             np.pi
             * l_rear
             * ((0.5 * d_fus_mid) ** 2 + (0.5 * d_fus_tip) ** 2 + 0.25 * d_fus_mid * d_fus_tip)
